@@ -4,7 +4,7 @@ on:
   workflow_dispatch:  # This allows you to run it manually
   push:
     branches:
-      - main  # Runs when pushing to main branch
+      - "**" # Runs when pushing to main branch
 
 jobs:
   start-app:
