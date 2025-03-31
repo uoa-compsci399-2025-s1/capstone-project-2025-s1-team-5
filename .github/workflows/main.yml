@@ -1,0 +1,31 @@
+name: Start App
+
+on:
+  workflow_dispatch:  # This allows you to run it manually
+  push:
+    branches:
+      - main  # Runs when pushing to main branch
+
+jobs:
+  start-app:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        run: |
+              cd cms/backend
+              npm install
+
+      - name: Start Application
+        run: |
+          cd cms/backend
+          npm start
+        
