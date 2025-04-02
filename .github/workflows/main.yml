@@ -24,8 +24,4 @@ jobs:
               cd cms/backend
               npm install
 
-      - name: Start Application
-        run: |
-          cd cms/backend
-          npm start
         
