@@ -1,14 +1,14 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import connectToDatabase from './mongodb';
+// import connectToDatabase from './mongodb';
 
 dotenv.config();
 const app = express();
 app.use(express.json());
 
-import adminRouter from './routes/admin_routes';
-import userRouter from './routes/user_routes';
-import authenticationRouter from './routes/authenticaiton.routes';
+import adminRouter from './routes/admin_routes.js';
+import userRouter from './routes/user_routes.js';
+import authenticationRouter from './routes/authenticaiton.routes.js';
 
 app.use('/api/admin', adminRouter);
 app.use('/api/user', userRouter)
