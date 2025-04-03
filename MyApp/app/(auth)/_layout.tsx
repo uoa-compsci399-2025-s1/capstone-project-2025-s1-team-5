@@ -3,8 +3,9 @@ import { Tabs } from 'expo-router';
 export default function Layout() {
   return (
     <Tabs>
-      <Tabs.Screen name="home" options={{ headerShown: false }} />
-      <Tabs.Screen name="profile" options={{ headerShown: false }} />
+      <Tabs.Screen name="Home" options={{ headerShown: false }} />
+      <Tabs.Screen name="Modules" options={{ headerShown: false }} />
+      <Tabs.Screen name="Profile" options={{ headerShown: false }} />
     </Tabs>
   );
 }
