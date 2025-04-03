@@ -9,8 +9,6 @@ export default function Module1Screen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.moduleTitle}>Get Set Up For Success</Text>
-
       <SubModuleButton 
         title="Navigating your course" 
         onPress={() => handleSubmodulePress('Navigating your course')} 
@@ -45,10 +43,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 20,
-  },
-  moduleTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20, 
   },
 });

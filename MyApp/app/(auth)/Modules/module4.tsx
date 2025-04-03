@@ -9,8 +9,6 @@ export default function Module4Screen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.moduleTitle}>Preparing for Departure</Text>
-
       <SubModuleButton 
         title="Life in Auckland" 
         iconName="info"
@@ -50,10 +48,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 20,
-  },
-  moduleTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20, 
   },
 });

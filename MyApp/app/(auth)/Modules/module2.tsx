@@ -9,8 +9,6 @@ export default function Module2Screen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.moduleTitle}>Academic preparedness for UoA</Text>
-
       <SubModuleButton 
         title="Academic skills"
         iconName="touch-app"
@@ -40,10 +38,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 20,
-  },
-  moduleTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20, 
   },
 });

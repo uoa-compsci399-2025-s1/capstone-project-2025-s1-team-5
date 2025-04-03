@@ -18,17 +18,17 @@ export default function SignInScreen() {
 
   const handleSignIn = async () => {
     if (email && password) {
-      // Simulating form submission and navigating to the next screen
-      router.replace('/Home'); // Replace with the actual page you want to navigate to
+      // autentication logic needed
+      router.replace('/Home'); 
     } else {
       setDisplayedError('Please enter both email and password');
     }
   };
 
   const handleForgotPassword = async () => {
-    // Mock action for forgotten password (simulated navigation)
+    //forget password logic needed
     console.log("Navigating to Forgot Password screen...");
-    //router.push('/forgot-password'); // Replace with your actual path
+    //router.push('/forgot-password'); 
   };
 
   return (

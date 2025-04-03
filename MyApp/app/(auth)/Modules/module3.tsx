@@ -9,8 +9,6 @@ export default function Module3Screen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.moduleTitle}>Connect to the University & New Zealand</Text>
-
       <SubModuleButton 
         title="Where to go for help" 
         iconName="info"
@@ -45,10 +43,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 20,
-  },
-  moduleTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20, 
   },
 });
