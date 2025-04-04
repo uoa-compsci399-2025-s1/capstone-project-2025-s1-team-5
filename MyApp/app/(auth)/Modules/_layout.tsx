@@ -1,12 +1,12 @@
 import { Stack } from 'expo-router';
 
-export default function RootLayout() {
+export default function ModulesLayout() {
   return (
     <Stack>
       <Stack.Screen 
         name="index" 
         options={{ 
-          title: 'UoA Your Way',
+          title: 'Modules',
           headerStyle: {
             backgroundColor: '#00467f',
           },
@@ -19,9 +19,9 @@ export default function RootLayout() {
         }} 
       />
       <Stack.Screen 
-        name="signup" 
+        name="module1" 
         options={{ 
-          title: 'Sign Up',
+          title: 'Get Set Up For Success',
           headerStyle: {
             backgroundColor: '#00467f',
           },
@@ -34,9 +34,9 @@ export default function RootLayout() {
         }} 
       />
       <Stack.Screen 
-        name="createprofile" 
+        name="module2" 
         options={{ 
-          title: 'Create Profile',
+          title: 'Academic Preparedness for UoA',
           headerStyle: {
             backgroundColor: '#00467f',
           },
@@ -48,7 +48,36 @@ export default function RootLayout() {
           headerTintColor: '#ffffff',
         }} 
       />
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen 
+        name="module3" 
+        options={{ 
+          title: 'Connect to the University & New Zealand',
+          headerStyle: {
+            backgroundColor: '#00467f',
+          },
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontSize: 24,
+            color: '#ffffff',
+          },
+          headerTintColor: '#ffffff',
+        }} 
+      />
+      <Stack.Screen 
+        name="module4" 
+        options={{ 
+          title: 'Preparing for Departure',
+          headerStyle: {
+            backgroundColor: '#00467f',
+          },
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontSize: 24,
+            color: '#ffffff',
+          },
+          headerTintColor: '#ffffff',
+        }} 
+      />
     </Stack>
   );
 }
