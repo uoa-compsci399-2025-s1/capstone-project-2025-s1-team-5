@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 export default function ProfileScreen() {
   return (
     <View>
-      <Text>ProfileScreen</Text>
+      <Text>Work in progress...</Text>
     </View>
   );
 }
