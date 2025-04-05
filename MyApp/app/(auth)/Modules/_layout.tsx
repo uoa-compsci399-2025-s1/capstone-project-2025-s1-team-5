@@ -27,7 +27,7 @@ export default function ModulesLayout() {
           },
           headerTitleStyle: {
             fontWeight: 'bold',
-            fontSize: 24,
+            fontSize: 18,
             color: '#ffffff',
           },
           headerTintColor: '#ffffff',
@@ -42,7 +42,7 @@ export default function ModulesLayout() {
           },
           headerTitleStyle: {
             fontWeight: 'bold',
-            fontSize: 24,
+            fontSize: 18,
             color: '#ffffff',
           },
           headerTintColor: '#ffffff',
@@ -57,7 +57,7 @@ export default function ModulesLayout() {
           },
           headerTitleStyle: {
             fontWeight: 'bold',
-            fontSize: 24,
+            fontSize: 18,
             color: '#ffffff',
           },
           headerTintColor: '#ffffff',
@@ -72,7 +72,7 @@ export default function ModulesLayout() {
           },
           headerTitleStyle: {
             fontWeight: 'bold',
-            fontSize: 24,
+            fontSize: 18,
             color: '#ffffff',
           },
           headerTintColor: '#ffffff',
