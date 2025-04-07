@@ -1,12 +1,12 @@
 import { Stack } from 'expo-router';
 
-export default function RootLayout() {
+export default function ProfileLayout() {
   return (
     <Stack>
       <Stack.Screen 
         name="index" 
         options={{ 
-          title: 'UoA Your Way',
+          title: 'Profile',
           headerStyle: {
             backgroundColor: '#00467f',
           },
@@ -15,13 +15,13 @@ export default function RootLayout() {
             fontSize: 24,
             color: '#ffffff',
           },
-          headerTintColor: '#ffffff',
+          headerTintColor: '#ffffff', 
         }} 
       />
       <Stack.Screen 
-        name="signup" 
+        name="changepassword" 
         options={{ 
-          title: 'Sign Up',
+          title: 'Change Password',
           headerStyle: {
             backgroundColor: '#00467f',
           },
@@ -30,25 +30,9 @@ export default function RootLayout() {
             fontSize: 24,
             color: '#ffffff',
           },
-          headerTintColor: '#ffffff',
+          headerTintColor: '#ffffff', 
         }} 
       />
-      <Stack.Screen 
-        name="createprofile" 
-        options={{ 
-          title: 'Create Profile',
-          headerStyle: {
-            backgroundColor: '#00467f',
-          },
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 24,
-            color: '#ffffff',
-          },
-          headerTintColor: '#ffffff',
-        }} 
-      />
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
     </Stack>
   );
 }
