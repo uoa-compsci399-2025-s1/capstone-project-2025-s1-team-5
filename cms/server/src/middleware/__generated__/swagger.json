@@ -58,6 +58,26 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"UserGetResponse": {
+				"properties": {
+					"data": {
+						"properties": {
+							"user": {
+								"$ref": "#/components/schemas/User"
+							}
+						},
+						"required": [
+							"user"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -76,11 +96,11 @@
 				"operationId": "GetUser",
 				"responses": {
 					"200": {
-						"description": "gay",
+						"description": "User fetched",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/User"
+									"$ref": "#/components/schemas/UserGetResponse"
 								}
 							}
 						}

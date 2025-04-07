@@ -6,7 +6,6 @@ import {
     SuccessResponse,
 } from "tsoa";
 
-import { User } from "../../data-layer/models/models";
 import { UserService } from "../../data-layer/services/UserService";
 import { UserGetResponse } from "../response-models/UserResponse";
 
