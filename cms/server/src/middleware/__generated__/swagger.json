@@ -1,0 +1,128 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"RoleType": {
+				"enum": [
+					"admin",
+					"user"
+				],
+				"type": "string"
+			},
+			"User": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"first_name": {
+						"type": "string"
+					},
+					"last_name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"country": {
+						"type": "string"
+					},
+					"programme": {
+						"type": "string"
+					},
+					"role": {
+						"$ref": "#/components/schemas/RoleType"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"first_name",
+					"last_name",
+					"email",
+					"password",
+					"country",
+					"programme",
+					"role",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserGetResponse": {
+				"properties": {
+					"data": {
+						"properties": {
+							"user": {
+								"$ref": "#/components/schemas/User"
+							}
+						},
+						"required": [
+							"user"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "server",
+		"version": "1.0.0",
+		"license": {
+			"name": "MIT"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/users/{userId}": {
+			"get": {
+				"operationId": "GetUser",
+				"responses": {
+					"200": {
+						"description": "User fetched",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserGetResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
