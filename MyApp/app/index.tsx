@@ -17,18 +17,23 @@ export default function SignInScreen() {
   const router = useRouter();
 
   const handleSignIn = async () => {
-    if (email && password) {
-      // autentication logic needed
-      router.replace('/Home'); 
-    } else {
-      setDisplayedError('Please enter both email and password');
+    //authentication logic needed when database is set up, async needed?
+    try {
+      if (email && password) {
+        router.replace('/Home');  
+      } else {
+        setDisplayedError('Please enter both email and password');
+      }
+    } catch (error) {
+      console.error(error);
+      setDisplayedError('An unknown error occurred');
     }
   };
+  
 
   const handleForgotPassword = async () => {
     //forget password logic needed
-    console.log("Navigating to Forgot Password screen...");
-    //router.push('/forgot-password'); 
+    console.log("Forgot password clicked");
   };
 
   return (

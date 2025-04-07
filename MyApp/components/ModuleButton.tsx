@@ -48,8 +48,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   textContainer: {
-    flex: 1, // This allows the text to take up available space and avoid wrapping
-    justifyContent: 'center', // Ensures the text is vertically centered
+    flex: 1, 
+    justifyContent: 'center', 
   },
   moduleText: {
     fontSize: 14,

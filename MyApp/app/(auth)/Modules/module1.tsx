@@ -1,6 +1,19 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import SubModuleButton from '@/components/SubModuleButton';
+
+interface Submodule {
+  title: string;
+  iconName: 'info' | 'touch-app'; 
+}
+
+const submoduleData: Submodule[] = [
+  { title: "Navigating your course", iconName: "info" },
+  { title: "Using Canvas", iconName: "info" },
+  { title: "Academic integrity", iconName: "info" },
+  { title: "Netiquette & code of conduct", iconName: "info" },
+  { title: "Prepare for success quiz", iconName: "touch-app" },
+];
 
 export default function Module1Screen() {
   const handleSubmodulePress = (submoduleName: string) => {
@@ -9,31 +22,14 @@ export default function Module1Screen() {
 
   return (
     <View style={styles.container}>
-      <SubModuleButton 
-        title="Navigating your course" 
-        onPress={() => handleSubmodulePress('Navigating your course')} 
-        iconName="info" 
-      />
-      <SubModuleButton 
-        title="Using Canvas" 
-        onPress={() => handleSubmodulePress('Using Canvas')} 
-        iconName="info" 
-      />
-      <SubModuleButton 
-        title="Academic integrity" 
-        onPress={() => handleSubmodulePress('Academic integrity')} 
-        iconName="info" 
-      />
-      <SubModuleButton 
-        title="Netiquette & code of conduct" 
-        onPress={() => handleSubmodulePress('Netiquette & code of conduct')} 
-        iconName="info" 
-      />
-      <SubModuleButton 
-        title="Prepare for success quiz" 
-        onPress={() => handleSubmodulePress('Prepare for success quiz')} 
-        iconName="touch-app" 
-      />
+      {submoduleData.map((submodule, index) => (
+        <SubModuleButton
+          key={index}
+          title={submodule.title}
+          onPress={() => handleSubmodulePress(submodule.title)}
+          iconName={submodule.iconName}
+        />
+      ))}
     </View>
   );
 }
