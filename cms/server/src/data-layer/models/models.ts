@@ -3,39 +3,39 @@ export enum RoleType {
     user= "user"
 }
 
-export interface User {
+export interface IUser {
     id: string;
     first_name: string;
     last_name: string;
     email: string;
     password: string;
     country: string;
-    programme: string;
+    programme?: string;
     role: RoleType,
     createdAt: Date
 }
 
-export interface Module {
+export interface IModule {
     id: string;
     title: string;
     description: string;
-    createdAt: Date
-    updatedAt?: Date
-    subsectionID: string
+    createdAt: Date;
+    updatedAt?: Date;
+    subsectionID: string;
 }
 
-export interface Programme {
+export interface IProgramme {
     id: string;
     name: string;
     createdAt: Date;
 }
 
-export interface Subsection {
+export interface ISubsection {
     id: string;
     title: string;
     body: string;
     authorID: string;
     published: boolean;
     createdAt: Date;
-    updatedAt: Date
+    updatedAt: Date;
 }

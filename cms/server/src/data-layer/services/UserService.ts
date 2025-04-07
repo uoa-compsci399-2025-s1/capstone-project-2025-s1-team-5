@@ -1,4 +1,8 @@
-import { RoleType, User } from "../models/models";
+import { userAdaptor } from "../adapter/UserAdapter";
+import { RoleType, IUser } from "../models/models";
+import User from "../models/schema";
+
+export type UserCreationParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme">
 
 export class UserService {
     /**
@@ -6,7 +10,7 @@ export class UserService {
      * @param userID the user id to fetch
      * @returns The user
      */
-    public async getUser(userID: string) : Promise<User> {
+    public async getUser(userID: string) : Promise<IUser> {
         return {
             id: "12738647836278yhdufheiufgyu8eg",
             first_name: "derick",
@@ -17,6 +21,21 @@ export class UserService {
             programme: "CS201",
             role: RoleType.user,
             createdAt: new Date()
+        }
+    }
+    /**
+     * @param UserCreationsParams - user information from input
+     * @returns void (Create User)
+     */
+    public async createUser(userCreationParams: UserCreationParams): Promise<IUser> | null {
+        try {
+            const newUser = new User({...userCreationParams, role: "user"});
+
+            await newUser.save();
+            return userAdaptor(newUser);
+        } catch (error) {
+            console.log("Error creating user", error);
+            return null;
         }
     }
 }

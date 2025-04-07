@@ -1,7 +1,10 @@
-import { User } from "../../data-layer/models/models"
+import { IUser } from "../../data-layer/models/models"
 
 export interface UserGetResponse {
     data: {
-        user: User
+        user: IUser
     }
+}
+export interface UserPostResponse {
+        user: IUser
 }

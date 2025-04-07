@@ -9,6 +9,8 @@ import * as swaggerUI from "swagger-ui-express";
 
 import { RegisterRoutes } from "./middleware/__generated__/routes";
 
+import connectToDatabase from "./data-layer/adapter/mongodb";
+
 export const app = express();
 
 // Use body parser to read sent json payloads
@@ -29,6 +31,14 @@ app.use("/swagger", swaggerUI.serve, swaggerUI.setup(swaggerJson));
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, () =>
-  console.log(`Example app listening at http://localhost:${port}`)
-);
+const startServer = async () => {
+  try {
+    await connectToDatabase()
+    app.listen(port, () =>
+      console.log(`Example app listening at http://localhost:${port}`),
+    )
+  } catch (error) {
+    console.error("ERROR Connecting to Database", error)
+  }
+}
+startServer()
