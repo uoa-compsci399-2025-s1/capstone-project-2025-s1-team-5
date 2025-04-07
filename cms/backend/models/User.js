@@ -5,8 +5,18 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   country: { type: String, }, 
-  programme: { type: String}, 
-  role: { type: String, enum: ["admin", "user"]},
+  programme: { 
+    type: String,
+    validate: {
+      validator: async (value) => {
+        const programme = mongoose.model("Programme");
+        const programmeExists = await programme.findOne({ name: value });
+        return !!programmeExists;
+      },
+      message: props => `${props.value} is not a valid programme.`
+    }
+  }, 
+  role: { type: String, enum: ["admin", "user"] },
   createdAt: { type: Date, default: Date.now }
 });
      
