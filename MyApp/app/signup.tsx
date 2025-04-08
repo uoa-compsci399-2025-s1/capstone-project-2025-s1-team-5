@@ -17,11 +17,12 @@ export default function SignUpScreen() {
   const router = useRouter();
 
   const handleSignUp = () => {
+    //user creation logic needed when database is set up, async needed?
     if (password !== confirmPassword) {
       setDisplayedError('Passwords do not match');
       return;
     }
-
+    // try and catch exception needed, try for the user creation and catch for the error message
     setDisplayedError('');
     console.log('Signing up with:', { email, password });
 

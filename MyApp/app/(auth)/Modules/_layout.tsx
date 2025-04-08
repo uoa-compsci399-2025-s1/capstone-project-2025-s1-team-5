@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import StyledText from '@/components/StyledText';
 
 export default function ModulesLayout() {
   return (
@@ -6,75 +7,45 @@ export default function ModulesLayout() {
       <Stack.Screen 
         name="index" 
         options={{ 
-          title: 'Modules',
-          headerStyle: {
-            backgroundColor: '#00467f',
-          },
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 24,
-            color: '#ffffff',
-          },
+          title: '',
+          headerStyle: { backgroundColor: '#00467f' },
+          headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Modules</StyledText>,
           headerTintColor: '#ffffff',
         }} 
       />
       <Stack.Screen 
         name="module1" 
         options={{ 
-          title: 'Get Set Up For Success',
-          headerStyle: {
-            backgroundColor: '#00467f',
-          },
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 18,
-            color: '#ffffff',
-          },
+          title: '',
+          headerStyle: { backgroundColor: '#00467f' },
+          headerTitle: () => <StyledText type="subtitle" style={{ color: '#ffffff' }}>Get Set Up For Success</StyledText>,
           headerTintColor: '#ffffff',
         }} 
       />
       <Stack.Screen 
         name="module2" 
         options={{ 
-          title: 'Academic Preparedness for UoA',
-          headerStyle: {
-            backgroundColor: '#00467f',
-          },
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 18,
-            color: '#ffffff',
-          },
+          title: '',
+          headerStyle: { backgroundColor: '#00467f' },
+          headerTitle: () => <StyledText type="subtitle" style={{ color: '#ffffff' }}>Academic Preparedness for UoA</StyledText>,
           headerTintColor: '#ffffff',
         }} 
       />
       <Stack.Screen 
         name="module3" 
         options={{ 
-          title: 'Connect to the University & New Zealand',
-          headerStyle: {
-            backgroundColor: '#00467f',
-          },
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 18,
-            color: '#ffffff',
-          },
+          title: '',
+          headerStyle: { backgroundColor: '#00467f' },
+          headerTitle: () => <StyledText type="subtitle" style={{ color: '#ffffff' }}>Connect to the University & New Zealand</StyledText>,
           headerTintColor: '#ffffff',
         }} 
       />
       <Stack.Screen 
         name="module4" 
         options={{ 
-          title: 'Preparing for Departure',
-          headerStyle: {
-            backgroundColor: '#00467f',
-          },
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 18,
-            color: '#ffffff',
-          },
+          title: '',
+          headerStyle: { backgroundColor: '#00467f' },
+          headerTitle: () => <StyledText type="subtitle" style={{ color: '#ffffff' }}>Preparing for Departure</StyledText>,
           headerTintColor: '#ffffff',
         }} 
       />
