@@ -58,22 +58,44 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"UserGetResponse": {
+			"PaginatedUserResponse": {
 				"properties": {
-					"data": {
-						"properties": {
-							"user": {
-								"$ref": "#/components/schemas/IUser"
-							}
+					"users": {
+						"items": {
+							"$ref": "#/components/schemas/IUser"
 						},
-						"required": [
-							"user"
-						],
-						"type": "object"
+						"type": "array"
+					},
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
-					"data"
+					"users",
+					"total",
+					"page",
+					"limit"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserGetResponse": {
+				"properties": {
+					"user": {
+						"$ref": "#/components/schemas/IUser"
+					}
+				},
+				"required": [
+					"user"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -136,16 +158,16 @@
 		"contact": {}
 	},
 	"paths": {
-		"/users/{userId}": {
+		"/users": {
 			"get": {
-				"operationId": "GetUser",
+				"operationId": "GetUsers",
 				"responses": {
 					"200": {
-						"description": "User fetched",
+						"description": "Page Users fetched",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/UserGetResponse"
+									"$ref": "#/components/schemas/PaginatedUserResponse"
 								}
 							}
 						}
@@ -154,17 +176,27 @@
 				"security": [],
 				"parameters": [
 					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
+						"in": "query",
+						"name": "limit",
+						"required": false,
 						"schema": {
-							"type": "string"
+							"default": 10,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"default": 1,
+							"format": "double",
+							"type": "number"
 						}
 					}
 				]
-			}
-		},
-		"/users": {
+			},
 			"post": {
 				"operationId": "CreateUser",
 				"responses": {
@@ -191,6 +223,34 @@
 						}
 					}
 				}
+			}
+		},
+		"/users/{userId}": {
+			"get": {
+				"operationId": "GetUser",
+				"responses": {
+					"200": {
+						"description": "User fetched",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserGetResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		}
 	},
