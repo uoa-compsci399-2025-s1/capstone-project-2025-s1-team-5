@@ -11,6 +11,7 @@ import StyledText from '@/components/StyledText';
 import DropDownMenu from '@/components/DropDownMenu';
 
 export default function CreateProfileScreen() {
+  //async and/or const navigation = useNavigation(); needed?
   const { theme } = useTheme();
   const router = useRouter();
 
@@ -32,6 +33,7 @@ export default function CreateProfileScreen() {
   ];
 
   const handleCreateProfile = () => {
+    // create profile logic needed when database is set up, e.g. how to save the profile in the database.
     if (!firstName || !lastName || !selectedCountry || !selectedProgramme) {
       setDisplayedError('Please fill in all fields');
       return;

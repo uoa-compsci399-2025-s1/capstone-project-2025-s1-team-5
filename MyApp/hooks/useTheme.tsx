@@ -42,6 +42,7 @@ type ThemeProviderProps = {
 };
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
+  // async needed?
   const [theme, setTheme] = useState(themes.light); // Default to light theme
 
   useEffect(() => {

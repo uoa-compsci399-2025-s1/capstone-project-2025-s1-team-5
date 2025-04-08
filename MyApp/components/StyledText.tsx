@@ -24,12 +24,12 @@ export default function StyledText({
       style={[
         type === 'default' ? [styles.default, {color: theme.text}] : undefined,
         type === 'note' ? [styles.note, {color: theme.subtextOne}]: undefined,
-        type === 'title' ? [styles.title, {color: theme.text}]: undefined,
-        type === 'subtitle' ? [styles.subtitle, {color: theme.text}] : undefined,
-        type === 'label' ? [styles.label, {color: theme.text}]: undefined,
-        type === 'boldLabel' ? [styles.boldLabel, {color: theme.text}]: undefined,
-        type === 'subtleLabel' ? [styles.subtleLabel, {color: theme.subtextOne}]: undefined,
-        type === 'error' ? [styles.error, {color: theme.error}]: undefined,
+        type === 'title' ? [styles.title, {color: theme.text, fontFamily: 'National-Bold'}] : undefined,
+        type === 'subtitle' ? [styles.subtitle, {color: theme.text, fontFamily: 'National-Regular'}] : undefined,
+        type === 'label' ? [styles.label, {color: theme.text, fontFamily: 'National-Regular'}]: undefined,
+        type === 'boldLabel' ? [styles.boldLabel, {color: theme.text, fontFamily: 'National-Bold'}]: undefined,
+        type === 'subtleLabel' ? [styles.subtleLabel, {color: theme.subtextOne, fontFamily: 'National-Light'}]: undefined,
+        type === 'error' ? [styles.error, {color: theme.error, fontFamily: 'National-Regular'}]: undefined,
         style,
       ]}
       numberOfLines={numberOfLines}
@@ -43,28 +43,37 @@ export default function StyledText({
 const styles = StyleSheet.create({
   default: {
     fontSize: 16,
+    fontFamily: 'National-Regular',
   },
   note: {
     fontSize: 14,
+    fontFamily: 'National-Regular',
   },
   title: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: 'bold',
+    fontFamily: 'National-Bold',
   },
   subtitle: {
-    fontSize: 26,
+    fontSize: 18,
+    fontWeight: 'bold',
+    fontFamily: 'National-Regular',
   },
   label: {
     fontSize: 18,
+    fontFamily: 'National-Regular',
   },
   boldLabel: {
     fontSize: 18,
     fontWeight: 'bold',
+    fontFamily: 'National-Bold',
   },
   subtleLabel: {
     fontSize: 18,
+    fontFamily: 'National-Light',
   },
   error: {
     fontSize: 14,
+    fontFamily: 'National-Regular',
   },
 });

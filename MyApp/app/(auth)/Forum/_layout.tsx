@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import StyledText from '@/components/StyledText';
 
 export default function ForumLayout() {
   return (
@@ -6,15 +7,9 @@ export default function ForumLayout() {
       <Stack.Screen 
         name="index" 
         options={{ 
-          title: 'Forum',
-          headerStyle: {
-            backgroundColor: '#00467f',
-          },
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 24,
-            color: '#ffffff',
-          },
+          title: '',
+          headerStyle: { backgroundColor: '#00467f' },
+          headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Forum</StyledText>,
         }} 
       />
     </Stack>

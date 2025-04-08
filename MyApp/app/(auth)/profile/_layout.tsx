@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import StyledText from '@/components/StyledText';
 
 export default function ProfileLayout() {
   return (
@@ -6,30 +7,18 @@ export default function ProfileLayout() {
       <Stack.Screen 
         name="index" 
         options={{ 
-          title: 'Profile',
-          headerStyle: {
-            backgroundColor: '#00467f',
-          },
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 24,
-            color: '#ffffff',
-          },
+          title: '',
+          headerStyle: { backgroundColor: '#00467f' },
+          headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Profile</StyledText>,
           headerTintColor: '#ffffff', 
         }} 
       />
       <Stack.Screen 
         name="changepassword" 
         options={{ 
-          title: 'Change Password',
-          headerStyle: {
-            backgroundColor: '#00467f',
-          },
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 24,
-            color: '#ffffff',
-          },
+          title: '',
+          headerStyle: { backgroundColor: '#00467f' },
+          headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Change Password</StyledText>,
           headerTintColor: '#ffffff', 
         }} 
       />
