@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useEffect, useState , useContext} from 'react';
 import {
   View,
   Text,
   Image,
   TouchableOpacity,
   StyleSheet,
+  useColorScheme,
   Alert,
+  Switch,
 } from 'react-native';
 import SettingItem from '@/components/SettingItem';
-
+import { ThemeContext } from '../../contexts/ThemeContext';
+import { darkTheme } from '@/app/theme/theme';
 // Define the type for the component's props if needed (here we use an empty object)
 interface ProfileScreenProps {}
 
@@ -19,8 +22,11 @@ const ProfileScreen: React.FC<ProfileScreenProps> = () => {
     Alert.alert(`Navigating to ${feature}`);
   };
 
+  const { theme, setCustomTheme } = useContext(ThemeContext);
+
+  
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor:theme.background}]}>
       {/* Header with profile image and info */}
       <View style={styles.header}>
         <Image
@@ -28,14 +34,14 @@ const ProfileScreen: React.FC<ProfileScreenProps> = () => {
           style={styles.profileImage}
         />
         <View style={styles.profileInfo}>
-          <Text style={styles.name}>Jack Zhen</Text>
-          <Text style={styles.email}>jackz123@aucklanduni.ac.nz</Text>
+          <Text style={[styles.name, {color : theme.text}]}>Jack Zhen</Text>
+          <Text style={[styles.email,{color : theme.text}]}>jackz123@aucklanduni.ac.nz</Text>
           <View style={styles.countryContainer}>
             <Image
               source={{ uri: 'https://flagcdn.com/w20/cn.png' }} // China flag image example
               style={styles.countryFlag}
             />
-            <Text style={styles.countryText}>China</Text>
+            <Text style={[styles.countryText,{color : theme.text}]}>China</Text>
           </View>
         </View>
       </View>
@@ -81,13 +87,24 @@ const ProfileScreen: React.FC<ProfileScreenProps> = () => {
       </View>
 
       <View>
-      <Text>
+      <Text style={[{color : theme.text}]}>
         Settings
       </Text>
       <SettingItem label="Change Password" onPress={() => console.log('Change password')} showDivider/>
       <SettingItem label="Language Preference" onPress={() => console.log('Change password')} showDivider/>
     </View>
-
+    <Text style={[styles.header,{color : theme.text}]}>Dark Mode Setting</Text>
+      
+      {/* 开关选择是否使用自定义主题 */}
+      <View style={[styles.row, {backgroundColor: theme.background}]}>
+        <Text style={[styles.label,{ color: theme.text }]}>Enable Dark Mode:</Text>
+        <Switch
+          value={theme === darkTheme}
+          onValueChange={(val) => {
+            if (setCustomTheme) setCustomTheme(val);
+          }}
+        />
+      </View>
     </View>
 
   );
@@ -154,6 +171,29 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: '#333',
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    color: '#333',
+  },
+  sliderContainer: {
+    marginBottom: 20,
+  },
+  slider: {
+    width: '100%',
+    height: 40,
+  },
+  info: {
+    fontSize: 16,
+    marginTop: 10,
+    color: '#555',
+    textAlign: 'center',
   },
 });
 
