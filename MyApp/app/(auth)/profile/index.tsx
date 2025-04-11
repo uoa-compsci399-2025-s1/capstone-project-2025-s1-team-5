@@ -30,7 +30,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = () => {
       {/* Header with profile image and info */}
       <View style={styles.header}>
         <Image
-          source={{ uri: 'https://example.com/path-to-your-profile-image.jpg' }}
+          source={require('@/assets/images/profile/default.jpg')}
           style={styles.profileImage}
         />
         <View style={styles.profileInfo}>
