@@ -1,3 +1,4 @@
+// Used to measure performance metrics
 import { ReportHandler } from 'web-vitals';
 
 const reportWebVitals = (onPerfEntry?: ReportHandler) => {
