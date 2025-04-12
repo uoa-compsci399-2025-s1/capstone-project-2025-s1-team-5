@@ -69,7 +69,7 @@ export class UsersController extends Controller {
     }
 
     @Delete("{userId}")
-    @SuccessResponse(200, "User deleted")
+    @SuccessResponse(202, "User deleted")
     public async deleteUser(
         @Path() userId: string
     ): Promise<{ message: string }> {

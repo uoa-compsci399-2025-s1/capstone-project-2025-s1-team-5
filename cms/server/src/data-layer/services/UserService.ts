@@ -1,7 +1,8 @@
+import mongoose from "mongoose";
 import { PaginatedUserResponse } from "../../service-layer/response-models/UserResponse";
 import { userAdaptor } from "../adapter/UserAdapter";
-import { RoleType, IUser } from "../models/models";
-import User from "../models/schema";
+import {  IUser } from "../models/models";
+import {User} from "../models/schema";
 
 export type UserCreationParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme">
 export type UserUpdateParams = Pick<IUser, "password" | "country" | "programme">
@@ -13,22 +14,19 @@ export class UserService {
      * @param userID the user id to fetch
      * @returns The user
      */
-    public async getUser(userID: string) : Promise<IUser> {
-        return {
-            id: "12738647836278yhdufheiufgyu8eg",
-            first_name: "derick",
-            last_name: "trands",
-            email: "dericktran1@gmail.com",
-            password: "wowowowowo123@",
-            country: "new zealand",
-            programme: "CS201",
-            role: RoleType.user,
-            createdAt: new Date()
+    public async getUser(userID: string): Promise<IUser | null> {
+        try {
+            const user = await User.findById(userID).exec();
+            return user;
+        } catch (error) {
+            console.error("Error fetching user:", error);
+            throw new Error("Failed to fetch user");
         }
     }
     /**
      * Method to fetch a certain amount of users 
-     * @param limit and page number
+     * @param limit how many users per page
+     * @param pageNumber page number
      * @returns list of users
      */
     public async getPaginatedUsers(limit = 10, page = 1) : Promise<PaginatedUserResponse | null> {
@@ -83,5 +81,18 @@ export class UserService {
             console.error("Error updating user", error)
             return null
         }
+    }
+    /**
+     * Method to delete user 
+     * @param userID 
+     * @returns void - deletes user
+     */
+    public async deleteUser(userId: string): Promise<boolean> {
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return false;
+        }
+    
+        const deletedUser = await User.findByIdAndDelete(userId);
+        return !!deletedUser;
     }
 }

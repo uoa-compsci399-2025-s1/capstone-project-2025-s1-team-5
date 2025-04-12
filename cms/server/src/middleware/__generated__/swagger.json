@@ -145,6 +145,132 @@
 			},
 			"UserCreationParams": {
 				"$ref": "#/components/schemas/Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme_"
+			},
+			"UserUpdateResponse": {
+				"properties": {
+					"user": {
+						"$ref": "#/components/schemas/IUser"
+					}
+				},
+				"required": [
+					"user"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_IUser.password-or-country-or-programme_": {
+				"properties": {
+					"password": {
+						"type": "string"
+					},
+					"country": {
+						"type": "string"
+					},
+					"programme": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"password",
+					"country"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"UserUpdateParams": {
+				"$ref": "#/components/schemas/Pick_IUser.password-or-country-or-programme_"
+			},
+			"IModule": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"subsectionIds": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"title",
+					"description",
+					"createdAt",
+					"subsectionIds"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ModulesGetResponse": {
+				"properties": {
+					"modules": {
+						"items": {
+							"$ref": "#/components/schemas/IModule"
+						},
+						"type": "array"
+					},
+					"total": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"modules",
+					"total"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ModuleGetResponse": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"subsectionIds": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"title",
+					"description",
+					"createdAt",
+					"subsectionIds"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -245,6 +371,128 @@
 					{
 						"in": "path",
 						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateUser",
+				"responses": {
+					"200": {
+						"description": "User updated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserUpdateResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserUpdateParams"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteUser",
+				"responses": {
+					"202": {
+						"description": "User deleted",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/modules": {
+			"get": {
+				"operationId": "GetModules",
+				"responses": {
+					"200": {
+						"description": "Modules Fetched",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/ModulesGetResponse"
+										}
+									],
+									"nullable": true
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/modules/{moduleId}": {
+			"get": {
+				"operationId": "GetModule",
+				"responses": {
+					"200": {
+						"description": "Module fetched",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ModuleGetResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "moduleId",
 						"required": true,
 						"schema": {
 							"type": "string"

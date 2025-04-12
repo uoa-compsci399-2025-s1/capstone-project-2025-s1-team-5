@@ -21,7 +21,7 @@ export interface IModule {
     description: string;
     createdAt: Date;
     updatedAt?: Date;
-    subsectionID: string;
+    subsectionIds: string[];
 }
 
 export interface IProgramme {
