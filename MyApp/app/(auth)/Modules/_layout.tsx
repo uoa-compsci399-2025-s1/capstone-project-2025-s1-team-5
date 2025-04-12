@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import StyledText from '@/components/StyledText';
+import { useLocalSearchParams } from 'expo-router';
 
 export default function ModulesLayout() {
   return (
@@ -9,45 +10,28 @@ export default function ModulesLayout() {
         options={{ 
           title: '',
           headerStyle: { backgroundColor: '#00467f' },
-          headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Modules</StyledText>,
-          headerTintColor: '#ffffff',
+          headerTitle: () => <StyledText type="title" style={{ color: '#fff' }}>Modules</StyledText>,
+          headerTintColor: '#fff',
         }} 
       />
       <Stack.Screen 
-        name="module1" 
-        options={{ 
+        name="[moduleNumber]" 
+        options={{
           title: '',
           headerStyle: { backgroundColor: '#00467f' },
-          headerTitle: () => <StyledText type="subtitle" style={{ color: '#ffffff' }}>Get Set Up For Success</StyledText>,
-          headerTintColor: '#ffffff',
-        }} 
-      />
-      <Stack.Screen 
-        name="module2" 
-        options={{ 
-          title: '',
-          headerStyle: { backgroundColor: '#00467f' },
-          headerTitle: () => <StyledText type="subtitle" style={{ color: '#ffffff' }}>Academic Preparedness for UoA</StyledText>,
-          headerTintColor: '#ffffff',
-        }} 
-      />
-      <Stack.Screen 
-        name="module3" 
-        options={{ 
-          title: '',
-          headerStyle: { backgroundColor: '#00467f' },
-          headerTitle: () => <StyledText type="subtitle" style={{ color: '#ffffff' }}>Connect to the University & New Zealand</StyledText>,
-          headerTintColor: '#ffffff',
-        }} 
-      />
-      <Stack.Screen 
-        name="module4" 
-        options={{ 
-          title: '',
-          headerStyle: { backgroundColor: '#00467f' },
-          headerTitle: () => <StyledText type="subtitle" style={{ color: '#ffffff' }}>Preparing for Departure</StyledText>,
-          headerTintColor: '#ffffff',
-        }} 
+          headerTitle: () => {
+            const params = useLocalSearchParams();
+            const moduleTitles: Record<string, string> = {
+              '1': 'Get Set Up For Success',
+              '2': 'Academic Preparedness for UoA',
+              '3': 'Connect to the University & New Zealand',
+              '4': 'Preparing for Departure',
+            };
+            const title = moduleTitles[params.moduleNumber as string] ?? 'Module';
+            return <StyledText type="subtitle" style={{ color: '#fff' }}>{title}</StyledText>;
+          },
+          headerTintColor: '#fff',
+        }}
       />
     </Stack>
   );
