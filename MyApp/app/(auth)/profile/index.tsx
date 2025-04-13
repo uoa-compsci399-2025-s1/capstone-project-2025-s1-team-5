@@ -12,6 +12,8 @@ import {
 import SettingItem from '@/components/SettingItem';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import { darkTheme } from '@/app/theme/theme';
+import { useRouter } from 'expo-router';
+
 // Define the type for the component's props if needed (here we use an empty object)
 interface ProfileScreenProps {}
 
@@ -24,23 +26,30 @@ const ProfileScreen: React.FC<ProfileScreenProps> = () => {
 
   const { theme, setCustomTheme } = useContext(ThemeContext);
 
-  
+  const router = useRouter();
+
   return (
     <View style={[styles.container, {backgroundColor:theme.background}]}>
       {/* Header with profile image and info */}
       <View style={styles.header}>
-        <Image
-          source={require('@/assets/images/profile/default.jpg')}
-          style={styles.profileImage}
-        />
+        <TouchableOpacity 
+        onPress={() => router.push('./Profile/picSelection')}>
+          <Image
+            source={require('@/assets/images/profile/default.jpg')}
+            style={styles.profileImage}
+          />
+        </TouchableOpacity>
+        
         <View style={styles.profileInfo}>
           <Text style={[styles.name, {color : theme.text}]}>Jack Zhen</Text>
           <Text style={[styles.email,{color : theme.text}]}>jackz123@aucklanduni.ac.nz</Text>
           <View style={styles.countryContainer}>
-            <Image
-              source={{ uri: 'https://flagcdn.com/w20/cn.png' }} // China flag image example
-              style={styles.countryFlag}
-            />
+            <TouchableOpacity>
+              <Image
+                source={{ uri: 'https://flagcdn.com/w20/cn.png' }} // China flag image example
+                style={styles.countryFlag}
+              />
+            </TouchableOpacity>
             <Text style={[styles.countryText,{color : theme.text}]}>China</Text>
           </View>
         </View>
@@ -95,7 +104,6 @@ const ProfileScreen: React.FC<ProfileScreenProps> = () => {
     </View>
     <Text style={[styles.header,{color : theme.text}]}>Dark Mode Setting</Text>
       
-      {/* 开关选择是否使用自定义主题 */}
       <View style={[styles.row, {backgroundColor: theme.background}]}>
         <Text style={[styles.label,{ color: theme.text }]}>Enable Dark Mode:</Text>
         <Switch
@@ -110,7 +118,6 @@ const ProfileScreen: React.FC<ProfileScreenProps> = () => {
   );
 };
 
-// Define the styling for the page
 const styles = StyleSheet.create({
   container: {
     flex: 1,
