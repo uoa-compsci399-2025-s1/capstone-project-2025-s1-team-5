@@ -20,7 +20,7 @@ export default function SignInScreen() {
     //authentication logic needed when database is set up, async needed?
     try {
       if (email && password) {
-        router.replace('/Home');  
+        router.replace('/Modules');  
       } else {
         setDisplayedError('Please enter both email and password');
       }
