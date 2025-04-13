@@ -353,6 +353,66 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsModuleController_addModule: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true}}},
+        };
+        app.post('/modules',
+            ...(fetchMiddlewares<RequestHandler>(ModuleController)),
+            ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.addModule)),
+
+            async function ModuleController_addModule(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsModuleController_addModule, request, response });
+
+                const controller = new ModuleController();
+
+              await templateService.apiHandler({
+                methodName: 'addModule',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsModuleController_deleteModule: Record<string, TsoaRoute.ParameterSchema> = {
+                moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
+        };
+        app.delete('/modules/:moduleId',
+            ...(fetchMiddlewares<RequestHandler>(ModuleController)),
+            ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.deleteModule)),
+
+            async function ModuleController_deleteModule(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsModuleController_deleteModule, request, response });
+
+                const controller = new ModuleController();
+
+              await templateService.apiHandler({
+                methodName: 'deleteModule',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 202,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 

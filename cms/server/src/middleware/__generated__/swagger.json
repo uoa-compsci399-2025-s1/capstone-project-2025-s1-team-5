@@ -471,6 +471,45 @@
 				},
 				"security": [],
 				"parameters": []
+			},
+			"post": {
+				"operationId": "AddModule",
+				"responses": {
+					"200": {
+						"description": "Module Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IModule"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"description": {
+										"type": "string"
+									},
+									"title": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"description",
+									"title"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/modules/{moduleId}": {
@@ -483,6 +522,40 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/ModuleGetResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "moduleId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteModule",
+				"responses": {
+					"202": {
+						"description": "Module Deleted",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
 								}
 							}
 						}

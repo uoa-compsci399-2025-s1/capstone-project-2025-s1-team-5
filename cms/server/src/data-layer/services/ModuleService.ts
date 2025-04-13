@@ -1,8 +1,11 @@
 import { moduleAdaptor } from "../adapter/ModuleAdapter";
 import { IModule } from "../models/models";
 import { newModule } from "../../data-layer/models/schema";
+import mongoose from "mongoose";
+
 
 export class ModuleService {
+    static createModule: any;
     /**
      * 
      * @param moduleId 
@@ -73,4 +76,47 @@ export class ModuleService {
             return null;
         }
     }
+    /**
+     * 
+     * @param data 
+     * @returns yes
+     */
+    public async createModule(data: Partial<IModule>): Promise<IModule> {
+        const module = new newModule({
+            title: data.title,
+            description: data.description,
+            subsectionIds: []
+          });
+      
+          const saved = await module.save();
+          return saved.toObject();
+        }
+
+    public async deleteModule(moduleId: string): Promise<boolean> {
+        if (!mongoose.Types.ObjectId.isValid(moduleId)) {
+            return false;
+        }
+        const deletedUser = await newModule.findByIdAndDelete(moduleId);
+        return !!deletedUser;
+    }
+    public async updateModule(
+        moduleId: string,
+        moduleChanges: { title: string; description: string }
+      ): Promise<boolean> {
+        try {
+          const module = await newModule.findById(moduleId);
+    
+          if (!module) {
+            throw new Error("Module not found");
+          }
+          module.title = moduleChanges.title;
+          module.description = moduleChanges.description;
+    
+          await module.save();
+          return true;
+        } catch (error) {
+          console.error("Error updating module:", error);
+          return false;
+        }
+      }
 }
