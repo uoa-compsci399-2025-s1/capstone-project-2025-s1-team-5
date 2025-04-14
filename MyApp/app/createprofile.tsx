@@ -47,7 +47,7 @@ export default function CreateProfileScreen() {
       selectedProgramme,
     });
 
-    router.replace('/Home');
+    router.replace('/Modules');
   };
 
   return (

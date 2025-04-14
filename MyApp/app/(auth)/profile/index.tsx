@@ -1,130 +1,77 @@
-import React, { useEffect, useState , useContext} from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  Switch,
-} from 'react-native';
-import SettingItem from '@/components/SettingItem';
+import React, { useContext } from 'react';
+import {View, Text, Image, TouchableOpacity, StyleSheet, Alert, Switch,} from 'react-native';
+
 import { ThemeContext } from '../../contexts/ThemeContext';
 import { darkTheme } from '@/app/theme/_theme';
 import { useRouter } from 'expo-router';
 import { UserContext } from '@/app/contexts/UserContext';
 import profileAvatars from '@/constants/profileAvatars';
 
-// Define the type for the component's props if needed (here we use an empty object)
-interface ProfileScreenProps {}
+import SettingItem from '@/components/SettingItem';
+import SettingsButton from '@/components/SettingsButton';
 
-const ProfileScreen: React.FC<ProfileScreenProps> = () => {
-  // Replace these dummy handlers with your actual navigation functions
-  const handlePress = (feature: string) => {
-    // For now, we'll just show an alert
-    Alert.alert(`Navigating to ${feature}`);
-  };
-
+const ProfileScreen: React.FC = () => {
   const { theme, setCustomTheme } = useContext(ThemeContext);
-
+  const { user } = useContext(UserContext);
   const router = useRouter();
 
-  const { user, setUser } = useContext(UserContext);
+  const textStyle = { color: theme.text };
+  const bgStyle = { backgroundColor: theme.background };
+
+  const features = ['My Courses', 'Accommodation', 'Events', 'Language', 'Support', 'Map'];
+
+  const CountryTag = () => (
+    <View style={styles.countryContainer}>
+      <TouchableOpacity>
+        <Image source={{ uri: 'https://flagcdn.com/w20/cn.png' }} style={styles.countryFlag} />
+      </TouchableOpacity>
+      <Text style={[styles.countryText, textStyle]}>China</Text>
+    </View>
+  );
 
   return (
-    <View style={[styles.container, {backgroundColor:theme.background}]}>
-      {/* Header with profile image and info */}
+    <View style={[styles.container, bgStyle]}>
       <View style={styles.header}>
-        <TouchableOpacity 
-        onPress={() => router.push('./Profile/picSelection')}>
+        <TouchableOpacity onPress={() => router.push('./Profile/picSelection')}>
           <Image
             source={profileAvatars[user.avatar] || profileAvatars.default}
             style={styles.profileImage}
           />
         </TouchableOpacity>
-        
         <View style={styles.profileInfo}>
-          <Text style={[styles.name, {color : theme.text}]}>Jack Zhen</Text>
-          <Text style={[styles.email,{color : theme.text}]}>jackz123@aucklanduni.ac.nz</Text>
-          <View style={styles.countryContainer}>
-            <TouchableOpacity>
-              <Image
-                source={{ uri: 'https://flagcdn.com/w20/cn.png' }} // China flag image example
-                style={styles.countryFlag}
-              />
-            </TouchableOpacity>
-            <Text style={[styles.countryText,{color : theme.text}]}>China</Text>
-          </View>
+          <Text style={[styles.name, textStyle]}>Jack Zhen</Text>
+          <Text style={[styles.email, textStyle]}>jackz123@aucklanduni.ac.nz</Text>
+          <CountryTag />
         </View>
       </View>
 
-      {/* Button grid */}
       <View style={styles.buttonGrid}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handlePress('My Courses')}
-        >
-          <Text style={styles.buttonText}>My Courses</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handlePress('Accommodation')}
-        >
-          <Text style={styles.buttonText}>Accommodation</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handlePress('Events')}
-        >
-          <Text style={styles.buttonText}>Events</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handlePress('Language')}
-        >
-          <Text style={styles.buttonText}>Language</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handlePress('Support')}
-        >
-          <Text style={styles.buttonText}>Support</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handlePress('Map')}
-        >
-          <Text style={styles.buttonText}>Map</Text>
-        </TouchableOpacity>
+        {features.map((feature) => (
+          <SettingsButton
+            key={feature}
+            title={feature}
+            onPress={() => Alert.alert(`Navigating to ${feature}`)}
+          />
+        ))}
       </View>
 
-      <View>
-      <Text style={[{color : theme.text}]}>
-        Settings
-      </Text>
-      <SettingItem label="Change Password" onPress={() => console.log('Change password')} showDivider/>
-      <SettingItem label="Language Preference" onPress={() => console.log('Change password')} showDivider/>
-    </View>
-    <Text style={[styles.header,{color : theme.text}]}>Dark Mode Setting</Text>
-      
-      <View style={[styles.row, {backgroundColor: theme.background}]}>
-        <Text style={[styles.label,{ color: theme.text }]}>Enable Dark Mode:</Text>
-        <Switch
-          value={theme === darkTheme}
-          onValueChange={(val) => {
-            if (setCustomTheme) setCustomTheme(val);
-          }}
-        />
+      <Text style={[styles.sectionHeader, textStyle]}>Settings</Text>
+      <SettingItem label="Change Password" onPress={() => console.log('Change password')} showDivider />
+      <SettingItem label="Change Email" onPress={() => console.log('Change email')} showDivider />
+      <SettingItem label="Language Preference" onPress={() => console.log('Language preference')} showDivider />
+
+      <Text style={[styles.sectionHeader, textStyle]}>Dark Mode Setting</Text>
+      <View style={[styles.row, bgStyle]}>
+        <Text style={[styles.label, textStyle]}>Enable Dark Mode:</Text>
+        <Switch value={theme === darkTheme} onValueChange={(val) => setCustomTheme?.(val)} />
       </View>
     </View>
-
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',
@@ -142,11 +89,9 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
   },
   email: {
     fontSize: 14,
-    color: '#777',
     marginTop: 4,
   },
   countryContainer: {
@@ -161,7 +106,6 @@ const styles = StyleSheet.create({
   },
   countryText: {
     fontSize: 14,
-    color: '#333',
   },
   buttonGrid: {
     flexDirection: 'row',
@@ -169,18 +113,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 16,
   },
-  button: {
-    width: '30%', // adjust the width for a two- or three-column layout
-    backgroundColor: '#F9DCC4', // warm, soft color
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  buttonText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#333',
+  sectionHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginVertical: 12,
   },
   row: {
     flexDirection: 'row',
@@ -190,20 +126,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    color: '#333',
-  },
-  sliderContainer: {
-    marginBottom: 20,
-  },
-  slider: {
-    width: '100%',
-    height: 40,
-  },
-  info: {
-    fontSize: 16,
-    marginTop: 10,
-    color: '#555',
-    textAlign: 'center',
   },
 });
 
