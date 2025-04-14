@@ -5,14 +5,15 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  useColorScheme,
   Alert,
   Switch,
 } from 'react-native';
 import SettingItem from '@/components/SettingItem';
 import { ThemeContext } from '../../contexts/ThemeContext';
-import { darkTheme } from '@/app/theme/theme';
+import { darkTheme } from '@/app/theme/_theme';
 import { useRouter } from 'expo-router';
+import { UserContext } from '@/app/contexts/UserContext';
+import profileAvatars from '@/constants/profileAvatars';
 
 // Define the type for the component's props if needed (here we use an empty object)
 interface ProfileScreenProps {}
@@ -28,6 +29,8 @@ const ProfileScreen: React.FC<ProfileScreenProps> = () => {
 
   const router = useRouter();
 
+  const { user, setUser } = useContext(UserContext);
+
   return (
     <View style={[styles.container, {backgroundColor:theme.background}]}>
       {/* Header with profile image and info */}
@@ -35,7 +38,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = () => {
         <TouchableOpacity 
         onPress={() => router.push('./Profile/picSelection')}>
           <Image
-            source={require('@/assets/images/profile/default.jpg')}
+            source={profileAvatars[user.avatar] || profileAvatars.default}
             style={styles.profileImage}
           />
         </TouchableOpacity>
