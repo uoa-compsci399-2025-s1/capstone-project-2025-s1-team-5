@@ -1,10 +1,9 @@
-import React from 'react';
 import { Text, StyleSheet, StyleProp, TextStyle } from 'react-native';
 import useTheme from '@/hooks/useTheme';
 
 type StyledTextProps = {
   children: React.ReactNode;
-  type: 'default' | 'note' | 'title' | 'subtitle' | 'label' | 'boldLabel' | 'subtleLabel' | 'error';
+  type: 'default' | 'note' | 'title' | 'subtitle' | 'label' | 'boldLabel' | 'subtleLabel' | 'error' | 'success';
   numberOfLines?: number;
   ellipsizeMode?: 'head' | 'middle' | 'tail' | 'clip';
   style?: StyleProp<TextStyle>;
@@ -30,6 +29,7 @@ export default function StyledText({
         type === 'boldLabel' ? [styles.boldLabel, { color: theme.text, fontFamily: 'National-Bold' }] : undefined,
         type === 'subtleLabel' ? [styles.subtleLabel, { color: theme.subtextOne, fontFamily: 'National-Light' }] : undefined,
         type === 'error' ? [styles.error, { color: theme.error, fontFamily: 'National-Regular' }] : undefined,
+        type === 'success' ? [styles.success, { color: 'green', fontFamily: 'National-Regular' }] : undefined, 
         style,
       ]}
       numberOfLines={numberOfLines}
@@ -75,5 +75,10 @@ const styles = StyleSheet.create({
   error: {
     fontSize: 14,
     fontFamily: 'National-Regular',
+  },
+  success: {
+    fontSize: 14,
+    fontFamily: 'National-Regular',
+    color: 'green', 
   },
 });

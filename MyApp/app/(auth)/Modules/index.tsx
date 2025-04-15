@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import ModuleButton from '@/components/ModuleButton';
-import ModuleScreen from './modulescreen'; // Your dynamic ModuleScreen
+import ModuleScreen from './modulescreen'; 
 
 const modules = [
   { moduleNumber: 1, title: "Get Set Up For Success", iconName: "info" as const },

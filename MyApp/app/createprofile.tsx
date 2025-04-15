@@ -11,7 +11,7 @@ import StyledText from '@/components/StyledText';
 import DropDownMenu from '@/components/DropDownMenu';
 
 export default function CreateProfileScreen() {
-  //async and/or const navigation = useNavigation(); needed?
+  // async and/or const navigation = useNavigation(); needed?
   const { theme } = useTheme();
   const router = useRouter();
 

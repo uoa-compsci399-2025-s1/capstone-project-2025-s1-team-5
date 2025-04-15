@@ -29,8 +29,8 @@ const ProfileScreen: React.FC = () => {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <ProfileUserCard
         avatar={user.avatar}
-        name="Jack Zhen" // Replace with user.name
-        email="jackz123@aucklanduni.ac.nz" // Replace with user.email
+        name="Jack Zhen" // replace with user.name
+        email="jackz123@aucklanduni.ac.nz" // replace with user.email
       />
 
       <View style={styles.bodyContent}>
