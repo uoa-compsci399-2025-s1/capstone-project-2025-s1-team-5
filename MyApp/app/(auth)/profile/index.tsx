@@ -21,8 +21,8 @@ const ProfileScreen: React.FC = () => {
 
   const handleLogout = () => {
     console.log('Logging out...');
-    // Here you can add logic to log out the user and clear their session
-    //router.replace('/'); 
+    // needs code to clear the user's session etc
+    router.replace('/'); 
   };
 
   return (
