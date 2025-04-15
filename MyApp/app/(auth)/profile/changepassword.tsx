@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 
@@ -19,6 +19,12 @@ export default function ChangePasswordScreen() {
 
   const handleChangePassword = () => {
     if (currentPassword && newPassword && confirmPassword) {
+      if (newPassword.length < 6) {
+        setErrorMessage('New password must be at least 6 characters long.');
+        setSuccessMessage('');
+        return;
+      }
+
       if (newPassword !== confirmPassword) {
         setErrorMessage('New password and confirm password do not match.');
         setSuccessMessage('');
@@ -33,7 +39,7 @@ export default function ChangePasswordScreen() {
         setErrorMessage('');
 
         setTimeout(() => {
-          router.back(); 
+          router.back();
         }, 3000);
 
       } catch (e) {
