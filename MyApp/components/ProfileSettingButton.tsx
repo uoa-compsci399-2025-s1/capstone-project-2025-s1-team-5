@@ -15,7 +15,7 @@ interface ProfileSettingButtonProps {
 const ProfileSettingButton: React.FC<ProfileSettingButtonProps> = ({ label, onPress, iconName, isLast = false, style }) => {
   const { theme } = useTheme();
 
-  const greyBackgroundColor = '#D3D3D3'; // Light grey background for visualisation before darklight theme is implemented
+  const greyBackgroundColor = '#D3D3D3'; // light grey background for visualisation before darklight theme is implemented
 
   return (
     <TouchableOpacity

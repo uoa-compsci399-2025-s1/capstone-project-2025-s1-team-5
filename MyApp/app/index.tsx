@@ -17,7 +17,7 @@ export default function SignInScreen() {
   const router = useRouter();
 
   const handleSignIn = async () => {
-    //authentication logic needed when database is set up, async needed?
+    // authentication logic needed when database is set up, async needed?
     try {
       if (email && password) {
         router.replace('/Modules');  
@@ -32,7 +32,7 @@ export default function SignInScreen() {
   
 
   const handleForgotPassword = async () => {
-    //forget password logic needed
+    // forget password logic needed
     console.log("Forgot password clicked");
   };
 

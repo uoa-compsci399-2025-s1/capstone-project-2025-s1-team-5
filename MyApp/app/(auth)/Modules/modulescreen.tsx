@@ -2,13 +2,11 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import SubModuleButton from '@/components/SubModuleButton';
 
-// Define submodule types
 interface Submodule {
   title: string;
   iconName: 'info' | 'touch-app';
 }
 
-// All submodules data
 const moduleSubmodules: { [key: number]: Submodule[] } = {
   1: [
     { title: "Navigating your course", iconName: "info" },
@@ -42,29 +40,24 @@ const moduleSubmodules: { [key: number]: Submodule[] } = {
 
 interface ModuleScreenProps {
   moduleNumber: number;
-  onBack: () => void;  // Callback to return to module list
+  onBack: () => void;  // callback to return to module list
 }
 
 const ModuleScreen: React.FC<ModuleScreenProps> = ({ moduleNumber, onBack }) => {
-  // Get submodules for current module
   const submodules = moduleSubmodules[moduleNumber] || [];
 
   const handleSubmodulePress = (title: string) => {
     console.log(`Submodule pressed: ${title}`);
-    // Add your submodule press logic here
+    // code module press logic needed
   };
 
   return (
     <View style={styles.container}>
-      {/* Back button */}
       <TouchableOpacity onPress={onBack} style={styles.backButton}>
         <Text style={styles.backText}>← Back to Modules</Text>
       </TouchableOpacity>
-
-      {/* Module title */}
       <Text style={styles.moduleTitle}>Module {moduleNumber}</Text>
 
-      {/* Submodule buttons */}
       <View style={styles.submodulesContainer}>
         {submodules.map((submodule, index) => (
           <SubModuleButton

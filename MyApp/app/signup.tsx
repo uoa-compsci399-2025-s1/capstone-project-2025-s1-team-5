@@ -17,7 +17,7 @@ export default function SignUpScreen() {
   const router = useRouter();
 
   const handleSignUp = () => {
-    //user creation logic needed when database is set up, async needed?
+    // user creation logic needed when database is set up, async needed?
     if (password !== confirmPassword) {
       setDisplayedError('Passwords do not match');
       return;
