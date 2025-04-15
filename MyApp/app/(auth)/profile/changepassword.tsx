@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 
@@ -6,34 +6,44 @@ import useTheme from '@/hooks/useTheme';
 
 import SubmitButton from '@/components/SubmitButton';
 import TextInputBox from '@/components/TextInputBox';
-import StyledText from '@/components/StyledText';  
+import StyledText from '@/components/StyledText';
 
 export default function ChangePasswordScreen() {
   const router = useRouter();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState(''); 
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const { theme } = useTheme();
 
   const handleChangePassword = () => {
     if (currentPassword && newPassword && confirmPassword) {
       if (newPassword !== confirmPassword) {
         setErrorMessage('New password and confirm password do not match.');
+        setSuccessMessage('');
         return;
       }
 
       try {
         // need code to store the new password in the database and update it
         console.log('New Password:', newPassword);
-        router.back(); 
+
+        setSuccessMessage('Your password has been successfully changed.');
+        setErrorMessage('');
+
+        setTimeout(() => {
+          router.back(); 
+        }, 3000);
 
       } catch (e) {
         setErrorMessage('An error occurred while changing the password.');
-        console.error('Error:', e); 
+        setSuccessMessage('');
+        console.error('Error:', e);
       }
     } else {
       setErrorMessage('Please fill out all fields.');
+      setSuccessMessage('');
     }
   };
 
@@ -60,8 +70,13 @@ export default function ChangePasswordScreen() {
         iconName="lock"
         secureTextEntry={true}
       />
+
       {errorMessage ? (
-        <StyledText type="error">{errorMessage}</StyledText> 
+        <StyledText type="error">{errorMessage}</StyledText>
+      ) : null}
+
+      {successMessage ? (
+        <StyledText type="success">{successMessage}</StyledText>
       ) : null}
 
       <SubmitButton text="Change Password" onPress={handleChangePassword} />
