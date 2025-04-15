@@ -27,7 +27,7 @@ export default function ProfileLayout() {
         options={{ 
           title: '',
           headerStyle: { backgroundColor: '#00467f' },
-          headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Change Password</StyledText>,
+          headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Change Email</StyledText>,
           headerTintColor: '#ffffff', 
         }} 
       />
