@@ -1,14 +1,15 @@
+import React from 'react';
 import { TouchableOpacity, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import useTheme from '@/hooks/useTheme';
 import StyledText from '@/components/StyledText';
 
-type SubmitButtonProps = {
-  text: string;
+interface ProfileOptionButtonProps {
+  title: string;
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
-};
+}
 
-export default function SubmitButton({ text, onPress, style }: SubmitButtonProps) {
+const ProfileOptionButton: React.FC<ProfileOptionButtonProps> = ({ title, onPress, style }) => {
   const { theme } = useTheme();
 
   return (
@@ -16,18 +17,20 @@ export default function SubmitButton({ text, onPress, style }: SubmitButtonProps
       style={[styles.button, { backgroundColor: theme.primary }, style]}
       onPress={onPress}
     >
-      <StyledText type="boldLabel" style={{ color: '#FFFFFF' }}>{text}</StyledText>
+      <StyledText type="boldLabel" style={{ color: '#FFFFFF' }}>{title}</StyledText>
     </TouchableOpacity>
   );
-}
+};
 
 const styles = StyleSheet.create({
   button: {
-    width: '100%',
+    width: '30%',
     height: 50,
     margin: 5,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 27,
+    borderRadius: 10,
   },
 });
+
+export default ProfileOptionButton;

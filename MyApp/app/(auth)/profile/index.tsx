@@ -1,209 +1,105 @@
-import React, { useEffect, useState , useContext} from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  Switch,
-} from 'react-native';
-import SettingItem from '@/components/SettingItem';
+import React, { useContext } from 'react';
+import { View, Alert, Switch, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router'; 
+
 import { ThemeContext } from '../../contexts/ThemeContext';
-import { darkTheme } from '@/app/theme/_theme';
-import { useRouter } from 'expo-router';
 import { UserContext } from '@/app/contexts/UserContext';
-import profileAvatars from '@/constants/profileAvatars';
+import { darkTheme } from '@/app/theme/_theme';
 
-// Define the type for the component's props if needed (here we use an empty object)
-interface ProfileScreenProps {}
+import StyledText from '@/components/StyledText';
+import ProfileOptionButton from '@/components/ProfileOptionButton';
+import ProfileSettingButton from '@/components/ProfileSettingButton';
+import ProfileSettingBox from '@/components/ProfileSettingBox';
+import ProfileUserCard from '@/components/ProfileUserCard';
 
-const ProfileScreen: React.FC<ProfileScreenProps> = () => {
-  // Replace these dummy handlers with your actual navigation functions
-  const handlePress = (feature: string) => {
-    // For now, we'll just show an alert
-    Alert.alert(`Navigating to ${feature}`);
+const ProfileScreen: React.FC = () => {
+  const { theme, setCustomTheme } = useContext(ThemeContext);
+  const { user } = useContext(UserContext);
+  const router = useRouter(); 
+
+  const features = ['My Courses', 'Housing', 'Events', 'Calendar', 'Support', 'Map'];
+
+  const handleLogout = () => {
+    console.log('Logging out...');
+    // needs code to clear the user's session etc
+    router.replace('/'); 
   };
 
-  const { theme, setCustomTheme } = useContext(ThemeContext);
-
-  const router = useRouter();
-
-  const { user, setUser } = useContext(UserContext);
-
   return (
-    <View style={[styles.container, {backgroundColor:theme.background}]}>
-      {/* Header with profile image and info */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-        onPress={() => router.push('./Profile/picSelection')}>
-          <Image
-            source={profileAvatars[user.avatar] || profileAvatars.default}
-            style={styles.profileImage}
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <ProfileUserCard
+        avatar={user.avatar}
+        name="Jack Zhen" // Replace with user.name
+        email="jackz123@aucklanduni.ac.nz" // Replace with user.email
+      />
+
+      <View style={styles.bodyContent}>
+        <View style={styles.buttonGrid}>
+          {features.map((feature) => (
+            <ProfileOptionButton
+              key={feature}
+              title={feature}
+              onPress={() => Alert.alert(`Navigating to ${feature}`)}
+            />
+          ))}
+        </View>
+
+        <StyledText type="subtitle">Settings</StyledText>
+        <ProfileSettingBox>
+          <ProfileSettingButton
+            label="Change Password"
+            iconName="vpn-key"
+            onPress={() => router.push('/Profile/changepassword')} 
+            style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
           />
-        </TouchableOpacity>
-        
-        <View style={styles.profileInfo}>
-          <Text style={[styles.name, {color : theme.text}]}>Jack Zhen</Text>
-          <Text style={[styles.email,{color : theme.text}]}>jackz123@aucklanduni.ac.nz</Text>
-          <View style={styles.countryContainer}>
-            <TouchableOpacity>
-              <Image
-                source={{ uri: 'https://flagcdn.com/w20/cn.png' }} // China flag image example
-                style={styles.countryFlag}
-              />
-            </TouchableOpacity>
-            <Text style={[styles.countryText,{color : theme.text}]}>China</Text>
-          </View>
+          <ProfileSettingButton
+            label="Change Email"
+            iconName="edit"
+            onPress={() => router.push('/Profile/changeemail')} 
+          />
+          <ProfileSettingButton
+            label="Language Preference"
+            iconName="language"
+            onPress={() => console.log('Language preference')}
+          />
+          <ProfileSettingButton
+            label="Log Out"
+            iconName="exit-to-app"
+            onPress={handleLogout} 
+            style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}
+          />
+        </ProfileSettingBox>
+
+        <StyledText type="subtitle">Dark Mode Setting</StyledText>
+        <View style={styles.row}>
+          <StyledText type="label">Enable Dark Mode:</StyledText>
+          <Switch value={theme === darkTheme} onValueChange={(val) => setCustomTheme?.(val)} />
         </View>
       </View>
-
-      {/* Button grid */}
-      <View style={styles.buttonGrid}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handlePress('My Courses')}
-        >
-          <Text style={styles.buttonText}>My Courses</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handlePress('Accommodation')}
-        >
-          <Text style={styles.buttonText}>Accommodation</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handlePress('Events')}
-        >
-          <Text style={styles.buttonText}>Events</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handlePress('Language')}
-        >
-          <Text style={styles.buttonText}>Language</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handlePress('Support')}
-        >
-          <Text style={styles.buttonText}>Support</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handlePress('Map')}
-        >
-          <Text style={styles.buttonText}>Map</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View>
-      <Text style={[{color : theme.text}]}>
-        Settings
-      </Text>
-      <SettingItem label="Change Password" onPress={() => console.log('Change password')} showDivider/>
-      <SettingItem label="Language Preference" onPress={() => console.log('Change password')} showDivider/>
     </View>
-    <Text style={[styles.header,{color : theme.text}]}>Dark Mode Setting</Text>
-      
-      <View style={[styles.row, {backgroundColor: theme.background}]}>
-        <Text style={[styles.label,{ color: theme.text }]}>Enable Dark Mode:</Text>
-        <Switch
-          value={theme === darkTheme}
-          onValueChange={(val) => {
-            if (setCustomTheme) setCustomTheme(val);
-          }}
-        />
-      </View>
-    </View>
-
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    padding: 20,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  profileImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-  },
-  profileInfo: {
-    marginLeft: 16,
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  email: {
-    fontSize: 14,
-    color: '#777',
-    marginTop: 4,
-  },
-  countryContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  countryFlag: {
-    width: 20,
-    height: 20,
-    marginRight: 8,
-  },
-  countryText: {
-    fontSize: 14,
-    color: '#333',
+  bodyContent: {
+    flex: 1,
+    width: '100%',
+    marginTop: 20,
   },
   buttonGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginTop: 16,
-  },
-  button: {
-    width: '30%', // adjust the width for a two- or three-column layout
-    backgroundColor: '#F9DCC4', // warm, soft color
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  buttonText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#333',
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    color: '#333',
-  },
-  sliderContainer: {
-    marginBottom: 20,
-  },
-  slider: {
-    width: '100%',
-    height: 40,
-  },
-  info: {
-    fontSize: 16,
-    marginTop: 10,
-    color: '#555',
-    textAlign: 'center',
   },
 });
 
