@@ -1,10 +1,9 @@
 import React, { useContext } from 'react';
-import { View, Alert, Switch, StyleSheet } from 'react-native';
+import { View, Alert, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router'; 
 
-import { ThemeContext } from '@/contexts/ThemeContext';
-import { UserContext } from '@/contexts/UserContext';
-import { darkTheme } from '@/theme/theme';
+import { ThemeContext } from '../../contexts/ThemeContext';
+import { UserContext } from '@/app/contexts/UserContext';
 
 import StyledText from '@/components/StyledText';
 import ProfileOptionButton from '@/components/ProfileOptionButton';
@@ -13,11 +12,11 @@ import ProfileSettingBox from '@/components/ProfileSettingBox';
 import ProfileUserCard from '@/components/ProfileUserCard';
 
 const ProfileScreen: React.FC = () => {
-  const { theme, setCustomTheme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
   const { user } = useContext(UserContext);
   const router = useRouter(); 
 
-  const features = ['My Courses', 'Housing', 'Events', 'Calendar', 'Support', 'Map'];
+  const features = ['Calendar', 'Support', 'Map'];
 
   const handleLogout = () => {
     console.log('Logging out...');
@@ -53,9 +52,9 @@ const ProfileScreen: React.FC = () => {
             style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
           />
           <ProfileSettingButton
-            label="Change Email"
-            iconName="edit"
-            onPress={() => router.push('/Profile/changeemail')} 
+            label="Theme"
+            iconName="palette"
+            onPress={() => router.push('/Profile/theme')} 
           />
           <ProfileSettingButton
             label="Language Preference"
@@ -69,12 +68,6 @@ const ProfileScreen: React.FC = () => {
             style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}
           />
         </ProfileSettingBox>
-
-        <StyledText type="subtitle">Dark Mode Setting</StyledText>
-        <View style={styles.row}>
-          <StyledText type="label">Enable Dark Mode:</StyledText>
-          <Switch value={theme === darkTheme} onValueChange={(val) => setCustomTheme?.(val)} />
-        </View>
       </View>
     </View>
   );
@@ -88,18 +81,12 @@ const styles = StyleSheet.create({
   bodyContent: {
     flex: 1,
     width: '100%',
-    marginTop: 20,
+    marginTop: 10,
   },
   buttonGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 20,
   },
 });
 
