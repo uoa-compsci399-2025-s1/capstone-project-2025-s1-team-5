@@ -3,27 +3,27 @@ import { useEffect, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { Stack } from 'expo-router';
 import StyledText from '@/components/StyledText';
-import { ThemeProvider } from '@/app/contexts/ThemeContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 const fontMap = {
-  'National-Black': require('@/assets/fonts/National-Black.otf'),
-  'National-BlackItalic': require('@/assets/fonts/National-BlackItalic.otf'),
-  'National-Bold': require('@/assets/fonts/National-Bold.otf'),
-  'National-BoldItalic': require('@/assets/fonts/National-BoldItalic.otf'),
-  'National-Book': require('@/assets/fonts/National-Book.otf'),
-  'National-BookItalic': require('@/assets/fonts/National-BookItalic.otf'),
-  'National-ExtraBold': require('@/assets/fonts/National-Extrabold.otf'),
-  'National-ExtraBoldItalic': require('@/assets/fonts/National-ExtraboldItalic.otf'),
-  'National-Light': require('@/assets/fonts/National-Light.otf'),
-  'National-LightItalic': require('@/assets/fonts/National-LightItalic.otf'),
-  'National-Medium': require('@/assets/fonts/National-Medium.otf'),
-  'National-MediumItalic': require('@/assets/fonts/National-MediumItalic.otf'),
-  'National-Regular': require('@/assets/fonts/National-Regular.otf'),
-  'National-RegularItalic': require('@/assets/fonts/National-RegularItalic.otf'),
-  'National-Semibold': require('@/assets/fonts/National-Semibold.otf'),
-  'National-SemiboldItalic': require('@/assets/fonts/National-SemiboldItalic.otf'),
-  'National-Thin': require('@/assets/fonts/National-Thin.otf'),
-  'National-ThinItalic': require('@/assets/fonts/National-ThinItalic.otf'),
+  'National-Black': require('@assets/global/fonts/National-Black.otf'),
+  'National-BlackItalic': require('@assets/global/fonts/National-BlackItalic.otf'),
+  'National-Bold': require('@assets/global/fonts/National-Bold.otf'),
+  'National-BoldItalic': require('@assets/global/fonts/National-BoldItalic.otf'),
+  'National-Book': require('@assets/global/fonts/National-Book.otf'),
+  'National-BookItalic': require('@assets/global/fonts/National-BookItalic.otf'),
+  'National-ExtraBold': require('@assets/global/fonts/National-Extrabold.otf'),
+  'National-ExtraBoldItalic': require('@assets/global/fonts/National-ExtraboldItalic.otf'),
+  'National-Light': require('@assets/global/fonts/National-Light.otf'),
+  'National-LightItalic': require('@assets/global/fonts/National-LightItalic.otf'),
+  'National-Medium': require('@assets/global/fonts/National-Medium.otf'),
+  'National-MediumItalic': require('@assets/global/fonts/National-MediumItalic.otf'),
+  'National-Regular': require('@assets/global/fonts/National-Regular.otf'),
+  'National-RegularItalic': require('@assets/global/fonts/National-RegularItalic.otf'),
+  'National-Semibold': require('@assets/global/fonts/National-Semibold.otf'),
+  'National-SemiboldItalic': require('@assets/global/fonts/National-SemiboldItalic.otf'),
+  'National-Thin': require('@assets/global/fonts/National-Thin.otf'),
+  'National-ThinItalic': require('@assets/global/fonts/National-ThinItalic.otf'),
 };
 
 export default function RootLayout() {

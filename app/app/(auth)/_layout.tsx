@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { UserProvider } from '@/app/contexts/UserContext';
+import { UserProvider } from '@/contexts/UserContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 export default function Layout() {

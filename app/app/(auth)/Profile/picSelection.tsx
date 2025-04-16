@@ -1,7 +1,7 @@
 import React, {useContext, useState} from 'react';
 import { View, Image, TouchableOpacity, FlatList, StyleSheet, Alert, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { UserContext } from '@/app/contexts/UserContext';
+import { UserContext } from '@/contexts/UserContext';
 import profileAvatars from '@/constants/profileAvatars';
 
 const ProfilePicSelectionScreen: React.FC = () => {
