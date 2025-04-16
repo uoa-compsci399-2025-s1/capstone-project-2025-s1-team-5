@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,7 +16,7 @@ function Sidebar() {
       border: 'none',
       position: 'fixed',
       top: '10px',
-      left: isOpen ? '225px' : '10px',
+      left: isOpen? '225px' : '10px',
       transition: 'left 0.3s ease',
       zIndex: 1000,
     },
@@ -49,6 +49,39 @@ function Sidebar() {
     },
   };
 
+  // return (
+  //   <div>
+  //     <button style={styles.burgerIcon as React.CSSProperties} onClick={toggleSidebar}>
+  //       ☰
+  //     </button>
+
+  //     <div style={styles.sidebar as React.CSSProperties}>
+  //       <nav>
+  //         <ul style={styles.nav}>
+  //           <li style={styles.navItem}>
+  //             <a href="/home" style={styles.navLink}>Home</a>
+  //           </li>
+  //           <li style={styles.navItem}>
+  //             <Link href="/modules/content">
+  //               <a style={styles.navLink}>Content Management</a>
+  //             </Link>
+  //           </li>
+  //           <li style={styles.navItem}>
+  //             <Link href="/modules/users"> 
+  //               <a style={styles.navLink}>User Management</a>
+  //             </Link>
+  //           </li>
+  //           <li style={styles.navItem}>
+  //             <Link href="/modules/account"> 
+  //               <a style={styles.navLink}>Account Management</a>
+  //             </Link>
+              
+  //           </li>
+  //         </ul>
+  //       </nav>
+  //     </div>
+  //   </div>
+  // );
   return (
     <div>
       <button style={styles.burgerIcon as React.CSSProperties} onClick={toggleSidebar}>
@@ -59,16 +92,16 @@ function Sidebar() {
         <nav>
           <ul style={styles.nav}>
             <li style={styles.navItem}>
-              <Link href="/home" style={styles.navLink}>Home</Link>
+              <a href="/home" style={styles.navLink}>Home</a>
             </li>
             <li style={styles.navItem}>
-              <Link href="/modules/content" style={styles.navLink}>Content Management</Link>
+              <a href="/" style={styles.navLink}>Content Management</a>
             </li>
             <li style={styles.navItem}>
-              <Link href="/modules/users" style={styles.navLink}>User Management</Link>
+              <a href="/" style={styles.navLink}>User Management</a>
             </li>
             <li style={styles.navItem}>
-              <Link href="/modules/account" style={styles.navLink}>Account Management</Link>
+              <a href="/" style={styles.navLink}>Account Management</a>
             </li>
           </ul>
         </nav>
@@ -77,4 +110,5 @@ function Sidebar() {
   );
 }
 
-export default Sidebar;
+
+  export default Sidebar;
