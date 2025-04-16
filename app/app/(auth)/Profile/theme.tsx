@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { View, Switch, StyleSheet } from 'react-native';
 
-import { ThemeContext } from '../../contexts/ThemeContext';
-import { darkTheme } from '@/app/theme/_theme';
+import { ThemeContext } from '@/contexts/ThemeContext';
+import { darkTheme } from '@/theme/theme';
 import StyledText from '@/components/StyledText';
 
 const ThemeScreen: React.FC = () => {
