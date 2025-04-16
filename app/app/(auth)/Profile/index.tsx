@@ -2,9 +2,9 @@ import React, { useContext } from 'react';
 import { View, Alert, Switch, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router'; 
 
-import { ThemeContext } from '../../contexts/ThemeContext';
-import { UserContext } from '@/app/contexts/UserContext';
-import { darkTheme } from '@/app/theme/_theme';
+import { ThemeContext } from '@/contexts/ThemeContext';
+import { UserContext } from '@/contexts/UserContext';
+import { darkTheme } from '@/theme/theme';
 
 import StyledText from '@/components/StyledText';
 import ProfileOptionButton from '@/components/ProfileOptionButton';

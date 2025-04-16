@@ -4,7 +4,7 @@
     "slug": "uoayourway",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/DarkBlueLogo.png",
+    "icon": "../assets/global/logos/VerticalColourLogo.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,21 +13,21 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/DarkBlueLogo.png",
+        "foregroundImage": "../assets/global/logos/VerticalColourLogo.png",
         "backgroundColor": "#ffffff"
       }
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/DarkBlueLogo.png"
+      "favicon": "../assets/global/logos/VerticalColourLogo.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/DarkBlueLogo.png",
+          "image": "../assets/global/logos/VerticalColourLogo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

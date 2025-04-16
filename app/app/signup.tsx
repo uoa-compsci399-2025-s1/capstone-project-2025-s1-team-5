@@ -33,7 +33,7 @@ export default function SignUpScreen() {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.appLogo}>
         <Image 
-          source={require('@/assets/images/DarkBlueLogo.png')} 
+          source={require('@assets/global/logos/VerticalColourLogo.png')} 
           style={styles.logoImage}
         />
       </View>
