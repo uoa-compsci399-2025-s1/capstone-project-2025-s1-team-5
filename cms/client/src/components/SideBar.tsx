@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,7 +16,7 @@ function Sidebar() {
       border: 'none',
       position: 'fixed',
       top: '10px',
-      left: isOpen? '225px' : '10px',
+      left: isOpen ? '225px' : '10px',
       transition: 'left 0.3s ease',
       zIndex: 1000,
     },
@@ -44,6 +45,7 @@ function Sidebar() {
     navLink: {
       color: 'white',
       textDecoration: 'none',
+      display: 'block',
     },
   };
 
@@ -57,16 +59,16 @@ function Sidebar() {
         <nav>
           <ul style={styles.nav}>
             <li style={styles.navItem}>
-              <a href="/home" style={styles.navLink}>Home</a>
+              <Link href="/home" style={styles.navLink}>Home</Link>
             </li>
             <li style={styles.navItem}>
-              <a href="/" style={styles.navLink}>Content Management</a>
+              <Link href="/modules/content" style={styles.navLink}>Content Management</Link>
             </li>
             <li style={styles.navItem}>
-              <a href="/" style={styles.navLink}>User Management</a>
+              <Link href="/modules/users" style={styles.navLink}>User Management</Link>
             </li>
             <li style={styles.navItem}>
-              <a href="/" style={styles.navLink}>Account Management</a>
+              <Link href="/modules/account" style={styles.navLink}>Account Management</Link>
             </li>
           </ul>
         </nav>
