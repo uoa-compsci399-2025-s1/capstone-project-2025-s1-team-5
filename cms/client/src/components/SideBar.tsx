@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Button from './Button';
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,9 +17,20 @@ function Sidebar() {
       border: 'none',
       position: 'fixed',
       top: '10px',
-      left: isOpen? '225px' : '10px',
+      left: isOpen? '225px' : '20px',
       transition: 'left 0.3s ease',
       zIndex: 1000,
+    },
+    closeIcon: {
+      fontSize: '24px',
+      cursor: 'pointer',
+      background: 'none',
+      border: 'none',
+      color: 'white',
+      position: 'absolute',
+      top: '10px',
+      left: '20px',
+      zIndex: 1001,
     },
     sidebar: {
       position: 'fixed',
@@ -36,7 +48,7 @@ function Sidebar() {
     nav: {
       listStyle: 'none',
       padding: 0,
-      margin: 0,
+      margin: '40px 0 0 0',
     },
     navItem: {
       padding: '15px',
@@ -84,24 +96,31 @@ function Sidebar() {
   // );
   return (
     <div>
-      <button style={styles.burgerIcon as React.CSSProperties} onClick={toggleSidebar}>
-        ☰
-      </button>
+      {!isOpen && (
+        <button style={styles.burgerIcon as React.CSSProperties} onClick={toggleSidebar}>
+          ☰
+        </button>
+      )}
 
       <div style={styles.sidebar as React.CSSProperties}>
+        {isOpen && (
+          <button style={styles.closeIcon as React.CSSProperties} onClick={toggleSidebar}>
+            ✖
+          </button>
+        )}
         <nav>
           <ul style={styles.nav}>
-            <li style={styles.navItem}>
-              <a href="/home" style={styles.navLink}>Home</a>
+            <li>
+              <Button label="Home" href="/home" />
             </li>
-            <li style={styles.navItem}>
-              <a href="/" style={styles.navLink}>Content Management</a>
+            <li>
+              <Button label="Content Management" href="/" />
             </li>
-            <li style={styles.navItem}>
-              <a href="/" style={styles.navLink}>User Management</a>
+            <li>
+              <Button label="User Management" href="/" />
             </li>
-            <li style={styles.navItem}>
-              <a href="/" style={styles.navLink}>Account Management</a>
+            <li>
+              <Button label="Account Management" href="/" />
             </li>
           </ul>
         </nav>
