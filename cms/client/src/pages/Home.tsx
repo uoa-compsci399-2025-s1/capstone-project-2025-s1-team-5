@@ -3,10 +3,13 @@ import Layout from '../components/Layout';
 
 function Home() {
   return (
-    <Layout>
-      <p>Placeholder Home Page</p>
-    </Layout>
-  );
+      <Layout>
+          <div style={{ padding: '1rem',}}>
+          <h1>Home Page</h1>
+          <p>Home Page.</p>
+          </div>
+      </Layout>
+  );  
 }
 
 export default Home;

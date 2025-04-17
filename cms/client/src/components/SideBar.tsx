@@ -111,16 +111,24 @@ function Sidebar() {
         <nav>
           <ul style={styles.nav}>
             <li>
-              <Button label="Home" href="/home" />
+              <Link to="/">
+                <Button label="Home" href="/" />
+              </Link>
             </li>
             <li>
-              <Button label="Content Management" href="/" />
+              <Link to="/modules/content">
+                <Button label="Content Management" href="/modules/content" />
+              </Link>
             </li>
             <li>
-              <Button label="User Management" href="/" />
+              <Link to="/modules/users">
+                <Button label="User Management" href="/modules/users" />
+              </Link>
             </li>
             <li>
-              <Button label="Account Management" href="/" />
+              <Link to="/modules/account">
+                <Button label="Account Management" href="/modules/account" />
+              </Link>
             </li>
           </ul>
         </nav>
