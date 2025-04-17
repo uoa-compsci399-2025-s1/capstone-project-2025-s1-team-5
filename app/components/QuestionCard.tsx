@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import StyledText from '@/components/StyledText';
 
@@ -10,19 +10,29 @@ type Question = {
 
 type QuestionCardProps = {
   questionData: Question;
+  onAnswerChecked: (isCorrect: boolean) => void;
+  resetShowResult: boolean; 
 };
 
-const QuestionCard: React.FC<QuestionCardProps> = ({ questionData }) => {
+const QuestionCard: React.FC<QuestionCardProps> = ({ questionData, onAnswerChecked, resetShowResult }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
 
+  useEffect(() => {
+    if (resetShowResult) {
+      setShowResult(false); 
+      setSelectedOption(null); 
+    }
+  }, [resetShowResult]);
+
   const handleOptionPress = (option: string) => {
     setSelectedOption(option);
-    setShowResult(false);
+    setShowResult(false); 
   };
 
   const checkAnswer = () => {
-    setShowResult(true);
+    setShowResult(true); 
+    onAnswerChecked(selectedOption === questionData.correctAnswer);
   };
 
   return (
@@ -32,8 +42,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ questionData }) => {
       {questionData.options.map((option) => {
         const isSelected = selectedOption === option;
         const isRight = showResult && option === questionData.correctAnswer;
-        const isWrong =
-          showResult && isSelected && option !== questionData.correctAnswer;
+        const isWrong = showResult && isSelected && option !== questionData.correctAnswer;
 
         return (
           <TouchableOpacity
@@ -53,7 +62,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ questionData }) => {
       })}
 
       <TouchableOpacity
-        style={[styles.checkButton, !selectedOption && styles.disabledButton,]} onPress={checkAnswer} disabled={!selectedOption}>
+        style={[styles.checkButton, !selectedOption && styles.disabledButton]}
+        onPress={checkAnswer}
+        disabled={!selectedOption}
+      >
         <StyledText type="boldLabel" style={styles.checkButtonText}>Check Your Answer</StyledText>
       </TouchableOpacity>
     </View>

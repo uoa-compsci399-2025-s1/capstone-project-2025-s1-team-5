@@ -15,10 +15,7 @@ const DisplayModulesScreen = () => {
 
   if (selectedModule !== null) {
     return (
-      <ModuleScreen 
-        moduleNumber={selectedModule} 
-        onBack={() => setSelectedModule(null)} 
-      />
+      <ModuleScreen moduleNumber={selectedModule} onBack={() => setSelectedModule(null)}/>
     );
   }
 
