@@ -54,7 +54,7 @@ export default function CreateProfileScreen() {
     <ScrollView contentContainerStyle={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.appLogo}>
         <Image
-          source={require('@assets/global/logos/VerticalColourLogo.png')}
+          source={require('@/assets/logos/VerticalColourLogo.png')}
           style={styles.logoImage}
         />
       </View>
