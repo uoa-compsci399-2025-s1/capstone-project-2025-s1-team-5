@@ -22,7 +22,7 @@ export default function ProfileLayout() {
           headerTintColor: '#ffffff', 
         }} 
       />
-      <Stack.Screen name="picselection" options={{ 
+      <Stack.Screen name="pfpselection" options={{ 
           title: '',
           headerStyle: { backgroundColor: '#00467f' },
           headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Select Profile Picture</StyledText>,
