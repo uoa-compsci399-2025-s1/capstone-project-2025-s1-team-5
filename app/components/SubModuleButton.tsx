@@ -1,25 +1,25 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import { TouchableOpacity, View, StyleSheet } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import StyledText from '@/components/StyledText'; 
 
 interface SubmoduleButtonProps {
   title: string;
   onPress: () => void;
-  iconName?: 'info' | 'touch-app' ; 
+  iconName?: 'info' | 'touch-app'; 
 }
 
 export default function SubmoduleButton({ title, onPress, iconName }: SubmoduleButtonProps) {
   return (
     <TouchableOpacity
-      style={[styles.button, { backgroundColor: '#00467f' }]} 
-      onPress={onPress}
-    >
+      style={[styles.button, { backgroundColor: '#00467f' }]} onPress={onPress}>
       {iconName && (
         <View style={styles.iconContainer}>
           <MaterialIcons name={iconName} size={24} color="#fff" />
         </View>
       )}
-      <Text style={styles.buttonText}>{title}</Text>
+ 
+      <StyledText type="default" style={styles.buttonText}>{title}</StyledText>
     </TouchableOpacity>
   );
 }

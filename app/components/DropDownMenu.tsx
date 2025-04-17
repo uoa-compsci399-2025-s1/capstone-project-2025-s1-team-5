@@ -24,16 +24,12 @@ export default function DropDownMenu({
   const { theme } = useTheme();
 
   return (
+    //can look into using styled text component for the placeholder text, but need to make sure its consistent with the textinputbox text styling
     <View style={[styles.container, { backgroundColor: theme.backgroundSecondary }]}>
       {!selectedValue && (
         <View style={styles.placeholderOverlay}>
           {iconName && (
-            <MaterialIcons
-              name={iconName}
-              size={iconSize}
-              style={styles.icon}
-              color= '#000000'
-            />
+            <MaterialIcons name={iconName} size={iconSize} style={styles.icon} color= '#000000'/>
           )}
           <Text style={[styles.placeholderText, { color: theme.subtextOne }]}>{placeholder}</Text>
         </View>

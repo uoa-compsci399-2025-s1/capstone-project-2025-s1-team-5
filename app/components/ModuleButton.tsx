@@ -1,6 +1,7 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import { TouchableOpacity, StyleSheet, View } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import StyledText from '@/components/StyledText';
 import useTheme from '@/hooks/useTheme';
 
 interface ModuleButtonProps {
@@ -21,8 +22,8 @@ export default function ModuleButton({ moduleNumber, title, onPress, iconName }:
       <View style={styles.content}>
         <MaterialIcons name={iconName} size={24} color="#FFF" style={styles.icon} />
         <View style={styles.textContainer}>
-          <Text style={styles.moduleText}>Module {moduleNumber}</Text>
-          <Text style={styles.buttonText}>{title}</Text>
+          <StyledText type="boldLabel" style={styles.textWhite}>Module {moduleNumber}</StyledText>
+          <StyledText type="subtitle" style={styles.textWhite}>{title}</StyledText>
         </View>
       </View>
     </TouchableOpacity>
@@ -51,14 +52,7 @@ const styles = StyleSheet.create({
     flex: 1, 
     justifyContent: 'center', 
   },
-  moduleText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+  textWhite: {
+    color: '#FFFFFF', 
   },
 });
