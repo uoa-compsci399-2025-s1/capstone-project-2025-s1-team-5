@@ -1,5 +1,6 @@
-import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity, View, StyleSheet } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import StyledText from '@/components/StyledText'; 
 import useTheme from '@/hooks/useTheme';
 
 type NavLinkProps = {
@@ -15,7 +16,7 @@ export default function NavLink({ text, iconName, onPress }: NavLinkProps) {
     <TouchableOpacity onPress={onPress}>
       <View style={styles.navLinkContainer}>
         {iconName && <MaterialIcons name={iconName} size={16} color={theme.text} />}
-        <Text style={[styles.navLinkText, {color: theme.text}]}>{text}</Text>
+        <StyledText type="default" style={styles.navLinkText}>{text}</StyledText>
       </View>
     </TouchableOpacity>
   );

@@ -46,22 +46,10 @@ export default function TextInputBox({
           style
         ]}
       />
-      <MaterialIcons
-        name={iconName}
-        size={iconSize}
-        color={theme.text}
-        style={styles.icon}
-      />
+      <MaterialIcons name={iconName} size={iconSize} color={theme.text} style={styles.icon}/>
       {secureTextEntry && (
-        <TouchableOpacity
-          onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-          style={styles.eyeIcon}
-        >
-          <MaterialIcons
-            name={isPasswordVisible ? 'visibility' : 'visibility-off'}
-            size={iconSize}
-            color={theme.text}
-          />
+        <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} style={styles.eyeIcon}>
+          <MaterialIcons name={isPasswordVisible ? 'visibility' : 'visibility-off'} size={iconSize} color={theme.text}/>
         </TouchableOpacity>
       )}
     </View>

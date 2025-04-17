@@ -27,9 +27,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ questionData }) => {
 
   return (
     <View style={styles.card}>
-      <StyledText type="title" style={styles.question}>
-        {questionData.question}
-      </StyledText>
+      <StyledText type="title" style={styles.question}>{questionData.question}</StyledText>
 
       {questionData.options.map((option) => {
         const isSelected = selectedOption === option;
@@ -49,24 +47,14 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ questionData }) => {
             onPress={() => handleOptionPress(option)}
             disabled={showResult} 
           >
-            <StyledText type="default" style={styles.optionText}>
-              {option}
-            </StyledText>
+            <StyledText type="default" style={styles.optionText}>{option}</StyledText>
           </TouchableOpacity>
         );
       })}
 
       <TouchableOpacity
-        style={[
-          styles.checkButton,
-          !selectedOption && styles.disabledButton,
-        ]}
-        onPress={checkAnswer}
-        disabled={!selectedOption}
-      >
-        <StyledText type="boldLabel" style={styles.checkButtonText}>
-          Check Your Answer
-        </StyledText>
+        style={[styles.checkButton, !selectedOption && styles.disabledButton,]} onPress={checkAnswer} disabled={!selectedOption}>
+        <StyledText type="boldLabel" style={styles.checkButtonText}>Check Your Answer</StyledText>
       </TouchableOpacity>
     </View>
   );
