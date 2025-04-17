@@ -22,7 +22,7 @@ const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email }
 
   return (
     <View style={styles.header}>
-      <TouchableOpacity onPress={() => router.push('./Profile/picSelection')}>
+      <TouchableOpacity onPress={() => router.push('./Profile/pfpselection')}>
         <Image
           source={profileAvatars[avatar] || profileAvatars.default}
           style={styles.profileImage}
