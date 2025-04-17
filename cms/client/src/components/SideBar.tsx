@@ -27,17 +27,6 @@ function Sidebar() {
       transition: 'left 0.3s ease',
       zIndex: 1000,
     },
-    closeIcon: {
-      fontSize: '24px',
-      cursor: 'pointer',
-      background: 'none',
-      border: 'none',
-      color: 'white',
-      position: 'absolute',
-      top: '10px',
-      left: '20px',
-      zIndex: 1001,
-    },
     sidebar: {
       position: 'fixed',
       top: 0,
@@ -51,10 +40,16 @@ function Sidebar() {
       zIndex: 999,
       padding: '10px',
     },
+    logo: {
+      width: '75%',
+      height: 'auto',
+      margin: '20px auto',
+      display: 'block',
+    },
     nav: {
       listStyle: 'none',
       padding: 0,
-      margin: '40px 0 0 0',
+      margin: '0px',
     },
     navItem: {
       padding: '15px',
@@ -76,6 +71,9 @@ function Sidebar() {
       )}
 
       <div ref={sidebarRef} style={styles.sidebar as React.CSSProperties}>
+        <img src="/assets/images/DarkBlueLogo.png" alt="Logo" style={styles.logo}/>
+
+
         <nav>
           <ul style={styles.nav}>
             <li>
