@@ -32,6 +32,7 @@ const sampleQuestions: Question[] = [
     options: ['Auckland', 'Tauranga', 'Otago', 'Christchurch'],
     correctAnswer: 'Auckland',
   },
+  // need to pull questions, options and answers from the database
 ];
 
 export default function Quiz() {
@@ -39,13 +40,21 @@ export default function Quiz() {
   const [score, setScore] = useState(0);
   const [isAnswerChecked, setIsAnswerChecked] = useState(false);
   const [isQuizFinished, setIsQuizFinished] = useState(false);
+  const [resetFlag, setResetFlag] = useState(false);
 
   const handleAnswerChecked = (isCorrect: boolean) => {
     if (isCorrect) {
       setScore(prevScore => prevScore + 1);
     }
     setIsAnswerChecked(true);
-    setTimeout(() => moveToNextQuestion(), 2000);
+
+    setTimeout(() => {
+      setResetFlag(true); 
+      setTimeout(() => {
+        moveToNextQuestion();
+        setResetFlag(false); 
+      }, 50); 
+    }, 2000);
   };
 
   const moveToNextQuestion = () => {
@@ -72,9 +81,10 @@ export default function Quiz() {
         <>
           <ProgressBar progress={progress} color="#00467f" style={styles.progressBar} />
           <QuestionCard
+            key={currentQuestionIndex} 
             questionData={sampleQuestions[currentQuestionIndex]}
             onAnswerChecked={handleAnswerChecked}
-            resetShowResult={!isAnswerChecked}
+            resetShowResult={resetFlag}
           />
         </>
       ) : (
