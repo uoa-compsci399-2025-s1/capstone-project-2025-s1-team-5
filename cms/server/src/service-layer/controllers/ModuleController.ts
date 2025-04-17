@@ -5,7 +5,9 @@ import {
     Get,
     Path,
     Post,
+    Put,
     Route,
+    // Security,
     SuccessResponse,
 } from "tsoa";
 import { ModuleService } from "../../data-layer/services/ModuleService";
@@ -33,8 +35,9 @@ export class ModuleController extends Controller {
         return moduleData;
     }
 
+    // @Security("jwt", ["admin"])
     @Post()
-    @SuccessResponse(200, "Module Created")
+    @SuccessResponse(201, "Module Created")
     public async addModule(@Body() body: {title: string, description: string}): Promise<IModule> {
         const moduleService = new ModuleService();
         const newModule = await moduleService.createModule(body);
@@ -54,14 +57,49 @@ export class ModuleController extends Controller {
         }
         return { message: "Module successfully deleted" };
     }
-    public async updateModule(moduleId: string, moduleChanges: {title: string, description: string}): Promise<boolean> {
-        const moduleService = new ModuleService();
-        const success = await moduleService.updateModule(moduleId, moduleChanges);
-        if (!success) {
-          this.setStatus(400);
-        }
-        return true;
+    
+    @Post("{moduleId}")
+    @SuccessResponse(201, "Subsection added")
+    public async addSubsection(
+        moduleId: string,
+        @Body() subsectionData: { title: string; body: string; authorID: string }
+      ): Promise<{ success: boolean }> {
+        const moduleService = new ModuleService()
+        const result = await moduleService.addSubsection(moduleId, subsectionData);
+        return { success: result };
     }
+
+    @Put("{moduleId}/{subsectionId}")
+    @SuccessResponse(200, "Subsection updated")
+    public async editSubsection(
+    moduleId: string,
+    subsectionId: string,
+    @Body() subsectionChanges: { title?: string; body?: string }
+    ): Promise<{ success: boolean }> {
+    const moduleService = new ModuleService();
+    const result = await moduleService.editSubsection(moduleId, subsectionId, subsectionChanges);
+    return { success: result };
+    }
+
+
+    @Delete("{moduleId}/{subsectionId}")
+    public async deleteSubsectionFromModule(
+      @Path() moduleId: string,
+      @Path() subsectionId: string
+    ): Promise<{ success: boolean }> {
+        const moduleService = new ModuleService()
+        const result = await moduleService.deleteSubsection(moduleId, subsectionId);
+        return { success: result };
+    }
+    
+    // @Post("{moduleId/{subsectionId}")
+    // public async addQuizSubsection(
+    //     @Path() moduleId: string,
+    //     @Path() subsectionId: string
+    // ): Promise< {success: boolean} > {
+    //     const moduleService = new ModuleService()
+    //     const 
+    // }
 }
 
 

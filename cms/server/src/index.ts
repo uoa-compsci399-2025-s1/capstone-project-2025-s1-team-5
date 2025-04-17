@@ -26,7 +26,6 @@ app.use(helmet())
 app.use(cors())
 
 RegisterRoutes(app);
-
 app.use("/swagger", swaggerUI.serve, swaggerUI.setup(swaggerJson));
 
 const port = process.env.PORT || 3000;

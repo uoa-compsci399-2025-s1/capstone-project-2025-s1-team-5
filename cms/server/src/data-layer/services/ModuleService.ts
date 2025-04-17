@@ -1,6 +1,6 @@
 import { moduleAdaptor } from "../adapter/ModuleAdapter";
 import { IModule } from "../models/models";
-import { newModule } from "../../data-layer/models/schema";
+import { newModule, Subsection } from "../../data-layer/models/schema";
 import mongoose from "mongoose";
 
 
@@ -77,7 +77,7 @@ export class ModuleService {
         }
     }
     /**
-     * 
+     * Creates new module
      * @param data 
      * @returns yes
      */
@@ -91,17 +91,27 @@ export class ModuleService {
           const saved = await module.save();
           return saved.toObject();
         }
-
+    /**
+     * 
+     * @param moduleId 
+     * @returns 
+     */
     public async deleteModule(moduleId: string): Promise<boolean> {
         if (!mongoose.Types.ObjectId.isValid(moduleId)) {
             return false;
         }
-        const deletedUser = await newModule.findByIdAndDelete(moduleId);
-        return !!deletedUser;
+        const deletedModule = await newModule.findByIdAndDelete(moduleId);
+        return !!deletedModule;
     }
+    /**
+     * Updates Module title and 
+     * @param moduleId 
+     * @param moduleChanges 
+     * @returns 
+     */
     public async updateModule(
         moduleId: string,
-        moduleChanges: { title: string; description: string }
+        moduleChanges: { title?: string; description?: string }
       ): Promise<boolean> {
         try {
           const module = await newModule.findById(moduleId);
@@ -118,5 +128,117 @@ export class ModuleService {
           console.error("Error updating module:", error);
           return false;
         }
+    }
+    /**
+     * Add Subsection to a module
+     * @param moduleId 
+     * @param subsectionData 
+     * @returns 
+     */
+    public async addSubsection(moduleId: string, 
+        subsectionData: { title: string; body: string; authorID: string }
+    ) {
+        try {
+            const module = await newModule.findById(moduleId);
+             if (!module) {
+                throw new Error("Module not found");
+            }
+            const newSubsection = new Subsection({
+                title: subsectionData.title,
+                body: subsectionData.body,
+                authorID: subsectionData.authorID,
+            });
+            await newSubsection.save();
+            module.subsectionIds.push(newSubsection._id.toString());
+            await module.save();
+            return true; 
+        } catch (error) {
+            console.error("Error adding subsection to module:", error);
+            return false; 
+            }
+    }
+    /**
+     * Deletes Subsection of a module
+     * @param moduleId 
+     * @param subsectionId 
+     * @returns 
+     */
+    public async deleteSubsection(moduleId: string, subsectionId: string): Promise<boolean> {
+        try {
+          const module = await newModule.findById(moduleId);
+          if (!module) throw new Error("Module not found");
+    
+          module.subsectionIds = module.subsectionIds.filter(
+            (id) => id.toString() !== subsectionId
+          );
+          await module.save();
+    
+          await Subsection.findByIdAndDelete(subsectionId);
+    
+          return true;
+        } catch (error) {
+          console.error("Failed to delete subsection:", error);
+          return false;
+        }
       }
+      /**
+       * Edit Subsection body and title
+       * @param moduleId 
+       * @param subsectionId 
+       * @param changes 
+       * @returns 
+       */
+      public async editSubsection(
+        moduleId: string,
+        subsectionId: string,
+        changes: { title?: string; body?: string }
+      ): Promise<boolean> {
+        try {
+          const module = await newModule.findById(moduleId);
+          if (!module) {
+            throw new Error("Module not found");
+          }
+      
+          const subsection = await Subsection.findById(subsectionId);
+          if (!subsection) {
+            throw new Error("Subsection not found");
+          }
+      
+          if (changes.title !== undefined) subsection.title = changes.title;
+          if (changes.body !== undefined) subsection.body = changes.body;
+      
+          await subsection.save();
+          return true;
+        } catch (error) {
+          console.error("Error editing subsection:", error);
+          return false;
+        }
+    }
+    /**
+     * Edit Description/title of module
+     * @param moduleId 
+     * @param changes 
+     * @returns 
+     */
+    public async editModule(
+        moduleId: string,
+        changes: { title?: string; description?: string }
+      ): Promise<boolean> {
+        try {
+          const module = await newModule.findById(moduleId);
+          if (!module) {
+            throw new Error("Module not found");
+          }
+      
+          if (changes.title !== undefined) module.title = changes.title;
+          if (changes.description !== undefined) module.description = changes.description;
+      
+          await module.save();
+          return true;
+        } catch (error) {
+          console.error("Error editing module:", error);
+          return false;
+        }
+      }
+    
 }

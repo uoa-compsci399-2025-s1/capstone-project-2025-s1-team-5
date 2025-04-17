@@ -30,6 +30,21 @@ export interface IProgramme {
     createdAt: Date;
 }
 
+export interface IQuestion {
+    id: string;
+    question: string;
+    answers: string[];
+    correctAnswer: string;
+    createdAt: Date;
+}
+
+export interface IQuiz {
+    title: string;
+    description: string;
+    questions: IQuestion[];
+    createdAt: Date;
+}
+
 export interface ISubsection {
     id: string;
     title: string;

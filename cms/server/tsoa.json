@@ -1,15 +1,42 @@
 {
-    "entryFile": "src/index.ts",
-    "noImplicitAdditionalProperties": "throw-on-extras",
-    "controllerPathGlobs": ["src/service-layer/controllers/**"],
-    "spec": {
-      "outputDirectory": "src/middleware/__generated__",
-      "specVersion": 3
-    },
-    "compilerOptions": {
-      "baseUrl": "src"
-    },
-    "routes": {
-      "routesDir": "src/middleware/__generated__"
+  "entryFile": "src/index.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": ["src/service-layer/controllers/**"],
+  "compilerOptions": {
+    "baseUrl": "src"
+  },
+  "routes": {
+    "routesDir": "src/middleware/__generated__",
+    "authenticationModule": "src/middleware/authentication.ts"
+  },
+  "security": {
+    "jwt": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"  
     }
+  },
+  "spec": {
+    "outputDirectory": "src/middleware/__generated__",
+    "specVersion": 3,
+    "securityDefinitions": {
+        "jwt": {
+            "type": "apiKey",
+            "name": "access_token",
+            "in": "query"
+        },
+        "tsoa_auth": {
+            "type": "oauth2",
+            "authorizationUrl": "http://swagger.io/api/oauth/dialog",
+            "flow": "implicit",
+            "scopes": {
+                "write:pets": "modify things",
+                "read:pets": "read things"
+            }
+          }
+        }
+      },
+  "middleware": {
+    "auth": "./src/middleware/authMiddleware.ts"
   }
+}

@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IModule, IProgramme, ISubsection, IUser } from "./models";
+import { IModule, IProgramme, IQuestion, ISubsection, IUser } from "./models";
 
 const userSchema: Schema<IUser> = new Schema(
     {
@@ -78,9 +78,50 @@ const subsectionSchema: Schema<ISubsection> = new Schema(
     { timestamps: true }
 );
 
+
+const questionSchema: Schema<IQuestion> = new Schema(
+    {
+        question: {
+            type: String,
+            required: true
+        },
+        answers: {
+            type: [String], 
+            required: true
+        },
+        correctAnswer: {
+            type: String,
+            required: true
+        }
+    },
+    {timestamps: true}
+);
+
+const quizSchema: Schema<IQuiz> = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    questions: {
+        type: [questionSchema],
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+}); 
+
+const Question = mongoose.model<IQuestion>('Question', questionSchema);
 const newModule = mongoose.model<IModule>('newModule', moduleSchema);
 const Programme = mongoose.model<IProgramme>('Programme', programmeSchema);
 const User = mongoose.model<IUser>('User', userSchema);
 const Subsection = mongoose.model<ISubsection>('Subsection', subsectionSchema);
+const Quiz = mongoose.model<IQuiz>('Quiz', quizSchema);
 
-export { Programme, User, Subsection, newModule }
+
+export { Programme, User, Subsection, newModule, Question, Quiz}
