@@ -24,9 +24,9 @@ export function expressAuthentication(
         return reject(new Error("No token provided"));
       }
 
-      jwt.verify(token, process.env.JWT_SECRET as string, (error: any, decoded: any) => {
-        if (error) {
-          return reject(error);
+      jwt.verify(token, process.env.JWT_SECRET as string, (err: jwt.VerifyErrors | null, decoded: any) => {
+        if (err) {
+          return reject(err);
         }
 
         if (!decoded || !decoded.scopes || !Array.isArray(decoded.scopes)) {

@@ -97,31 +97,31 @@ const questionSchema: Schema<IQuestion> = new Schema(
     {timestamps: true}
 );
 
-const quizSchema: Schema<IQuiz> = new Schema({
-    title: {
-        type: String,
-        required: true
-    },
-    description: {
-        type: String,
-        required: true
-    },
-    questions: {
-        type: [questionSchema],
-        required: true
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-}); 
+// const quizSchema: Schema<IQuiz> = new Schema({
+//     title: {
+//         type: String,
+//         required: true
+//     },
+//     description: {
+//         type: String,
+//         required: true
+//     },
+//     questions: {
+//         type: [questionSchema],
+//         required: true
+//     },
+//     createdAt: {
+//         type: Date,
+//         default: Date.now
+//     }
+// }); 
 
 const Question = mongoose.model<IQuestion>('Question', questionSchema);
 const newModule = mongoose.model<IModule>('newModule', moduleSchema);
 const Programme = mongoose.model<IProgramme>('Programme', programmeSchema);
 const User = mongoose.model<IUser>('User', userSchema);
 const Subsection = mongoose.model<ISubsection>('Subsection', subsectionSchema);
-const Quiz = mongoose.model<IQuiz>('Quiz', quizSchema);
+// const Quiz = mongoose.model<IQuiz>('Quiz', quizSchema);
 
 
-export { Programme, User, Subsection, newModule, Question, Quiz}
+export { Programme, User, Subsection, newModule, Question}

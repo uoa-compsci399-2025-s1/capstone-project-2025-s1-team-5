@@ -7,7 +7,7 @@ import {
     Post,
     Put,
     Route,
-    // Security,
+    Security,
     SuccessResponse,
 } from "tsoa";
 import { ModuleService } from "../../data-layer/services/ModuleService";
@@ -35,7 +35,7 @@ export class ModuleController extends Controller {
         return moduleData;
     }
 
-    // @Security("jwt", ["admin"])
+    @Security("jwt", ["admin"])
     @Post()
     @SuccessResponse(201, "Module Created")
     public async addModule(@Body() body: {title: string, description: string}): Promise<IModule> {

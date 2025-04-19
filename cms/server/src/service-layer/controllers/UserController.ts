@@ -11,14 +11,17 @@ import {
     SuccessResponse,
 } from "tsoa";
 
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs"
 import { UserService, UserCreationParams, UserUpdateParams } from "../../data-layer/services/UserService";
 import { PaginatedUserResponse, UserGetResponse, UserPostResponse, UserUpdateResponse } from "../response-models/UserResponse";
 import { userAdaptor } from "../../data-layer/adapter/UserAdapter";
+import { User } from "../../data-layer/models/schema";
 
 @Route("users")
-export class UsersController extends Controller {
-    @Get()
-    @SuccessResponse(200, "Page Users fetched")
+export class UsersController extends Controller {     
+    @Get() //Admin Method need Authorisation
+    @SuccessResponse(200, "Page Users fetched") 
     public async getUsers(
         @Query() limit: number = 10,
         @Query() page: number = 1
@@ -34,7 +37,7 @@ export class UsersController extends Controller {
         return fetchedUsers;
     }
     
-    @Get("{userId}")
+    @Get("{userId}") //User/Admin Method 
     @SuccessResponse(200, "User fetched")
     public async getUser(
         @Path() userId: string,
@@ -42,7 +45,7 @@ export class UsersController extends Controller {
         const user = await new UserService().getUser(userId);
         return {user: userAdaptor(user)};
     }
-    @Post()
+    @Post() 
     @SuccessResponse(201, "User created") 
     public async createUser(
         @Body() requestbody: UserCreationParams
@@ -51,8 +54,9 @@ export class UsersController extends Controller {
         this.setStatus(201); 
         return {user: newUser}
     }
+        
 
-    @Put("{userId}")
+    @Put("{userId}") 
     @SuccessResponse(200, "User updated")
     public async updateUser(
         @Path() userId: string,
@@ -82,5 +86,24 @@ export class UsersController extends Controller {
     
         return { message: "User successfully deleted" };
     }
+    @Post("/login")
+    public async login(@Body() credentials: { email: string, password: string }): Promise<{ token: string }> {
+    const user = await User.findOne({ email: credentials.email });
+    if (!user) throw new Error("Invalid credentials");
+
+    const isMatch = await bcrypt.compare(credentials.password, user.password);
+    if (!isMatch) throw new Error("Invalid credentials");
+
+    const token = jwt.sign(
+        { id: user._id, role: user.role },
+        process.env.JWT_SECRET as string,
+        { expiresIn: "1d" }
+    );
+
+    return { token };
+    }
+
+
+
 }
 
