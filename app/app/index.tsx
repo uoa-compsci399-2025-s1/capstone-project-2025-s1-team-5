@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import useTheme from '@/hooks/useTheme';
+import { ThemeContext } from '@/contexts/ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from '@/contexts/UserContext';
 import SubmitButton from '@/components/SubmitButton'; 
@@ -10,7 +10,7 @@ import StyledText from '@/components/StyledText';
 import NavLink from '@/components/NavLink'; 
 
 export default function SignInScreen() {
-  const { theme } = useTheme();
+  const { theme } = useContext(ThemeContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayedError, setDisplayedError] = useState('');

@@ -1,5 +1,6 @@
+import React, { useContext } from 'react';
 import { TouchableOpacity, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import useTheme from '@/hooks/useTheme';
+import { ThemeContext } from '@/contexts/ThemeContext';
 import StyledText from '@/components/StyledText';
 
 type SubmitButtonProps = {
@@ -9,7 +10,7 @@ type SubmitButtonProps = {
 };
 
 export default function SubmitButton({ text, onPress, style }: SubmitButtonProps) {
-  const { theme } = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <TouchableOpacity

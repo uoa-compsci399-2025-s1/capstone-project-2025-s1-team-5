@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, StyleSheet, Image, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import useTheme from '@/hooks/useTheme';
+import { ThemeContext } from '@/contexts/ThemeContext';
 import countries from 'world-countries';
 
 import SubmitButton from '@/components/SubmitButton';
@@ -12,7 +12,7 @@ import DropDownMenu from '@/components/DropDownMenu';
 
 export default function CreateProfileScreen() {
   // async and/or const navigation = useNavigation(); needed?
-  const { theme } = useTheme();
+  const { theme } = useContext(ThemeContext);
   const router = useRouter();
 
   const [firstName, setFirstName] = useState('');

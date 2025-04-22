@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import useTheme from '@/hooks/useTheme';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 type DropDownMenuProps = {
   selectedValue: string;
@@ -21,7 +21,7 @@ export default function DropDownMenu({
   iconName,
   iconSize = 20,
 }: DropDownMenuProps) {
-  const { theme } = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     //can look into using styled text component for the placeholder text, but need to make sure its consistent with the textinputbox text styling

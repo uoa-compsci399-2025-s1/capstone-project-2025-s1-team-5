@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { ScrollView, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
-
+import { ThemeContext } from '@/contexts/ThemeContext';
 import QuestionCard from '@/components/QuestionCard';
 import StyledText from '@/components/StyledText';
 

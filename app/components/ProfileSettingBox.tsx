@@ -1,16 +1,16 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { View, StyleSheet } from 'react-native';
-import useTheme from '@/hooks/useTheme';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 type ProfileSettingBoxProps = {
   children: React.ReactNode;
 };
 
 export default function ProfileSettingBox({ children }: ProfileSettingBoxProps) {
-  const { theme } = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background, borderColor: theme.background }]}>
+    <View style={[styles.container, { backgroundColor: theme.backgroundSecondary }]}>
       {children}
     </View>
   );

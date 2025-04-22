@@ -43,7 +43,7 @@ const ProfileScreen: React.FC = () => {
           ))}
         </View>
 
-        <StyledText type="subtitle">Settings</StyledText>
+        <StyledText type="subtitle" style={{color: theme.text}}>Settings</StyledText>
         <ProfileSettingBox>
           <ProfileSettingButton
             label="Change Password"
