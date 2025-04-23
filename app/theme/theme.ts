@@ -13,7 +13,7 @@ export const lightTheme = {
     background: '#212121', 
     backgroundSecondary: '#3e3e3e', 
     backgroundTertiary: '#666666', 
-    text: '#f0f0f0', 
+    text: '#ffffff', 
     subtextOne: '#999999', 
     error: '#cc0000',
   };

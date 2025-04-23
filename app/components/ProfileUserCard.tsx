@@ -26,7 +26,7 @@ const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email }
   const router = useRouter();
   const { theme } = useContext(ThemeContext);
   return (
-    <View style={[styles.header,{ backgroundColor: theme.backgroundSecondary }]}>
+    <View style={styles.header}>
       <TouchableOpacity onPress={() => router.push('./Profile/pfpselection')}>
         <Image
           source={profileAvatars[avatar] || profileAvatars.default}

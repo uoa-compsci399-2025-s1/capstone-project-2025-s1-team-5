@@ -1,4 +1,4 @@
-import React, {useContext}from 'react';
+import React, {useContext} from 'react';
 import { TouchableOpacity, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { ThemeContext } from '@/contexts/ThemeContext';

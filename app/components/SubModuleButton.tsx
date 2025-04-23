@@ -18,7 +18,6 @@ export default function SubmoduleButton({ title, onPress, iconName }: SubmoduleB
           <MaterialIcons name={iconName} size={24} color="#fff" />
         </View>
       )}
- 
       <StyledText type="default" style={styles.buttonText}>{title}</StyledText>
     </TouchableOpacity>
   );

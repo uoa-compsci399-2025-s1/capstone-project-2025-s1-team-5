@@ -29,7 +29,7 @@ export default function DropDownMenu({
       {!selectedValue && (
         <View style={styles.placeholderOverlay}>
           {iconName && (
-            <MaterialIcons name={iconName} size={iconSize} style={styles.icon} color= '#000000'/>
+            <MaterialIcons name={iconName} size={iconSize} style={styles.icon} color={theme.text}/>
           )}
           <Text style={[styles.placeholderText, { color: theme.subtextOne }]}>{placeholder}</Text>
         </View>
