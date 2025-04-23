@@ -1,15 +1,14 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import useTheme from '@/hooks/useTheme';
-
+import { ThemeContext } from '@/contexts/ThemeContext';
 import SubmitButton from '@/components/SubmitButton';
 import TextInputBox from '@/components/TextInputBox';
 import StyledText from '@/components/StyledText';
 
 export default function SignUpScreen() {
-  const { theme } = useTheme();
+  const { theme } = useContext(ThemeContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');

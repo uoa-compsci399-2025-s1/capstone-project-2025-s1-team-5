@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity, StyleProp, TextStyle } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import useTheme from '@/hooks/useTheme';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 type TextInputBoxProps = {
   placeholder: string;
@@ -25,7 +25,7 @@ export default function TextInputBox({
   style
 }: TextInputBoxProps) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const { theme } = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <View style={styles.container}>

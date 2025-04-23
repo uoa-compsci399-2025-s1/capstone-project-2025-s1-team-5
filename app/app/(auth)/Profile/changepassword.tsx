@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import useTheme from '@/hooks/useTheme';
-
+import { ThemeContext } from '@/contexts/ThemeContext';
 import SubmitButton from '@/components/SubmitButton';
 import TextInputBox from '@/components/TextInputBox';
 import StyledText from '@/components/StyledText';
@@ -15,7 +14,7 @@ export default function ChangePasswordScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const { theme } = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const handleChangePassword = () => {
     if (currentPassword && newPassword && confirmPassword) {

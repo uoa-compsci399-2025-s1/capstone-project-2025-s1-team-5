@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { TouchableOpacity, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import useTheme from '@/hooks/useTheme';
+import { ThemeContext } from '@/contexts/ThemeContext';
 import StyledText from '@/components/StyledText';
 
 interface ProfileSettingButtonProps {
@@ -13,13 +13,13 @@ interface ProfileSettingButtonProps {
 }
 
 const ProfileSettingButton: React.FC<ProfileSettingButtonProps> = ({ label, onPress, iconName, isLast = false, style }) => {
-  const { theme } = useTheme();
+  const { theme } = useContext(ThemeContext);
 
-  const greyBackgroundColor = '#D3D3D3'; // light grey background for visualisation before darklight theme is implemented
+  // const greyBackgroundColor = '#D3D3D3'; // light grey background for visualisation before darklight theme is implemented
 
   return (
     <TouchableOpacity
-      style={[styles.button, { backgroundColor: greyBackgroundColor }, style]} // style={[styles.button, { backgroundColor: theme.background }, style]}
+      style={[styles.button, { backgroundColor: theme.backgroundSecondary }, style]}
       onPress={onPress}
     >
       {iconName && <MaterialIcons name={iconName} size={24} color={theme.text} />}

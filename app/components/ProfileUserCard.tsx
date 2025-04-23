@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import { ThemeContext } from '@/contexts/ThemeContext';
 import StyledText from '@/components/StyledText';
 import profileAvatars from '@/constants/profileAvatars';
 
@@ -10,27 +11,31 @@ interface ProfileUserCardProps {
   email: string;
 }
 
-const CountryTag = () => (
-  <View style={styles.countryContainer}>
-    <Image source={{ uri: 'https://flagcdn.com/w20/cn.png' }} style={styles.countryFlag} />
-    <StyledText type="label">China</StyledText>
-  </View>
-);
+
+const CountryTag: React.FC = () => {
+  const { theme } = useContext(ThemeContext);
+  return (
+    <View style={styles.countryContainer}>
+      <Image source={{ uri: 'https://flagcdn.com/w20/cn.png' }} style={styles.countryFlag} />
+      <StyledText type="label" style={{ color: theme.subtextOne }}>China</StyledText>
+    </View>
+  )
+};
 
 const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email }) => {
   const router = useRouter();
-
+  const { theme } = useContext(ThemeContext);
   return (
     <View style={styles.header}>
       <TouchableOpacity onPress={() => router.push('./Profile/pfpselection')}>
         <Image
           source={profileAvatars[avatar] || profileAvatars.default}
-          style={styles.profileImage}
+          style={[styles.profileImage,{ borderColor: theme.primary }]}
         />
       </TouchableOpacity>
       <View style={styles.profileInfo}>
-        <StyledText type="title">{name}</StyledText>
-        <StyledText type="subtitle">{email}</StyledText>
+        <StyledText type="title" style={{ color: theme.text }}>{name}</StyledText>
+        <StyledText type="subtitle" style={{ color: theme.subtextOne }}>{email}</StyledText>
         <CountryTag />
       </View>
     </View>
