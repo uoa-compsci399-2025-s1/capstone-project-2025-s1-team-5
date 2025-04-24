@@ -1,15 +1,15 @@
 import React from 'react';
-import Layout from '../components/Layout';
+// import Layout from '../components/Layout';
 
 
 function UsersPage() {
     return (
-        <Layout>
+        // <Layout>
             <div style={{ padding: '1rem' }}>
             <h1>User Management</h1>
             <p>Manage Users</p>
             </div>
-        </Layout>
+        // </Layout>
     );
   }
   
