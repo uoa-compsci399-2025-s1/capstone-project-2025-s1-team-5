@@ -82,8 +82,8 @@ function Sidebar() {
               </Link>
             </li>
             <li>
-              <Link to="/modules/content">
-                <Button label="Content Management" href="/modules/content" />
+              <Link to="/modules/modules">
+                <Button label="Module Management" href="/modules/modules" />
               </Link>
             </li>
             <li>

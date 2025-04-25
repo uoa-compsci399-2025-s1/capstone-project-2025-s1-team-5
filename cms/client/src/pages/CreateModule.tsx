@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const CreateModule = () => {
+interface CreateModuleProps {
+  onModuleCreated?: () => void;
+}
+
+const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated }) => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [success, setSuccess] = useState<string | null>(null);
