@@ -83,14 +83,9 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_IUser.password-or-country-or-programme_": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"password":{"dataType":"string","required":true},"country":{"dataType":"string","required":true},"programme":{"dataType":"string"}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UserUpdateParams": {
         "dataType": "refAlias",
-        "type": {"ref":"Pick_IUser.password-or-country-or-programme_","validators":{}},
+        "type": {"ref":"Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme_","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IModule": {
