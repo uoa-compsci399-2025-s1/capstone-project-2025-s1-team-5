@@ -158,27 +158,8 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Pick_IUser.password-or-country-or-programme_": {
-				"properties": {
-					"password": {
-						"type": "string"
-					},
-					"country": {
-						"type": "string"
-					},
-					"programme": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"password",
-					"country"
-				],
-				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
 			"UserUpdateParams": {
-				"$ref": "#/components/schemas/Pick_IUser.password-or-country-or-programme_"
+				"$ref": "#/components/schemas/Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme_"
 			},
 			"IModule": {
 				"properties": {

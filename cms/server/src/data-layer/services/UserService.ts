@@ -5,7 +5,7 @@ import {  IUser } from "../models/models";
 import {User} from "../models/schema";
 
 export type UserCreationParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme">
-export type UserUpdateParams = Pick<IUser, "password" | "country" | "programme">
+export type UserUpdateParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme">
 
 
 export class UserService {
