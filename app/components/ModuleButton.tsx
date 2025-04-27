@@ -1,8 +1,8 @@
 import React, {useContext} from 'react';
 import { TouchableOpacity, StyleSheet, View } from 'react-native';
+import { ThemeContext } from '@/contexts/ThemeContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import StyledText from '@/components/StyledText';
-import { ThemeContext } from '@/contexts/ThemeContext';
 
 interface ModuleButtonProps {
   moduleNumber: number;

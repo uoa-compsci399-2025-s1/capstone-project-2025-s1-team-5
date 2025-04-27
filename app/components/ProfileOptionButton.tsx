@@ -13,10 +13,7 @@ const ProfileOptionButton: React.FC<ProfileOptionButtonProps> = ({ title, onPres
   const { theme } = useContext(ThemeContext);
 
   return (
-    <TouchableOpacity
-      style={[styles.button, { backgroundColor: theme.primary }, style]}
-      onPress={onPress}
-    >
+    <TouchableOpacity style={[styles.button, { backgroundColor: theme.primary }, style]} onPress={onPress}>
       <StyledText type="boldLabel" style={{ color: '#FFFFFF' }}>{title}</StyledText>
     </TouchableOpacity>
   );

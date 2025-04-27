@@ -28,10 +28,7 @@ const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email }
   return (
     <View style={styles.header}>
       <TouchableOpacity onPress={() => router.push('./Profile/pfpselection')}>
-        <Image
-          source={profileAvatars[avatar] || profileAvatars.default}
-          style={[styles.profileImage,{ borderColor: theme.primary }]}
-        />
+        <Image source={profileAvatars[avatar] || profileAvatars.default} style={[styles.profileImage,{ borderColor: theme.primary }]}/>
       </TouchableOpacity>
       <View style={styles.profileInfo}>
         <StyledText type="title" style={{ color: theme.text }}>{name}</StyledText>

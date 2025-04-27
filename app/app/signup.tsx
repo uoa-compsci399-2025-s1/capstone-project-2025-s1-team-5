@@ -1,8 +1,8 @@
 import { useState, useContext } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-
 import { ThemeContext } from '@/contexts/ThemeContext';
+
 import SubmitButton from '@/components/SubmitButton';
 import TextInputBox from '@/components/TextInputBox';
 import StyledText from '@/components/StyledText';
@@ -30,34 +30,11 @@ export default function SignUpScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <View style={styles.appLogo}>
-        <Image 
-          source={require('@/assets/logos/VerticalColourLogo.png')} 
-          style={styles.logoImage}
-        />
-      </View>
+      <View style={styles.appLogo}><Image source={require('@/assets/logos/VerticalColourLogo.png')} style={styles.logoImage}/></View>
 
-      <TextInputBox
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        iconName="email"
-      />
-      <TextInputBox
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        iconName="lock"
-      />
-      <TextInputBox
-        placeholder="Confirm password"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry
-        iconName="lock"
-      />
+      <TextInputBox placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" iconName="email"/>
+      <TextInputBox placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry iconName="lock"/>
+      <TextInputBox placeholder="Confirm password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry iconName="lock"/>
 
       {displayedError !== '' && <StyledText type="error">{displayedError}</StyledText>}
 

@@ -7,9 +7,6 @@ export default function ModuleNumberScreen() {
   const router = useRouter();
 
   return (
-    <ModuleScreen
-      moduleNumber={parseInt(moduleNumber as string, 10)}
-      onBack={() => router.back()}
-    />
+    <ModuleScreen moduleNumber={parseInt(moduleNumber as string, 10)} onBack={() => router.back()}/>
   );
 }

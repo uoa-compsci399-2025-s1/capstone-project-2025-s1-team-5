@@ -1,8 +1,8 @@
+import { useContext } from 'react';
 import { TouchableOpacity, View, StyleSheet } from 'react-native';
+import { ThemeContext } from '@/contexts/ThemeContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import StyledText from '@/components/StyledText'; 
-import { useContext } from 'react';
-import { ThemeContext } from '@/contexts/ThemeContext';
 
 type NavLinkProps = {
   text: string;
