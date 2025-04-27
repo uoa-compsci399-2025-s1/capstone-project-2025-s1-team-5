@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { ScrollView, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
 import { ThemeContext } from '@/contexts/ThemeContext';
+
 import QuestionCard from '@/components/QuestionCard';
 import StyledText from '@/components/StyledText';
 
@@ -80,12 +81,7 @@ export default function Quiz() {
       {!isQuizFinished ? (
         <>
           <ProgressBar progress={progress} color={theme.primary} style={styles.progressBar} />
-          <QuestionCard
-            key={currentQuestionIndex}
-            questionData={quizQuestions[currentQuestionIndex]}
-            onAnswerChecked={handleAnswerChecked}
-            resetShowResult={resetFlag}
-          />
+          <QuestionCard key={currentQuestionIndex} questionData={quizQuestions[currentQuestionIndex]} onAnswerChecked={handleAnswerChecked} resetShowResult={resetFlag}/>
         </>
       ) : (
         <View style={[styles.resultContainer, { backgroundColor: theme.background }]}>

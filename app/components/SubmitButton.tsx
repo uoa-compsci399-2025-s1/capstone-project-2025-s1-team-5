@@ -13,10 +13,7 @@ export default function SubmitButton({ text, onPress, style }: SubmitButtonProps
   const { theme } = useContext(ThemeContext);
 
   return (
-    <TouchableOpacity
-      style={[styles.button, { backgroundColor: theme.primary }, style]}
-      onPress={onPress}
-    >
+    <TouchableOpacity style={[styles.button, { backgroundColor: theme.primary }, style]} onPress={onPress}>
       <StyledText type="boldLabel" style={{ color: '#FFFFFF' }}>{text}</StyledText>
     </TouchableOpacity>
   );

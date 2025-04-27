@@ -1,7 +1,8 @@
 import React, {useContext} from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import SubModuleButton from '@/components/SubModuleButton';
 import { ThemeContext } from '@/contexts/ThemeContext';
+import SubModuleButton from '@/components/SubModuleButton';
+
 interface Submodule {
   title: string;
   iconName: 'info' | 'touch-app';
@@ -53,19 +54,12 @@ const ModuleScreen: React.FC<ModuleScreenProps> = ({ moduleNumber, onBack }) => 
 
   return (
     <View style={[styles.container,{backgroundColor: theme.background}]}>
-      <TouchableOpacity onPress={onBack} style={styles.backButton}>
-        <Text style={styles.backText}>← Back to Modules</Text>
-      </TouchableOpacity>
+      <TouchableOpacity onPress={onBack} style={styles.backButton}><Text style={styles.backText}>← Back to Modules</Text></TouchableOpacity>
       <Text style={[styles.moduleTitle, {color: theme.text}]}>Module {moduleNumber}</Text>
 
       <View style={styles.submodulesContainer}>
         {submodules.map((submodule, index) => (
-          <SubModuleButton
-            key={index}
-            title={submodule.title}
-            onPress={() => handleSubmodulePress(submodule.title)}
-            iconName={submodule.iconName}
-          />
+          <SubModuleButton key={index} title={submodule.title} onPress={() => handleSubmodulePress(submodule.title)} iconName={submodule.iconName}/>
         ))}
       </View>
     </View>

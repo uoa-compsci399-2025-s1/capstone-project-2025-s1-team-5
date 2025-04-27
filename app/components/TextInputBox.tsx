@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity, StyleProp, TextStyle } from 'react-native';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { ThemeContext } from '@/contexts/ThemeContext';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 type TextInputBoxProps = {
   placeholder: string;

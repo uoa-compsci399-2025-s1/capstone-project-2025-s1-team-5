@@ -1,8 +1,8 @@
 import React, {useContext} from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { ThemeContext } from '@/contexts/ThemeContext';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 type DropDownMenuProps = {
   selectedValue: string;

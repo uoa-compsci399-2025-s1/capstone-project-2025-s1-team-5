@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import StyledText from '@/components/StyledText';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { darkTheme } from '@/theme/theme';
+import StyledText from '@/components/StyledText';
 
 type Question = {
   question: string;
