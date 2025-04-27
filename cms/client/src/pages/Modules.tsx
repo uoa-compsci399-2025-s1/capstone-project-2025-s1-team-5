@@ -89,8 +89,9 @@ const ModulesPage = () => {
               Name {sortKey === "title" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
             </th>
             <th onClick={() => handleSort("description")} style={{ cursor: "pointer" , userSelect: "none" }}>
-              Email {sortKey === "description" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+              Description {sortKey === "description" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
             </th>
+            <th>Subsection Ids</th>
           </tr>
         </thead>
         <tbody>
@@ -104,6 +105,13 @@ const ModulesPage = () => {
             <tr key={module.id}>
               <td>{module.title}</td>
               <td>{module.description}</td>
+              <td>
+                <ul>
+                  {module.subsectionIds.map((id) => (
+                    <li key={id}>{id}</li>
+                  ))}
+                </ul>
+              </td>
               <td>
                 <button onClick={() => handleEdit(module)}>Edit</button>
                 <button onClick={() => handleDelete(module.id)}>Delete</button>
