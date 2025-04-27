@@ -17,7 +17,7 @@ interface EditModuleFormProps {
 const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated, setEditModule }) => {
   const [title, setTitle] = useState(module.title);
   const [description, setDescription] = useState(module.description);
-  const [subsectionIds, setSubsectionIds] = useState(module.subsectionIds);
+  const [subsectionIds, setSubsectionIds] = useState(module.subsectionIds.join(", "));
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -25,7 +25,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
     const updatedModule = {
       "title": title,
       "description": description,
-      "subsectionIds": subsectionIds,
+      "subsectionIds": subsectionIds.split(",").map((id) => id.trim()),
     };
 
     try {
@@ -56,6 +56,15 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
+          />
+        </div>
+        <div>
+          <label>Subsection IDs (comma-separated):</label>
+          <input
+            type="text"
+            value={subsectionIds}
+            onChange={(e) => setSubsectionIds(e.target.value)}
+            placeholder="Enter subsection IDs separated by commas"
           />
         </div>
         <button type="submit">Update Module</button>
