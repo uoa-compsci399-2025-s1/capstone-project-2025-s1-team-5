@@ -15,13 +15,19 @@ export default function SignUpScreen() {
   const [displayedError, setDisplayedError] = useState('');
   const router = useRouter();
 
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/; 
+
   const handleSignUp = () => {
-    // user creation logic needed when database is set up, async needed?
+    if (!emailRegex.test(email)) {
+      setDisplayedError('Please enter a valid email address');
+      return;
+    }
+
     if (password !== confirmPassword) {
       setDisplayedError('Passwords do not match');
       return;
     }
-    // try and catch exception needed, try for the user creation and catch for the error message
+
     setDisplayedError('');
     console.log('Signing up with:', { email, password });
 

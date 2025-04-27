@@ -2,13 +2,13 @@ import React, { useContext, useState } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from '@/contexts/UserContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import SubmitButton from '@/components/SubmitButton'; 
-import TextInputBox from '@/components/TextInputBox'; 
-import StyledText from '@/components/StyledText'; 
-import NavLink from '@/components/NavLink'; 
+import SubmitButton from '@/components/SubmitButton';
+import TextInputBox from '@/components/TextInputBox';
+import StyledText from '@/components/StyledText';
+import NavLink from '@/components/NavLink';
 
 export default function SignInScreen() {
   const { theme } = useContext(ThemeContext);
@@ -18,23 +18,19 @@ export default function SignInScreen() {
   
   const router = useRouter();
   const userContext = useContext(UserContext);
-  
-  // async function getMe() {
-  //   // token for Authorization header???
-  //   const me = await api.get('/api/me'); 
-  //   userContext.setUser(me);
-  
-  //   if (me.themePreference) {
-  //     await AsyncStorage.setItem('USER_THEME_PREFERENCE', me.themePreference);
-  //   }
-  // }
+
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;  
   
   const handleSignIn = async () => {
-    // authentication logic needed when database is set up, async needed?
     try {
+      if (!emailRegex.test(email)) {
+        setDisplayedError('Please enter a valid email address');
+        return;
+      }
+
       if (email && password) {
         // await getme();
-        router.replace('/Modules');  
+        router.replace('/Modules');
       } else {
         setDisplayedError('Please enter both email and password');
       }
@@ -43,7 +39,6 @@ export default function SignInScreen() {
       setDisplayedError('An unknown error occurred');
     }
   };
-  
 
   const handleForgotPassword = async () => {
     // forget password logic needed
