@@ -85,7 +85,7 @@ export class ModuleService {
         const module = new newModule({
             title: data.title,
             description: data.description,
-            subsectionIds: [], //data.subsectionIds
+            subsectionIds: data.subsectionIds,
           });
       
           const saved = await module.save();

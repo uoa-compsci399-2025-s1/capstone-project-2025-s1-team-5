@@ -45,7 +45,7 @@ const moduleSchema: Schema<IModule> = new Schema(
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Subsection",
-                default: [] //required: true
+                required: true
             }
         ]
     },
