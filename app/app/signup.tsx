@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
