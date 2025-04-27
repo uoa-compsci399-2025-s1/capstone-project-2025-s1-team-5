@@ -1,3 +1,4 @@
+import React from 'react';
 import { Stack } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
 import StyledText from '@/components/StyledText';

@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { Tabs } from 'expo-router';
 import { UserProvider } from '@/contexts/UserContext';
 import { ThemeProvider, ThemeContext } from '@/contexts/ThemeContext';
