@@ -19,12 +19,14 @@ export function expressAuthentication(
       ? authHeader.split(" ")[1]
       : null;
 
+
     return new Promise((resolve, reject) => {
       if (!token) {
         return reject(new Error("No token provided"));
       }
 
       jwt.verify(token, process.env.JWT_SECRET as string, (err, decoded: any) => {
+
         if (err) {
           return reject(err);
         }

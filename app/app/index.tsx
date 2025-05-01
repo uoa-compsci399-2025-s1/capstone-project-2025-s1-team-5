@@ -1,26 +1,36 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import useTheme from '@/hooks/useTheme';
+import { ThemeContext } from '@/contexts/ThemeContext';
+import { UserContext } from '@/contexts/UserContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import SubmitButton from '@/components/SubmitButton'; 
-import TextInputBox from '@/components/TextInputBox'; 
-import StyledText from '@/components/StyledText'; 
-import NavLink from '@/components/NavLink'; 
+import SubmitButton from '@/components/SubmitButton';
+import TextInputBox from '@/components/TextInputBox';
+import StyledText from '@/components/StyledText';
+import NavLink from '@/components/NavLink';
 
 export default function SignInScreen() {
-  const { theme } = useTheme();
+  const { theme } = useContext(ThemeContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayedError, setDisplayedError] = useState('');
   
   const router = useRouter();
+  const userContext = useContext(UserContext);
 
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;  
+  
   const handleSignIn = async () => {
-    // authentication logic needed when database is set up, async needed?
     try {
+      if (!emailRegex.test(email)) {
+        setDisplayedError('Please enter a valid email address');
+        return;
+      }
+
       if (email && password) {
-        router.replace('/Modules');  
+        // await getme();
+        router.replace('/Modules');
       } else {
         setDisplayedError('Please enter both email and password');
       }
@@ -29,7 +39,6 @@ export default function SignInScreen() {
       setDisplayedError('An unknown error occurred');
     }
   };
-  
 
   const handleForgotPassword = async () => {
     // forget password logic needed
@@ -38,42 +47,18 @@ export default function SignInScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <View style={styles.appLogo}>
-        <Image 
-          source={require('@assets/global/logos/VerticalColourLogo.png')} 
-          style={styles.logoImage}
-        />
-      </View>
+      <View style={styles.appLogo}><Image source={require('@/assets/logos/VerticalColourLogo.png')} style={styles.logoImage}/></View>
 
-      <TextInputBox
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        iconName="email"
-      />
-      <TextInputBox
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        iconName="lock"
-      />
+      <TextInputBox placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" iconName="email"/>
+      <TextInputBox placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry iconName="lock"/>
 
       {displayedError !== '' && <StyledText type="error">{displayedError}</StyledText>}
       
       <SubmitButton text="Sign In" onPress={handleSignIn} />
 
       <View style={styles.navLinksContainer}>
-        <NavLink 
-          text="Create Account" 
-          iconName="double-arrow" 
-          onPress={() => router.push('/signup')} 
-        />
-        <NavLink 
-          text="Forgot Password?" 
-          onPress={handleForgotPassword} 
-        />
+        <NavLink text="Create Account" iconName="double-arrow" onPress={() => router.push('/signup')} />
+        <NavLink text="Forgot Password?" onPress={handleForgotPassword} />
       </View>
     </View>
   );

@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, StyleSheet, Image, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-
-import useTheme from '@/hooks/useTheme';
+import { ThemeContext } from '@/contexts/ThemeContext';
 import countries from 'world-countries';
 
 import SubmitButton from '@/components/SubmitButton';
@@ -12,7 +11,7 @@ import DropDownMenu from '@/components/DropDownMenu';
 
 export default function CreateProfileScreen() {
   // async and/or const navigation = useNavigation(); needed?
-  const { theme } = useTheme();
+  const { theme } = useContext(ThemeContext);
   const router = useRouter();
 
   const [firstName, setFirstName] = useState('');
@@ -52,39 +51,12 @@ export default function CreateProfileScreen() {
 
   return (
     <ScrollView contentContainerStyle={[styles.container, { backgroundColor: theme.background }]}>
-      <View style={styles.appLogo}>
-        <Image
-          source={require('@assets/global/logos/VerticalColourLogo.png')}
-          style={styles.logoImage}
-        />
-      </View>
+      <View style={styles.appLogo}><Image source={require('@/assets/logos/VerticalColourLogo.png')} style={styles.logoImage}/></View>
 
-      <TextInputBox
-        placeholder="First Name"
-        value={firstName}
-        onChangeText={setFirstName}
-        iconName="person"
-      />
-      <TextInputBox
-        placeholder="Last Name"
-        value={lastName}
-        onChangeText={setLastName}
-        iconName="person"
-      />
-      <DropDownMenu
-        selectedValue={selectedCountry}
-        onValueChange={setSelectedCountry}
-        items={countryList}
-        placeholder="Select your country"
-        iconName="public"
-      />
-      <DropDownMenu
-        selectedValue={selectedProgramme}
-        onValueChange={setselectedProgramme}
-        items={Programme}
-        placeholder="Select your programme"
-        iconName="library-books"
-      />
+      <TextInputBox placeholder="First Name" value={firstName} onChangeText={setFirstName} iconName="person"/>
+      <TextInputBox placeholder="Last Name" value={lastName} onChangeText={setLastName} iconName="person"/>
+      <DropDownMenu selectedValue={selectedCountry} onValueChange={setSelectedCountry} items={countryList} placeholder="Select your country" iconName="public"/>
+      <DropDownMenu selectedValue={selectedProgramme} onValueChange={setselectedProgramme} items={Programme} placeholder="Select your programme" iconName="library-books"/>
 
       {displayedError !== '' && <StyledText type="error">{displayedError}</StyledText>}
 

@@ -14,11 +14,8 @@ export default function SubmoduleButton({ title, onPress, iconName }: SubmoduleB
     <TouchableOpacity
       style={[styles.button, { backgroundColor: '#00467f' }]} onPress={onPress}>
       {iconName && (
-        <View style={styles.iconContainer}>
-          <MaterialIcons name={iconName} size={24} color="#fff" />
-        </View>
+        <View style={styles.iconContainer}> <MaterialIcons name={iconName} size={24} color="#fff" /></View>
       )}
- 
       <StyledText type="default" style={styles.buttonText}>{title}</StyledText>
     </TouchableOpacity>
   );

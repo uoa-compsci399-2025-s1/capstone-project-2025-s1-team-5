@@ -5,7 +5,6 @@ import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { UserContext } from '@/contexts/UserContext';
 
-import StyledText from '@/components/StyledText';
 import ProfileOptionButton from '@/components/ProfileOptionButton';
 import ProfileSettingButton from '@/components/ProfileSettingButton';
 import ProfileSettingBox from '@/components/ProfileSettingBox';
@@ -26,47 +25,19 @@ const ProfileScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <ProfileUserCard
-        avatar={user.avatar}
-        name="Jack Zhen" // replace with user.name
-        email="jackz123@aucklanduni.ac.nz" // replace with user.email
-      />
+      <ProfileUserCard avatar={user.avatar} name="Jack Zhen" email="jackz123@aucklanduni.ac.nz" />
 
       <View style={styles.bodyContent}>
         <View style={styles.buttonGrid}>
           {features.map((feature) => (
-            <ProfileOptionButton
-              key={feature}
-              title={feature}
-              onPress={() => Alert.alert(`Navigating to ${feature}`)}
-            />
+            <ProfileOptionButton key={feature} title={feature} onPress={() => Alert.alert(`Navigating to ${feature}`)}/>
           ))}
         </View>
 
-        <StyledText type="subtitle">Settings</StyledText>
         <ProfileSettingBox>
-          <ProfileSettingButton
-            label="Change Password"
-            iconName="vpn-key"
-            onPress={() => router.push('/Profile/changepassword')} 
-            style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
-          />
-          <ProfileSettingButton
-            label="Theme"
-            iconName="palette"
-            onPress={() => router.push('/Profile/theme')} 
-          />
-          <ProfileSettingButton
-            label="Language Preference"
-            iconName="language"
-            onPress={() => console.log('Language preference')}
-          />
-          <ProfileSettingButton
-            label="Log Out"
-            iconName="exit-to-app"
-            onPress={handleLogout} 
-            style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}
-          />
+          <ProfileSettingButton label="Change Password" iconName="vpn-key" onPress={() => router.push('/Profile/changepassword')} style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}/>
+          <ProfileSettingButton label="Theme" iconName="palette" onPress={() => router.push('/Profile/theme')}/>
+          <ProfileSettingButton label="Log Out" iconName="exit-to-app"onPress={handleLogout} style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}/>
         </ProfileSettingBox>
       </View>
     </View>

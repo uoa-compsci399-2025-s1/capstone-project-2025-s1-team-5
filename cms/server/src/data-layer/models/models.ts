@@ -17,7 +17,8 @@ export interface IUser {
     createdAt: Date
 }
 
-export interface IModule {
+
+export interface IModule {  
     id: string;
     title: string;
     description: string;

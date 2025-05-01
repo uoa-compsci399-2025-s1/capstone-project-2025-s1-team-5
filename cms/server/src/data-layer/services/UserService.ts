@@ -5,10 +5,8 @@ import {  IUser } from "../models/models";
 import {User} from "../models/schema";
 import * as bcrypt from "bcrypt";
 
-
 export type UserCreationParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme">
-export type UserUpdateParams = Pick<IUser, "password" | "country" | "programme">
-
+export type UserUpdateParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme">
 
 export class UserService {
     /**
@@ -63,7 +61,6 @@ export class UserService {
             });
     
             await newUser.save();
-    
             return userAdaptor(newUser);
         } catch (error) {
             console.log("Error creating user", error);
@@ -129,6 +126,9 @@ export class UserService {
             console.error(error);
             return null;
         }
+    
+        const deletedUser = await User.findByIdAndDelete(userId);
+        return !!deletedUser;
     }
     
     

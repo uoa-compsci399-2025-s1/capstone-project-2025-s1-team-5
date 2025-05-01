@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { ScrollView, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 import QuestionCard from '@/components/QuestionCard';
 import StyledText from '@/components/StyledText';
@@ -11,10 +12,10 @@ type Question = {
   correctAnswer: string;
 };
 
-const sampleQuestions: Question[] = [
+const quizQuestions: Question[] = [
   {
     question: 'What is Kahu?',
-    options: ['A Owl', 'UoA App', 'A Place', 'IDK'],
+    options: ['An Owl', 'UoA App', 'A place', 'IDK'],
     correctAnswer: 'UoA App',
   },
   {
@@ -28,28 +29,37 @@ const sampleQuestions: Question[] = [
     correctAnswer: 'University of Auckland',
   },
   {
-    question: 'Which New Zealand city is the best?',
+    question: 'What is the best city in New Zealand?',
     options: ['Auckland', 'Tauranga', 'Otago', 'Christchurch'],
     correctAnswer: 'Auckland',
   },
 ];
-
+  // need to pull questions, options and answers from the database
 export default function Quiz() {
+  const { theme } = useContext(ThemeContext); 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [isAnswerChecked, setIsAnswerChecked] = useState(false);
   const [isQuizFinished, setIsQuizFinished] = useState(false);
+  const [resetFlag, setResetFlag] = useState(false);
 
   const handleAnswerChecked = (isCorrect: boolean) => {
     if (isCorrect) {
       setScore(prevScore => prevScore + 1);
     }
     setIsAnswerChecked(true);
-    setTimeout(() => moveToNextQuestion(), 2000);
+
+    setTimeout(() => {
+      setResetFlag(true);
+      setTimeout(() => {
+        moveToNextQuestion();
+        setResetFlag(false);
+      }, 50);
+    }, 2000);
   };
 
   const moveToNextQuestion = () => {
-    if (currentQuestionIndex < sampleQuestions.length - 1) {
+    if (currentQuestionIndex < quizQuestions.length - 1) {
       setCurrentQuestionIndex(prevIndex => prevIndex + 1);
       setIsAnswerChecked(false);
     } else {
@@ -64,24 +74,20 @@ export default function Quiz() {
     setIsQuizFinished(false);
   };
 
-  const progress = (currentQuestionIndex + 1) / sampleQuestions.length;
+  const progress = (currentQuestionIndex + 1) / quizQuestions.length;
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16 }}>
       {!isQuizFinished ? (
         <>
-          <ProgressBar progress={progress} color="#00467f" style={styles.progressBar} />
-          <QuestionCard
-            questionData={sampleQuestions[currentQuestionIndex]}
-            onAnswerChecked={handleAnswerChecked}
-            resetShowResult={!isAnswerChecked}
-          />
+          <ProgressBar progress={progress} color={theme.primary} style={styles.progressBar} />
+          <QuestionCard key={currentQuestionIndex} questionData={quizQuestions[currentQuestionIndex]} onAnswerChecked={handleAnswerChecked} resetShowResult={resetFlag}/>
         </>
       ) : (
-        <View style={styles.resultContainer}>
-          <StyledText type="title" style={styles.resultTitle}>Quiz Completed!</StyledText>
-          <StyledText type="default" style={styles.resultText}>You scored {score} out of {sampleQuestions.length}.</StyledText>
-          <TouchableOpacity style={styles.retakeButton} onPress={restartQuiz}>
+        <View style={[styles.resultContainer, { backgroundColor: theme.background }]}>
+          <StyledText type="title" style={[styles.resultTitle, { color: theme.primary }]}>Quiz Completed!</StyledText>
+          <StyledText type="default" style={[styles.resultText, { color: theme.text }]}>You scored {score} out of {quizQuestions.length}.</StyledText>
+          <TouchableOpacity style={[styles.retakeButton, { backgroundColor: theme.primary }]} onPress={restartQuiz}>
             <StyledText type="boldLabel" style={styles.retakeButtonText}>Retake Quiz</StyledText>
           </TouchableOpacity>
         </View>
@@ -98,7 +104,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
-    backgroundColor: '#ffffff',
     borderRadius: 16,
     elevation: 4,
     marginTop: 50,
@@ -106,14 +111,12 @@ const styles = StyleSheet.create({
   resultTitle: {
     fontSize: 24,
     marginBottom: 12,
-    color: '#00467f',
   },
   resultText: {
     fontSize: 18,
     marginBottom: 20,
   },
   retakeButton: {
-    backgroundColor: '#00467f',
     paddingVertical: 12,
     borderRadius: 8,
     width: '60%',

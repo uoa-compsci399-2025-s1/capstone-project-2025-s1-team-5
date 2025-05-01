@@ -3,6 +3,7 @@ import React, { createContext, useState, ReactNode } from 'react';
 export interface User {
     email: number;
     avatar: string; // 'cat', 'dog'...
+    themePreference: string; //'light', 'dark'
   }
 
 interface UserContextProps {
@@ -13,6 +14,7 @@ interface UserContextProps {
 const defaultUser: User = {
     email: 1,
     avatar: 'default',
+    themePreference: 'light',
 }
 
 export const UserContext = createContext<UserContextProps>({
@@ -25,12 +27,10 @@ interface UserProviderProps {
   }
 
 
-  export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-    const [user, setUser] = useState<User>(defaultUser);
-  
-    return (
-      <UserContext.Provider value={{ user, setUser }}>
-        {children}
-      </UserContext.Provider>
-    );
-  };
+export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<User>(defaultUser);
+
+  return (
+    <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>
+  );
+};

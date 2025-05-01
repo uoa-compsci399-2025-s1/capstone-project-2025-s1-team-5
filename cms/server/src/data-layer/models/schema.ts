@@ -20,6 +20,10 @@ const userSchema: Schema<IUser> = new Schema(
             type: String,
             required: true
         },
+        country: {
+            type: String,
+            required: true
+        },
         programme: {
             type: String,
         }, 

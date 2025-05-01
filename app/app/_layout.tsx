@@ -1,9 +1,9 @@
 import * as Font from 'expo-font';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { Stack } from 'expo-router';
-import StyledText from '@/components/StyledText';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import StyledText from '@/components/StyledText';
 
 const fontMap = {
   'National-Black': require('@assets/global/fonts/National-Black.otf'),

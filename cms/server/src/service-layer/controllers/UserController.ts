@@ -82,7 +82,25 @@ export class UsersController extends Controller {
         }
     
         return { message: "User successfully deleted" };
+
     }
 
+    }
+    @Post("/login")
+    public async login(@Body() credentials: { email: string, password: string }): Promise<{ token: string }> {
+    const user = await User.findOne({ email: credentials.email });
+    if (!user) throw new Error("Invalid credentials");
+
+    const isMatch = await bcrypt.compare(credentials.password, user.password);
+    if (!isMatch) throw new Error("Invalid credentials");
+
+    const token = jwt.sign(
+        { id: user._id, role: user.role },
+        process.env.JWT_SECRET as string,
+        { expiresIn: "1d" }
+    );
+
+    return { token };
+    }
 }
 

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { ThemeContext } from '@/contexts/ThemeContext';
 import SubModuleButton from '@/components/SubModuleButton';
 
 interface Submodule {
@@ -45,27 +46,20 @@ interface ModuleScreenProps {
 
 const ModuleScreen: React.FC<ModuleScreenProps> = ({ moduleNumber, onBack }) => {
   const submodules = moduleSubmodules[moduleNumber] || [];
-
+  const {theme} = useContext(ThemeContext);
   const handleSubmodulePress = (title: string) => {
     console.log(`Submodule pressed: ${title}`);
     // code module press logic needed
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={onBack} style={styles.backButton}>
-        <Text style={styles.backText}>← Back to Modules</Text>
-      </TouchableOpacity>
-      <Text style={styles.moduleTitle}>Module {moduleNumber}</Text>
+    <View style={[styles.container,{backgroundColor: theme.background}]}>
+      <TouchableOpacity onPress={onBack} style={styles.backButton}><Text style={styles.backText}>← Back to Modules</Text></TouchableOpacity>
+      <Text style={[styles.moduleTitle, {color: theme.text}]}>Module {moduleNumber}</Text>
 
       <View style={styles.submodulesContainer}>
         {submodules.map((submodule, index) => (
-          <SubModuleButton
-            key={index}
-            title={submodule.title}
-            onPress={() => handleSubmodulePress(submodule.title)}
-            iconName={submodule.iconName}
-          />
+          <SubModuleButton key={index} title={submodule.title} onPress={() => handleSubmodulePress(submodule.title)} iconName={submodule.iconName}/>
         ))}
       </View>
     </View>
