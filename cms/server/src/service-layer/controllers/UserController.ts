@@ -11,12 +11,9 @@ import {
     SuccessResponse,
 } from "tsoa";
 
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs"
 import { UserService, UserCreationParams, UserUpdateParams } from "../../data-layer/services/UserService";
 import { PaginatedUserResponse, UserGetResponse, UserPostResponse, UserUpdateResponse } from "../response-models/UserResponse";
 import { userAdaptor } from "../../data-layer/adapter/UserAdapter";
-import { User } from "../../data-layer/models/schema";
 
 @Route("users")
 export class UsersController extends Controller {     
@@ -86,24 +83,6 @@ export class UsersController extends Controller {
     
         return { message: "User successfully deleted" };
     }
-    @Post("/login")
-    public async login(@Body() credentials: { email: string, password: string }): Promise<{ token: string }> {
-    const user = await User.findOne({ email: credentials.email });
-    if (!user) throw new Error("Invalid credentials");
-
-    const isMatch = await bcrypt.compare(credentials.password, user.password);
-    if (!isMatch) throw new Error("Invalid credentials");
-
-    const token = jwt.sign(
-        { id: user._id, role: user.role },
-        process.env.JWT_SECRET as string,
-        { expiresIn: "1d" }
-    );
-
-    return { token };
-    }
-
-
 
 }
 

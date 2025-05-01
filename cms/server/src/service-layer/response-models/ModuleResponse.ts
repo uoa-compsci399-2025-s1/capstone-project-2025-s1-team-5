@@ -13,10 +13,10 @@ export interface ModuleGetResponse {
     updatedAt?: Date;
     subsectionIds: string[];
 }
-// }
-// export interface SubsectionResponse {
-//     title: string;
-//     body: string;
-//     authorID: string;
-//     published: boolean;
-// }
+
+export interface SubsectionResponse {
+    title: string;
+    body: string;
+    authorID: string;
+    published: boolean;
+}
