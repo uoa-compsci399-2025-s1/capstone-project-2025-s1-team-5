@@ -161,6 +161,9 @@
 			"UserUpdateParams": {
 				"$ref": "#/components/schemas/Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme_"
 			},
+			"mongoose.Types.ObjectId": {
+				"type": "string"
+			},
 			"IModule": {
 				"properties": {
 					"id": {
@@ -182,7 +185,7 @@
 					},
 					"subsectionIds": {
 						"items": {
-							"type": "string"
+							"$ref": "#/components/schemas/mongoose.Types.ObjectId"
 						},
 						"type": "array"
 					}
@@ -252,13 +255,51 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"ISubsection": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"body": {
+						"type": "string"
+					},
+					"authorID": {
+						"type": "string"
+					},
+					"published": {
+						"type": "boolean"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"title",
+					"body",
+					"authorID",
+					"published",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {
 			"jwt": {
 				"type": "apiKey",
-				"name": "access_token",
-				"in": "query"
+				"name": "Authorization",
+				"in": "header"
 			},
 			"tsoa_auth": {
 				"type": "oauth2",
@@ -635,15 +676,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"success": {
-											"type": "boolean"
-										}
-									},
-									"required": [
-										"success"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/ISubsection"
 								}
 							}
 						}
@@ -790,6 +823,55 @@
 						}
 					}
 				]
+			}
+		},
+		"/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"token": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"token"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"password": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"password",
+									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		}
 	},
