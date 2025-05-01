@@ -14,6 +14,9 @@ import {
 import { UserService, UserCreationParams, UserUpdateParams } from "../../data-layer/services/UserService";
 import { PaginatedUserResponse, UserGetResponse, UserPostResponse, UserUpdateResponse } from "../response-models/UserResponse";
 import { userAdaptor } from "../../data-layer/adapter/UserAdapter";
+import * as bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
+import { User } from "../../data-layer/models/schema";
 
 @Route("users")
 export class UsersController extends Controller {     
@@ -85,7 +88,7 @@ export class UsersController extends Controller {
 
     }
 
-    }
+    
     @Post("/login")
     public async login(@Body() credentials: { email: string, password: string }): Promise<{ token: string }> {
     const user = await User.findOne({ email: credentials.email });

@@ -127,8 +127,6 @@ export class UserService {
             return null;
         }
     
-        const deletedUser = await User.findByIdAndDelete(userId);
-        return !!deletedUser;
     }
     
     

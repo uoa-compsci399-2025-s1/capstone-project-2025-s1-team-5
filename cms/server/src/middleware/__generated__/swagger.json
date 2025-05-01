@@ -158,33 +158,11 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Pick_IUser.password-or-country-or-programme_": {
-				"properties": {
-					"password": {
-						"type": "string"
-					},
-					"country": {
-						"type": "string"
-					},
-					"programme": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"password",
-					"country"
-				],
-				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
 			"UserUpdateParams": {
-				"$ref": "#/components/schemas/Pick_IUser.password-or-country-or-programme_"
+				"$ref": "#/components/schemas/Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme_"
 			},
 			"mongoose.Types.ObjectId": {
 				"type": "string"
-=======
-			"UserUpdateParams": {
-				"$ref": "#/components/schemas/Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme_"
 			},
 			"IModule": {
 				"properties": {
@@ -208,8 +186,6 @@
 					"subsectionIds": {
 						"items": {
 							"$ref": "#/components/schemas/mongoose.Types.ObjectId"
-=======
-							"type": "string"
 						},
 						"type": "array"
 					}
@@ -314,48 +290,6 @@
 					"published",
 					"createdAt",
 					"updatedAt"
-=======
-					}
-				},
-				"required": [
-					"modules",
-					"total"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ModuleGetResponse": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"title": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"subsectionIds": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"id",
-					"title",
-					"description",
-					"createdAt",
-					"subsectionIds"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -366,9 +300,6 @@
 				"type": "apiKey",
 				"name": "Authorization",
 				"in": "header"
-=======
-				"name": "access_token",
-				"in": "query"
 			},
 			"tsoa_auth": {
 				"type": "oauth2",
@@ -558,7 +489,6 @@
 				]
 			}
 		},
-=======
 		"/users/login": {
 			"post": {
 				"operationId": "Login",
@@ -747,16 +677,6 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/ISubsection"
-=======
-									"properties": {
-										"success": {
-											"type": "boolean"
-										}
-									},
-									"required": [
-										"success"
-									],
-									"type": "object"
 								}
 							}
 						}
@@ -952,7 +872,6 @@
 						}
 					}
 				}
-=======
 			}
 		}
 	},
