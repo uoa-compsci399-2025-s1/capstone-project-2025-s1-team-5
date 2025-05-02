@@ -9,6 +9,7 @@ import ProfileOptionButton from '@/components/ProfileOptionButton';
 import ProfileSettingButton from '@/components/ProfileSettingButton';
 import ProfileSettingBox from '@/components/ProfileSettingBox';
 import ProfileUserCard from '@/components/ProfileUserCard';
+import * as SecureStore from 'expo-secure-store';
 
 const ProfileScreen: React.FC = () => {
   const { theme } = useContext(ThemeContext);
@@ -17,9 +18,9 @@ const ProfileScreen: React.FC = () => {
 
   const features = ['Calendar', 'Support', 'Map'];
 
-  const handleLogout = () => {
+  const handleLogout = async() => {
     console.log('Logging out...');
-    // needs code to clear the user's session etc
+    await SecureStore.deleteItemAsync('USER_TOKEN');
     router.replace('/'); 
   };
 

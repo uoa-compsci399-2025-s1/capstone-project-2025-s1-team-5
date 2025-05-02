@@ -4,6 +4,9 @@ import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { UserContext } from '@/contexts/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import api from '@/app/lib/api'
+import * as SecureStore from 'expo-secure-store';
 
 import SubmitButton from '@/components/SubmitButton';
 import TextInputBox from '@/components/TextInputBox';
@@ -20,7 +23,7 @@ export default function SignInScreen() {
   const userContext = useContext(UserContext);
 
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;  
-  
+
   const handleSignIn = async () => {
     try {
       if (!emailRegex.test(email)) {
@@ -29,15 +32,27 @@ export default function SignInScreen() {
       }
 
       if (email && password) {
-        // await getme();
+        const response = await api.post('/auth/login', { email, password });
+        const { token } = response.data;
+        await SecureStore.setItemAsync('USER_TOKEN', token);
+        // const meRes = await api.get('/me');
+        // userContext.setUser(meRes.data);
         router.replace('/Modules');
       } else {
         setDisplayedError('Please enter both email and password');
       }
-    } catch (error) {
-      console.error(error);
-      setDisplayedError('An unknown error occurred');
+    } catch (err: any) {
+      if (err.response) {
+        // HTTP error from backend
+        setDisplayedError(err.response.data.message || 'Login failed');
+      } else if (err.request) {
+        setDisplayedError('Cannot reach server. Check your network or try again later.');
+      } else {
+        setDisplayedError(err.message);
+      }
     }
+    
+    
   };
 
   const handleForgotPassword = async () => {
