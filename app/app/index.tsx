@@ -3,7 +3,6 @@ import { View, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { UserContext } from '@/contexts/UserContext';
-import axios from 'axios';
 import api from '@/app/lib/api'
 import * as SecureStore from 'expo-secure-store';
 
@@ -31,7 +30,7 @@ export default function SignInScreen() {
       }
 
       if (email && password) {
-        const response = await api.post('/auth/login', { email, password });
+        const response = await api.post('/auth/login', { password, email });
         const token  = response.data.token;
         await SecureStore.setItemAsync('USER_TOKEN', token);
         // const meRes = await api.get('/me');
@@ -42,16 +41,20 @@ export default function SignInScreen() {
       }
     } catch (err: any) {
       if (err.response) {
-        // HTTP error from backend
-        setDisplayedError(err.response.data.message || 'Login failed');
+        const data = err.response.data;
+        const msg =
+          data.message  
+          ?? data.detail  
+          ?? data.reason  
+          ?? 'Login failed';
+    
+        setDisplayedError(msg);
       } else if (err.request) {
         setDisplayedError('Cannot reach server. Check your network or try again later.');
       } else {
         setDisplayedError(err.message);
       }
     }
-    
-    
   };
 
   const handleForgotPassword = async () => {
