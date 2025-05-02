@@ -3,7 +3,6 @@ import { View, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { UserContext } from '@/contexts/UserContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import api from '@/app/lib/api'
 import * as SecureStore from 'expo-secure-store';
@@ -33,7 +32,7 @@ export default function SignInScreen() {
 
       if (email && password) {
         const response = await api.post('/auth/login', { email, password });
-        const { token } = response.data;
+        const token  = response.data.token;
         await SecureStore.setItemAsync('USER_TOKEN', token);
         // const meRes = await api.get('/me');
         // userContext.setUser(meRes.data);
