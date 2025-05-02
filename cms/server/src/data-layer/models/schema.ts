@@ -20,12 +20,10 @@ const userSchema: Schema<IUser> = new Schema(
             type: String,
             required: true
         },
-
         country: {
             type: String,
             required: true
         },
-
         programme: {
             type: String,
         }, 
@@ -39,18 +37,12 @@ const userSchema: Schema<IUser> = new Schema(
 
 const moduleSchema: Schema<IModule> = new Schema(
     {
-        title: { type: String, required: true },
-        description: { type: String, required: true },
-        subsectionIds: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Subsection",
-                required: true
-            }
-        ]
-    },
-    { timestamps: true }
-);
+      title: { type: String, required: true },
+      description: { type: String, required: true },
+      subsectionIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Subsection" }]},
+      
+      { timestamps: true }
+  );
 
 const programmeSchema: Schema<IProgramme> = new Schema(
     {

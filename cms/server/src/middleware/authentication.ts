@@ -14,17 +14,19 @@ export function expressAuthentication(
   scopes: string[] = []
 ): Promise<DecodedToken> {
   if (securityName === "jwt") {
-    const token =
-      request.body.token ||
-      request.query.token ||
-      request.headers["x-access-token"];
+    const authHeader = request.headers["authorization"];
+    const token = authHeader && authHeader.startsWith("Bearer ")
+      ? authHeader.split(" ")[1]
+      : null;
+
 
     return new Promise((resolve, reject) => {
       if (!token) {
         return reject(new Error("No token provided"));
       }
 
-      jwt.verify(token, process.env.JWT_SECRET as string, (err: jwt.VerifyErrors | null, decoded: any) => {
+      jwt.verify(token, process.env.JWT_SECRET as string, (err, decoded: any) => {
+
         if (err) {
           return reject(err);
         }

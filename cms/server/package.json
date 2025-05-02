@@ -9,6 +9,7 @@
     "nodemon": "nodemon"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "axios": "^1.8.4",
     "bcryptjs": "^3.0.2",
     "body-parser": "^1.20.2",
@@ -21,6 +22,7 @@
     "tsoa": "^6.6.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^3.0.0",
     "@types/cors": "^2.8.17",
     "@types/jsonwebtoken": "^9.0.9",

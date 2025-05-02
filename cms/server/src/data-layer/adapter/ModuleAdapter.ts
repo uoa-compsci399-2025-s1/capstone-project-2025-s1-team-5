@@ -1,3 +1,4 @@
+import { ModuleGetResponse } from "../../service-layer/response-models/ModuleResponse";
 import { IModule } from "../models/models";
 
 export function moduleAdaptor(doc: any): IModule {
@@ -8,5 +9,16 @@ export function moduleAdaptor(doc: any): IModule {
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
       subsectionIds: doc.subsectionIds?.map((id: any) => id.toString()) || []
+    };
+  }
+
+  export function moduleToResponse(module: IModule): ModuleGetResponse {
+    return {
+      id: module.id,
+      title: module.title,
+      description: module.description,
+      createdAt: module.createdAt,
+      updatedAt: module.updatedAt,
+      subsectionIds: module.subsectionIds?.map((id: any) => id.toString()) || []
     };
   }
