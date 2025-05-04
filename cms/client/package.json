@@ -43,9 +43,14 @@
       "last 1 safari version"
     ]
   },
+
+    "resolutions": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "index.js",
-  "keywords": [],
+  "keywords": [], 
   "author": "",
   "license": "ISC"
 }

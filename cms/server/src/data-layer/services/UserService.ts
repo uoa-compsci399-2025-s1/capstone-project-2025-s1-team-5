@@ -6,7 +6,7 @@ import {User} from "../models/schema";
 import * as bcrypt from "bcrypt";
 
 export type UserCreationParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme">
-export type UserUpdateParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme">
+export type UserUpdateParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme" | "role">
 
 export class UserService {
     /**
@@ -57,7 +57,7 @@ export class UserService {
             const newUser = new User({
                 ...userCreationParams,
                 password: hashedPassword,
-                role: "admin",
+                role: "user",
             });
     
             await newUser.save();

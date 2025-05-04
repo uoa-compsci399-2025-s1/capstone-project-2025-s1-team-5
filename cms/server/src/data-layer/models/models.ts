@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 export enum RoleType {
     admin= "admin",
     user= "user"
+   
 }
 
 export interface IUser {
