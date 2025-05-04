@@ -9,14 +9,15 @@
     "nodemon": "nodemon"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1",
     "axios": "^1.8.4",
+    "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.16.0",
     "mongoose": "^8.13.2",
     "swagger-ui-express": "^5.0.1",
     "tsoa": "^6.6.0"
