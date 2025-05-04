@@ -1,13 +1,13 @@
 import React, { useContext, useState } from 'react'
 import {
   View,
-  Text,
   TouchableOpacity,
   Modal,
   FlatList,
   StyleSheet,
   Platform,
   Keyboard,
+  Text,
 } from 'react-native'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import { ThemeContext } from '@/contexts/ThemeContext'
@@ -31,52 +31,30 @@ export default function DropDownMenu({
   const [visible, setVisible] = useState(false)
 
   const close = () => {
-    Keyboard.dismiss()       
-    setVisible(false)         
+    Keyboard.dismiss()
+    setVisible(false)
   }
+
   const displayText = selectedValue || placeholder
   const displayColor = selectedValue ? theme.text : theme.subtextOne
 
   return (
     <>
       <TouchableOpacity
-        style={[
-          styles.container,
-          { backgroundColor: theme.backgroundSecondary },
-        ]}
+        style={[styles.container, { backgroundColor: theme.backgroundSecondary }]}
         activeOpacity={0.7}
         onPress={() => setVisible(true)}
       >
         {iconName && (
-          <MaterialIcons
-            name={iconName}
-            size={20}
-            color={displayColor}
-            style={styles.icon}
-          />
+          <MaterialIcons name={iconName} size={20} color={theme.text} style={styles.icon} />
         )}
-        <Text style={[styles.label, { color: displayColor }]}>
-          {displayText}
-        </Text>
-        <MaterialIcons
-          name="keyboard-arrow-down"
-          size={24}
-          color={theme.text}
-        />
+        <Text style={[styles.label, { color: displayColor }]}>{displayText}</Text>
+        <MaterialIcons name="keyboard-arrow-down" size={24} color={theme.text} />
       </TouchableOpacity>
 
-      <Modal
-        visible={visible}
-        transparent
-        animationType="fade"
-        onRequestClose={close}
-      >
-        <TouchableOpacity
-          style={styles.backdrop}
-          activeOpacity={1}
-          onPress={close}
-        />
-        <View style={[styles.modal, { backgroundColor: theme.background }]}>
+      <Modal visible={visible} transparent animationType="fade" onRequestClose={close}>
+        <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={close} />
+        <View style={[styles.modal, { backgroundColor: theme.background }]} >
           <FlatList
             data={items}
             keyExtractor={(item) => item}
@@ -88,19 +66,12 @@ export default function DropDownMenu({
                   close()
                 }}
               >
-                <Text style={[styles.itemText, { color: theme.text }]}>
-                  {item}
-                </Text>
+                <Text style={[styles.itemText, { color: theme.text }]}>{item}</Text>
               </TouchableOpacity>
             )}
             ListFooterComponent={
-              <TouchableOpacity
-                style={styles.cancel}
-                onPress={() => setVisible(false)}
-              >
-                <Text style={[styles.cancelText, { color: theme.primary }]}>
-                  Cancel
-                </Text>
+              <TouchableOpacity style={styles.cancel} onPress={close}>
+                <Text style={[styles.cancelText, { color: theme.primary }]}>Cancel</Text>
               </TouchableOpacity>
             }
           />
@@ -115,7 +86,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: 50,
-    borderWidth: 1,
     borderRadius: 8,
     marginVertical: 8,
     paddingHorizontal: 12,
