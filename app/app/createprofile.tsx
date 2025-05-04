@@ -1,77 +1,115 @@
-import React, { useState, useContext } from 'react';
-import { View, StyleSheet, Image, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
-import { ThemeContext } from '@/contexts/ThemeContext';
-import countries from 'world-countries';
-import { useLocalSearchParams } from 'expo-router';
-import axios from 'axios';
+import React, { useState, useContext } from 'react'
+import {
+  View,
+  StyleSheet,
+  Image,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native'
+import { useRouter } from 'expo-router'
+import { ThemeContext } from '@/contexts/ThemeContext'
+import countries from 'world-countries'
+import { useLocalSearchParams } from 'expo-router'
+import axios from 'axios'
 
-import SubmitButton from '@/components/SubmitButton';
-import TextInputBox from '@/components/TextInputBox';
-import StyledText from '@/components/StyledText';
-import DropDownMenu from '@/components/DropDownMenu';
+import SubmitButton from '@/components/SubmitButton'
+import TextInputBox from '@/components/TextInputBox'
+import StyledText from '@/components/StyledText'
+import DropDownMenu from '@/components/DropDownMenu'
 
 export default function CreateProfileScreen() {
-  // async and/or const navigation = useNavigation(); needed?
-  const { theme } = useContext(ThemeContext);
-  const router = useRouter();
+  const { theme } = useContext(ThemeContext)
+  const router = useRouter()
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [selectedCountry, setSelectedCountry] = useState('')
+  const [selectedProgramme, setSelectedProgramme] = useState('')
+  const [displayedError, setDisplayedError] = useState('')
+  const { email, password } = useLocalSearchParams()
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState('');
-  const [selectedProgramme, setselectedProgramme] = useState('');
-  const [displayedError, setDisplayedError] = useState('');
-
-  const { email, password } = useLocalSearchParams();
-
-  const filteredCountries = countries.filter(
-    (country) => country.cca3 !== 'TWN' 
-  );
-
-  const countryList = filteredCountries.map((c) => c.name.common).sort();
+  const filteredCountries = countries.filter((c) => c.cca3 !== 'TWN')
+  const countryList = filteredCountries.map((c) => c.name.common).sort()
 
   const Programme = [
     'Master of Engineering Project Management',
     'Master of Civil Engineering',
-  ];
+  ]
 
   const handleCreateProfile = async () => {
     if (!firstName || !lastName || !selectedCountry || !selectedProgramme) {
-      setDisplayedError('Please fill in all fields');
-      return;
+      setDisplayedError('Please fill in all fields')
+      return
     }
-  
+
     try {
       await axios.post('http://localhost:3000/users', {
         first_name: firstName,
         last_name: lastName,
-        email: email,
-        password: password,
+        email,
+        password,
         country: selectedCountry,
         programme: selectedProgramme,
-      });
-  
-      router.replace('/Modules'); // or wherever your app goes next
+      })
+      router.replace('/Modules')
     } catch (error) {
-      console.error(error);
-      setDisplayedError('Failed to create user profile');
+      console.error(error)
+      setDisplayedError('Failed to create user profile')
     }
-  };
+  }
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: theme.background }]}>
-      <View style={styles.appLogo}><Image source={require('@/assets/logos/VerticalColourLogo.png')} style={styles.logoImage}/></View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.container,
+          { backgroundColor: theme.background },
+        ]}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.appLogo}>
+          <Image
+            source={require('@/assets/logos/VerticalColourLogo.png')}
+            style={styles.logoImage}
+          />
+        </View>
 
-      <TextInputBox placeholder="First Name" value={firstName} onChangeText={setFirstName} iconName="person"/>
-      <TextInputBox placeholder="Last Name" value={lastName} onChangeText={setLastName} iconName="person"/>
-      <DropDownMenu selectedValue={selectedCountry} onValueChange={setSelectedCountry} items={countryList} placeholder="Select your country" iconName="public"/>
-      <DropDownMenu selectedValue={selectedProgramme} onValueChange={setselectedProgramme} items={Programme} placeholder="Select your programme" iconName="library-books"/>
+        <TextInputBox
+          placeholder="First Name"
+          value={firstName}
+          onChangeText={setFirstName}
+          iconName="person"
+        />
+        <TextInputBox
+          placeholder="Last Name"
+          value={lastName}
+          onChangeText={setLastName}
+          iconName="person"
+        />
 
-      {displayedError !== '' && <StyledText type="error">{displayedError}</StyledText>}
+        <DropDownMenu
+          selectedValue={selectedCountry}
+          onValueChange={setSelectedCountry}
+          items={countryList}
+          placeholder="Select your country"
+          iconName="public"
+        />
+        <DropDownMenu
+          selectedValue={selectedProgramme}
+          onValueChange={setSelectedProgramme}
+          items={Programme}
+          placeholder="Select your programme"
+          iconName="library-books"
+        />
 
-      <SubmitButton text="Create Profile" onPress={handleCreateProfile} />
-    </ScrollView>
-  );
+        {displayedError !== '' && (
+          <StyledText type="error">{displayedError}</StyledText>
+        )}
+
+        <SubmitButton text="Create Profile" onPress={handleCreateProfile} />
+      </ScrollView>
+    </TouchableWithoutFeedback>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -94,4 +132,4 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 10,
   },
-});
+})
