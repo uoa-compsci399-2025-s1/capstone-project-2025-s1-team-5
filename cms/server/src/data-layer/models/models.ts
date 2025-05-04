@@ -18,14 +18,13 @@ export interface IUser {
     createdAt: Date
 }
 
-
-export interface IModule {  
+export interface IModule {
     id: string;
     title: string;
     description: string;
     createdAt: Date;
     updatedAt?: Date;
-    subsectionIds: Types.ObjectId[];
+    subsectionIds: Types.ObjectId[];    
 }
 
 export interface IProgramme {
@@ -57,4 +56,9 @@ export interface ISubsection {
     published: boolean;
     createdAt: Date;
     updatedAt: Date;
+}
+
+export interface ChangePasswordRequest {
+    oldPassword: string;
+    newPassword: string;
 }
