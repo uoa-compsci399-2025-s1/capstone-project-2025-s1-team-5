@@ -21,7 +21,7 @@ const expressAuthenticationRecasted = expressAuthentication as (req: ExRequest, 
 const models: TsoaRoute.Models = {
     "RoleType": {
         "dataType": "refEnum",
-        "enums": ["admin","user"],
+        "enums": ["user","admin"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IUser": {
