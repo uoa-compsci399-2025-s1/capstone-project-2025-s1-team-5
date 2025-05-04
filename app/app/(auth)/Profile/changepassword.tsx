@@ -1,7 +1,8 @@
 import React, { useContext, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Keyboard } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
+import api from '@/app/lib/api';
 
 import SubmitButton from '@/components/SubmitButton';
 import TextInputBox from '@/components/TextInputBox';
@@ -16,7 +17,7 @@ export default function ChangePasswordScreen() {
   const [successMessage, setSuccessMessage] = useState('');
   const { theme } = useContext(ThemeContext);
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async() => {
     if (currentPassword && newPassword && confirmPassword) {
       if (newPassword.length < 6) {
         setErrorMessage('New password must be at least 6 characters long.');
@@ -31,15 +32,20 @@ export default function ChangePasswordScreen() {
       }
 
       try {
-        // need code to store the new password in the database and update it
-        console.log('New Password:', newPassword);
+         // call your backend
+         const res = await api.post<{ message: string }>('/auth/changePassword', {
+          oldPassword: currentPassword,
+          newPassword,
+        })
 
-        setSuccessMessage('Your password has been successfully changed.');
-        setErrorMessage('');
+        setSuccessMessage(res.data.message)
+        setErrorMessage('')
 
-        setTimeout(() => {
-          router.back();
-        }, 3000);
+        // dismiss keyboard
+        Keyboard.dismiss()
+
+        // after 2s go back
+        setTimeout(() => router.back(), 2000)
 
       } catch (e) {
         setErrorMessage('An error occurred while changing the password.');
