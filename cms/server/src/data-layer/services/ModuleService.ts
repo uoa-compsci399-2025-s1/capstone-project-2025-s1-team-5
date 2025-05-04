@@ -1,34 +1,9 @@
 import { moduleAdaptor } from "../adapter/ModuleAdapter";
-import { IModule } from "../models/models";
+import { IModule, ISubsection } from "../models/models";
 import { newModule, Subsection } from "../../data-layer/models/schema";
 import mongoose from "mongoose";
 
-
 export class ModuleService {
-    static createModule: any;
-    /**
-     * 
-     * @param moduleId 
-     * @param data 
-    //  */
-    // public async createSubsectionForModule(id: string, data: { title: string; body: string; authorID: string }): Promise<SubsectionResponse> {
-    //     const newSubsection = new Subsection({
-    //        title: data.title,
-    //        body: data.body,
-    //        authorID: data.authorID,
-    //     });
-  
-    //     await newSubsection.save();
-  
-    //     return {
-    //        title: newSubsection.title,
-    //        body: newSubsection.body,
-    //        authorID: newSubsection.authorID,
-    //        published: newSubsection.published,
-    //     };
-    //  }
-
-
 
     // /**
     //  * For future use when MVP is done
@@ -85,7 +60,7 @@ export class ModuleService {
         const module = new newModule({
             title: data.title,
             description: data.description,
-            subsectionIds: data.subsectionIds,
+            subsectionIds: []
           });
       
           const saved = await module.save();
@@ -135,27 +110,34 @@ export class ModuleService {
      * @param subsectionData 
      * @returns 
      */
-    public async addSubsection(moduleId: string, 
-        subsectionData: { title: string; body: string; authorID: string }
-    ) {
-        try {
-            const module = await newModule.findById(moduleId);
-             if (!module) {
-                throw new Error("Module not found");
-            }
-            const newSubsection = new Subsection({
-                title: subsectionData.title,
-                body: subsectionData.body,
-                authorID: subsectionData.authorID,
-            });
-            await newSubsection.save();
-            module.subsectionIds.push(newSubsection._id.toString());
-            await module.save();
-            return true; 
-        } catch (error) {
-            console.error("Error adding subsection to module:", error);
-            return false; 
-            }
+    public async addSubsection(
+      moduleId: string,
+      subsectionData: { title: string; body: string; authorID: string }
+    ): Promise<ISubsection | null> {
+      try {
+        const module = await newModule.findById(moduleId);
+        if (!module) {
+          throw new Error("Module not found");
+        }
+    
+        const newSubsection = new Subsection({
+          title: subsectionData.title,
+          body: subsectionData.body,
+          authorID: subsectionData.authorID,
+        });
+    
+        await newSubsection.save();
+    
+        if (!newSubsection._id) {
+          throw new Error("Subsection ID not generated");
+        }
+
+        module.subsectionIds.push(newSubsection._id);        
+        await module.save();
+        return newSubsection;
+      } catch (error: any) {
+        return error;
+      }
     }
     /**
      * Deletes Subsection of a module

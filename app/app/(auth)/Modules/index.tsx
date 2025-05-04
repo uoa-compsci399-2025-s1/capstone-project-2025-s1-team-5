@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
-import ModuleButton from '@/components/ModuleButton';
+import { ThemeContext } from '@/contexts/ThemeContext';
+
 import ModuleScreen from './modulescreen'; 
+import ModuleButton from '@/components/ModuleButton';
 
 const modules = [
   { moduleNumber: 1, title: "Get Set Up For Success", iconName: "info" as const },
@@ -12,7 +14,7 @@ const modules = [
 
 const DisplayModulesScreen = () => {
   const [selectedModule, setSelectedModule] = useState<number | null>(null);
-
+  const {theme} = useContext(ThemeContext);
   if (selectedModule !== null) {
     return (
       <ModuleScreen moduleNumber={selectedModule} onBack={() => setSelectedModule(null)}/>
@@ -20,15 +22,9 @@ const DisplayModulesScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,{backgroundColor: theme.background}]}>
       {modules.map((module) => (
-        <ModuleButton
-          key={module.moduleNumber}
-          moduleNumber={module.moduleNumber}
-          title={module.title}
-          onPress={() => setSelectedModule(module.moduleNumber)}
-          iconName={module.iconName}
-        />
+        <ModuleButton key={module.moduleNumber} moduleNumber={module.moduleNumber} title={module.title} onPress={() => setSelectedModule(module.moduleNumber)}iconName={module.iconName}/>
       ))}
     </View>
   );

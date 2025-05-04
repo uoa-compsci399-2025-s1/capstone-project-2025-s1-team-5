@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 export enum RoleType {
     admin= "admin",
     user= "user"
@@ -21,7 +23,7 @@ export interface IModule {
     description: string;
     createdAt: Date;
     updatedAt?: Date;
-    subsectionIds: string[];
+    subsectionIds: Types.ObjectId[];
 }
 
 export interface IProgramme {

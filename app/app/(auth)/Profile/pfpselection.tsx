@@ -40,13 +40,7 @@ const ProfilePicSelectionScreen: React.FC = () => {
         keyExtractor={(item) => item.key}
         renderItem={({ item }) => (
             <TouchableOpacity style={styles.avatarItem} onPress={() => handleSelection(item.key)}>
-            <Image
-                source={item.source}
-                style={[
-                styles.presetImage,
-                selectedAvatar === item.key && styles.selectedImage,
-                ]}
-            />
+            <Image source={item.source} style={[styles.presetImage, selectedAvatar === item.key && styles.selectedImage,]}/>
             </TouchableOpacity>
         )}
         />

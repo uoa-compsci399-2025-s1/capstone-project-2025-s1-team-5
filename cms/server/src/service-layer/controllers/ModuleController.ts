@@ -12,7 +12,8 @@ import {
 } from "tsoa";
 import { ModuleService } from "../../data-layer/services/ModuleService";
 import { ModuleGetResponse, ModulesGetResponse } from "../response-models/ModuleResponse";
-import { IModule } from "../../data-layer/models/models";
+import { IModule, ISubsection } from "../../data-layer/models/models";
+import { moduleToResponse } from "../../data-layer/adapter/ModuleAdapter";
 
 @Route("modules")
 export class ModuleController extends Controller {  
@@ -29,11 +30,18 @@ export class ModuleController extends Controller {
     @SuccessResponse(200, "Module fetched")
     public async getModule(
         @Path() moduleId: string,
-    ): Promise<ModuleGetResponse> {
+      ): Promise<ModuleGetResponse> {
         const moduleService = new ModuleService();
+        
         const moduleData = await moduleService.getModule(moduleId);
-        return moduleData;
-    }
+    
+        if (!moduleData) {
+          this.setStatus(404);
+          throw new Error("Module not found");
+        }
+    
+        return moduleToResponse(moduleData);
+      }
 
     @Security("jwt", ["admin"])
     @Post()
@@ -63,10 +71,10 @@ export class ModuleController extends Controller {
     public async addSubsection(
         moduleId: string,
         @Body() subsectionData: { title: string; body: string; authorID: string }
-      ): Promise<{ success: boolean }> {
+      ): Promise<ISubsection> {
         const moduleService = new ModuleService()
         const result = await moduleService.addSubsection(moduleId, subsectionData);
-        return { success: result };
+        return result;
     }
 
     @Put("{moduleId}/{subsectionId}")

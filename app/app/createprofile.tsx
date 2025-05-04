@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, StyleSheet, Image, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-
-import useTheme from '@/hooks/useTheme';
+import { ThemeContext } from '@/contexts/ThemeContext';
 import countries from 'world-countries';
+import { useLocalSearchParams } from 'expo-router';
+import axios from 'axios';
 
 import SubmitButton from '@/components/SubmitButton';
 import TextInputBox from '@/components/TextInputBox';
@@ -12,7 +13,7 @@ import DropDownMenu from '@/components/DropDownMenu';
 
 export default function CreateProfileScreen() {
   // async and/or const navigation = useNavigation(); needed?
-  const { theme } = useTheme();
+  const { theme } = useContext(ThemeContext);
   const router = useRouter();
 
   const [firstName, setFirstName] = useState('');
@@ -20,6 +21,8 @@ export default function CreateProfileScreen() {
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedProgramme, setselectedProgramme] = useState('');
   const [displayedError, setDisplayedError] = useState('');
+
+  const { email, password } = useLocalSearchParams();
 
   const filteredCountries = countries.filter(
     (country) => country.cca3 !== 'TWN' 
@@ -32,59 +35,37 @@ export default function CreateProfileScreen() {
     'Master of Civil Engineering',
   ];
 
-  const handleCreateProfile = () => {
-    // create profile logic needed when database is set up, e.g. how to save the profile in the database.
+  const handleCreateProfile = async () => {
     if (!firstName || !lastName || !selectedCountry || !selectedProgramme) {
       setDisplayedError('Please fill in all fields');
       return;
     }
-
-    setDisplayedError('');
-    const fullName = `${firstName} ${lastName}`;
-    console.log('Profile Created:', {
-      fullName,
-      selectedCountry,
-      selectedProgramme,
-    });
-
-    router.replace('/Modules');
+  
+    try {
+      await axios.post('http://localhost:3000/users', {
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        password: password,
+        country: selectedCountry,
+        programme: selectedProgramme,
+      });
+  
+      router.replace('/Modules'); // or wherever your app goes next
+    } catch (error) {
+      console.error(error);
+      setDisplayedError('Failed to create user profile');
+    }
   };
 
   return (
     <ScrollView contentContainerStyle={[styles.container, { backgroundColor: theme.background }]}>
-      <View style={styles.appLogo}>
-        <Image
-          source={require('@assets/global/logos/VerticalColourLogo.png')}
-          style={styles.logoImage}
-        />
-      </View>
+      <View style={styles.appLogo}><Image source={require('@/assets/logos/VerticalColourLogo.png')} style={styles.logoImage}/></View>
 
-      <TextInputBox
-        placeholder="First Name"
-        value={firstName}
-        onChangeText={setFirstName}
-        iconName="person"
-      />
-      <TextInputBox
-        placeholder="Last Name"
-        value={lastName}
-        onChangeText={setLastName}
-        iconName="person"
-      />
-      <DropDownMenu
-        selectedValue={selectedCountry}
-        onValueChange={setSelectedCountry}
-        items={countryList}
-        placeholder="Select your country"
-        iconName="public"
-      />
-      <DropDownMenu
-        selectedValue={selectedProgramme}
-        onValueChange={setselectedProgramme}
-        items={Programme}
-        placeholder="Select your programme"
-        iconName="library-books"
-      />
+      <TextInputBox placeholder="First Name" value={firstName} onChangeText={setFirstName} iconName="person"/>
+      <TextInputBox placeholder="Last Name" value={lastName} onChangeText={setLastName} iconName="person"/>
+      <DropDownMenu selectedValue={selectedCountry} onValueChange={setSelectedCountry} items={countryList} placeholder="Select your country" iconName="public"/>
+      <DropDownMenu selectedValue={selectedProgramme} onValueChange={setselectedProgramme} items={Programme} placeholder="Select your programme" iconName="library-books"/>
 
       {displayedError !== '' && <StyledText type="error">{displayedError}</StyledText>}
 

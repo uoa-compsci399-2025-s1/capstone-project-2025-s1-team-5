@@ -3,10 +3,10 @@ import { PaginatedUserResponse } from "../../service-layer/response-models/UserR
 import { userAdaptor } from "../adapter/UserAdapter";
 import {  IUser } from "../models/models";
 import {User} from "../models/schema";
+import * as bcrypt from "bcrypt";
 
 export type UserCreationParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme">
 export type UserUpdateParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme">
-
 
 export class UserService {
     /**
@@ -50,10 +50,16 @@ export class UserService {
      * @param UserCreationsParams - user information from input
      * @returns void (Create User)
      */
-    public async createUser(userCreationParams: UserCreationParams): Promise<IUser> | null {
+    public async createUser(userCreationParams: UserCreationParams): Promise<IUser | null> {
         try {
-            const newUser = new User({...userCreationParams, role: "user"});
-
+            const hashedPassword = await bcrypt.hash(userCreationParams.password, 10);
+    
+            const newUser = new User({
+                ...userCreationParams,
+                password: hashedPassword,
+                role: "admin",
+            });
+    
             await newUser.save();
             return userAdaptor(newUser);
         } catch (error) {
@@ -95,4 +101,33 @@ export class UserService {
         const deletedUser = await User.findByIdAndDelete(userId);
         return !!deletedUser;
     }
+    /**
+     * 
+     * @param email 
+     * @param password 
+     * @returns User
+     */
+    public async findUserByLogin(email: string, password: string): Promise<IUser | null> {
+        try {
+            const user = await User.findOne({ email: email });
+    
+            if (!user) {
+                return null;
+            }
+    
+            const isPasswordValid = await bcrypt.compare(password, user.password);
+    
+            if (!isPasswordValid) {
+                return null;
+            }
+    
+            return user;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    
+    }
+    
+    
 }

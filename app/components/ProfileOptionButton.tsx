@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { TouchableOpacity, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import useTheme from '@/hooks/useTheme';
+import { ThemeContext } from '@/contexts/ThemeContext';
 import StyledText from '@/components/StyledText';
 
 interface ProfileOptionButtonProps {
@@ -10,13 +10,10 @@ interface ProfileOptionButtonProps {
 }
 
 const ProfileOptionButton: React.FC<ProfileOptionButtonProps> = ({ title, onPress, style }) => {
-  const { theme } = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
-    <TouchableOpacity
-      style={[styles.button, { backgroundColor: theme.primary }, style]}
-      onPress={onPress}
-    >
+    <TouchableOpacity style={[styles.button, { backgroundColor: theme.primary }, style]} onPress={onPress}>
       <StyledText type="boldLabel" style={{ color: '#FFFFFF' }}>{title}</StyledText>
     </TouchableOpacity>
   );

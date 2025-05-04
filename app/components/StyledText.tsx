@@ -1,5 +1,6 @@
+import React, { useContext } from 'react';
 import { Text, StyleSheet, StyleProp, TextStyle } from 'react-native';
-import useTheme from '@/hooks/useTheme';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 type StyledTextProps = {
   children: React.ReactNode;
@@ -16,7 +17,7 @@ export default function StyledText({
   ellipsizeMode,
   style,
 }: StyledTextProps) {
-  const { theme } = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <Text

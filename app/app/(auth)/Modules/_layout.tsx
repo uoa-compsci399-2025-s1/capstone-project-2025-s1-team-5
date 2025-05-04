@@ -1,6 +1,7 @@
+import React from 'react';
 import { Stack } from 'expo-router';
-import StyledText from '@/components/StyledText';
 import { useLocalSearchParams } from 'expo-router';
+import StyledText from '@/components/StyledText';
 
 export default function ModulesLayout() {
   return (

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { TouchableOpacity, StyleSheet, View } from 'react-native';
+import { ThemeContext } from '@/contexts/ThemeContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import StyledText from '@/components/StyledText';
-import useTheme from '@/hooks/useTheme';
 
 interface ModuleButtonProps {
   moduleNumber: number;
@@ -12,7 +12,7 @@ interface ModuleButtonProps {
 }
 
 export default function ModuleButton({ moduleNumber, title, onPress, iconName }: ModuleButtonProps) {
-  const { theme } = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <TouchableOpacity
