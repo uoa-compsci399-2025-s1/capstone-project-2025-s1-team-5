@@ -9,8 +9,8 @@
 		"schemas": {
 			"RoleType": {
 				"enum": [
-					"user",
-					"admin"
+					"admin",
+					"user"
 				],
 				"type": "string"
 			},
