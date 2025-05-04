@@ -11,7 +11,7 @@ import { useRouter } from 'expo-router'
 import { ThemeContext } from '@/contexts/ThemeContext'
 import countries from 'world-countries'
 import { useLocalSearchParams } from 'expo-router'
-import axios from 'axios'
+import api from './lib/api'
 
 import SubmitButton from '@/components/SubmitButton'
 import TextInputBox from '@/components/TextInputBox'
@@ -43,7 +43,7 @@ export default function CreateProfileScreen() {
     }
 
     try {
-      await axios.post('http://localhost:3000/users', {
+      await api.post('/users', {
         first_name: firstName,
         last_name: lastName,
         email,
