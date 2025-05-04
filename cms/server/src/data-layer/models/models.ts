@@ -1,8 +1,8 @@
 import { Types } from "mongoose";
 
 export enum RoleType {
-    admin= "admin",
-    user= "user"
+    user= "user",
+    admin= "admin"
 }
 
 export interface IUser {

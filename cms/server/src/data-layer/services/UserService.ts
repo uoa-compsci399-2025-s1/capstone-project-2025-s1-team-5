@@ -57,7 +57,7 @@ export class UserService {
             const newUser = new User({
                 ...userCreationParams,
                 password: hashedPassword,
-                role: "admin",
+                role: "user",
             });
     
             await newUser.save();

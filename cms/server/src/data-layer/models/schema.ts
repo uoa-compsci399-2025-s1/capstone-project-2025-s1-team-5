@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IModule, IProgramme, IQuestion, ISubsection, IUser } from "./models";
+import { IModule, IProgramme, IQuestion, ISubsection, IUser, RoleType } from "./models";
 
 const userSchema: Schema<IUser> = new Schema(
     {
@@ -29,6 +29,8 @@ const userSchema: Schema<IUser> = new Schema(
         }, 
         role: {
             type: String,
+            enum: Object.values(RoleType),
+            default: RoleType.user,
             required: true
         }
     },
