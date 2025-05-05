@@ -1,3 +1,4 @@
+import * as SecureStore from 'expo-secure-store'
 import React, { useState, useContext } from 'react'
 import {
   View,
@@ -51,6 +52,16 @@ export default function CreateProfileScreen() {
         country: selectedCountry,
         programme: selectedProgramme,
       })
+
+      const loginRes = await api.post<{ token: string }>('/auth/login', {
+        email,
+        password,
+      })
+
+      await SecureStore.setItemAsync('USER_TOKEN', loginRes.data.token)
+      
+      //update userContext....
+      
       router.replace('/Modules')
     } catch (error) {
       console.error(error)

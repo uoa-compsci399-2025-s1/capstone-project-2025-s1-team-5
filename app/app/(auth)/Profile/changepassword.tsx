@@ -32,7 +32,6 @@ export default function ChangePasswordScreen() {
       }
 
       try {
-         // call your backend
          const res = await api.post<{ message: string }>('/auth/changePassword', {
           oldPassword: currentPassword,
           newPassword,
@@ -41,10 +40,8 @@ export default function ChangePasswordScreen() {
         setSuccessMessage(res.data.message)
         setErrorMessage('')
 
-        // dismiss keyboard
         Keyboard.dismiss()
 
-        // after 2s go back
         setTimeout(() => router.back(), 2000)
 
       } catch (e) {
