@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
       height: 120,
       borderRadius: 60,
       borderWidth: 2,
-      borderColor: '#00467f',
+      borderColor: '#0c0c48',
     },
     avatarItem: {
       flex: 1,
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     },
     selectedImage: {
       borderWidth: 3,
-      borderColor: '#00467f',
+      borderColor: '#0c0c48',
     },
     confirmButtonContainer: {
       marginTop: 20,

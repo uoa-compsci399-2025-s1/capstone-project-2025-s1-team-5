@@ -39,7 +39,7 @@ export default function SignUpScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <View style={styles.appLogo}><Image source={require('@/assets/logos/VerticalColourLogo.png')} style={styles.logoImage}/></View>
+      <View style={styles.appLogo}><Image source={require('@/assets/logos/VerticalColourLogo1.png')} style={styles.logoImage}/></View>
 
       <TextInputBox placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" iconName="email"/>
       <TextInputBox placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry iconName="lock"/>
@@ -59,8 +59,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   appLogo: {
-    width: 165,
-    height: 165,
+    width: 200,
+    height: 240,
     borderRadius: 10,
     marginBottom: 40,
     marginTop: 60,

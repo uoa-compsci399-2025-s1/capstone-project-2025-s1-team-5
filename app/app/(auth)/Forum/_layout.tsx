@@ -9,7 +9,7 @@ export default function ForumLayout() {
         name="index" 
         options={{ 
           title: '',
-          headerStyle: { backgroundColor: '#00467f' },
+          headerStyle: { backgroundColor: '#0c0c48' },
           headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Forum</StyledText>,
         }} 
       />
