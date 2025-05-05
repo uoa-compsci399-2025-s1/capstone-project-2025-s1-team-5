@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, Keyboard, TouchableWithoutFeedback} from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { UserContext } from '@/contexts/UserContext';
@@ -63,21 +63,23 @@ export default function SignInScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <View style={styles.appLogo}><Image source={require('@/assets/logos/VerticalColourLogo.png')} style={styles.logoImage}/></View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
+        <View style={styles.appLogo}><Image source={require('@/assets/logos/VerticalColourLogo.png')} style={styles.logoImage}/></View>
 
-      <TextInputBox placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" iconName="email"/>
-      <TextInputBox placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry iconName="lock"/>
+        <TextInputBox placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" iconName="email"/>
+        <TextInputBox placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry iconName="lock"/>
 
-      {displayedError !== '' && <StyledText type="error">{displayedError}</StyledText>}
-      
-      <SubmitButton text="Sign In" onPress={handleSignIn} />
+        {displayedError !== '' && <StyledText type="error">{displayedError}</StyledText>}
+        
+        <SubmitButton text="Sign In" onPress={handleSignIn} />
 
-      <View style={styles.navLinksContainer}>
-        <NavLink text="Create Account" iconName="double-arrow" onPress={() => router.push('/signup')} />
-        <NavLink text="Forgot Password?" onPress={handleForgotPassword} />
+        <View style={styles.navLinksContainer}>
+          <NavLink text="Create Account" iconName="double-arrow" onPress={() => router.push('/signup')} />
+          <NavLink text="Forgot Password?" onPress={handleForgotPassword} />
+        </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 

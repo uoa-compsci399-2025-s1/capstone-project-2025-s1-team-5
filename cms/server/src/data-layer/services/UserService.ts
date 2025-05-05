@@ -129,7 +129,10 @@ export class UserService {
     
     }
     public async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<boolean> {
+        console.log(`>>> changePassword got userId = ${userId}`);
         const user = await User.findById(userId);
+        console.log(`>>> changePassword finds user.email = ${user?.email}`);
+
         if (!user) return false;
     
         const isMatch = await bcrypt.compare(oldPassword, user.password);

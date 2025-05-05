@@ -1,7 +1,9 @@
-import React, {useContext} from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import React, { useContext } from 'react';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { ThemeContext } from '@/contexts/ThemeContext';
+
 import SubModuleButton from '@/components/SubModuleButton';
+import StyledText from '@/components/StyledText';
 
 interface Submodule {
   title: string;
@@ -41,25 +43,33 @@ const moduleSubmodules: { [key: number]: Submodule[] } = {
 
 interface ModuleScreenProps {
   moduleNumber: number;
-  onBack: () => void;  // callback to return to module list
+  onBack: () => void;
 }
 
 const ModuleScreen: React.FC<ModuleScreenProps> = ({ moduleNumber, onBack }) => {
   const submodules = moduleSubmodules[moduleNumber] || [];
-  const {theme} = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
+
   const handleSubmodulePress = (title: string) => {
     console.log(`Submodule pressed: ${title}`);
-    // code module press logic needed
   };
 
   return (
-    <View style={[styles.container,{backgroundColor: theme.background}]}>
-      <TouchableOpacity onPress={onBack} style={styles.backButton}><Text style={styles.backText}>← Back to Modules</Text></TouchableOpacity>
-      <Text style={[styles.moduleTitle, {color: theme.text}]}>Module {moduleNumber}</Text>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <TouchableOpacity onPress={onBack} style={styles.backButton}>
+        <StyledText type="label" style={styles.backText}>← Back to Modules</StyledText>
+      </TouchableOpacity>
+
+      <StyledText type="title" style={styles.moduleTitle}>Module {moduleNumber}</StyledText>
 
       <View style={styles.submodulesContainer}>
         {submodules.map((submodule, index) => (
-          <SubModuleButton key={index} title={submodule.title} onPress={() => handleSubmodulePress(submodule.title)} iconName={submodule.iconName}/>
+          <SubModuleButton
+            key={index}
+            title={submodule.title}
+            onPress={() => handleSubmodulePress(submodule.title)}
+            iconName={submodule.iconName}
+          />
         ))}
       </View>
     </View>
@@ -70,7 +80,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
   },
   backButton: {
     alignSelf: 'flex-start',
@@ -79,14 +88,11 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 16,
-    color: '#0066cc',
     fontWeight: '500',
   },
   moduleTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
     marginBottom: 20,
-    color: '#333',
   },
   submodulesContainer: {
     width: '100%',
