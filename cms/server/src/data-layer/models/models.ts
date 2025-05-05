@@ -62,3 +62,18 @@ export interface ChangePasswordRequest {
     oldPassword: string;
     newPassword: string;
 }
+
+export interface IQuestion {
+    question: string;
+    options: string[];
+    correctAnswer: string;
+}
+
+export interface IQuiz {
+    title: string;
+    description: string;
+    questions: IQuestion[];
+    createdAt: Date;
+    updatedAt: Date;
+
+}
