@@ -128,6 +128,17 @@ export class UserService {
         }
     
     }
+    public async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<boolean> {
+        const user = await User.findById(userId);
+        if (!user) return false;
+    
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!isMatch) return false;
+    
+        const hashed = await bcrypt.hash(newPassword, 10);
+        await User.findByIdAndUpdate(userId, {password: hashed})
+        return true;
+      }
     
     
 }
