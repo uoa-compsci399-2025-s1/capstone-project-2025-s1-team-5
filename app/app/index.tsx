@@ -88,8 +88,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   appLogo: {
-    width: 165,
-    height: 165,
+    width: 200,
+    height: 240,
     borderRadius: 10,
     marginBottom: 40,
     marginTop: 60,
