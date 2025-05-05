@@ -60,7 +60,7 @@ export default function CreateProfileScreen() {
 
   return (
     <ScrollView contentContainerStyle={[styles.container, { backgroundColor: theme.background }]}>
-      <View style={styles.appLogo}><Image source={require('@/assets/logos/VerticalColourLogo1.png')} style={styles.logoImage}/></View>
+      <View style={styles.appLogo}><Image source={require('@/assets/logos/VerticalColourLogo.png')} style={styles.logoImage}/></View>
 
       <TextInputBox placeholder="First Name" value={firstName} onChangeText={setFirstName} iconName="person"/>
       <TextInputBox placeholder="Last Name" value={lastName} onChangeText={setLastName} iconName="person"/>
