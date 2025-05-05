@@ -37,6 +37,41 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated }) => {
         console.error(error);
       }
     };
+    
+    /*const handleSubmit = async (event: React.FormEvent) => {
+      event.preventDefault();
+    
+      const moduleData = {
+        title,
+        description,
+        subsectionIds,
+      };
+    
+      try {
+        // Retrieve the token from localStorage or SecureStore
+        const token = localStorage.getItem("USER_TOKEN"); // Adjust if stored elsewhere
+    
+        if (!token) {
+          setError("You are not authenticated. Please log in.");
+          return;
+        }
+    
+        // Make the POST request with the Authorization header
+        const response = await axios.post("http://localhost:3000/modules", moduleData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+    
+        setSuccess("Module created successfully!");
+        setError(null);
+        console.log(response.data); // Handle response data (created module)
+      } catch (error: any) {
+        setError("Error creating module!");
+        setSuccess(null);
+        console.error(error);
+      }
+    };*/
   
     return (
       <div>

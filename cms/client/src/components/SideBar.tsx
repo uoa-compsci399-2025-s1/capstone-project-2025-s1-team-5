@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import Button from './Button';
 import { useOutsideClick } from '../hooks/useOutsideClick';
+import Button from './Button';
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,7 +22,7 @@ function Sidebar() {
       border: 'none',
       position: 'fixed',
       top: '10px',
-      left: isOpen? '225px' : '20px',
+      left: isOpen ? '225px' : '20px',
       transition: 'left 0.3s ease',
       zIndex: 1000,
     },
@@ -55,11 +54,6 @@ function Sidebar() {
       padding: '15px',
       borderBottom: '1px solid #444',
     },
-    navLink: {
-      color: 'white',
-      textDecoration: 'none',
-      display: 'block',
-    },
   };
 
   return (
@@ -71,30 +65,21 @@ function Sidebar() {
       )}
 
       <div ref={sidebarRef} style={styles.sidebar as React.CSSProperties}>
-        <img src="/assets/images/DarkBlueLogo.png" alt="Logo" style={styles.logo}/>
-
+        <img src="/assets/images/DarkBlueLogo.png" alt="Logo" style={styles.logo} />
 
         <nav>
           <ul style={styles.nav}>
-            <li>
-              <Link to="/">
-                <Button label="Home" href="/" />
-              </Link>
+            <li style={styles.navItem}>
+              <Button label="Home" href="/" />
             </li>
-            <li>
-              <Link to="/modules/modules">
-                <Button label="Module Management" href="/modules/modules" />
-              </Link>
+            <li style={styles.navItem}>
+              <Button label="Module Management" href="/modules/modules" />
             </li>
-            <li>
-              <Link to="/modules/users">
-                <Button label="User Management" href="/modules/users" />
-              </Link>
+            <li style={styles.navItem}>
+              <Button label="User Management" href="/modules/users" />
             </li>
-            <li>
-              <Link to="/modules/account">
-                <Button label="Account Management" href="/modules/account" />
-              </Link>
+            <li style={styles.navItem}>
+              <Button label="Account Management" href="/modules/account" />
             </li>
           </ul>
         </nav>
@@ -103,5 +88,4 @@ function Sidebar() {
   );
 }
 
-
-  export default Sidebar;
+export default Sidebar;

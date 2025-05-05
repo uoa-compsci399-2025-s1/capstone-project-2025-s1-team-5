@@ -11,8 +11,7 @@ const Button: React.FC<ButtonProps> = ({ label, href }) => {
       color: 'white',
       textDecoration: 'none',
       display: 'block',
-      padding: '15px',
-      borderBottom: '1px solid #444',
+      padding: '4px',
       transition: 'background-color 0.3s ease',
     },
     buttonHover: {

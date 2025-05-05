@@ -15,6 +15,7 @@ export default function App() {
           <Route path="/modules/modules" element={<ModulesPage />} />
           <Route path="/modules/users" element={<UsersPage />} />
           <Route path="/modules/account" element={<AccountPage />} />
+          <Route path="*" element={<div>Page Not Found</div>} />
         </Routes>
     </Layout>
   </Router>

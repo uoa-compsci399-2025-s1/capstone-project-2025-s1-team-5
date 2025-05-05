@@ -1,3 +1,136 @@
-import React from 'react';
-import Layout from '../components/Layout';
-export {};
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import ModuleModal from "../components/ModuleModal";
+
+interface Module {
+  id: string;
+  title: string;
+  description: string;
+  subsectionIds: string[];
+}
+
+const ModulesPage = () => {
+  const [modules, setModules] = useState<Module[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortOption, setSortOption] = useState("title");
+  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
+
+  const fetchModules = async () => {
+    try {
+      const res = await axios.get("http://localhost:3000/modules");
+      setModules(res.data.modules);
+    } catch (error) {
+      console.error("Failed to fetch modules:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchModules();
+  }, []);
+
+  const sortedModules = [...modules].sort((a, b) => {
+    if (sortOption === "title") {
+      return a.title.localeCompare(b.title);
+    }
+    return 0;
+  });
+
+  return (
+    <div style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
+      <h1 style={{ fontSize: "2.5rem", textAlign: "center", marginBottom: "2rem" }}>
+        UOA YOUR WAY: Module Management
+      </h1>
+
+      <div
+        style={{
+          backgroundColor: "#f0f0f0",
+          borderRadius: "10px",
+          padding: "2rem",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <h2 style={{ fontSize: "1.8rem", margin: 0 }}>Content Modules:</h2>
+          <div>
+            <label htmlFor="sort" style={{ marginRight: "0.5rem" }}>
+              Sort by:
+            </label>
+            <select
+              id="sort"
+              style={{ padding: "0.5rem", borderRadius: "5px" }}
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+            >
+              <option value="title">Title</option>
+              <option value="lastModified">Last Modified</option>
+              <option value="editedBy">Edited By</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          {sortedModules
+            .filter((module) =>
+              module.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              module.description.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((module) => (
+              <div
+                key={module.id}
+                style={{
+                  backgroundColor: "#ffffff",
+                  borderRadius: "8px",
+                  padding: "1rem",
+                  marginBottom: "1rem",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <div>
+                  <h3 style={{ margin: 0 }}>{module.title}</h3>
+                  <p style={{ margin: "0.5rem 0 0 0", fontSize: "0.9rem", color: "#555" }}>
+                    Last modified: [Not implemented]
+                  </p>
+                  <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.9rem", color: "#555" }}>
+                    Edited by: [Not implemented]
+                  </p>
+                </div>
+                <button
+                  style={{
+                    backgroundColor: "#007bff",
+                    color: "#ffffff",
+                    border: "none",
+                    borderRadius: "5px",
+                    padding: "0.5rem 1rem",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => setSelectedModule(module)}
+                >
+                  Edit
+                </button>
+              </div>
+            ))}
+        </div>
+      </div>
+
+      <ModuleModal module={selectedModule} onClose={() => setSelectedModule(null)} />
+    </div>
+  );
+};
+
+export default function ModulesPageWithLayout() {
+  return (
+    <div>
+      <ModulesPage />
+    </div>
+  );
+}
