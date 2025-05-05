@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CreateModule from "./CreateModule";
 import EditModuleForm from "./EditModuleForm";
-import ModuleButton from "../components/ModuleButton"; // Import the reusable button
+import ModuleButton from "../components/ModuleButton";
 
 interface Module {
   id: string;
   title: string;
   description: string;
   subsectionIds: string[];
+  updatedAt: string;
 }
 
 const ModulesPage = () => {
@@ -21,6 +22,7 @@ const ModulesPage = () => {
   const fetchModules = async () => {
     try {
       const res = await axios.get("http://localhost:3000/modules");
+      console.log("Fetched modules:", res.data);
       setModules(res.data.modules);
     } catch (error) {
       console.error("Failed to fetch modules:", error);
@@ -34,6 +36,8 @@ const ModulesPage = () => {
   const sortedModules = [...modules].sort((a, b) => {
     if (sortOption === "title") {
       return a.title.localeCompare(b.title);
+    } else if (sortOption === "lastModified") {
+      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(); // Sort by newest first
     }
     return 0;
   });
@@ -72,7 +76,6 @@ const ModulesPage = () => {
             >
               <option value="title">Title</option>
               <option value="lastModified">Last Modified</option>
-              <option value="editedBy">Edited By</option>
             </select>
           </div>
           <ModuleButton
@@ -105,10 +108,7 @@ const ModulesPage = () => {
                 <div>
                   <h3 style={{ margin: 0 }}>{module.title}</h3>
                   <p style={{ margin: "0.5rem 0 0 0", fontSize: "0.9rem", color: "#555" }}>
-                    Last modified: [Not implemented]
-                  </p>
-                  <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.9rem", color: "#555" }}>
-                    Edited by: [Not implemented]
+                    Last modified: {new Date(module.updatedAt).toLocaleString()}
                   </p>
                 </div>
                 <ModuleButton

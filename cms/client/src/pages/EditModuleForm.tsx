@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+// Updated Module interface to include updatedAt
 interface Module {
   id: string;
   title: string;
   description: string;
   subsectionIds: string[];
+  updatedAt: string; // Added updatedAt field
 }
 
 interface EditModuleFormProps {
@@ -67,6 +69,12 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
             onChange={(e) => setSubsectionIds(e.target.value)}
             style={{ width: "100%", height: "80px" }}
           />
+        </div>
+        <div>
+          <label>Last Modified:</label>
+          <p style={{ fontSize: "1rem", color: "#555" }}>
+            {new Date(module.updatedAt).toLocaleString()}
+          </p>
         </div>
         <button type="submit">Update Module</button>
       </form>
