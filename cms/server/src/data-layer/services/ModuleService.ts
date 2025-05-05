@@ -86,7 +86,7 @@ export class ModuleService {
      */
     public async updateModule(
         moduleId: string,
-        moduleChanges: { title?: string; description?: string }
+        moduleChanges: { title?: string; description?: string; subsectionIds?: string[] }
       ): Promise<boolean> {
         try {
           const module = await newModule.findById(moduleId);
@@ -96,6 +96,7 @@ export class ModuleService {
           }
           module.title = moduleChanges.title;
           module.description = moduleChanges.description;
+          module.subsectionIds = moduleChanges.subsectionIds?.map(id => new mongoose.Types.ObjectId(id));
     
           await module.save();
           return true;

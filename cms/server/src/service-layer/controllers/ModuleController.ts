@@ -58,6 +58,7 @@ export class ModuleController extends Controller {
       @Path() moduleId: string,
       @Body() moduleChanges: { title?: string; description?: string; subsectionIds?: string[] }
     ): Promise<{ success: boolean }> {
+
       const moduleService = new ModuleService();
       const result = await moduleService.updateModule(moduleId, moduleChanges);
       return { success: result };
