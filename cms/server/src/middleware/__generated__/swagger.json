@@ -634,6 +634,64 @@
 					}
 				]
 			},
+			"put": {
+				"operationId": "UpdateModule",
+				"responses": {
+					"200": {
+						"description": "Module Updated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "moduleId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"subsectionIds": {
+										"items": {
+											"type": "string"
+										},
+										"type": "array"
+									},
+									"description": {
+										"type": "string"
+									},
+									"title": {
+										"type": "string"
+									}
+								},
+								"type": "object"
+							}
+						}
+					}
+				}
+			},
 			"delete": {
 				"operationId": "DeleteModule",
 				"responses": {

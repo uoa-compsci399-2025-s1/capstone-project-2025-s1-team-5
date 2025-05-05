@@ -52,6 +52,17 @@ export class ModuleController extends Controller {
         return newModule;
     }
 
+    @Put("{moduleId}")
+    @SuccessResponse(200, "Module Updated")
+    public async updateModule(
+      @Path() moduleId: string,
+      @Body() moduleChanges: { title?: string; description?: string; subsectionIds?: string[] }
+    ): Promise<{ success: boolean }> {
+      const moduleService = new ModuleService();
+      const result = await moduleService.updateModule(moduleId, moduleChanges);
+      return { success: result };
+    }
+
     @Delete("{moduleId}")
     @SuccessResponse(202, "Module Deleted")
     public async deleteModule(
