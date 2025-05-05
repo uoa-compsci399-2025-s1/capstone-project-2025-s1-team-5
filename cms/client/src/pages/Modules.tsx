@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CreateModule from "./CreateModule";
 import EditModuleForm from "./EditModuleForm";
+import ModuleButton from "../components/ModuleButton"; // Import the reusable button
 
 interface Module {
   id: string;
@@ -59,8 +60,7 @@ const ModulesPage = () => {
             marginBottom: "1.5rem",
           }}
         >
-          <h2 style={{ fontSize: "1.8rem", margin: 0 }}>Content Modules:</h2>
-          <div>
+          <div style={{ display: "flex", alignItems: "center" }}>
             <label htmlFor="sort" style={{ marginRight: "0.5rem" }}>
               Sort by:
             </label>
@@ -75,6 +75,11 @@ const ModulesPage = () => {
               <option value="editedBy">Edited By</option>
             </select>
           </div>
+          <ModuleButton
+            label="Create Module"
+            onClick={() => setShowCreateModule(true)}
+            color="#28a745"
+          />
         </div>
 
         <div>
@@ -106,48 +111,53 @@ const ModulesPage = () => {
                     Edited by: [Not implemented]
                   </p>
                 </div>
-                <button
-                  style={{
-                    backgroundColor: "#007bff",
-                    color: "#ffffff",
-                    border: "none",
-                    borderRadius: "5px",
-                    padding: "0.5rem 1rem",
-                    cursor: "pointer",
-                  }}
+                <ModuleButton
+                  label="Edit"
                   onClick={() => setEditModule(module)}
-                >
-                  Edit
-                </button>
+                  color="#007bff"
+                />
               </div>
             ))}
         </div>
       </div>
 
-      <div style={{ marginTop: "2rem" }}>
-        <button
+      {showCreateModule && (
+        <div
           style={{
-            backgroundColor: "#28a745",
-            color: "#ffffff",
-            border: "none",
-            borderRadius: "5px",
-            padding: "0.5rem 1rem",
-            cursor: "pointer",
-            marginRight: "1rem",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
-          onClick={() => setShowCreateModule(true)}
         >
-          Create Module
-        </button>
-        {showCreateModule && (
-          <CreateModule
-            onModuleCreated={() => {
-              fetchModules();
-              setShowCreateModule(false);
+          <div
+            style={{
+              backgroundColor: "#ffffff",
+              borderRadius: "10px",
+              padding: "2rem",
+              width: "500px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
             }}
-          />
-        )}
-      </div>
+          >
+            <CreateModule
+              onModuleCreated={() => {
+                fetchModules();
+                setShowCreateModule(false);
+              }}
+            />
+            <ModuleButton
+              label="Close"
+              onClick={() => setShowCreateModule(false)}
+              color="#dc3545"
+            />
+          </div>
+        </div>
+      )}
 
       {editModule && (
         <div
@@ -180,20 +190,11 @@ const ModulesPage = () => {
               }}
               setEditModule={setEditModule}
             />
-            <button
-              style={{
-                marginTop: "1rem",
-                backgroundColor: "#dc3545",
-                color: "#ffffff",
-                border: "none",
-                borderRadius: "5px",
-                padding: "0.5rem 1rem",
-                cursor: "pointer",
-              }}
+            <ModuleButton
+              label="Close"
               onClick={() => setEditModule(null)}
-            >
-              Close
-            </button>
+              color="#dc3545"
+            />
           </div>
         </div>
       )}
