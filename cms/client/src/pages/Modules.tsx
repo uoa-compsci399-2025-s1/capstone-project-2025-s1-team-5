@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import ModuleModal from "../components/ModuleModal";
+import CreateModule from "./CreateModule";
+import EditModuleForm from "./EditModuleForm";
 
 interface Module {
   id: string;
@@ -13,7 +14,8 @@ const ModulesPage = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("title");
-  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
+  const [showCreateModule, setShowCreateModule] = useState(false);
+  const [editModule, setEditModule] = useState<Module | null>(null);
 
   const fetchModules = async () => {
     try {
@@ -113,7 +115,7 @@ const ModulesPage = () => {
                     padding: "0.5rem 1rem",
                     cursor: "pointer",
                   }}
-                  onClick={() => setSelectedModule(module)}
+                  onClick={() => setEditModule(module)}
                 >
                   Edit
                 </button>
@@ -122,7 +124,79 @@ const ModulesPage = () => {
         </div>
       </div>
 
-      <ModuleModal module={selectedModule} onClose={() => setSelectedModule(null)} />
+      <div style={{ marginTop: "2rem" }}>
+        <button
+          style={{
+            backgroundColor: "#28a745",
+            color: "#ffffff",
+            border: "none",
+            borderRadius: "5px",
+            padding: "0.5rem 1rem",
+            cursor: "pointer",
+            marginRight: "1rem",
+          }}
+          onClick={() => setShowCreateModule(true)}
+        >
+          Create Module
+        </button>
+        {showCreateModule && (
+          <CreateModule
+            onModuleCreated={() => {
+              fetchModules();
+              setShowCreateModule(false);
+            }}
+          />
+        )}
+      </div>
+
+      {editModule && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#ffffff",
+              borderRadius: "10px",
+              padding: "2rem",
+              width: "500px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+            }}
+          >
+            <EditModuleForm
+              module={editModule}
+              onModuleUpdated={() => {
+                fetchModules();
+                setEditModule(null);
+              }}
+              setEditModule={setEditModule}
+            />
+            <button
+              style={{
+                marginTop: "1rem",
+                backgroundColor: "#dc3545",
+                color: "#ffffff",
+                border: "none",
+                borderRadius: "5px",
+                padding: "0.5rem 1rem",
+                cursor: "pointer",
+              }}
+              onClick={() => setEditModule(null)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
