@@ -1,1 +1,3 @@
 node_modules/
+cms/server/src/middleware/__generated__/swagger.json
+cms/server/src/middleware/__generated__/routes.ts
