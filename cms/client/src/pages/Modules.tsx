@@ -16,7 +16,7 @@ const ModulesPage = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("title");
-  const [showCreateModule, setShowCreateModule] = useState(false);
+  const [showCreateModule, setCreateModule] = useState(false);
   const [editModule, setEditModule] = useState<Module | null>(null);
 
   const fetchModules = async () => {
@@ -37,7 +37,7 @@ const ModulesPage = () => {
     if (sortOption === "title") {
       return a.title.localeCompare(b.title);
     } else if (sortOption === "lastModified") {
-      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(); // Sort by newest first
+      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(); 
     }
     return 0;
   });
@@ -80,7 +80,7 @@ const ModulesPage = () => {
           </div>
           <ModuleButton
             label="Create Module"
-            onClick={() => setShowCreateModule(true)}
+            onClick={() => setCreateModule(true)}
             color="#28a745"
           />
         </div>
@@ -147,13 +147,9 @@ const ModulesPage = () => {
             <CreateModule
               onModuleCreated={() => {
                 fetchModules();
-                setShowCreateModule(false);
+                setCreateModule(false);
               }}
-            />
-            <ModuleButton
-              label="Close"
-              onClick={() => setShowCreateModule(false)}
-              color="#dc3545"
+              setCreateModule={setCreateModule}
             />
           </div>
         </div>
@@ -189,11 +185,6 @@ const ModulesPage = () => {
                 setEditModule(null);
               }}
               setEditModule={setEditModule}
-            />
-            <ModuleButton
-              label="Close"
-              onClick={() => setEditModule(null)}
-              color="#dc3545"
             />
           </div>
         </div>

@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-// Updated Module interface to include updatedAt
 interface Module {
   id: string;
   title: string;
   description: string;
   subsectionIds: string[];
-  updatedAt: string; // Added updatedAt field
+  updatedAt: string;
 }
 
 interface EditModuleFormProps {
@@ -42,9 +41,12 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
   return (
     <div>
       <h2>Edit Module</h2>
+      <p style={{ fontSize: "1rem", color: "#555" }}>
+        Last modified: {new Date(module.updatedAt).toLocaleString()}
+      </p>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Title:</label>
+        <div style={{ marginBottom: "1rem" }}>
+          <label style={{ display: "block", marginBottom: "0.5rem" }}>Title:</label>
           <input
             type="text"
             value={title}
@@ -53,8 +55,8 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
             required
           />
         </div>
-        <div>
-          <label>Description:</label>
+        <div style={{ marginBottom: "1rem" }}>
+          <label style={{ display: "block", marginBottom: "0.5rem" }}>Description:</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -62,23 +64,44 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
             required
           />
         </div>
-        <div>
-          <label>Subsection IDs (comma-separated):</label>
+        <div style={{ marginBottom: "1.5rem" }}>
+          <label style={{ display: "block", marginBottom: "0.5rem" }}>Subsection IDs (comma-separated):</label>
           <textarea
             value={subsectionIds}
             onChange={(e) => setSubsectionIds(e.target.value)}
             style={{ width: "100%", height: "80px" }}
           />
         </div>
-        <div>
-          <label>Last Modified:</label>
-          <p style={{ fontSize: "1rem", color: "#555" }}>
-            {new Date(module.updatedAt).toLocaleString()}
-          </p>
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1.5rem" }}>
+          <button
+            type="submit"
+            style={{
+              backgroundColor: "#007bff",
+              color: "#fff",
+              border: "none",
+              borderRadius: "5px",
+              padding: "0.5rem 1rem",
+              cursor: "pointer",
+            }}
+          >
+            Update Module
+          </button>
+          <button
+            type="button"
+            style={{
+              backgroundColor: "#dc3545",
+              color: "#fff",
+              border: "none",
+              borderRadius: "5px",
+              padding: "0.5rem 1rem",
+              cursor: "pointer",
+            }}
+            onClick={() => setEditModule(null)}
+          >
+            Close
+          </button>
         </div>
-        <button type="submit">Update Module</button>
       </form>
-      <button onClick={() => setEditModule(null)}>Cancel</button>
     </div>
   );
 };
