@@ -66,6 +66,7 @@ export class ModuleController extends Controller {
         return { message: "Module successfully deleted" };
     }
     
+
     @Post("{moduleId}")
     @SuccessResponse(201, "Subsection added")
     public async addSubsection(
@@ -77,18 +78,25 @@ export class ModuleController extends Controller {
         return result;
     }
 
-    @Put("{moduleId}/{subsectionId}")
-    @SuccessResponse(200, "Subsection updated")
+    @Put("subsection/{subsectionId}")
+    @SuccessResponse(202, "Subsection updated")
     public async editSubsection(
-    moduleId: string,
     subsectionId: string,
     @Body() subsectionChanges: { title?: string; body?: string }
     ): Promise<{ success: boolean }> {
     const moduleService = new ModuleService();
-    const result = await moduleService.editSubsection(moduleId, subsectionId, subsectionChanges);
+    const result = await moduleService.editSubsection(subsectionId, subsectionChanges);
     return { success: result };
     }
-
+    
+    @Get("subsection/{subsectionId}")
+    public async getSubseciton(
+      @Path() subsectionId: string
+    ): Promise<ISubsection> {
+        const moduleService = new ModuleService()
+        const subsection = await moduleService.getSubsectionById(subsectionId);
+        return subsection;
+    }
 
     @Delete("{moduleId}/{subsectionId}")
     public async deleteSubsectionFromModule(
@@ -99,6 +107,8 @@ export class ModuleController extends Controller {
         const result = await moduleService.deleteSubsection(moduleId, subsectionId);
         return { success: result };
     }
+  
+}
     
     // @Post("{moduleId/{subsectionId}")
     // public async addQuizSubsection(
@@ -108,6 +118,5 @@ export class ModuleController extends Controller {
     //     const moduleService = new ModuleService()
     //     const 
     // }
-}
 
 

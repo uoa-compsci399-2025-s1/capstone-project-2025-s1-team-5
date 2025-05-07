@@ -139,6 +139,15 @@ export class ModuleService {
         return error;
       }
     }
+    
+    public async getSubsectionById(subsectionId: string): Promise<ISubsection> {
+        const subsection = await Subsection.findById(subsectionId)
+      if (!subsection) {
+        throw new Error("Subsection Not Found")
+      }
+      return subsection
+    }
+
     /**
      * Deletes Subsection of a module
      * @param moduleId 
@@ -171,15 +180,10 @@ export class ModuleService {
        * @returns 
        */
       public async editSubsection(
-        moduleId: string,
         subsectionId: string,
         changes: { title?: string; body?: string }
       ): Promise<boolean> {
         try {
-          const module = await newModule.findById(moduleId);
-          if (!module) {
-            throw new Error("Module not found");
-          }
       
           const subsection = await Subsection.findById(subsectionId);
           if (!subsection) {
