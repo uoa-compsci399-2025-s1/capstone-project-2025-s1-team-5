@@ -779,6 +779,37 @@
 				}
 			}
 		},
+		"/modules/{moduleId}/subsections": {
+			"get": {
+				"operationId": "GetSubsections",
+				"responses": {
+					"200": {
+						"description": "Subsections fetched",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/ISubsection"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "moduleId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/modules/{moduleId}/{subsectionId}": {
 			"put": {
 				"operationId": "EditSubsection",

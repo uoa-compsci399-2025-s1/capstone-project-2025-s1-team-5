@@ -44,8 +44,8 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
     <div>
       <h1>Create Module</h1>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Module Title:</label>
+        <div style={{ marginBottom: "1rem" }}>
+          <label style={{ display: "block", marginBottom: "0.5rem" }}>Module Title:</label>
           <input
             type="text"
             value={title}
@@ -55,8 +55,8 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
             required
           />
         </div>
-        <div>
-          <label>Description Content:</label>
+        <div style={{ marginBottom: "1rem" }}>
+          <label style={{ display: "block", marginBottom: "0.5rem" }}>Description Content:</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -65,8 +65,8 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
             required
           />
         </div>
-        <div>
-          <label>Subsection IDs (comma-separated):</label>
+        <div style={{ marginBottom: "1.5rem" }}>
+          <label style={{ display: "block", marginBottom: "0.5rem" }}>Subsection IDs (comma-separated):</label>
           <textarea
             value={subsectionIds.join(", ")}
             onChange={handleSubsectionIdsChange}

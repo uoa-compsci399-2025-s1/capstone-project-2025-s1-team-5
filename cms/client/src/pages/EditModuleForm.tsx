@@ -40,7 +40,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
 
   return (
     <div>
-      <h2>Edit Module</h2>
+      <h1>Edit Module</h1>
       <p style={{ fontSize: "1rem", color: "#555" }}>
         Last modified: {new Date(module.updatedAt).toLocaleString()}
       </p>
