@@ -22,3 +22,12 @@ export interface UserPostResponse {
 export interface UserDeleteResponse{
     message: string
 }
+
+export interface UserInfo { 
+    first_name: string
+    last_name: string
+    email: string,
+    avatar: string
+    colorPref: string
+    country: string
+}

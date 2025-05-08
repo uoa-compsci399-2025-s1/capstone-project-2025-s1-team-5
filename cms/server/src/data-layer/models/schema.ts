@@ -20,6 +20,16 @@ const userSchema: Schema<IUser> = new Schema(
             type: String,
             required: true
         },
+        avatar: {
+            type: String,
+            required: false,
+            default: "default"
+        },
+        colorPref: {
+            type: String,
+            required: true,
+            default: "lightTheme"
+        },
         country: {
             type: String,
             required: true

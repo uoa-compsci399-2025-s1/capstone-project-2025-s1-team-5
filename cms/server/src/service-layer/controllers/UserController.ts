@@ -12,7 +12,7 @@ import {
 } from "tsoa";
 
 import { UserService, UserCreationParams, UserUpdateParams } from "../../data-layer/services/UserService";
-import { PaginatedUserResponse, UserGetResponse, UserPostResponse, UserUpdateResponse } from "../response-models/UserResponse";
+import { PaginatedUserResponse, UserGetResponse, UserInfo, UserPostResponse, UserUpdateResponse } from "../response-models/UserResponse";
 import { userAdaptor } from "../../data-layer/adapter/UserAdapter";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
@@ -53,6 +53,19 @@ export class UsersController extends Controller {
         const newUser = await new UserService().createUser(requestbody);
         this.setStatus(201); 
         return {user: newUser}
+    }
+
+    @Get("userInfo/{userId}")
+    @SuccessResponse(200, "User Information Fetched")
+    public async GetUserInfo(@Path() userId: string):
+    Promise<UserInfo> {
+        const userService = new UserService()
+        const userInfo = userService.getUserInfo(userId)
+        if (!userInfo) {
+            this.setStatus(404);
+            throw new Error("User not found");
+          }
+          return userInfo;
     }
         
 
