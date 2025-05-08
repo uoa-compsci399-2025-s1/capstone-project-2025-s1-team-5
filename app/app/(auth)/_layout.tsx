@@ -7,11 +7,7 @@ import { ThemeProvider, ThemeContext } from '@/contexts/ThemeContext';
 
 export default function Layout() {
   return (
-    <ThemeProvider>
-      <UserProvider>
-        <LayoutInner />
-      </UserProvider>
-    </ThemeProvider>
+    <LayoutInner />
   );
 }
 

@@ -28,7 +28,7 @@ const userSchema: Schema<IUser> = new Schema(
         colorPref: {
             type: String,
             required: true,
-            default: "lightTheme"
+            default: "light"
         },
         country: {
             type: String,

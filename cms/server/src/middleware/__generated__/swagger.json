@@ -1037,6 +1037,56 @@
 					}
 				}
 			}
+		},
+		"/auth/me": {
+			"get": {
+				"operationId": "Me",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"avatar": {
+											"type": "string"
+										},
+										"colorPref": {
+											"type": "string"
+										},
+										"email": {
+											"type": "string"
+										},
+										"last_name": {
+											"type": "string"
+										},
+										"first_name": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"avatar",
+										"colorPref",
+										"email",
+										"last_name",
+										"first_name"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"auth"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
 		}
 	},
 	"servers": [
