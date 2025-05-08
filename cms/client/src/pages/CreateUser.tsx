@@ -29,7 +29,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onUserCreated }) => {
       email,
       password,
       country,
-      programme
+      programme,
     };
 
     try {

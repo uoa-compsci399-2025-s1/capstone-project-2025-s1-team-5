@@ -6,7 +6,7 @@ import {User} from "../models/schema";
 import * as bcrypt from "bcrypt";
 
 export type UserCreationParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme">
-export type UserUpdateParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme">
+export type UserUpdateParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme" | "role">
 
 export class UserService {
     /**
@@ -57,7 +57,7 @@ export class UserService {
             const newUser = new User({
                 ...userCreationParams,
                 password: hashedPassword,
-                role: "admin",
+                role: "user",
             });
     
             await newUser.save();
@@ -128,6 +128,20 @@ export class UserService {
         }
     
     }
+    public async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<boolean> {
+        console.log(`>>> changePassword got userId = ${userId}`);
+        const user = await User.findById(userId);
+        console.log(`>>> changePassword finds user.email = ${user?.email}`);
+
+        if (!user) return false;
+    
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!isMatch) return false;
+    
+        const hashed = await bcrypt.hash(newPassword, 10);
+        await User.findByIdAndUpdate(userId, {password: hashed})
+        return true;
+      }
     
     
 }

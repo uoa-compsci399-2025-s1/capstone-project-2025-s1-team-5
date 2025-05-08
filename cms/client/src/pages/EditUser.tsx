@@ -39,6 +39,7 @@ const EditUserForm: React.FC<EditUserFormProps> = ({ user, onUserUpdated, setEdi
         "password": password,
         "country": country,
         "programme": programme,
+        "role": role,
       };
 
     try {
@@ -106,6 +107,17 @@ const EditUserForm: React.FC<EditUserFormProps> = ({ user, onUserUpdated, setEdi
             value={programme}
             onChange={(e) => setProgramme(e.target.value)}
           />
+        </div>
+        <div>
+          <label>Role</label>
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            required
+          >
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
         </div>
         <button type="submit">Update User</button>
       </form>

@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Stack } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
 import StyledText from '@/components/StyledText';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 export default function ModulesLayout() {
+  const {theme} = useContext(ThemeContext);
   return (
     <Stack>
       <Stack.Screen 
         name="index" 
         options={{ 
           title: '',
-          headerStyle: { backgroundColor: '#00467f' },
+          headerStyle: { backgroundColor: theme.primary },
           headerTitle: () => <StyledText type="title" style={{ color: '#fff' }}>Modules</StyledText>,
           headerTintColor: '#fff',
         }} 
@@ -19,7 +21,7 @@ export default function ModulesLayout() {
         name="[moduleNumber]" 
         options={{
           title: '',
-          headerStyle: { backgroundColor: '#00467f' },
+          headerStyle: { backgroundColor: '#0c0c48' },
           headerTitle: () => {
             const params = useLocalSearchParams();
             const moduleTitles: Record<string, string> = {

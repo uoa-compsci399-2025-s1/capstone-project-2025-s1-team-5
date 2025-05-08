@@ -85,9 +85,14 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme-or-role_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"first_name":{"dataType":"string","required":true},"last_name":{"dataType":"string","required":true},"email":{"dataType":"string","required":true},"password":{"dataType":"string","required":true},"country":{"dataType":"string","required":true},"programme":{"dataType":"string"},"role":{"ref":"RoleType","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UserUpdateParams": {
         "dataType": "refAlias",
-        "type": {"ref":"Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme_","validators":{}},
+        "type": {"ref":"Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme-or-role_","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "mongoose.Types.ObjectId": {
@@ -140,6 +145,15 @@ const models: TsoaRoute.Models = {
             "published": {"dataType":"boolean","required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ChangePasswordRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "oldPassword": {"dataType":"string","required":true},
+            "newPassword": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -494,36 +508,6 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsModuleController_getSubsections: Record<string, TsoaRoute.ParameterSchema> = {
-                moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
-        };
-        app.get('/modules/:moduleId/subsections',
-            ...(fetchMiddlewares<RequestHandler>(ModuleController)),
-            ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.getSubsections)),
-
-            async function ModuleController_getSubsections(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsModuleController_getSubsections, request, response });
-
-                const controller = new ModuleController();
-
-              await templateService.apiHandler({
-                methodName: 'getSubsections',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: 200,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_addSubsection: Record<string, TsoaRoute.ParameterSchema> = {
                 moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
                 subsectionData: {"in":"body","name":"subsectionData","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"authorID":{"dataType":"string","required":true},"body":{"dataType":"string","required":true},"title":{"dataType":"string","required":true}}},
@@ -556,11 +540,10 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_editSubsection: Record<string, TsoaRoute.ParameterSchema> = {
-                moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
                 subsectionId: {"in":"path","name":"subsectionId","required":true,"dataType":"string"},
                 subsectionChanges: {"in":"body","name":"subsectionChanges","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"body":{"dataType":"string"},"title":{"dataType":"string"}}},
         };
-        app.put('/modules/:moduleId/:subsectionId',
+        app.put('/modules/subsection/:subsectionId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.editSubsection)),
 
@@ -580,7 +563,37 @@ export function RegisterRoutes(app: Router) {
                 response,
                 next,
                 validatedArgs,
-                successStatus: 200,
+                successStatus: 202,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsModuleController_getSubseciton: Record<string, TsoaRoute.ParameterSchema> = {
+                subsectionId: {"in":"path","name":"subsectionId","required":true,"dataType":"string"},
+        };
+        app.get('/modules/subsection/:subsectionId',
+            ...(fetchMiddlewares<RequestHandler>(ModuleController)),
+            ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.getSubseciton)),
+
+            async function ModuleController_getSubseciton(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsModuleController_getSubseciton, request, response });
+
+                const controller = new ModuleController();
+
+              await templateService.apiHandler({
+                methodName: 'getSubseciton',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
               });
             } catch (err) {
                 return next(err);
@@ -637,6 +650,38 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'login',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAuthController_changePassword: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"ChangePasswordRequest"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.post('/auth/changePassword',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AuthController)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.changePassword)),
+
+            async function AuthController_changePassword(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_changePassword, request, response });
+
+                const controller = new AuthController();
+
+              await templateService.apiHandler({
+                methodName: 'changePassword',
                 controller,
                 response,
                 next,

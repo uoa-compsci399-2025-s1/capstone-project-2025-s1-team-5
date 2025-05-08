@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 
@@ -38,7 +38,8 @@ export default function SignUpScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.appLogo}><Image source={require('@/assets/logos/VerticalColourLogo.png')} style={styles.logoImage}/></View>
 
       <TextInputBox placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" iconName="email"/>
@@ -49,6 +50,7 @@ export default function SignUpScreen() {
 
       <SubmitButton text="Sign Up" onPress={handleSignUp} />
     </View>
+    </TouchableWithoutFeedback> 
   );
 }
 
@@ -59,8 +61,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   appLogo: {
-    width: 165,
-    height: 165,
+    width: 200,
+    height: 240,
     borderRadius: 10,
     marginBottom: 40,
     marginTop: 60,

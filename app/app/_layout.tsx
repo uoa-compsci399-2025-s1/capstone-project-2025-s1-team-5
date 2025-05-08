@@ -51,7 +51,7 @@ export default function RootLayout() {
           name="index" 
           options={{ 
             title: '',
-            headerStyle: { backgroundColor: '#00467f' },
+            headerStyle: { backgroundColor: '#0c0c48' },
             headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>UoA Your Way</StyledText>,
             headerTintColor: '#ffffff',
           }} 
@@ -60,7 +60,7 @@ export default function RootLayout() {
           name="signup" 
           options={{ 
             title: '',
-            headerStyle: { backgroundColor: '#00467f' },
+            headerStyle: { backgroundColor: '#0c0c48' },
             headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Sign Up</StyledText>,
             headerTintColor: '#ffffff',
           }} 
@@ -69,7 +69,7 @@ export default function RootLayout() {
           name="createprofile" 
           options={{ 
             title: '',
-            headerStyle: { backgroundColor: '#00467f' },
+            headerStyle: { backgroundColor: '#0c0c48' },
             headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Create Profile</StyledText>,
             headerTintColor: '#ffffff',
           }} 
