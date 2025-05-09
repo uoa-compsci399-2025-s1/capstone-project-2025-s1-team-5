@@ -154,7 +154,7 @@ export class UsersController extends Controller {
         this.setStatus(401);
         return { message: 'Unauthorized' };
         }
-        const ok = await new UserService().updateThemePreference(userId, body.themePreference);
+        const ok = await new UserService().updateThemePreference(userId, body.colorPref);
         if (!ok) {
         this.setStatus(400);
         return { message: 'Failed to update theme preference' };

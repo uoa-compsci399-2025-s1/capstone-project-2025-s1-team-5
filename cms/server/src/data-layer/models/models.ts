@@ -84,5 +84,5 @@ export interface UpdateAvatarRequest {
 }
 
 export interface UpdateThemeRequest {
-  themePreference: 'light' | 'dark' | 'system';
+  colorPref: 'light' | 'dark' | 'system';
 }

@@ -158,11 +158,11 @@ export class UserService {
     /** Update just the themePreference field */
     public async updateThemePreference(
         userId: string,
-        themePreference: 'light' | 'dark' | 'system'
+        colorPref: 'light' | 'dark' | 'system'
     ): Promise<boolean> {
         const result = await User.findByIdAndUpdate(
         userId,
-        { $set: { themePreference } },
+        { $set: { colorPref } },
         { new: false }
         );
         return !!result;

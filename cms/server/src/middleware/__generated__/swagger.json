@@ -248,7 +248,7 @@
 			},
 			"UpdateThemeRequest": {
 				"properties": {
-					"themePreference": {
+					"colorPref": {
 						"type": "string",
 						"enum": [
 							"light",
@@ -258,7 +258,7 @@
 					}
 				},
 				"required": [
-					"themePreference"
+					"colorPref"
 				],
 				"type": "object",
 				"additionalProperties": false

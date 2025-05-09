@@ -10,7 +10,7 @@ const ThemeScreen: React.FC = () => {
   const changeThemePreference = async (pref: 'light' | 'dark' | 'system') => {
     try {
       const res = await api.patch<{ message: string }>('/users/me/theme', {
-        themePreference: pref,
+        colorPref: pref,
       })
       console.log(res.data.message)
     } catch (e) {

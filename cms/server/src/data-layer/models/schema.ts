@@ -28,7 +28,8 @@ const userSchema: Schema<IUser> = new Schema(
         colorPref: {
             type: String,
             required: true,
-            default: "light"
+            enum: ['light', 'dark', 'system'],
+            default: "system",
         },
         country: {
             type: String,

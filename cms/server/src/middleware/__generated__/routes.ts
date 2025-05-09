@@ -121,7 +121,7 @@ const models: TsoaRoute.Models = {
     "UpdateThemeRequest": {
         "dataType": "refObject",
         "properties": {
-            "themePreference": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["light"]},{"dataType":"enum","enums":["dark"]},{"dataType":"enum","enums":["system"]}],"required":true},
+            "colorPref": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["light"]},{"dataType":"enum","enums":["dark"]},{"dataType":"enum","enums":["system"]}],"required":true},
         },
         "additionalProperties": false,
     },
