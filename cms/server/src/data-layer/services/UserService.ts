@@ -129,12 +129,8 @@ export class UserService {
     
     }
     public async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<boolean> {
-        console.log(`>>> changePassword got userId = ${userId}`);
         const user = await User.findById(userId);
-        console.log(`>>> changePassword finds user.email = ${user?.email}`);
-
         if (!user) return false;
-    
         const isMatch = await bcrypt.compare(oldPassword, user.password);
         if (!isMatch) return false;
     
@@ -149,5 +145,26 @@ export class UserService {
         return userInfo;
       }
     
-    
+        /** Update just the avatar field */
+    public async updateAvatar(userId: string, avatar: string): Promise<boolean> {
+        const result = await User.findByIdAndUpdate(
+        userId,
+        { $set: { avatar } },
+        { new: false }
+        );
+        return !!result;
+    }
+
+    /** Update just the themePreference field */
+    public async updateThemePreference(
+        userId: string,
+        themePreference: 'light' | 'dark' | 'system'
+    ): Promise<boolean> {
+        const result = await User.findByIdAndUpdate(
+        userId,
+        { $set: { themePreference } },
+        { new: false }
+        );
+        return !!result;
+    }
 }

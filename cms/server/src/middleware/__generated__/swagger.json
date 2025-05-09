@@ -234,6 +234,35 @@
 			"UserUpdateParams": {
 				"$ref": "#/components/schemas/Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme-or-role_"
 			},
+			"UpdateAvatarRequest": {
+				"properties": {
+					"avatar": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"avatar"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateThemeRequest": {
+				"properties": {
+					"themePreference": {
+						"type": "string",
+						"enum": [
+							"light",
+							"dark",
+							"system"
+						]
+					}
+				},
+				"required": [
+					"themePreference"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"mongoose.Types.ObjectId": {
 				"type": "string"
 			},
@@ -649,6 +678,89 @@
 									"email"
 								],
 								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/me/avatar": {
+			"patch": {
+				"operationId": "UpdateAvatar",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateAvatarRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/me/theme": {
+			"patch": {
+				"operationId": "UpdateTheme",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update logged-in user’s theme preference",
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateThemeRequest"
 							}
 						}
 					}
