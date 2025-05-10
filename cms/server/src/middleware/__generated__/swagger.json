@@ -31,6 +31,12 @@
 					"password": {
 						"type": "string"
 					},
+					"avatar": {
+						"type": "string"
+					},
+					"colorPref": {
+						"type": "string"
+					},
 					"country": {
 						"type": "string"
 					},
@@ -145,6 +151,38 @@
 			},
 			"UserCreationParams": {
 				"$ref": "#/components/schemas/Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme_"
+			},
+			"UserInfo": {
+				"properties": {
+					"first_name": {
+						"type": "string"
+					},
+					"last_name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"avatar": {
+						"type": "string"
+					},
+					"colorPref": {
+						"type": "string"
+					},
+					"country": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"first_name",
+					"last_name",
+					"email",
+					"avatar",
+					"colorPref",
+					"country"
+				],
+				"type": "object",
+				"additionalProperties": false
 			},
 			"UserUpdateResponse": {
 				"properties": {
@@ -328,6 +366,22 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"ChangePasswordRequest": {
+				"properties": {
+					"oldPassword": {
+						"type": "string"
+					},
+					"newPassword": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"oldPassword",
+					"newPassword"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {
@@ -506,6 +560,34 @@
 										"message"
 									],
 									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/userInfo/{userId}": {
+			"get": {
+				"operationId": "GetUserInfo",
+				"responses": {
+					"200": {
+						"description": "User Information Fetched",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserInfo"
 								}
 							}
 						}
@@ -883,6 +965,9 @@
 						}
 					}
 				},
+				"tags": [
+					"auth"
+				],
 				"security": [],
 				"parameters": [],
 				"requestBody": {
@@ -907,6 +992,100 @@
 						}
 					}
 				}
+			}
+		},
+		"/auth/changePassword": {
+			"post": {
+				"operationId": "ChangePassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"auth"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ChangePasswordRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/me": {
+			"get": {
+				"operationId": "Me",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"avatar": {
+											"type": "string"
+										},
+										"colorPref": {
+											"type": "string"
+										},
+										"email": {
+											"type": "string"
+										},
+										"last_name": {
+											"type": "string"
+										},
+										"first_name": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"avatar",
+										"colorPref",
+										"email",
+										"last_name",
+										"first_name"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"auth"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
 			}
 		}
 	},

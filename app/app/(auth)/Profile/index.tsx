@@ -17,7 +17,6 @@ const ProfileScreen: React.FC = () => {
   const router = useRouter(); 
 
   const features = ['Calendar', 'Support', 'Map'];
-
   const handleLogout = async() => {
     console.log('Logging out...');
     await SecureStore.deleteItemAsync('USER_TOKEN');
@@ -26,7 +25,7 @@ const ProfileScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <ProfileUserCard avatar={user.avatar} name="Jack Zhen" email="jackz123@aucklanduni.ac.nz" />
+      <ProfileUserCard avatar={user.avatar} name={user.first_name} email={user.email} />
 
       <View style={styles.bodyContent}>
         <View style={styles.buttonGrid}>

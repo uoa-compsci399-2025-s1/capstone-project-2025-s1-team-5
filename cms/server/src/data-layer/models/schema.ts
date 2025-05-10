@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IModule, IProgramme, IQuestion, ISubsection, IUser, RoleType } from "./models";
+import { IModule, IProgramme, IQuestion, IQuiz, ISubsection, IUser, RoleType } from "./models";
 
 const userSchema: Schema<IUser> = new Schema(
     {
@@ -19,6 +19,16 @@ const userSchema: Schema<IUser> = new Schema(
         password: {
             type: String,
             required: true
+        },
+        avatar: {
+            type: String,
+            required: false,
+            default: "default"
+        },
+        colorPref: {
+            type: String,
+            required: true,
+            default: "light"
         },
         country: {
             type: String,
@@ -94,34 +104,37 @@ const questionSchema: Schema<IQuestion> = new Schema(
             required: true
         }
     },
-    {timestamps: true}
 );
 
-// const quizSchema: Schema<IQuiz> = new Schema({
-//     title: {
-//         type: String,
-//         required: true
-//     },
-//     description: {
-//         type: String,
-//         required: true
-//     },
-//     questions: {
-//         type: [questionSchema],
-//         required: true
-//     },
-//     createdAt: {
-//         type: Date,
-//         default: Date.now
-//     }
-// }); 
+const quizSchema: Schema<IQuiz> = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    questions: {
+        type: [questionSchema],
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+}, 
+    {timestamps: true}
+); 
+
+
 
 const Question = mongoose.model<IQuestion>('Question', questionSchema);
 const newModule = mongoose.model<IModule>('newModule', moduleSchema);
 const Programme = mongoose.model<IProgramme>('Programme', programmeSchema);
 const User = mongoose.model<IUser>('User', userSchema);
 const Subsection = mongoose.model<ISubsection>('Subsection', subsectionSchema);
-// const Quiz = mongoose.model<IQuiz>('Quiz', quizSchema);
+const Quiz = mongoose.model<IQuiz>('Quiz', quizSchema);
 
 
-export { Programme, User, Subsection, newModule, Question}
+export { Programme, User, Subsection, newModule, Question, Quiz}

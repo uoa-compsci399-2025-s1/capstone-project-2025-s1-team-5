@@ -4,7 +4,7 @@ import React from 'react';
 function ContentPage() {
     return (
         // <Layout>
-            <div style={{ padding: '1rem',}}>
+            <div style={{ paddingLeft: '60px' }}>
             <h1>Content Management</h1>
             <p>Manage content.</p>
             </div>
