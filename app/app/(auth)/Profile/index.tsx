@@ -26,7 +26,7 @@ const ProfileScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <ProfileUserCard avatar={user.avatar} name={user.first_name} email={user.email} country={user.country}/>
+      <ProfileUserCard avatar={user.avatar} name={`${user.first_name} ${user.last_name}`} email={user.email} country={user.country}/>
 
       <View style={styles.bodyContent}>
         <View style={styles.buttonGrid}>
