@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { PaginatedUserResponse } from "../../service-layer/response-models/UserResponse";
+import { PaginatedUserResponse, UserInfo } from "../../service-layer/response-models/UserResponse";
 import { userAdaptor } from "../adapter/UserAdapter";
 import {  IUser } from "../models/models";
 import {User} from "../models/schema";
@@ -129,7 +129,10 @@ export class UserService {
     
     }
     public async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<boolean> {
+        console.log(`>>> changePassword got userId = ${userId}`);
         const user = await User.findById(userId);
+        console.log(`>>> changePassword finds user.email = ${user?.email}`);
+
         if (!user) return false;
     
         const isMatch = await bcrypt.compare(oldPassword, user.password);
@@ -138,6 +141,12 @@ export class UserService {
         const hashed = await bcrypt.hash(newPassword, 10);
         await User.findByIdAndUpdate(userId, {password: hashed})
         return true;
+      }
+      public async getUserInfo(userId: string): Promise<UserInfo> {
+        const userDoc = await User.findById(userId).select('first_name last_name email colorPref avatar');
+        if (!userDoc) return null;
+        const userInfo = userDoc.toObject() as UserInfo;
+        return userInfo;
       }
     
     

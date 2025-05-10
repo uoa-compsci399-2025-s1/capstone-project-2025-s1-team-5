@@ -8,7 +8,7 @@ interface ButtonProps {
 const Button: React.FC<ButtonProps> = ({ label, href }) => {
   const styles = {
     button: {
-      color: 'white',
+      color: 'black',
       textDecoration: 'none',
       display: 'block',
       padding: '15px',
@@ -16,7 +16,7 @@ const Button: React.FC<ButtonProps> = ({ label, href }) => {
       transition: 'background-color 0.3s ease',
     },
     buttonHover: {
-      backgroundColor: '#555',
+      backgroundColor: '#93c5fd',
     },
   };
 

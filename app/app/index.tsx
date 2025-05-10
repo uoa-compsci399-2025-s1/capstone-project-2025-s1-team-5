@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, Keyboard, TouchableWithoutFeedback} from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { UserContext } from '@/contexts/UserContext';
@@ -33,8 +33,9 @@ export default function SignInScreen() {
         const response = await api.post('/auth/login', { password, email });
         const token  = response.data.token;
         await SecureStore.setItemAsync('USER_TOKEN', token);
-        // const meRes = await api.get('/me');
-        // userContext.setUser(meRes.data);
+        const meRes = await api.get('/auth/me');
+        console.log(meRes.data);
+        userContext.setUser(meRes.data);
         router.replace('/Modules');
       } else {
         setDisplayedError('Please enter both email and password');
@@ -63,21 +64,23 @@ export default function SignInScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <View style={styles.appLogo}><Image source={require('@/assets/logos/VerticalColourLogo.png')} style={styles.logoImage}/></View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
+        <View style={styles.appLogo}><Image source={require('@/assets/logos/VerticalColourLogo.png')} style={styles.logoImage}/></View>
 
-      <TextInputBox placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" iconName="email"/>
-      <TextInputBox placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry iconName="lock"/>
+        <TextInputBox placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" iconName="email"/>
+        <TextInputBox placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry iconName="lock"/>
 
-      {displayedError !== '' && <StyledText type="error">{displayedError}</StyledText>}
-      
-      <SubmitButton text="Sign In" onPress={handleSignIn} />
+        {displayedError !== '' && <StyledText type="error">{displayedError}</StyledText>}
+        
+        <SubmitButton text="Sign In" onPress={handleSignIn} />
 
-      <View style={styles.navLinksContainer}>
-        <NavLink text="Create Account" iconName="double-arrow" onPress={() => router.push('/signup')} />
-        <NavLink text="Forgot Password?" onPress={handleForgotPassword} />
+        <View style={styles.navLinksContainer}>
+          <NavLink text="Create Account" iconName="double-arrow" onPress={() => router.push('/signup')} />
+          <NavLink text="Forgot Password?" onPress={handleForgotPassword} />
+        </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -88,8 +91,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   appLogo: {
-    width: 165,
-    height: 165,
+    width: 200,
+    height: 240,
     borderRadius: 10,
     marginBottom: 40,
     marginTop: 60,

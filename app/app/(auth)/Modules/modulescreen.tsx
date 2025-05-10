@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router'; // 🧭 Import router
 import { ThemeContext } from '@/contexts/ThemeContext';
 
 import SubModuleButton from '@/components/SubModuleButton';
@@ -11,7 +10,7 @@ interface Submodule {
   iconName: 'info' | 'touch-app';
 }
 
-export const moduleSubmodules: { [key: number]: Submodule[] } = {
+const moduleSubmodules: { [key: number]: Submodule[] } = {
   1: [
     { title: "Navigating your course", iconName: "info" },
     { title: "Using Canvas", iconName: "info" },
@@ -48,18 +47,11 @@ interface ModuleScreenProps {
 }
 
 const ModuleScreen: React.FC<ModuleScreenProps> = ({ moduleNumber, onBack }) => {
-  const router = useRouter();
   const submodules = moduleSubmodules[moduleNumber] || [];
   const { theme } = useContext(ThemeContext);
 
-  const handleSubmodulePress = (submoduleIndex: number) => {
-    router.push({
-      pathname: `/Modules/${submoduleIndex}`,
-      params: {
-        moduleNumber: moduleNumber.toString(),
-        submoduleNumber: submoduleIndex.toString(),
-      },
-    });
+  const handleSubmodulePress = (title: string) => {
+    console.log(`Submodule pressed: ${title}`);
   };
 
   return (
@@ -75,7 +67,7 @@ const ModuleScreen: React.FC<ModuleScreenProps> = ({ moduleNumber, onBack }) => 
           <SubModuleButton
             key={index}
             title={submodule.title}
-            onPress={() => handleSubmodulePress(index)}
+            onPress={() => handleSubmodulePress(submodule.title)}
             iconName={submodule.iconName}
           />
         ))}
