@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { Stack } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
-import StyledText from '@/components/StyledText';
 import { ThemeContext } from '@/contexts/ThemeContext';
+import StyledText from '@/components/StyledText';
 
 export default function ModulesLayout() {
   const {theme} = useContext(ThemeContext);

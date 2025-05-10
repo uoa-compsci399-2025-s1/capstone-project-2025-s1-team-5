@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
 import { moduleSubmodules } from './modulescreen';
+import { useLocalSearchParams } from 'expo-router';
 import StyledText from '@/components/StyledText';
-
 
 const SubmoduleScreen: React.FC = () => {
   const { moduleNumber, submoduleNumber } = useLocalSearchParams();
