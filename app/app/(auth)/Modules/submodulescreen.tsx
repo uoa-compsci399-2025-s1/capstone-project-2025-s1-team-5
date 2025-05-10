@@ -2,14 +2,15 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import StyledText from '@/components/StyledText';
 import { moduleSubmodules } from './modulescreen';
+import { useLocalSearchParams } from 'expo-router';
 
-interface Props {
-  moduleNumber: number;
-  submoduleNumber: number;
-}
+const SubmoduleScreen: React.FC = () => {
+  const { moduleNumber, submoduleNumber } = useLocalSearchParams();
 
-const SubmoduleScreen: React.FC<Props> = ({ moduleNumber, submoduleNumber }) => {
-  const submodule = moduleSubmodules[moduleNumber]?.[submoduleNumber];
+  const moduleIndex = Number(moduleNumber);
+  const submoduleIndex = Number(submoduleNumber);
+
+  const submodule = moduleSubmodules[moduleIndex]?.[submoduleIndex];
 
   if (!submodule) {
     return (
@@ -21,9 +22,11 @@ const SubmoduleScreen: React.FC<Props> = ({ moduleNumber, submoduleNumber }) => 
 
   return (
     <View style={styles.container}>
-      <StyledText type="title">Module {moduleNumber}</StyledText>
+      <StyledText type="title">Module {moduleIndex}</StyledText>
       <StyledText type="subtitle">{submodule.title}</StyledText>
-      <StyledText type="default">This is where content for "{submodule.title}" would go.</StyledText>
+      <StyledText type="default">
+        This is where content for "{submodule.title}" would go.
+      </StyledText>
     </View>
   );
 };

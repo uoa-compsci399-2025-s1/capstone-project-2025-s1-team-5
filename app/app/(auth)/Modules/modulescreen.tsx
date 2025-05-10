@@ -54,7 +54,7 @@ const ModuleScreen: React.FC<ModuleScreenProps> = ({ moduleNumber, onBack }) => 
 
   const handleSubmodulePress = (submoduleIndex: number) => {
     router.push({
-      pathname: `/Modules/${submoduleIndex}`,
+      pathname: `/Modules/submodulescreen`,
       params: {
         moduleNumber: moduleNumber.toString(),
         submoduleNumber: submoduleIndex.toString(),
@@ -71,11 +71,11 @@ const ModuleScreen: React.FC<ModuleScreenProps> = ({ moduleNumber, onBack }) => 
       <StyledText type="title" style={styles.moduleTitle}>Module {moduleNumber}</StyledText>
 
       <View style={styles.submodulesContainer}>
-        {submodules.map((submodule, index) => (
+        {submodules.map((submodule, title) => (
           <SubModuleButton
-            key={index}
+            key={title}
             title={submodule.title}
-            onPress={() => handleSubmodulePress(index)}
+            onPress={() => handleSubmodulePress(title)}
             iconName={submodule.iconName}
           />
         ))}
