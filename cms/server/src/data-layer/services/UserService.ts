@@ -5,7 +5,7 @@ import {  IUser } from "../models/models";
 import {User} from "../models/schema";
 import * as bcrypt from "bcrypt";
 
-export type UserCreationParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme">
+export type UserCreationParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme" | "colorPref">
 export type UserUpdateParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme" | "role">
 
 export class UserService {
@@ -139,13 +139,12 @@ export class UserService {
         return true;
       }
       public async getUserInfo(userId: string): Promise<UserInfo> {
-        const userDoc = await User.findById(userId).select('first_name last_name email colorPref avatar');
+        const userDoc = await User.findById(userId).select('first_name last_name email colorPref avatar country');
         if (!userDoc) return null;
         const userInfo = userDoc.toObject() as UserInfo;
         return userInfo;
       }
     
-        /** Update just the avatar field */
     public async updateAvatar(userId: string, avatar: string): Promise<boolean> {
         const result = await User.findByIdAndUpdate(
         userId,
@@ -155,10 +154,9 @@ export class UserService {
         return !!result;
     }
 
-    /** Update just the themePreference field */
     public async updateThemePreference(
         userId: string,
-        colorPref: 'light' | 'dark' | 'system'
+        colorPref: 'light' | 'dark'
     ): Promise<boolean> {
         const result = await User.findByIdAndUpdate(
         userId,

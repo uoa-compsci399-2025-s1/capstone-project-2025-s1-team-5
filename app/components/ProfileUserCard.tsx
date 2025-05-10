@@ -4,25 +4,30 @@ import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import StyledText from '@/components/StyledText';
 import profileAvatars from '@/constants/profileAvatars';
+import countries from 'world-countries';
 
 interface ProfileUserCardProps {
   avatar: string;
   name: string;
   email: string;
+  country: string;
 }
 
 
-const CountryTag: React.FC = () => {
+const CountryTag: React.FC<{ country: string }> = ({ country }) => {
   const { theme } = useContext(ThemeContext);
+  const countryObj = countries.find(c => c.name.common === country)
+  const code =countryObj?.cca2.toLowerCase();
+  const uri = `https://flagcdn.com/256x192/${code}.png`
   return (
     <View style={styles.countryContainer}>
-      <Image source={{ uri: 'https://flagcdn.com/w20/cn.png' }} style={styles.countryFlag} />
-      <StyledText type="label" style={{ color: theme.subtextOne }}>China</StyledText>
+      <Image source={{ uri }} style={styles.countryFlag} />
+      <StyledText type="label" style={{ color: theme.subtextOne }}>{country}</StyledText>
     </View>
   )
 };
 
-const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email }) => {
+const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email, country}) => {
   const router = useRouter();
   const { theme } = useContext(ThemeContext);
   return (
@@ -33,7 +38,7 @@ const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email }
       <View style={styles.profileInfo}>
         <StyledText type="title" style={{ color: theme.text }}>{name}</StyledText>
         <StyledText type="subtitle" style={{ color: theme.subtextOne }}>{email}</StyledText>
-        <CountryTag />
+        <CountryTag country={country}/>
       </View>
     </View>
   );

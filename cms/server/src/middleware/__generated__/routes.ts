@@ -69,14 +69,14 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme_": {
+    "Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme-or-colorPref_": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"first_name":{"dataType":"string","required":true},"last_name":{"dataType":"string","required":true},"email":{"dataType":"string","required":true},"password":{"dataType":"string","required":true},"country":{"dataType":"string","required":true},"programme":{"dataType":"string"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"first_name":{"dataType":"string","required":true},"last_name":{"dataType":"string","required":true},"email":{"dataType":"string","required":true},"password":{"dataType":"string","required":true},"country":{"dataType":"string","required":true},"programme":{"dataType":"string"},"colorPref":{"dataType":"string"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UserCreationParams": {
         "dataType": "refAlias",
-        "type": {"ref":"Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme_","validators":{}},
+        "type": {"ref":"Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme-or-colorPref_","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UserInfo": {
@@ -121,7 +121,7 @@ const models: TsoaRoute.Models = {
     "UpdateThemeRequest": {
         "dataType": "refObject",
         "properties": {
-            "colorPref": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["light"]},{"dataType":"enum","enums":["dark"]},{"dataType":"enum","enums":["system"]}],"required":true},
+            "colorPref": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["light"]},{"dataType":"enum","enums":["dark"]}],"required":true},
         },
         "additionalProperties": false,
     },

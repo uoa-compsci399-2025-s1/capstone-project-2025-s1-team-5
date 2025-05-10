@@ -118,7 +118,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme_": {
+			"Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme-or-colorPref_": {
 				"properties": {
 					"first_name": {
 						"type": "string"
@@ -137,6 +137,9 @@
 					},
 					"programme": {
 						"type": "string"
+					},
+					"colorPref": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -150,7 +153,7 @@
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
 			"UserCreationParams": {
-				"$ref": "#/components/schemas/Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme_"
+				"$ref": "#/components/schemas/Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme-or-colorPref_"
 			},
 			"UserInfo": {
 				"properties": {
@@ -252,8 +255,7 @@
 						"type": "string",
 						"enum": [
 							"light",
-							"dark",
-							"system"
+							"dark"
 						]
 					}
 				},
@@ -1160,6 +1162,9 @@
 							"application/json": {
 								"schema": {
 									"properties": {
+										"country": {
+											"type": "string"
+										},
 										"avatar": {
 											"type": "string"
 										},
@@ -1177,6 +1182,7 @@
 										}
 									},
 									"required": [
+										"country",
 										"avatar",
 										"colorPref",
 										"email",

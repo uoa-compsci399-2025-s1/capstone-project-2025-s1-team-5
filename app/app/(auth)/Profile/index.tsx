@@ -20,12 +20,13 @@ const ProfileScreen: React.FC = () => {
   const handleLogout = async() => {
     console.log('Logging out...');
     await SecureStore.deleteItemAsync('USER_TOKEN');
+    await SecureStore.deleteItemAsync('USER_THEME_PREFERENCE');
     router.replace('/'); 
   };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <ProfileUserCard avatar={user.avatar} name={user.first_name} email={user.email} />
+      <ProfileUserCard avatar={user.avatar} name={user.first_name} email={user.email} country={user.country}/>
 
       <View style={styles.bodyContent}>
         <View style={styles.buttonGrid}>
