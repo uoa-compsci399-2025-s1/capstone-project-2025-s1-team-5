@@ -1,44 +1,44 @@
 import React, { useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router'; // 🧭 Import router
+import { useRouter } from 'expo-router'; 
 import { ThemeContext } from '@/contexts/ThemeContext';
-
 import SubModuleButton from '@/components/SubModuleButton';
 import StyledText from '@/components/StyledText';
 
 interface Submodule {
+  id: string;
   title: string;
   iconName: 'info' | 'touch-app';
 }
 
 export const moduleSubmodules: { [key: number]: Submodule[] } = {
   1: [
-    { title: "Navigating your course", iconName: "info" },
-    { title: "Using Canvas", iconName: "info" },
-    { title: "Academic integrity", iconName: "info" },
-    { title: "Netiquette & code of conduct", iconName: "info" },
-    { title: "Prepare for success quiz", iconName: "touch-app" },
+    { id: 'm1s1', title: "Navigating your course", iconName: "info" },
+    { id: 'm1s2', title: "Using Canvas", iconName: "info" },
+    { id: 'm1s3', title: "Academic integrity", iconName: "info" },
+    { id: 'm1s4', title: "Netiquette & code of conduct", iconName: "info" },
+    { id: 'm1s5', title: "Prepare for success quiz", iconName: "touch-app" },
   ],
   2: [
-    { title: "Academic skills", iconName: "touch-app" },
-    { title: "Library & learning services", iconName: "info" },
-    { title: "Study tips", iconName: "info" },
-    { title: "Work life balance", iconName: "info" },
+    { id: 'm2s1', title: "Academic skills", iconName: "touch-app" },
+    { id: 'm2s2', title: "Library & learning services", iconName: "info" },
+    { id: 'm2s3', title: "Study tips", iconName: "info" },
+    { id: 'm2s4', title: "Work life balance", iconName: "info" },
   ],
   3: [
-    { title: "Where to go for help", iconName: "info" },
-    { title: "Meet the academics", iconName: "info" },
-    { title: "Meet your student advisers", iconName: "info" },
-    { title: "Introduction to Te Reo Maori", iconName: "touch-app" },
-    { title: "Forum", iconName: "touch-app" },
+    { id: 'm3s1', title: "Where to go for help", iconName: "info" },
+    { id: 'm3s2', title: "Meet the academics", iconName: "info" },
+    { id: 'm3s3', title: "Meet your student advisers", iconName: "info" },
+    { id: 'm3s4', title: "Introduction to Te Reo Maori", iconName: "touch-app" },
+    { id: 'm3s5', title: "Forum", iconName: "touch-app" },
   ],
   4: [
-    { title: "Life in Auckland", iconName: "info" },
-    { title: "Work rights & employment", iconName: "info" },
-    { title: "Intercultural communication", iconName: "info" },
-    { title: "Visas & insurance", iconName: "info" },
-    { title: "Biosecurity", iconName: "info" },
-    { title: "Accommodation", iconName: "touch-app" },
+    { id: 'm4s1', title: "Life in Auckland", iconName: "info" },
+    { id: 'm4s2', title: "Work rights & employment", iconName: "info" },
+    { id: 'm4s3', title: "Intercultural communication", iconName: "info" },
+    { id: 'm4s4', title: "Visas & insurance", iconName: "info" },
+    { id: 'm4s5', title: "Biosecurity", iconName: "info" },
+    { id: 'm4s6', title: "Accommodation", iconName: "touch-app" },
   ],
 };
 
@@ -52,12 +52,12 @@ const ModuleScreen: React.FC<ModuleScreenProps> = ({ moduleNumber, onBack }) => 
   const submodules = moduleSubmodules[moduleNumber] || [];
   const { theme } = useContext(ThemeContext);
 
-  const handleSubmodulePress = (submoduleIndex: number) => {
+  const handleSubmodulePress = (submoduleId: string) => {
     router.push({
-      pathname: `/Modules/${submoduleIndex}`,
+      pathname: "/(auth)/Modules/[submoduleNumber]" as const,
       params: {
         moduleNumber: moduleNumber.toString(),
-        submoduleNumber: submoduleIndex.toString(),
+        submoduleNumber: submoduleId, 
       },
     });
   };
@@ -71,11 +71,11 @@ const ModuleScreen: React.FC<ModuleScreenProps> = ({ moduleNumber, onBack }) => 
       <StyledText type="title" style={styles.moduleTitle}>Module {moduleNumber}</StyledText>
 
       <View style={styles.submodulesContainer}>
-        {submodules.map((submodule, index) => (
+        {submodules.map((submodule) => (
           <SubModuleButton
-            key={index}
+            key={submodule.id}
             title={submodule.title}
-            onPress={() => handleSubmodulePress(index)}
+            onPress={() => handleSubmodulePress(submodule.id)}
             iconName={submodule.iconName}
           />
         ))}
