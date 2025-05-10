@@ -71,11 +71,11 @@ const ModuleScreen: React.FC<ModuleScreenProps> = ({ moduleNumber, onBack }) => 
       <StyledText type="title" style={styles.moduleTitle}>Module {moduleNumber}</StyledText>
 
       <View style={styles.submodulesContainer}>
-        {submodules.map((submodule, title) => (
+        {submodules.map((submodule, index) => (
           <SubModuleButton
-            key={title}
+            key={`module-${moduleNumber}-sub-${index}`}
             title={submodule.title}
-            onPress={() => handleSubmodulePress(title)}
+            onPress={() => handleSubmodulePress(index)}
             iconName={submodule.iconName}
           />
         ))}
