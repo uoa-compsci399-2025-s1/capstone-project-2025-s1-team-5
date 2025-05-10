@@ -1,12 +1,12 @@
 import React from 'react';
 import { useLocalSearchParams } from 'expo-router';
-import SubmoduleInfoScreen from './submoduleinfoscreen';
+import SubmoduleScreen from './submodulescreen';
 
 const SubmoduleRoute = () => {
   const { moduleNumber, submoduleNumber } = useLocalSearchParams();
 
   return (
-    <SubmoduleInfoScreen
+    <SubmoduleScreen
       moduleNumber={Number(moduleNumber)}
       submoduleNumber={Number(submoduleNumber)}
     />
