@@ -3,7 +3,6 @@ import * as jwt from "jsonwebtoken";
 import { ChangePasswordRequest } from "../../data-layer/models/models";
 import { UserService } from "../../data-layer/services/UserService";
 
-
 @Route("auth")
 @Tags("auth")
 export class AuthController extends Controller {
@@ -66,7 +65,7 @@ export class AuthController extends Controller {
   }
   @Get("/me")
   @Security("jwt")
-  public async me(@Request() req: any): Promise<{ first_name: string; last_name: string; email: string; colorPref: string; avatar: string;}> {
+  public async me(@Request() req: any): Promise<{ first_name: string; last_name: string; email: string; colorPref: string; avatar: string; country: string}> {
     const userId = req.user.id;
     const userService = new UserService();
     const userInfo = await userService.getUserInfo(userId);

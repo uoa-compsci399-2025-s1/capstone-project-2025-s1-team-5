@@ -6,9 +6,12 @@ import {
     Path,
     Post,
     Put,
+    Patch,
     Query,
     Route,
     SuccessResponse,
+    Security,
+    Request,
 } from "tsoa";
 
 import { UserService, UserCreationParams, UserUpdateParams } from "../../data-layer/services/UserService";
@@ -17,6 +20,7 @@ import { userAdaptor } from "../../data-layer/adapter/UserAdapter";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { User } from "../../data-layer/models/schema";
+import { UpdateAvatarRequest, UpdateThemeRequest } from '../../data-layer/models/models';
 
 @Route("users")
 export class UsersController extends Controller {     
@@ -117,6 +121,45 @@ export class UsersController extends Controller {
     );
 
     return { token };
+    }
+
+    @Patch('/me/avatar')
+    @Security('jwt')
+    public async updateAvatar(
+        @Body() body: UpdateAvatarRequest,
+        @Request() req: any
+    ): Promise<{ message: string }> {
+        const userId = req.user?.id;
+        if (!userId) {
+        this.setStatus(401);
+        return { message: 'Unauthorized' };
+        }
+        const ok = await new UserService().updateAvatar(userId, body.avatar);
+        if (!ok) {
+        this.setStatus(400);
+        return { message: 'Failed to update avatar' };
+        }
+        return { message: 'Avatar updated successfully' };
+    }
+
+    /** Update logged-in user’s theme preference */
+    @Patch('/me/theme')
+    @Security('jwt')
+    public async updateTheme(
+        @Body() body: UpdateThemeRequest,
+        @Request() req: any
+    ): Promise<{ message: string }> {
+        const userId = req.user?.id;
+        if (!userId) {
+        this.setStatus(401);
+        return { message: 'Unauthorized' };
+        }
+        const ok = await new UserService().updateThemePreference(userId, body.colorPref);
+        if (!ok) {
+        this.setStatus(400);
+        return { message: 'Failed to update theme preference' };
+        }
+        return { message: 'Theme preference updated successfully' };
     }
 }
 

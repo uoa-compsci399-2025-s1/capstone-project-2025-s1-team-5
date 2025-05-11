@@ -6,6 +6,7 @@ export interface User {
     email: string;
     colorPref: string;
     avatar: string; // 'cat', 'dog'...
+    country: string;
   }
 
 interface UserContextProps {
@@ -19,6 +20,7 @@ const defaultUser: User = {
   email: 'default',
   colorPref: 'light',
   avatar: 'default', // 'cat', 'dog'...
+  country: 'New Zealand',
 }
 
 export const UserContext = createContext<UserContextProps>({

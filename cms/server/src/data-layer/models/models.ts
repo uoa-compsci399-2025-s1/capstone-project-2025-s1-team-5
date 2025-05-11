@@ -78,3 +78,11 @@ export interface IQuiz {
     updatedAt: Date;
 
 }
+
+export interface UpdateAvatarRequest {
+  avatar: string;         
+}
+
+export interface UpdateThemeRequest {
+  colorPref: 'light' | 'dark';
+}
