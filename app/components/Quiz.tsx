@@ -34,9 +34,9 @@ const quizQuestions: Question[] = [
     correctAnswer: 'Auckland',
   },
 ];
-  // need to pull questions, options and answers from the database
+
 export default function Quiz() {
-  const { theme } = useContext(ThemeContext); 
+  const { theme } = useContext(ThemeContext);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [isAnswerChecked, setIsAnswerChecked] = useState(false);
@@ -44,26 +44,31 @@ export default function Quiz() {
   const [resetFlag, setResetFlag] = useState(false);
 
   const handleAnswerChecked = (isCorrect: boolean) => {
-    if (isCorrect) {
-      setScore(prevScore => prevScore + 1);
+    if (!isAnswerChecked) {
+      if (isCorrect) {
+        setScore(prev => prev + 1);
+      }
+      setIsAnswerChecked(true);
     }
-    setIsAnswerChecked(true);
-
-    setTimeout(() => {
-      setResetFlag(true);
-      setTimeout(() => {
-        moveToNextQuestion();
-        setResetFlag(false);
-      }, 50);
-    }, 2000);
   };
 
   const moveToNextQuestion = () => {
     if (currentQuestionIndex < quizQuestions.length - 1) {
-      setCurrentQuestionIndex(prevIndex => prevIndex + 1);
+      setCurrentQuestionIndex(i => i + 1);
       setIsAnswerChecked(false);
+      setResetFlag(true);
+      setTimeout(() => setResetFlag(false), 50);
     } else {
       setIsQuizFinished(true);
+    }
+  };
+
+  const moveToPreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(i => i - 1);
+      setIsAnswerChecked(false);
+      setResetFlag(true);
+      setTimeout(() => setResetFlag(false), 50);
     }
   };
 
@@ -81,12 +86,37 @@ export default function Quiz() {
       {!isQuizFinished ? (
         <>
           <ProgressBar progress={progress} color={theme.primary} style={styles.progressBar} />
-          <QuestionCard key={currentQuestionIndex} questionData={quizQuestions[currentQuestionIndex]} onAnswerChecked={handleAnswerChecked} resetShowResult={resetFlag}/>
+
+          <QuestionCard
+            key={currentQuestionIndex}
+            questionData={quizQuestions[currentQuestionIndex]}
+            onAnswerChecked={handleAnswerChecked}
+            resetShowResult={resetFlag}
+          />
+
+          <View style={styles.navigationContainer}>
+            <TouchableOpacity
+              style={[styles.navButton, { backgroundColor: theme.primary, opacity: currentQuestionIndex === 0 ? 0.5 : 1 }]}
+              onPress={moveToPreviousQuestion}
+              disabled={currentQuestionIndex === 0}
+            >
+              <StyledText type="boldLabel" style={styles.navButtonText}>Back</StyledText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.navButton, { backgroundColor: theme.primary }]}
+              onPress={moveToNextQuestion}
+            >
+              <StyledText type="boldLabel" style={styles.navButtonText}>Next</StyledText>
+            </TouchableOpacity>
+          </View>
         </>
       ) : (
         <View style={[styles.resultContainer, { backgroundColor: theme.background }]}>
           <StyledText type="title" style={[styles.resultTitle, { color: theme.primary }]}>Quiz Completed!</StyledText>
-          <StyledText type="default" style={[styles.resultText, { color: theme.text }]}>You scored {score} out of {quizQuestions.length}.</StyledText>
+          <StyledText type="default" style={[styles.resultText, { color: theme.text }]}>
+            You scored {score} out of {quizQuestions.length}.
+          </StyledText>
           <TouchableOpacity style={[styles.retakeButton, { backgroundColor: theme.primary }]} onPress={restartQuiz}>
             <StyledText type="boldLabel" style={styles.retakeButtonText}>Retake Quiz</StyledText>
           </TouchableOpacity>
@@ -124,5 +154,20 @@ const styles = StyleSheet.create({
   retakeButtonText: {
     textAlign: 'center',
     color: '#ffffff',
+  },
+  navigationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
+    gap: 16,
+  },
+  navButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  navButtonText: {
+    color: '#fff',
   },
 });
