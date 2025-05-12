@@ -1,8 +1,8 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import ModuleButton from '@/components/ModuleButton';
-import ModuleScreen from './modulescreen';
 import { moduleTitles } from './modulescreen';
 
 type ModuleIconName = 'star' | 'school' | 'people' | 'flight';
@@ -15,26 +15,21 @@ const modules = [
 ];
 
 const DisplayModulesScreen = () => {
-  const [selectedModule, setSelectedModule] = useState<number | null>(null);
   const { theme } = useContext(ThemeContext);
+  const router = useRouter();
 
-  if (selectedModule !== null) {
-    return (
-      <ModuleScreen 
-        moduleNumber={selectedModule}
-        onBack={() => setSelectedModule(null)}
-      />
-    );
-  }
+  const handleModulePress = (moduleNumber: number) => {
+    router.push(`/Modules/${moduleNumber}`);
+  };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <View style={[styles.container, { backgroundColor: theme?.background || '#fff' }]}>
       {modules.map((module) => (
         <ModuleButton
           key={module.moduleNumber}
           moduleNumber={module.moduleNumber}
           title={module.title}
-          onPress={() => setSelectedModule(module.moduleNumber)}
+          onPress={() => handleModulePress(module.moduleNumber)}
           iconName={module.iconName}
         />
       ))}

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router'; 
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import SubModuleButton from '@/components/SubModuleButton';
 import StyledText from '@/components/StyledText';
@@ -48,15 +48,14 @@ export const moduleSubmodules: { [key: number]: Submodule[] } = {
   ],
 };
 
-interface ModuleScreenProps {
-  moduleNumber: number;
-  onBack: () => void;
-}
-
-const ModuleScreen: React.FC<ModuleScreenProps> = ({ moduleNumber, onBack }) => {
+const ModuleScreen = () => {
   const router = useRouter();
-  const submodules = moduleSubmodules[moduleNumber] || [];
+  const params = useLocalSearchParams();
+  const moduleNumber = Number(params.moduleNumber) || 1;
   const { theme } = useContext(ThemeContext);
+
+  const submodules = moduleSubmodules[moduleNumber] || [];
+  const moduleTitle = moduleTitles[moduleNumber] || 'Module';
 
   const handleSubmodulePress = (submoduleIndex: number) => {
     router.push({
@@ -64,20 +63,28 @@ const ModuleScreen: React.FC<ModuleScreenProps> = ({ moduleNumber, onBack }) => 
       params: {
         moduleNumber: moduleNumber.toString(),
         submoduleNumber: submoduleIndex.toString(),
+        submoduleTitle: submodules[submoduleIndex].title,
       },
     });
   };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <TouchableOpacity onPress={onBack} style={styles.backButton}>
+      <TouchableOpacity 
+        onPress={() => router.back()} 
+        style={styles.backButton}
+      >
         <StyledText type="label" style={styles.backText}>← All Modules</StyledText>
       </TouchableOpacity>
+
+      <StyledText type="title" style={styles.moduleTitle}>
+        {moduleTitle}
+      </StyledText>
 
       <View style={styles.submodulesContainer}>
         {submodules.map((submodule, index) => (
           <SubModuleButton
-            key={`module-${moduleNumber}-sub-${index}`}
+            key={`${moduleNumber}-${index}`}
             title={submodule.title}
             onPress={() => handleSubmodulePress(index)}
             iconName={submodule.iconName}
@@ -102,8 +109,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
+  moduleTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
   submodulesContainer: {
     width: '100%',
+    gap: 12,
   },
 });
 
