@@ -6,10 +6,10 @@ import ModuleScreen from './modulescreen';
 import ModuleButton from '@/components/ModuleButton';
 
 const modules = [
-  { moduleNumber: 1, title: "Get Set Up For Success", iconName: "info" as const },
-  { moduleNumber: 2, title: "Academic Preparedness for UoA", iconName: "info" as const },
-  { moduleNumber: 3, title: "Connect to the University & New Zealand", iconName: "info" as const },
-  { moduleNumber: 4, title: "Preparing for Departure", iconName: "info" as const },
+  { moduleNumber: 1, title: "Get Set Up For Success", iconName: "star" as const },
+  { moduleNumber: 2, title: "Academic Preparedness for UoA", iconName: "school" as const },
+  { moduleNumber: 3, title: "Connect to the University & New Zealand", iconName: "people" as const },
+  { moduleNumber: 4, title: "Preparing for Departure", iconName: "flight" as const },
 ];
 
 const DisplayModulesScreen = () => {
