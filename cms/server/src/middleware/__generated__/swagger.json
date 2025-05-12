@@ -31,6 +31,12 @@
 					"password": {
 						"type": "string"
 					},
+					"avatar": {
+						"type": "string"
+					},
+					"colorPref": {
+						"type": "string"
+					},
 					"country": {
 						"type": "string"
 					},
@@ -112,7 +118,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme_": {
+			"Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme-or-colorPref_": {
 				"properties": {
 					"first_name": {
 						"type": "string"
@@ -131,6 +137,9 @@
 					},
 					"programme": {
 						"type": "string"
+					},
+					"colorPref": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -144,7 +153,39 @@
 				"description": "From T, pick a set of properties whose keys are in the union K"
 			},
 			"UserCreationParams": {
-				"$ref": "#/components/schemas/Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme_"
+				"$ref": "#/components/schemas/Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme-or-colorPref_"
+			},
+			"UserInfo": {
+				"properties": {
+					"first_name": {
+						"type": "string"
+					},
+					"last_name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"avatar": {
+						"type": "string"
+					},
+					"colorPref": {
+						"type": "string"
+					},
+					"country": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"first_name",
+					"last_name",
+					"email",
+					"avatar",
+					"colorPref",
+					"country"
+				],
+				"type": "object",
+				"additionalProperties": false
 			},
 			"UserUpdateResponse": {
 				"properties": {
@@ -195,6 +236,34 @@
 			},
 			"UserUpdateParams": {
 				"$ref": "#/components/schemas/Pick_IUser.first_name-or-last_name-or-email-or-password-or-country-or-programme-or-role_"
+			},
+			"UpdateAvatarRequest": {
+				"properties": {
+					"avatar": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"avatar"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateThemeRequest": {
+				"properties": {
+					"colorPref": {
+						"type": "string",
+						"enum": [
+							"light",
+							"dark"
+						]
+					}
+				},
+				"required": [
+					"colorPref"
+				],
+				"type": "object",
+				"additionalProperties": false
 			},
 			"mongoose.Types.ObjectId": {
 				"type": "string"
@@ -540,6 +609,34 @@
 				]
 			}
 		},
+		"/users/userInfo/{userId}": {
+			"get": {
+				"operationId": "GetUserInfo",
+				"responses": {
+					"200": {
+						"description": "User Information Fetched",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserInfo"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/users/login": {
 			"post": {
 				"operationId": "Login",
@@ -583,6 +680,89 @@
 									"email"
 								],
 								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/me/avatar": {
+			"patch": {
+				"operationId": "UpdateAvatar",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateAvatarRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/me/theme": {
+			"patch": {
+				"operationId": "UpdateTheme",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update logged-in user’s theme preference",
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateThemeRequest"
 							}
 						}
 					}
@@ -970,6 +1150,60 @@
 						}
 					}
 				}
+			}
+		},
+		"/auth/me": {
+			"get": {
+				"operationId": "Me",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"country": {
+											"type": "string"
+										},
+										"avatar": {
+											"type": "string"
+										},
+										"colorPref": {
+											"type": "string"
+										},
+										"email": {
+											"type": "string"
+										},
+										"last_name": {
+											"type": "string"
+										},
+										"first_name": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"country",
+										"avatar",
+										"colorPref",
+										"email",
+										"last_name",
+										"first_name"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"auth"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
 			}
 		}
 	},

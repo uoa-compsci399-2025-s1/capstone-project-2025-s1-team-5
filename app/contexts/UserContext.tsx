@@ -1,9 +1,12 @@
 import React, { createContext, useState, ReactNode } from 'react';
 
 export interface User {
-    email: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    colorPref: string;
     avatar: string; // 'cat', 'dog'...
-    themePreference: string; //'light', 'dark'
+    country: string;
   }
 
 interface UserContextProps {
@@ -12,9 +15,12 @@ interface UserContextProps {
 }
 
 const defaultUser: User = {
-    email: 1,
-    avatar: 'default',
-    themePreference: 'light',
+  first_name: 'default',
+  last_name: 'default',
+  email: 'default',
+  colorPref: 'light',
+  avatar: 'default', // 'cat', 'dog'...
+  country: 'New Zealand',
 }
 
 export const UserContext = createContext<UserContextProps>({

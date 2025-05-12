@@ -20,6 +20,17 @@ const userSchema: Schema<IUser> = new Schema(
             type: String,
             required: true
         },
+        avatar: {
+            type: String,
+            required: false,
+            default: "default"
+        },
+        colorPref: {
+            type: String,
+            required: true,
+            enum: ['light', 'dark', 'system'],
+            default: "system",
+        },
         country: {
             type: String,
             required: true

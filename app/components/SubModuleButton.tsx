@@ -1,46 +1,49 @@
 import React, { useContext } from 'react';
 import { TouchableOpacity, View, StyleSheet } from 'react-native';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import StyledText from '@/components/StyledText'; 
 import { ThemeContext } from '@/contexts/ThemeContext';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import StyledText from '@/components/StyledText';
+
 
 interface SubmoduleButtonProps {
   title: string;
   onPress: () => void;
-  iconName?: 'info' | 'touch-app'; 
+  iconName?: 'info' | 'touch-app';
 }
 
-export default function SubmoduleButton({ title, onPress, iconName }: SubmoduleButtonProps) {
-  const {theme} = useContext(ThemeContext)
+export default function SubmoduleButton({ 
+  title, 
+  onPress, 
+  iconName 
+}: SubmoduleButtonProps) {
+  const { theme } = useContext(ThemeContext);
+
   return (
-    <TouchableOpacity
-      style={[styles.button, { backgroundColor: theme.primary }]} onPress={onPress}>
+    <TouchableOpacity style={[styles.button, { backgroundColor: theme.primary }]} onPress={onPress}>
       {iconName && (
-        <View style={styles.iconContainer}> <MaterialIcons name={iconName} size={24} color="#fff" /></View>
+        <View style={styles.iconContainer}><MaterialIcons name={iconName} size={24} color={theme.buttonText} /></View>
       )}
-      <StyledText type="default" style={styles.buttonText}>{title}</StyledText>
+      <StyledText type="label" style={[styles.buttonText, { color: theme.buttonText }]}>{title}</StyledText>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   button: {
-    width: '100%', 
-    paddingVertical: 10, 
-    paddingHorizontal: 20, 
+    width: '100%',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     borderRadius: 8,
+    flexDirection: 'row',
     alignItems: 'center',
-    flexDirection: 'row', 
-    marginVertical: 5, 
+    marginVertical: 6,
   },
   buttonText: {
-    fontSize: 14, 
-    fontWeight: 'normal', 
-    color: '#FFFFFF',
-    marginLeft: 10, 
+    flex: 1,
+    marginLeft: 12,
   },
   iconContainer: {
-    justifyContent: 'center',
+    width: 24,
     alignItems: 'center',
-  }
+  },
 });

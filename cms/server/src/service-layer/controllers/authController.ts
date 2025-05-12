@@ -1,14 +1,11 @@
-import { Controller, Post, Route, Body, Security, Tags, Request } from "tsoa";
+import { Controller, Post, Route, Body, Security, Tags, Request, Get } from "tsoa";
 import * as jwt from "jsonwebtoken";
 import { ChangePasswordRequest } from "../../data-layer/models/models";
 import { UserService } from "../../data-layer/services/UserService";
 
-
 @Route("auth")
 @Tags("auth")
 export class AuthController extends Controller {
- 
-
   @Post("/login")
   public async login(@Body() body: { email: string; password: string }): Promise<{ token: string }> {
     const userService = new UserService()
@@ -65,6 +62,17 @@ export class AuthController extends Controller {
       console.log(error)
     }
     return { message: "Failure to change password"}
-    
+  }
+  @Get("/me")
+  @Security("jwt")
+  public async me(@Request() req: any): Promise<{ first_name: string; last_name: string; email: string; colorPref: string; avatar: string; country: string}> {
+    const userId = req.user.id;
+    const userService = new UserService();
+    const userInfo = await userService.getUserInfo(userId);
+    if (!userInfo) {
+      this.setStatus(404);
+      throw new Error("User not found");
+    }
+    return userInfo;
   }
 }
