@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import { View, Image, TouchableOpacity, FlatList, StyleSheet, Alert, Button } from 'react-native';
+import { View, Image, TouchableOpacity, FlatList, StyleSheet, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { UserContext } from '@/contexts/UserContext';
 import profileAvatars from '@/constants/profileAvatars';
