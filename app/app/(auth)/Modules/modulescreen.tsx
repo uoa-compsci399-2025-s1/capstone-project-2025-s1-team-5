@@ -2,14 +2,20 @@ import React, { useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router'; 
 import { ThemeContext } from '@/contexts/ThemeContext';
-
 import SubModuleButton from '@/components/SubModuleButton';
 import StyledText from '@/components/StyledText';
 
-interface Submodule {
+export interface Submodule {
   title: string;
   iconName: 'info' | 'touch-app';
 }
+
+export const moduleTitles: { [key: number]: string } = {
+  1: "Get Set Up For Success",
+  2: "Academic Preparedness for UoA",
+  3: "Connect to the University & New Zealand",
+  4: "Preparing for Departure",
+};
 
 export const moduleSubmodules: { [key: number]: Submodule[] } = {
   1: [
@@ -65,10 +71,8 @@ const ModuleScreen: React.FC<ModuleScreenProps> = ({ moduleNumber, onBack }) => 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <TouchableOpacity onPress={onBack} style={styles.backButton}>
-        <StyledText type="label" style={styles.backText}>← Back to Modules</StyledText>
+        <StyledText type="label" style={styles.backText}>← All Modules</StyledText>
       </TouchableOpacity>
-
-      <StyledText type="title" style={styles.moduleTitle}>Module {moduleNumber}</StyledText>
 
       <View style={styles.submodulesContainer}>
         {submodules.map((submodule, index) => (
@@ -97,10 +101,6 @@ const styles = StyleSheet.create({
   backText: {
     fontSize: 16,
     fontWeight: '500',
-  },
-  moduleTitle: {
-    fontSize: 24,
-    marginBottom: 20,
   },
   submodulesContainer: {
     width: '100%',

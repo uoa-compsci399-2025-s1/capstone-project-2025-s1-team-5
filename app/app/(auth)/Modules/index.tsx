@@ -1,30 +1,42 @@
 import React, { useState, useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ThemeContext } from '@/contexts/ThemeContext';
-
-import ModuleScreen from './modulescreen'; 
 import ModuleButton from '@/components/ModuleButton';
+import ModuleScreen from './modulescreen';
+import { moduleTitles } from './modulescreen';
+
+type ModuleIconName = 'star' | 'school' | 'people' | 'flight';
 
 const modules = [
-  { moduleNumber: 1, title: "Get Set Up For Success", iconName: "star" as const },
-  { moduleNumber: 2, title: "Academic Preparedness for UoA", iconName: "school" as const },
-  { moduleNumber: 3, title: "Connect to the University & New Zealand", iconName: "people" as const },
-  { moduleNumber: 4, title: "Preparing for Departure", iconName: "flight" as const },
+  { moduleNumber: 1, title: moduleTitles[1], iconName: 'star' as ModuleIconName },
+  { moduleNumber: 2, title: moduleTitles[2], iconName: 'school' as ModuleIconName },
+  { moduleNumber: 3, title: moduleTitles[3], iconName: 'people' as ModuleIconName },
+  { moduleNumber: 4, title: moduleTitles[4], iconName: 'flight' as ModuleIconName },
 ];
 
 const DisplayModulesScreen = () => {
   const [selectedModule, setSelectedModule] = useState<number | null>(null);
-  const {theme} = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
+
   if (selectedModule !== null) {
     return (
-      <ModuleScreen moduleNumber={selectedModule} onBack={() => setSelectedModule(null)}/>
+      <ModuleScreen 
+        moduleNumber={selectedModule}
+        onBack={() => setSelectedModule(null)}
+      />
     );
   }
 
   return (
-    <View style={[styles.container,{backgroundColor: theme.background}]}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {modules.map((module) => (
-        <ModuleButton key={module.moduleNumber} moduleNumber={module.moduleNumber} title={module.title} onPress={() => setSelectedModule(module.moduleNumber)}iconName={module.iconName}/>
+        <ModuleButton
+          key={module.moduleNumber}
+          moduleNumber={module.moduleNumber}
+          title={module.title}
+          onPress={() => setSelectedModule(module.moduleNumber)}
+          iconName={module.iconName}
+        />
       ))}
     </View>
   );
@@ -36,5 +48,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 });
+
+DisplayModulesScreen.options = {
+  title: 'All Modules',
+};
 
 export default DisplayModulesScreen;

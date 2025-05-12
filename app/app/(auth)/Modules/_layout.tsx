@@ -1,40 +1,44 @@
 import React, { useContext } from 'react';
 import { Stack } from 'expo-router';
-import { useLocalSearchParams } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import StyledText from '@/components/StyledText';
 
+const moduleTitles: Record<string, string> = {
+  '1': 'Get Set Up For Success',
+  '2': 'Academic Preparedness for UoA',
+  '3': 'Connect to the University & New Zealand',
+  '4': 'Preparing for Departure',
+};
+
 export default function ModulesLayout() {
-  const {theme} = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
+
   return (
-    <Stack>
+    <Stack
+      screenOptions={{
+        headerStyle: { backgroundColor: '#0c0c48' },
+        headerTintColor: '#fff',
+      }}
+    >
       <Stack.Screen 
         name="index" 
         options={{ 
-          title: '',
-          headerStyle: { backgroundColor: theme.primary },
           headerTitle: () => <StyledText type="title" style={{ color: '#fff' }}>Modules</StyledText>,
-          headerTintColor: '#fff',
+          headerStyle: { backgroundColor: theme.primary },
         }} 
       />
       <Stack.Screen 
         name="[moduleNumber]" 
-        options={{
-          title: '',
-          headerStyle: { backgroundColor: '#0c0c48' },
+        options={({ route }) => ({
           headerTitle: () => {
-            const params = useLocalSearchParams();
-            const moduleTitles: Record<string, string> = {
-              '1': 'Get Set Up For Success',
-              '2': 'Academic Preparedness for UoA',
-              '3': 'Connect to the University & New Zealand',
-              '4': 'Preparing for Departure',
-            };
-            const title = moduleTitles[params.moduleNumber as string] ?? 'Module';
-            return <StyledText type="subtitle" style={{ color: '#fff' }}>{title}</StyledText>;
+            const { moduleNumber } = route.params as { moduleNumber: string };
+            return (
+              <StyledText type="subtitle" style={{ color: '#fff' }}>
+                {moduleTitles[moduleNumber] || `Module ${moduleNumber}`}
+              </StyledText>
+            );
           },
-          headerTintColor: '#fff',
-        }}
+        })}
       />
     </Stack>
   );
