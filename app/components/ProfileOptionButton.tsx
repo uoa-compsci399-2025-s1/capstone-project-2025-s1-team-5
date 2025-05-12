@@ -7,13 +7,23 @@ interface ProfileOptionButtonProps {
   title: string;
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
+  isLeftmost: boolean; 
+  isRightmost: boolean; 
 }
 
-const ProfileOptionButton: React.FC<ProfileOptionButtonProps> = ({ title, onPress, style }) => {
+const ProfileOptionButton: React.FC<ProfileOptionButtonProps> = ({ title, onPress, style, isLeftmost, isRightmost }) => {
   const { theme } = useContext(ThemeContext);
 
+  const buttonStyle = [
+    styles.button,
+    { backgroundColor: theme.primary },
+    style,
+    isLeftmost && styles.noLeftMargin, 
+    isRightmost && styles.noRightMargin, 
+  ];
+
   return (
-    <TouchableOpacity style={[styles.button, { backgroundColor: theme.primary }, style]} onPress={onPress}>
+    <TouchableOpacity style={buttonStyle} onPress={onPress}>
       <StyledText type="boldLabel" style={{ color: '#FFFFFF' }}>{title}</StyledText>
     </TouchableOpacity>
   );
@@ -21,12 +31,18 @@ const ProfileOptionButton: React.FC<ProfileOptionButtonProps> = ({ title, onPres
 
 const styles = StyleSheet.create({
   button: {
-    width: '47%',
+    width: '48%',
     height: 50,
     margin: 5,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
+  },
+  noLeftMargin: {
+    marginLeft: 0, 
+  },
+  noRightMargin: {
+    marginRight: 0, 
   },
 });
 

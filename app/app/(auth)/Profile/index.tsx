@@ -49,13 +49,20 @@ const ProfileScreen: React.FC = () => {
 
       <View style={styles.bodyContent}>
         <View style={styles.buttonGrid}>
-          {featureRoutes.map(({ title, route }) => (
-            <ProfileOptionButton
-              key={title}
-              title={title}
-              onPress={() => router.push(route)}
-            />
-          ))}
+          {featureRoutes.map(({ title, route }, index) => {
+            const isLeftmost = index % 2 === 0; 
+            const isRightmost = index % 2 === 1; 
+
+            return (
+              <ProfileOptionButton
+                key={title}
+                title={title}
+                onPress={() => router.push(route)}
+                isLeftmost={isLeftmost}
+                isRightmost={isRightmost}
+              />
+            );
+          })}
         </View>
 
         <ProfileSettingBox>
