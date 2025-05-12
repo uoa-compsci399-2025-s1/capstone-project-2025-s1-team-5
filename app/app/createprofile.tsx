@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   Keyboard,
+  useColorScheme,
 } from 'react-native'
 import { useRouter } from 'expo-router'
 import { ThemeContext } from '@/contexts/ThemeContext'
@@ -18,6 +19,7 @@ import SubmitButton from '@/components/SubmitButton'
 import TextInputBox from '@/components/TextInputBox'
 import StyledText from '@/components/StyledText'
 import DropDownMenu from '@/components/DropDownMenu'
+import { UserContext } from '@/contexts/UserContext'
 
 export default function CreateProfileScreen() {
   const { theme } = useContext(ThemeContext)
@@ -36,6 +38,9 @@ export default function CreateProfileScreen() {
     'Master of Engineering Project Management',
     'Master of Civil Engineering',
   ]
+  
+  const systemScheme = useColorScheme();
+  const userContext = useContext(UserContext);
 
   const handleCreateProfile = async () => {
     if (!firstName || !lastName || !selectedCountry || !selectedProgramme) {
@@ -51,17 +56,18 @@ export default function CreateProfileScreen() {
         password,
         country: selectedCountry,
         programme: selectedProgramme,
+        colorPref: systemScheme === 'dark' ? 'dark' : 'light',
       })
 
       const loginRes = await api.post<{ token: string }>('/auth/login', {
         email,
         password,
       })
-
       await SecureStore.setItemAsync('USER_TOKEN', loginRes.data.token)
-      
-      //update userContext....
-      
+
+      const meRes = await api.get('/auth/me');
+      userContext.setUser(meRes.data);
+    
       router.replace('/Modules')
     } catch (error) {
       console.error(error)
