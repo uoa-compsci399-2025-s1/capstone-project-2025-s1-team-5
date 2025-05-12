@@ -6,11 +6,19 @@ import StyledText from '@/components/StyledText';
 const ThemeScreen: React.FC = () => {
   const { theme, isDarkMode, setCustomTheme } = useContext(ThemeContext);
 
+  const trackColor = '#0c0c48';
+  const thumbColor = isDarkMode ? '#fff' : '#0c0c48';  
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.row}>
-        <StyledText type="label" style={{ color: theme.text}}>Dark Mode:</StyledText>
-        <Switch value={isDarkMode} onValueChange={setCustomTheme}/>
+        <StyledText type="label" style={{ color: theme.text }}>Dark Mode:</StyledText>
+        <Switch 
+          value={isDarkMode} 
+          onValueChange={setCustomTheme}
+          trackColor={{ false: '#ccc', true: trackColor }}
+          thumbColor={thumbColor}  
+        />
       </View>
     </View>
   );
