@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import { TouchableOpacity, StyleSheet, View } from 'react-native';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -20,10 +20,16 @@ export default function ModuleButton({ moduleNumber, title, onPress, iconName }:
       onPress={onPress}
     >
       <View style={styles.content}>
-        <MaterialIcons name={iconName} size={24} color="#FFF" style={styles.icon} />
+        <View style={styles.iconContainer}>
+          <MaterialIcons name={iconName} size={60} color="#FFF" />
+        </View>
         <View style={styles.textContainer}>
-          <StyledText type="boldLabel" style={styles.textWhite}>Module {moduleNumber}</StyledText>
-          <StyledText type="subtitle" style={styles.textWhite}>{title}</StyledText>
+          <StyledText type="boldLabel" style={styles.textWhite}>
+            Module {moduleNumber}
+          </StyledText>
+          <StyledText type="subtitle" style={styles.textWhite}>
+            {title}
+          </StyledText>
         </View>
       </View>
     </TouchableOpacity>
@@ -33,26 +39,28 @@ export default function ModuleButton({ moduleNumber, title, onPress, iconName }:
 const styles = StyleSheet.create({
   button: {
     width: '100%',
-    paddingVertical: 12,
+    height: 125,
+    paddingVertical: 16,
     paddingHorizontal: 20,
     borderRadius: 12,
-    alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 5, 
+    marginVertical: 6,
   },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
   },
-  icon: {
-    marginRight: 10,
+  iconContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   textContainer: {
-    flex: 1, 
-    justifyContent: 'center', 
+    flex: 1,
+    justifyContent: 'center',
   },
   textWhite: {
-    color: '#FFFFFF', 
+    color: '#FFFFFF',
   },
 });
