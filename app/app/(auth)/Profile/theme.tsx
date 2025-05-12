@@ -1,20 +1,43 @@
-import React, { useContext } from 'react';
-import { View, Switch, StyleSheet } from 'react-native';
-import { ThemeContext } from '@/contexts/ThemeContext';
-import StyledText from '@/components/StyledText';
+import React, { useContext } from 'react'
+import { View, Switch, StyleSheet, Alert } from 'react-native'
+import { ThemeContext } from '@/contexts/ThemeContext'
+import StyledText from '@/components/StyledText'
+import api from '@/app/lib/api'
 
 const ThemeScreen: React.FC = () => {
-  const { theme, isDarkMode, setCustomTheme } = useContext(ThemeContext);
+  const { theme, isDarkMode, setCustomTheme } = useContext(ThemeContext)
+
+  const changeThemePreference = async (pref: 'light' | 'dark' | 'system') => {
+    try {
+      const res = await api.patch<{ message: string }>('/users/me/theme', {
+        colorPref: pref,
+      })
+      console.log(res.data.message)
+    } catch (e) {
+      console.error('Theme update failed', e)
+      Alert.alert('Error', 'Could not save your theme preference.')
+    }
+  }
+
+  const toggleDark = (value: boolean) => {
+    setCustomTheme?.(value)
+    changeThemePreference(value ? 'dark' : 'light')
+  }
+
+  const trackColor = '#0c0c48';
+  const thumbColor = isDarkMode ? '#fff' : '#0c0c48';  
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.row}>
-        <StyledText type="label" style={{ color: theme.text}}>Dark Mode:</StyledText>
-        <Switch value={isDarkMode} onValueChange={setCustomTheme}/>
+        <StyledText type="label" style={{ color: theme.text }}>
+          Dark Mode:
+        </StyledText>
+        <Switch value={isDarkMode} onValueChange={toggleDark} />
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -26,6 +49,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-});
+})
 
-export default ThemeScreen;
+export default ThemeScreen

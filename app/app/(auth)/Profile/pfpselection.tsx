@@ -3,6 +3,7 @@ import { View, Image, TouchableOpacity, FlatList, StyleSheet, Alert, Button } fr
 import { useNavigation } from '@react-navigation/native';
 import { UserContext } from '@/contexts/UserContext';
 import profileAvatars from '@/constants/profileAvatars';
+import api from '@/app/lib/api';
 
 const ProfilePicSelectionScreen: React.FC = () => {
     const { user, setUser } = useContext(UserContext);
@@ -14,17 +15,19 @@ const ProfilePicSelectionScreen: React.FC = () => {
     };
 
     const handleConfirmUpdate = async () => {
-        try {
-          console.log(`Updating avatar to: ${selectedAvatar}`);
-          // await updateAvatarAPI({ userId: user.id, avatar: selectedAvatar });
-    
+      try {
+        console.log(`Updating avatar to: ${selectedAvatar}`);
+        const res = await api.patch<{ message: string }>('/users/me/avatar', {
+          avatar: selectedAvatar,
+        });
+          console.log(res.data.message);
           setUser({ ...user, avatar: selectedAvatar });
           navigation.goBack();
-        } catch (error) {
-          Alert.alert('error', 'Please try again!');
+        } catch (e) {
+          console.error('Avatar update failed', e);
         }
-      };
-
+      }
+          
     const avatarKeys = Object.keys(profileAvatars);
     const avatarImages = avatarKeys.map(key => ({ key, source: profileAvatars[key] }));
 

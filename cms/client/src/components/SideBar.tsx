@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { useOutsideClick } from '../hooks/useOutsideClick';
+import { Link } from 'react-router-dom';
 import Button from './Button';
+import { useAuth } from '../auth/AuthProvider';
+import { useOutsideClick } from '../hooks/useOutsideClick';
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { setIsAuthenticated } = useAuth();
   const sidebarRef = useOutsideClick(() => {
     if (isOpen) {
       setIsOpen(false);
@@ -14,6 +17,14 @@ function Sidebar() {
     setIsOpen(!isOpen);
   };
 
+  const handleLogout = () => {
+    // Clear the token from localStorage
+    localStorage.removeItem('authToken');
+    
+    // Update the authentication state to false
+    setIsAuthenticated(false);
+  };
+
   const styles = {
     burgerIcon: {
       fontSize: '24px',
@@ -21,40 +32,42 @@ function Sidebar() {
       background: 'none',
       border: 'none',
       position: 'fixed',
-      top: '10px',
-      left: isOpen ? '225px' : '20px',
+      top: '20px',
+      left: isOpen ? '265px' : '20px',  // Make room when sidebar is open
       transition: 'left 0.3s ease',
       zIndex: 1000,
     },
     sidebar: {
       position: 'fixed',
       top: 0,
-      left: isOpen ? '0' : '-100%',
+      left: isOpen ? '0' : '-270px',  // Adjust to match width + some buffer
       width: '250px',
       height: '100%',
-      backgroundColor: '#333',
-      color: 'white',
-      overflow: 'hidden',
+      backgroundColor: 'white',
+      borderRight: '1px solid #ddd',  // Optional, adds definition
+      overflowY: 'auto',
       transition: 'left 0.3s ease',
       zIndex: 999,
-      padding: '10px',
+      padding: '20px 16px',  // More padding inside the sidebar
+      boxShadow: '2px 0 8px rgba(0, 0, 0, 0.05)',
     },
     logo: {
-      width: '75%',
+      width: '100%',
       height: 'auto',
-      margin: '20px auto',
+      margin: '10px 0 30px',
       display: 'block',
     },
     nav: {
       listStyle: 'none',
       padding: 0,
-      margin: '0px',
+      margin: 0,
     },
     navItem: {
-      padding: '15px',
-      borderBottom: '1px solid #444',
+      padding: '12px 0',
+      borderBottom: '1px solid #eee',
     },
   };
+  
 
   return (
     <div>
@@ -65,12 +78,14 @@ function Sidebar() {
       )}
 
       <div ref={sidebarRef} style={styles.sidebar as React.CSSProperties}>
-        <img src="/assets/images/DarkBlueLogo.png" alt="Logo" style={styles.logo} />
+        <img src="/assets/images/UoA-Logo-Primary-RGB-Large.png" alt="Logo" style={styles.logo}/>
 
         <nav>
           <ul style={styles.nav}>
-            <li style={styles.navItem}>
-              <Button label="Home" href="/" />
+            <li>
+              <Link to="/modules/home">
+                <Button label="Home" href="/modules/home" />
+              </Link>
             </li>
             <li style={styles.navItem}>
               <Button label="Module Management" href="/modules/modules" />
@@ -78,8 +93,15 @@ function Sidebar() {
             <li style={styles.navItem}>
               <Button label="User Management" href="/modules/users" />
             </li>
-            <li style={styles.navItem}>
-              <Button label="Account Management" href="/modules/account" />
+            <li>
+              <Link to="/modules/analytics">
+                <Button label="Analytics" href="/modules/analytics" />
+              </Link>
+            </li>
+            <li>
+              <button onClick={handleLogout} className="w-full text-left">
+                <Button label="Logout" href="/" />
+              </button>
             </li>
           </ul>
         </nav>

@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
-import { PaginatedUserResponse } from "../../service-layer/response-models/UserResponse";
+import { PaginatedUserResponse, UserInfo } from "../../service-layer/response-models/UserResponse";
 import { userAdaptor } from "../adapter/UserAdapter";
 import {  IUser } from "../models/models";
 import {User} from "../models/schema";
 import * as bcrypt from "bcrypt";
 
-export type UserCreationParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme">
+export type UserCreationParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme" | "colorPref">
 export type UserUpdateParams = Pick<IUser, "first_name" | "last_name" | "email" | "password" | "country" | "programme" | "role">
 
 export class UserService {
@@ -129,12 +129,8 @@ export class UserService {
     
     }
     public async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<boolean> {
-        console.log(`>>> changePassword got userId = ${userId}`);
         const user = await User.findById(userId);
-        console.log(`>>> changePassword finds user.email = ${user?.email}`);
-
         if (!user) return false;
-    
         const isMatch = await bcrypt.compare(oldPassword, user.password);
         if (!isMatch) return false;
     
@@ -142,6 +138,31 @@ export class UserService {
         await User.findByIdAndUpdate(userId, {password: hashed})
         return true;
       }
+      public async getUserInfo(userId: string): Promise<UserInfo> {
+        const userDoc = await User.findById(userId).select('first_name last_name email colorPref avatar country');
+        if (!userDoc) return null;
+        const userInfo = userDoc.toObject() as UserInfo;
+        return userInfo;
+      }
     
-    
+    public async updateAvatar(userId: string, avatar: string): Promise<boolean> {
+        const result = await User.findByIdAndUpdate(
+        userId,
+        { $set: { avatar } },
+        { new: false }
+        );
+        return !!result;
+    }
+
+    public async updateThemePreference(
+        userId: string,
+        colorPref: 'light' | 'dark'
+    ): Promise<boolean> {
+        const result = await User.findByIdAndUpdate(
+        userId,
+        { $set: { colorPref } },
+        { new: false }
+        );
+        return !!result;
+    }
 }

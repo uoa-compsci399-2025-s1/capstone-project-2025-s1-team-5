@@ -33,8 +33,11 @@ export default function SignInScreen() {
         const response = await api.post('/auth/login', { password, email });
         const token  = response.data.token;
         await SecureStore.setItemAsync('USER_TOKEN', token);
-        // const meRes = await api.get('/me');
-        // userContext.setUser(meRes.data);
+
+        const meRes = await api.get('/auth/me');
+        console.log(meRes.data);
+        userContext.setUser(meRes.data);
+
         router.replace('/Modules');
       } else {
         setDisplayedError('Please enter both email and password');

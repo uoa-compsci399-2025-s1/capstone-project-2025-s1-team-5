@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { Stack } from 'expo-router';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { UserProvider }  from '@/contexts/UserContext'
 import StyledText from '@/components/StyledText';
 
 const fontMap = {
@@ -45,37 +46,39 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider>
-      <Stack>
-        <Stack.Screen 
-          name="index" 
-          options={{ 
-            title: '',
-            headerStyle: { backgroundColor: '#0c0c48' },
-            headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>UoA Your Way</StyledText>,
-            headerTintColor: '#ffffff',
-          }} 
-        />
-        <Stack.Screen 
-          name="signup" 
-          options={{ 
-            title: '',
-            headerStyle: { backgroundColor: '#0c0c48' },
-            headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Sign Up</StyledText>,
-            headerTintColor: '#ffffff',
-          }} 
-        />
-        <Stack.Screen 
-          name="createprofile" 
-          options={{ 
-            title: '',
-            headerStyle: { backgroundColor: '#0c0c48' },
-            headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Create Profile</StyledText>,
-            headerTintColor: '#ffffff',
-          }} 
-        />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      </Stack>
-    </ThemeProvider>
+    <UserProvider>
+      <ThemeProvider>
+        <Stack>
+          <Stack.Screen 
+            name="index" 
+            options={{ 
+              title: '',
+              headerStyle: { backgroundColor: '#0c0c48' },
+              headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>UoA Your Way</StyledText>,
+              headerTintColor: '#ffffff',
+            }} 
+          />
+          <Stack.Screen 
+            name="signup" 
+            options={{ 
+              title: '',
+              headerStyle: { backgroundColor: '#0c0c48' },
+              headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Sign Up</StyledText>,
+              headerTintColor: '#ffffff',
+            }} 
+          />
+          <Stack.Screen 
+            name="createprofile" 
+            options={{ 
+              title: '',
+              headerStyle: { backgroundColor: '#0c0c48' },
+              headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Create Profile</StyledText>,
+              headerTintColor: '#ffffff',
+            }} 
+          />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        </Stack>
+      </ThemeProvider>
+    </UserProvider> 
   );
 }
