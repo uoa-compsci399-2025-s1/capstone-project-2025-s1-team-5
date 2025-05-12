@@ -167,6 +167,7 @@ const ModulesPage = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            zIndex: 1000,
           }}
         >
           <div
@@ -174,7 +175,10 @@ const ModulesPage = () => {
               backgroundColor: "#ffffff",
               borderRadius: "10px",
               padding: "2rem",
-              width: "500px",
+              width: "90%",
+              maxWidth: "800px",
+              maxHeight: "90vh",
+              overflowY: "auto",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
             }}
           >

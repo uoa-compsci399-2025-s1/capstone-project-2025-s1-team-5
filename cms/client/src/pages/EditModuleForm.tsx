@@ -25,28 +25,29 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
   const [title, setTitle] = useState(module.title);
   const [description, setDescription] = useState(module.description);
   const [subsections, setSubsections] = useState<Subsection[]>([]);
+  const [moduleSubsectionIds, setModuleSubsectionIds] = useState<string[]>(module.subsectionIds || []);
 
-useEffect(() => {
-  const fetchSubsections = async () => {
-    try {
-      const responses = await Promise.all(
-        module.subsectionIds.map((id) =>
-          axios.get(`http://localhost:3000/modules/subsection/${id}`)
-        )
-      );
-      setSubsections(
-        responses.map((res) => ({
-          ...res.data,
-          id: res.data._id,
-        }))
-      );
-    } catch (error) {
-      console.error("Failed to fetch subsections:", error);
-    }
-  };
+  useEffect(() => {
+    const fetchSubsections = async () => {
+      try {
+        const responses = await Promise.all(
+          moduleSubsectionIds.map((id) =>
+            axios.get(`http://localhost:3000/modules/subsection/${id}`)
+          )
+        );
+        setSubsections(
+          responses.map((res) => ({
+            ...res.data,
+            id: res.data._id,
+          }))
+        );
+      } catch (error) {
+        console.error("Failed to fetch subsections:", error);
+      }
+    };
 
-  fetchSubsections();
-}, [module.subsectionIds]);
+    fetchSubsections();
+  }, [moduleSubsectionIds]);
 
   const handleSubsectionChange = (id: string, field: keyof Subsection, value: string) => {
     setSubsections((prev) =>
@@ -56,13 +57,43 @@ useEffect(() => {
     );
   };
 
+  const handleAddSubsection = async () => {
+    try {
+      const newSubsectionData = {
+        title: "New Subsection",
+        body: "Enter content here...",
+        authorID: "system"
+      };
+      
+      const response = await axios.post(
+        `http://localhost:3000/modules/${module.id}`, 
+        newSubsectionData
+      );
+      
+      const newSubsectionId = response.data._id.toString();
+      
+      const newSubsection = {
+        id: newSubsectionId,
+        title: response.data.title,
+        body: response.data.body
+      };
+      
+      setSubsections([...subsections, newSubsection]);
+      
+      setModuleSubsectionIds([...moduleSubsectionIds, newSubsectionId]);
+      
+    } catch (error) {
+      console.error("Failed to add subsection:", error);
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     const updatedModule = {
       title,
       description,
-      subsectionIds: module.subsectionIds,
+      subsectionIds: moduleSubsectionIds,
     };
 
     try {
@@ -135,6 +166,23 @@ useEffect(() => {
               </div>
             </div>
           ))}
+          
+          <button
+            type="button"
+            onClick={handleAddSubsection}
+            style={{
+              backgroundColor: "#28a745",
+              color: "#fff",
+              border: "none",
+              borderRadius: "5px",
+              padding: "0.5rem 1rem",
+              cursor: "pointer",
+              marginTop: "1rem",
+              width: "100%"
+            }}
+          >
+            Add Subsection
+          </button>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1.5rem" }}>
           <button
