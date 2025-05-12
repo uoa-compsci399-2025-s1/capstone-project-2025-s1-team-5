@@ -75,7 +75,7 @@ const ProfileScreen: React.FC = () => {
             style={styles.topButton}
           />
           <ProfileSettingButton
-            label="Theme"
+            label="Theme Preference"
             iconName="palette"
             onPress={() => router.push('/Profile/theme' as ValidRoutes)}
           />
