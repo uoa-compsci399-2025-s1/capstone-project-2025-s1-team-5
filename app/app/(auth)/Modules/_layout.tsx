@@ -2,13 +2,7 @@ import React, { useContext } from 'react';
 import { Stack } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import StyledText from '@/components/StyledText';
-
-const moduleTitles: Record<string, string> = {
-  '1': 'Get Set Up For Success',
-  '2': 'Academic Preparedness for UoA',
-  '3': 'Connect to the University & New Zealand',
-  '4': 'Preparing for Departure',
-};
+import { moduleTitles, moduleSubmodules } from './modulescreen';
 
 export default function ModulesLayout() {
   const { theme } = useContext(ThemeContext);
@@ -23,22 +17,44 @@ export default function ModulesLayout() {
       <Stack.Screen 
         name="index" 
         options={{ 
-          headerTitle: () => <StyledText type="title" style={{ color: '#fff' }}>Modules</StyledText>,
+          headerTitle: () => (
+            <StyledText type="title" style={{ color: '#fff' }}>
+              Modules
+            </StyledText>
+          ),
           headerStyle: { backgroundColor: theme.primary },
         }} 
       />
       <Stack.Screen 
         name="[moduleNumber]" 
-        options={({ route }) => ({
-          headerTitle: () => {
-            const { moduleNumber } = route.params as { moduleNumber: string };
-            return (
+        options={({ route }) => {
+          const { moduleNumber } = route.params as { moduleNumber: string };
+          return {
+            headerTitle: () => (
               <StyledText type="title" style={{ color: '#fff' }}>
-                {moduleTitles[moduleNumber] || `Module ${moduleNumber}`}
+                {moduleTitles[Number(moduleNumber)] || `Module ${moduleNumber}`}
               </StyledText>
-            );
-          },
-        })}
+            ),
+          };
+        }}
+      />
+      <Stack.Screen
+        name="submodulescreen"
+        options={({ route }) => {
+          const { moduleNumber, submoduleNumber } = route.params as {
+            moduleNumber: string;
+            submoduleNumber: string;
+          };
+          const submoduleTitle =
+            moduleSubmodules[Number(moduleNumber)]?.[Number(submoduleNumber)]?.title;
+          return {
+            headerTitle: () => (
+              <StyledText type="title" style={{ color: '#fff' }}>
+                {submoduleTitle || 'Submodule'}
+              </StyledText>
+            ),
+          };
+        }}
       />
     </Stack>
   );

@@ -27,7 +27,6 @@ const DisplayModulesScreen = () => {
       {modules.map((module) => (
         <ModuleButton
           key={module.moduleNumber}
-          moduleNumber={module.moduleNumber}
           title={module.title}
           onPress={() => handleModulePress(module.moduleNumber)}
           iconName={module.iconName}
@@ -43,5 +42,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 });
+
+// If you don't need a title for the screen, simply remove or modify the options.
+DisplayModulesScreen.options = {
+  // You can either omit the title or change it based on your needs
+  // title: 'All Modules',
+};
 
 export default DisplayModulesScreen;

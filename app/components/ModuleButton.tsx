@@ -5,13 +5,12 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import StyledText from '@/components/StyledText';
 
 interface ModuleButtonProps {
-  moduleNumber: number;
   title: string;
   onPress: () => void;
   iconName: keyof typeof MaterialIcons.glyphMap;
 }
 
-export default function ModuleButton({ moduleNumber, title, onPress, iconName }: ModuleButtonProps) {
+export default function ModuleButton({ title, onPress, iconName }: ModuleButtonProps) {
   const { theme } = useContext(ThemeContext);
 
   return (
@@ -24,9 +23,6 @@ export default function ModuleButton({ moduleNumber, title, onPress, iconName }:
           <MaterialIcons name={iconName} size={60} color="#FFF" />
         </View>
         <View style={styles.textContainer}>
-          <StyledText type="boldLabel" style={styles.textWhite}>
-            Module {moduleNumber}
-          </StyledText>
           <StyledText type="subtitle" style={styles.textWhite}>
             {title}
           </StyledText>

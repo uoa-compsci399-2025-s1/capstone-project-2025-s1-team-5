@@ -47,7 +47,6 @@ export const moduleSubmodules: { [key: number]: Submodule[] } = {
   ],
 };
 
-
 const ModuleScreen = () => {
   const router = useRouter();
   const params = useLocalSearchParams();
@@ -72,7 +71,7 @@ const ModuleScreen = () => {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <ScrollView
         contentContainerStyle={styles.submodulesContainer}
-        showsVerticalScrollIndicator={false}  
+        showsVerticalScrollIndicator={false}
       >
         {submodules.map((submodule, index) => (
           <SubModuleButton
@@ -99,7 +98,7 @@ const styles = StyleSheet.create({
   },
   submodulesContainer: {
     width: '100%',
-    paddingBottom: 20,  
+    paddingBottom: 20,
   },
 });
 
