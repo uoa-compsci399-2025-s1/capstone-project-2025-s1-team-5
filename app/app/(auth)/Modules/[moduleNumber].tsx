@@ -1,5 +1,4 @@
 import React from 'react';
-import { useLocalSearchParams } from 'expo-router';
 import ModuleScreen from './modulescreen';
 import { moduleTitles } from './modulescreen';
 

@@ -2,8 +2,8 @@ import React, { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
-import ModuleButton from '@/components/ModuleButton';
 import { moduleTitles } from './modulescreen';
+import ModuleButton from '@/components/ModuleButton';
 
 type ModuleIconName = 'star' | 'school' | 'people' | 'flight';
 
@@ -43,9 +43,5 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 });
-
-DisplayModulesScreen.options = {
-  title: 'All Modules',
-};
 
 export default DisplayModulesScreen;

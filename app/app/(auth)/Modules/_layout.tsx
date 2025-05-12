@@ -33,7 +33,7 @@ export default function ModulesLayout() {
           headerTitle: () => {
             const { moduleNumber } = route.params as { moduleNumber: string };
             return (
-              <StyledText type="subtitle" style={{ color: '#fff' }}>
+              <StyledText type="title" style={{ color: '#fff' }}>
                 {moduleTitles[moduleNumber] || `Module ${moduleNumber}`}
               </StyledText>
             );
