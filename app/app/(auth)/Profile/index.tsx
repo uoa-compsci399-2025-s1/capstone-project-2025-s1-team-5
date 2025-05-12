@@ -45,6 +45,7 @@ const ProfileScreen: React.FC = () => {
         avatar={user.avatar}
         name={user.first_name}
         email={user.email}
+        country={user.country}
       />
 
       <View style={styles.bodyContent}>
