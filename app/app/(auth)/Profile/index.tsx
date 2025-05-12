@@ -24,6 +24,7 @@ const ProfileScreen: React.FC = () => {
   const handleLogout = useCallback(async () => {
     console.log('Logging out...');
     await SecureStore.deleteItemAsync('USER_TOKEN');
+    await SecureStore.deleteItemAsync('USER_THEME_PREFERENCE');
     router.replace('/');
   }, [router]);
 
