@@ -12,6 +12,12 @@ type Question = {
   correctAnswer: string;
 };
 
+type UserAnswer = {
+  selectedOption: string | null;
+  showResult: boolean;
+  isCorrect: boolean | null;
+};
+
 const quizQuestions: Question[] = [
   {
     question: 'What is Kahu?',
@@ -39,25 +45,45 @@ export default function Quiz() {
   const { theme } = useContext(ThemeContext);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
-  const [isAnswerChecked, setIsAnswerChecked] = useState(false);
   const [isQuizFinished, setIsQuizFinished] = useState(false);
-  const [resetFlag, setResetFlag] = useState(false);
+  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>(
+    quizQuestions.map(() => ({
+      selectedOption: null,
+      showResult: false,
+      isCorrect: null
+    }))
+  );
 
   const handleAnswerChecked = (isCorrect: boolean) => {
-    if (!isAnswerChecked) {
-      if (isCorrect) {
-        setScore(prev => prev + 1);
-      }
-      setIsAnswerChecked(true);
+    setUserAnswers(prev => {
+      const newAnswers = [...prev];
+      newAnswers[currentQuestionIndex] = {
+        ...newAnswers[currentQuestionIndex],
+        showResult: true,
+        isCorrect
+      };
+      return newAnswers;
+    });
+
+    if (isCorrect && !userAnswers[currentQuestionIndex].showResult) {
+      setScore(prev => prev + 1);
     }
+  };
+
+  const handleOptionSelect = (option: string) => {
+    setUserAnswers(prev => {
+      const newAnswers = [...prev];
+      newAnswers[currentQuestionIndex] = {
+        ...newAnswers[currentQuestionIndex],
+        selectedOption: option
+      };
+      return newAnswers;
+    });
   };
 
   const moveToNextQuestion = () => {
     if (currentQuestionIndex < quizQuestions.length - 1) {
       setCurrentQuestionIndex(i => i + 1);
-      setIsAnswerChecked(false);
-      setResetFlag(true);
-      setTimeout(() => setResetFlag(false), 50);
     } else {
       setIsQuizFinished(true);
     }
@@ -66,16 +92,19 @@ export default function Quiz() {
   const moveToPreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(i => i - 1);
-      setIsAnswerChecked(false);
-      setResetFlag(true);
-      setTimeout(() => setResetFlag(false), 50);
     }
   };
 
   const restartQuiz = () => {
     setCurrentQuestionIndex(0);
     setScore(0);
-    setIsAnswerChecked(false);
+    setUserAnswers(
+      quizQuestions.map(() => ({
+        selectedOption: null,
+        showResult: false,
+        isCorrect: null
+      }))
+    );
     setIsQuizFinished(false);
   };
 
@@ -88,10 +117,11 @@ export default function Quiz() {
           <ProgressBar progress={progress} color={theme.primary} style={styles.progressBar} />
 
           <QuestionCard
-            key={currentQuestionIndex}
             questionData={quizQuestions[currentQuestionIndex]}
             onAnswerChecked={handleAnswerChecked}
-            resetShowResult={resetFlag}
+            selectedOption={userAnswers[currentQuestionIndex].selectedOption}
+            showResult={userAnswers[currentQuestionIndex].showResult}
+            onOptionSelect={handleOptionSelect}
           />
 
           <View style={styles.navigationContainer}>
@@ -107,7 +137,9 @@ export default function Quiz() {
               style={[styles.navButton, { backgroundColor: theme.primary }]}
               onPress={moveToNextQuestion}
             >
-              <StyledText type="boldLabel" style={styles.navButtonText}>Next</StyledText>
+              <StyledText type="boldLabel" style={styles.navButtonText}>
+                {currentQuestionIndex === quizQuestions.length - 1 ? 'Finish' : 'Next'}
+              </StyledText>
             </TouchableOpacity>
           </View>
         </>
