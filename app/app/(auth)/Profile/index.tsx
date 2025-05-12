@@ -1,6 +1,7 @@
-import React, { useContext } from 'react';
-import { View, Alert, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router'; 
+import React, { useContext, useMemo, useCallback } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
 
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { UserContext } from '@/contexts/UserContext';
@@ -9,36 +10,81 @@ import ProfileOptionButton from '@/components/ProfileOptionButton';
 import ProfileSettingButton from '@/components/ProfileSettingButton';
 import ProfileSettingBox from '@/components/ProfileSettingBox';
 import ProfileUserCard from '@/components/ProfileUserCard';
-import * as SecureStore from 'expo-secure-store';
+
+const FEATURES = ['Programme', 'Support', 'Calendar', 'Map'] as const;
+
+type ExtractRouteParams<T> = T extends `${infer Start}?${infer Rest}` ? Start : T;
+type ValidRoutes = ExtractRouteParams<Parameters<ReturnType<typeof useRouter>['push']>[0]>;
 
 const ProfileScreen: React.FC = () => {
   const { theme } = useContext(ThemeContext);
   const { user } = useContext(UserContext);
-  const router = useRouter(); 
+  const router = useRouter();
 
-  const features = ['Calendar', 'Support', 'Map'];
-  const handleLogout = async() => {
+  const handleLogout = useCallback(async () => {
     console.log('Logging out...');
     await SecureStore.deleteItemAsync('USER_TOKEN');
     await SecureStore.deleteItemAsync('USER_THEME_PREFERENCE');
-    router.replace('/'); 
-  };
+    router.replace('/');
+  }, [router]);
+
+  const featureRoutes = useMemo(
+    () =>
+      FEATURES.map((feature) => {
+        const path = feature.toLowerCase().replace(/\s+/g, '-');
+        return {
+          title: feature,
+          route: `/Profile/${path}` as ValidRoutes,
+        };
+      }),
+    []
+  );
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <ProfileUserCard avatar={user.avatar} name={`${user.first_name} ${user.last_name}`} email={user.email} country={user.country}/>
+      <ProfileUserCard
+        avatar={user.avatar}
+        name={user.first_name}
+        email={user.email}
+        country={user.country}
+      />
 
       <View style={styles.bodyContent}>
         <View style={styles.buttonGrid}>
-          {features.map((feature) => (
-            <ProfileOptionButton key={feature} title={feature} onPress={() => Alert.alert(`Navigating to ${feature}`)}/>
-          ))}
+          {featureRoutes.map(({ title, route }, index) => {
+            const isLeftmost = index % 2 === 0; 
+            const isRightmost = index % 2 === 1; 
+
+            return (
+              <ProfileOptionButton
+                key={title}
+                title={title}
+                onPress={() => router.push(route)}
+                isLeftmost={isLeftmost}
+                isRightmost={isRightmost}
+              />
+            );
+          })}
         </View>
 
         <ProfileSettingBox>
-          <ProfileSettingButton label="Change Password" iconName="vpn-key" onPress={() => router.push('/Profile/changepassword')} style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}/>
-          <ProfileSettingButton label="Theme" iconName="palette" onPress={() => router.push('/Profile/theme')}/>
-          <ProfileSettingButton label="Log Out" iconName="exit-to-app"onPress={handleLogout} style={{ borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}/>
+          <ProfileSettingButton
+            label="Change Password"
+            iconName="vpn-key"
+            onPress={() => router.push('/Profile/changepassword' as ValidRoutes)}
+            style={styles.topButton}
+          />
+          <ProfileSettingButton
+            label="Theme"
+            iconName="palette"
+            onPress={() => router.push('/Profile/theme' as ValidRoutes)}
+          />
+          <ProfileSettingButton
+            label="Log Out"
+            iconName="exit-to-app"
+            onPress={handleLogout}
+            style={styles.bottomButton}
+          />
         </ProfileSettingBox>
       </View>
     </View>
@@ -59,6 +105,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+  },
+  topButton: {
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  bottomButton: {
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
   },
 });
 

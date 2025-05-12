@@ -24,6 +24,9 @@ const ThemeScreen: React.FC = () => {
     changeThemePreference(value ? 'dark' : 'light')
   }
 
+  const trackColor = '#0c0c48';
+  const thumbColor = isDarkMode ? '#fff' : '#0c0c48';  
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.row}>
