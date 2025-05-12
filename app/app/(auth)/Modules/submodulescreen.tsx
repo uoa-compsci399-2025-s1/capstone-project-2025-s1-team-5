@@ -1,16 +1,25 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { moduleSubmodules } from './modulescreen';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
 import StyledText from '@/components/StyledText';
 
 const SubmoduleScreen: React.FC = () => {
   const { moduleNumber, submoduleNumber } = useLocalSearchParams();
+  const navigation = useNavigation();
 
   const moduleIndex = Number(moduleNumber);
   const submoduleIndex = Number(submoduleNumber);
 
   const submodule = moduleSubmodules[moduleIndex]?.[submoduleIndex];
+
+  useLayoutEffect(() => {
+      if (submodule?.title) {
+        navigation.setOptions({ title: submodule.title });
+      } else {
+        navigation.setOptions({ title: 'Submodule' });
+      }
+    }, [navigation, submodule]);
 
   if (!submodule) {
     return (
