@@ -21,7 +21,7 @@ const ProfileOptionButton: React.FC<ProfileOptionButtonProps> = ({ title, onPres
 
 const styles = StyleSheet.create({
   button: {
-    width: '30%',
+    width: '47%',
     height: 50,
     margin: 5,
     alignItems: 'center',

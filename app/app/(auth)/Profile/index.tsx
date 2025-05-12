@@ -11,7 +11,7 @@ import ProfileSettingButton from '@/components/ProfileSettingButton';
 import ProfileSettingBox from '@/components/ProfileSettingBox';
 import ProfileUserCard from '@/components/ProfileUserCard';
 
-const FEATURES = ['Calendar', 'Support', 'Map', 'Programme'] as const;
+const FEATURES = ['Programme', 'Support', 'Calendar', 'Map'] as const;
 
 type ExtractRouteParams<T> = T extends `${infer Start}?${infer Rest}` ? Start : T;
 type ValidRoutes = ExtractRouteParams<Parameters<ReturnType<typeof useRouter>['push']>[0]>;
