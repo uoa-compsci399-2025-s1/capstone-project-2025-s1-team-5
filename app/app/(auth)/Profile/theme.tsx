@@ -4,13 +4,12 @@ import { ThemeContext } from '@/contexts/ThemeContext';
 import StyledText from '@/components/StyledText';
 import api from '@/app/lib/api';
 
-type ColorPreference = 'light' | 'dark' | 'system'; // Adjust according to your existing type
+type ColorPreference = 'light' | 'dark' | 'system';
 
 const ThemeScreen: React.FC = () => {
   const { theme, isDarkMode, setCustomTheme, colorPreference } = useContext(ThemeContext);
-  const [systemMockUp, setSystemMockUp] = useState(false); // Dummy toggle for system default
+  const [systemDefault, setsystemDefault] = useState(false); //To be implemented
 
-  // Function to update the theme preference on the server
   const changeThemePreference = async (pref: 'light' | 'dark') => {
     try {
       const res = await api.patch<{ message: string }>('/users/me/theme', {
@@ -23,28 +22,27 @@ const ThemeScreen: React.FC = () => {
     }
   };
 
-  // Function to handle theme changes and ensure only one toggle is active
   const handleThemeChange = (pref: 'light' | 'dark' | 'system') => {
     if (pref === 'light' && colorPreference !== 'light') {
       setCustomTheme('light');
       changeThemePreference('light');
-      setSystemMockUp(false); // Turn off system toggle if light is selected
+      setsystemDefault(false); 
     } else if (pref === 'dark' && colorPreference !== 'dark') {
       setCustomTheme('dark');
       changeThemePreference('dark');
-      setSystemMockUp(false); // Turn off system toggle if dark is selected
+      setsystemDefault(false); 
     } else if (pref === 'system' && colorPreference !== 'system') {
-      setSystemMockUp(true); // For system default
-      setCustomTheme('system'); // Set system as the active theme
+      setsystemDefault(true); 
+      setCustomTheme('system'); 
     } else {
-      // Reset all preferences if user turns off any active theme
       setCustomTheme('system');
-      setSystemMockUp(false); // Turn off system toggle
+      setsystemDefault(false); 
     }
   };
 
-  const trackColor = '#0c0c48';
-  const thumbColor = isDarkMode ? '#fff' : '#0c0c48';
+  const trackColor = isDarkMode ? '#444' : '#ccc';  
+  const activeTrackColor = isDarkMode ? '#555' : '#888'; 
+  const thumbColor = isDarkMode ? '#ffffff' : '#0c0c48'; 
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -53,7 +51,7 @@ const ThemeScreen: React.FC = () => {
         <Switch
           value={colorPreference === 'light'}
           onValueChange={() => handleThemeChange('light')}
-          trackColor={{ true: trackColor, false: '#ccc' }}
+          trackColor={{ true: activeTrackColor, false: trackColor }}
           thumbColor={colorPreference === 'light' ? thumbColor : '#f4f3f4'}
         />
       </View>
@@ -63,7 +61,7 @@ const ThemeScreen: React.FC = () => {
         <Switch
           value={colorPreference === 'dark'}
           onValueChange={() => handleThemeChange('dark')}
-          trackColor={{ true: trackColor, false: '#ccc' }}
+          trackColor={{ true: activeTrackColor, false: trackColor }}
           thumbColor={colorPreference === 'dark' ? thumbColor : '#f4f3f4'}
         />
       </View>
@@ -71,10 +69,10 @@ const ThemeScreen: React.FC = () => {
       <View style={styles.row}>
         <StyledText type="label" style={{ color: theme.text }}>System Default</StyledText>
         <Switch
-          value={systemMockUp}
+          value={systemDefault}
           onValueChange={() => handleThemeChange('system')}
-          trackColor={{ true: trackColor, false: '#ccc' }}
-          thumbColor={systemMockUp ? thumbColor : '#f4f3f4'}
+          trackColor={{ true: activeTrackColor, false: trackColor }}
+          thumbColor={systemDefault ? thumbColor : '#f4f3f4'}
         />
       </View>
 
