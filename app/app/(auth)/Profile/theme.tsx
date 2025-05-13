@@ -4,10 +4,13 @@ import { ThemeContext } from '@/contexts/ThemeContext';
 import StyledText from '@/components/StyledText';
 import api from '@/app/lib/api';
 
+type ColorPreference = 'light' | 'dark' | 'system'; // Adjust according to your existing type
+
 const ThemeScreen: React.FC = () => {
   const { theme, isDarkMode, setCustomTheme, colorPreference } = useContext(ThemeContext);
-  const [systemDefault, setsystemDefault] = useState(false); // To be implemented
+  const [systemMockUp, setSystemMockUp] = useState(false); // Dummy toggle for system default
 
+  // Function to update the theme preference on the server
   const changeThemePreference = async (pref: 'light' | 'dark') => {
     try {
       const res = await api.patch<{ message: string }>('/users/me/theme', {
@@ -20,9 +23,24 @@ const ThemeScreen: React.FC = () => {
     }
   };
 
-  const handleThemeChange = (pref: 'light' | 'dark') => {
-    setCustomTheme(pref); 
-    changeThemePreference(pref);
+  // Function to handle theme changes and ensure only one toggle is active
+  const handleThemeChange = (pref: 'light' | 'dark' | 'system') => {
+    if (pref === 'light' && colorPreference !== 'light') {
+      setCustomTheme('light');
+      changeThemePreference('light');
+      setSystemMockUp(false); // Turn off system toggle if light is selected
+    } else if (pref === 'dark' && colorPreference !== 'dark') {
+      setCustomTheme('dark');
+      changeThemePreference('dark');
+      setSystemMockUp(false); // Turn off system toggle if dark is selected
+    } else if (pref === 'system' && colorPreference !== 'system') {
+      setSystemMockUp(true); // For system default
+      setCustomTheme('system'); // Set system as the active theme
+    } else {
+      // Reset all preferences if user turns off any active theme
+      setCustomTheme('system');
+      setSystemMockUp(false); // Turn off system toggle
+    }
   };
 
   const trackColor = '#0c0c48';
@@ -53,10 +71,10 @@ const ThemeScreen: React.FC = () => {
       <View style={styles.row}>
         <StyledText type="label" style={{ color: theme.text }}>System Default</StyledText>
         <Switch
-          value={systemDefault}
-          onValueChange={() => setsystemDefault(!systemDefault)} // just have a toggle for now, further implementation needed
+          value={systemMockUp}
+          onValueChange={() => handleThemeChange('system')}
           trackColor={{ true: trackColor, false: '#ccc' }}
-          thumbColor={systemDefault ? thumbColor : '#f4f3f4'}
+          thumbColor={systemMockUp ? thumbColor : '#f4f3f4'}
         />
       </View>
 
