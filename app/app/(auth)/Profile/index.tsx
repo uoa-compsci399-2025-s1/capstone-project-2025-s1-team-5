@@ -11,6 +11,8 @@ import ProfileSettingButton from '@/components/ProfileSettingButton';
 import ProfileSettingBox from '@/components/ProfileSettingBox';
 import ProfileUserCard from '@/components/ProfileUserCard';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import StyledText from '@/components/StyledText';
+import { Text } from 'react-native';
 
 const FEATURES = ['Programme', 'Support', 'Calendar', 'Map'] as const;
 
@@ -43,32 +45,46 @@ const ProfileScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <ProfileUserCard
-        avatar={user.avatar}
-        name={user.first_name}
-        email={user.email}
-        country={user.country}
-      />
+        <View style={styles.profileCardOuter}>
+          <View style={styles.profileCardInner}>
+            <ProfileUserCard
+              avatar={user.avatar}
+              name={user.first_name}
+              email={user.email}
+              country={user.country}
+            />
+          </View>
+        </View>
 
-      <View style={styles.bodyContent}>
+      <View style={styles.bodyContent}> //This is the buttons for programme, support, calendar, and map...
         <View style={styles.buttonGrid}>
           {featureRoutes.map(({ title, route }, index) => {
-            const isLeftmost = index % 2 === 0; 
-            const isRightmost = index % 2 === 1; 
+            const isLeftmost = index % 2 === 0;
+            const isRightmost = index % 2 === 1;
 
             return (
-              <ProfileOptionButton
-                key={title}
-                title={title}
-                onPress={() => router.push(route)}
-                isLeftmost={isLeftmost}
-                isRightmost={isRightmost}
-              />
+//               <ProfileOptionButton
+//                 key={title}
+//                 title={title}
+//                 onPress={() => router.push(route)}
+//                 isLeftmost={isLeftmost}
+//                 isRightmost={isRightmost}
+//               />
+                <View key={title} style={styles.buttonOuter}>
+                  <View style={styles.buttonInner}>
+                    <ProfileOptionButton
+                      title={title}
+                      onPress={() => router.push(route)}
+                      isLeftmost={isLeftmost}
+                      isRightmost={isRightmost}
+                    />
+                  </View>
+                </View>
             );
           })}
         </View>
 
-        <ProfileSettingBox>
+        <ProfileSettingBox> //This is the settings box
            <ProfileSettingButton
              label="Change Profile Picture"
              iconName="tag-faces"
@@ -106,12 +122,13 @@ const styles = StyleSheet.create({
   bodyContent: {
     flex: 1,
     width: '100%',
-    marginTop: 10,
+    marginTop: '10%',
   },
   buttonGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+    marginBottom: 130, //ok this might need to change as well
   },
   topButton: {
     borderTopLeftRadius: 10,
@@ -121,6 +138,39 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
   },
+    profileCardOuter: {
+      padding: 2, // inner border thickness
+      borderRadius: 16,
+      backgroundColor: '#0c0c48', // outer edge if needed
+      alignItems: 'center',
+    },
+
+    profileCardInner: {
+      backgroundColor: '#0c0c48',
+      borderRadius: 14,
+      width: '100%',
+      padding: 16,
+      borderWidth: 2,
+      borderColor: 'rgba(255,255,255,1)',
+    },
+    buttonOuter: {
+      width: '48%',
+      aspectRatio: 1.8, // maintain square-ish buttons
+      marginBottom: 12,
+      borderRadius: 12,
+      backgroundColor: '#0c0c48', // outer border color
+      padding: 2, // border thickness
+    },
+    buttonInner: {
+      flex: 1,                       // Fills vertical space
+      width: '100%',                // Fills horizontal space
+      padding: 2,
+      backgroundColor: '#fff',
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+    },
 });
 
 export default ProfileScreen;
