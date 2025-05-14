@@ -292,6 +292,12 @@
 							"$ref": "#/components/schemas/mongoose.Types.ObjectId"
 						},
 						"type": "array"
+					},
+					"quizIds": {
+						"items": {
+							"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -299,7 +305,8 @@
 					"title",
 					"description",
 					"createdAt",
-					"subsectionIds"
+					"subsectionIds",
+					"quizIds"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1151,6 +1158,7 @@
 					}
 				}
 			}
+<<<<<<< Updated upstream
 		},
 		"/auth/me": {
 			"get": {
@@ -1205,6 +1213,8 @@
 				],
 				"parameters": []
 			}
+=======
+>>>>>>> Stashed changes
 		}
 	},
 	"servers": [

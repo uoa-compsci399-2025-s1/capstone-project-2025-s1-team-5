@@ -1,5 +1,5 @@
 import { moduleAdaptor } from "../adapter/ModuleAdapter";
-import { IModule, IQuestion, IQuiz, ISubsection } from "../models/models";
+import type { IModule, IQuestion, IQuiz, ISubsection } from "../models/models";
 import { newModule, Question, Quiz, Subsection } from "../../data-layer/models/schema";
 import mongoose from "mongoose";
 
