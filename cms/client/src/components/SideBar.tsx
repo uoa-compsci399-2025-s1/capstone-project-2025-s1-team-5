@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import Button from './Button';
 import { useAuth } from '../auth/AuthProvider';
 import { useOutsideClick } from '../hooks/useOutsideClick';
 
-function Sidebar() {
-  const [isOpen, setIsOpen] = useState(false);
+interface SidebarProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}
+
+function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const { setIsAuthenticated } = useAuth();
   const sidebarRef = useOutsideClick(() => {
     if (isOpen) {
@@ -13,24 +17,16 @@ function Sidebar() {
     }
   });
 
-  const contentStyles = {
-    transition: 'margin-left 0.3s ease', // Smooth transition
-    marginLeft: isOpen ? '250px' : '0', // Adjust margin when sidebar is open
-  };
-
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
 
   const handleLogout = () => {
-    // Clear the token from localStorage
     localStorage.removeItem('authToken');
-    
-    // Update the authentication state to false
     setIsAuthenticated(false);
   };
 
-const styles = {
+  const styles = {
     burgerIcon: {
       fontSize: '24px',
       cursor: 'pointer',
@@ -38,26 +34,26 @@ const styles = {
       border: 'none',
       position: 'fixed',
       top: '20px',
-      left: isOpen ? '265px' : '20px',  // Make room when sidebar is open
+      left: isOpen ? '265px' : '20px',
       transition: 'left 0.3s ease',
       zIndex: 1000,
     },
     sidebar: {
       position: 'fixed',
       top: 0,
-      left: isOpen ? '0' : '-270px',  // Adjust to match width + some buffer
+      left: isOpen ? '0' : '-270px',
       width: '250px',
       height: '100%',
       backgroundColor: 'white',
-      borderRight: '1px solid #ddd',  // Optional, adds definition
+      borderRight: '1px solid #ddd',
       overflowY: 'auto',
       transition: 'left 0.3s ease',
       zIndex: 999,
-      padding: '20px 16px',  // More padding inside the sidebar
+      padding: '20px 16px',
       boxShadow: '2px 0 8px rgba(0, 0, 0, 0.05)',
-      display: 'flex', // Add this
-      flexDirection: 'column', // Add this
-      justifyContent: 'space-between', // Push bottom items down
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
     },
     logo: {
       width: '100%',
@@ -75,18 +71,24 @@ const styles = {
       borderBottom: '1px solid #eee',
     },
   };
-  
 
   return (
-    <div>
+    <>
       {!isOpen && (
-        <button style={styles.burgerIcon as React.CSSProperties} onClick={toggleSidebar}>
+        <button 
+          style={styles.burgerIcon as React.CSSProperties} 
+          onClick={toggleSidebar}
+        >
           ☰
         </button>
       )}
 
       <div ref={sidebarRef} style={styles.sidebar as React.CSSProperties}>
-        <img src="/assets/images/UoA-Logo-Primary-RGB-Large.png" alt="Logo" style={styles.logo} />
+        <img 
+          src="/assets/images/UoA-Logo-Primary-RGB-Large.png" 
+          alt="Logo" 
+          style={styles.logo} 
+        />
 
         <nav>
           <ul style={styles.nav}>
@@ -97,7 +99,6 @@ const styles = {
           </ul>
         </nav>
 
-        {/* Logout button at bottom */}
         <div className="mt-auto pt-6">
           <Link
             to="/"
@@ -108,12 +109,7 @@ const styles = {
           </Link>
         </div>
       </div>
-
-      <div style={{ transition: 'transform 0.3s ease', transform: isOpen ? 'translateX(250px)' : 'translateX(0)' }}>
-        {/* Main content */}
-      </div>
-
-    </div>
+    </>
   );
 }
 
