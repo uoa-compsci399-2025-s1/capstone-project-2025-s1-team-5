@@ -10,6 +10,7 @@ import ProfileOptionButton from '@/components/ProfileOptionButton';
 import ProfileSettingButton from '@/components/ProfileSettingButton';
 import ProfileSettingBox from '@/components/ProfileSettingBox';
 import ProfileUserCard from '@/components/ProfileUserCard';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const FEATURES = ['Programme', 'Support', 'Calendar', 'Map'] as const;
 
@@ -68,11 +69,17 @@ const ProfileScreen: React.FC = () => {
         </View>
 
         <ProfileSettingBox>
+           <ProfileSettingButton
+             label="Change Profile Picture"
+             iconName="tag-faces"
+             onPress={() => router.push('/Profile/pfpselection' as ValidRoutes)}
+             style={styles.topButton}
+           />
           <ProfileSettingButton
             label="Change Password"
             iconName="vpn-key"
             onPress={() => router.push('/Profile/changepassword' as ValidRoutes)}
-            style={styles.topButton}
+            style={styles.Button}
           />
           <ProfileSettingButton
             label="Theme Preference"
