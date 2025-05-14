@@ -1,8 +1,9 @@
 import React, {useContext, useState} from 'react';
-import { View, Image, TouchableOpacity, FlatList, StyleSheet, Alert, Button } from 'react-native';
+import { View, Image, TouchableOpacity, FlatList, StyleSheet, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { UserContext } from '@/contexts/UserContext';
 import profileAvatars from '@/constants/profileAvatars';
+import SubmitButton from '@/components/SubmitButton';
 import api from '@/app/lib/api';
 
 const ProfilePicSelectionScreen: React.FC = () => {
@@ -49,7 +50,7 @@ const ProfilePicSelectionScreen: React.FC = () => {
         />
 
         <View style={styles.confirmButtonContainer}>
-        <Button title="Update Profile Picture" onPress={handleConfirmUpdate} />
+        <SubmitButton text="Update Profile Picture" onPress={handleConfirmUpdate}/>
         </View>
     </View>
     );
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
       width: 120,
       height: 120,
       borderRadius: 60,
-      borderWidth: 2,
+      borderWidth: 3,
       borderColor: '#0c0c48',
     },
     avatarItem: {

@@ -14,6 +14,9 @@ export default function ProfileSettingBox({ children }: ProfileSettingBoxProps) 
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    marginTop: -100, //ok this might need a change with other components
+    marginTop: -100, // adjust as needed
+    borderRadius: 14,
+    borderWidth: 2,
+    borderColor: '#ffffff',
   },
 });

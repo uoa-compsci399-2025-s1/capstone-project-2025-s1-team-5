@@ -136,39 +136,38 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
   },
-    profileCardOuter: {
-      padding: 2, // inner border thickness
-      borderRadius: 16,
-      backgroundColor: '#0c0c48', // outer edge if needed
-      alignItems: 'center',
-    },
-
-    profileCardInner: {
-      backgroundColor: '#0c0c48',
-      borderRadius: 14,
-      width: '100%',
-      padding: 16,
-      borderWidth: 2,
-      borderColor: '#ffffff',
-    },
-    buttonOuter: {
-      width: '48%',
-      aspectRatio: 1.8, // maintain square-ish buttons
-      marginBottom: 12,
-      borderRadius: 12,
-      backgroundColor: '#0c0c48', // outer border color
-      padding: 2, // border thickness
-    },
-    buttonInner: {
-      flex: 1,                       // Fills vertical space
-      width: '100%',                // Fills horizontal space
-      padding: 2,
-      backgroundColor: '#fff',
-      borderRadius: 10,
-      alignItems: 'center',
-      justifyContent: 'center',
-      overflow: 'hidden',
-    },
+  profileCardOuter: {
+    padding: 2, // inner border thickness
+    borderRadius: 16,
+    backgroundColor: '#0c0c48', // outer edge if needed
+    alignItems: 'center',
+  },
+  profileCardInner: {
+    backgroundColor: '#0c0c48',
+    borderRadius: 14,
+    width: '100%',
+    padding: 16,
+    borderWidth: 2,
+    borderColor: '#ffffff',
+  },
+  buttonOuter: {
+    width: '48%',
+    aspectRatio: 1.8, // maintain square-ish buttons
+    marginBottom: 12,
+    borderRadius: 12,
+    backgroundColor: '#0c0c48', // outer border color
+    padding: 2, // border thickness
+  },
+  buttonInner: {
+    flex: 1,                       // Fills vertical space
+    width: '100%',                // Fills horizontal space
+    padding: 2,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
 });
 
 export default ProfileScreen;
