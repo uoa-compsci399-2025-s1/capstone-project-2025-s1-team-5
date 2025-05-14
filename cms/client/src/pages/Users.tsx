@@ -21,6 +21,9 @@ const UsersPage = () => {
   const [sortKey, setSortKey] = useState<keyof User | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [editUser, setEditUser] = useState<User | null>(null);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false); //transition
+  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false); //transition
 
   const fetchUsers = async () => {
     try {
@@ -60,6 +63,7 @@ const UsersPage = () => {
 
   const handleEdit = (user: User) => {
     setEditUser(user);
+    setIsEditModalVisible(true);
   };
 
   const handleDelete = async (userId: string) => {
@@ -148,18 +152,80 @@ const UsersPage = () => {
       </div>
 
       {editUser && (
-        <div className="mt-8">
-          <EditUserForm
-            user={editUser}
-            onUserUpdated={fetchUsers}
-            setEditUser={setEditUser}
-          />
+        <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50 transition-opacity duration-300">
+          <div
+            className={`bg-white rounded-lg p-6 shadow-lg w-full max-w-lg relative transform transition-all duration-300 ${
+              isEditModalVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+            }`}
+          >
+            <h2 className="text-xl font-semibold mb-4">Edit User</h2>
+            <button
+              onClick={() => {
+                setIsEditModalVisible(false);
+                setTimeout(() => setEditUser(null), 300);
+              }}
+              className="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-3xl leading-none font-bold"
+              aria-label="Close"
+            >
+              &times;
+            </button>
+            <EditUserForm
+              user={editUser}
+              onUserUpdated={() => {
+                fetchUsers();
+                setIsEditModalVisible(false);
+                setTimeout(() => setEditUser(null), 300);
+              }}
+              setEditUser={setEditUser}
+            />
+          </div>
         </div>
       )}
 
       <div className="mt-12">
-        <CreateUser onUserCreated={fetchUsers} />
+        {!showCreateForm && (
+          <button
+            onClick={() => {
+              setShowCreateForm(true);
+              setIsCreateModalVisible(true);
+            }}
+            className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
+          >
+            Create New User
+          </button>
+        )}
+
+        {showCreateForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 transition-opacity duration-300">
+            <div
+              className={`bg-white rounded-lg p-6 shadow-lg w-full max-w-lg relative transform transition-all duration-300 ${
+                isCreateModalVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+              }`}
+            >
+              <h2 className="text-xl font-semibold mb-4">Create User</h2>
+              <button
+                onClick={() => {
+                  setIsCreateModalVisible(false);
+                  setTimeout(() => setShowCreateForm(false), 300);
+                }}
+                className="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-3xl leading-none font-bold"
+                aria-label="Close"
+              >
+                &times;
+              </button>
+
+              <CreateUser
+                onUserCreated={() => {
+                  fetchUsers();
+                  setIsCreateModalVisible(false);
+                  setTimeout(() => setShowCreateForm(false), 300);
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
+
     </div>
   );
 };

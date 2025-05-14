@@ -24,7 +24,7 @@ const EditUserForm: React.FC<EditUserFormProps> = ({ user, onUserUpdated, setEdi
   const [first_name, setFirstName] = useState(user.first_name);
   const [last_name, setLastName] = useState(user.last_name);
   const [email, setEmail] = useState(user.email);
-  const [password, setPassword] = useState(user.password);
+  const [password, setPassword] = useState("");
   const [country, setCountry] = useState(user.country);
   const [programme, setProgramme] = useState(user.programme || "");
   const [role, setRole] = useState(user.role);
@@ -56,80 +56,6 @@ const EditUserForm: React.FC<EditUserFormProps> = ({ user, onUserUpdated, setEdi
     }
   };
 
-//   return (
-//     <div>
-//       <h2>Edit User</h2>
-//       <form onSubmit={handleSubmit}>
-//         <div>
-//           <label>First Name:</label>
-//           <input
-//             type="text"
-//             value={first_name}
-//             onChange={(e) => setFirstName(e.target.value)}
-//             required
-//           />
-//         </div>
-//         <div>
-//           <label>Last Name:</label>
-//           <input
-//             type="text"
-//             value={last_name}
-//             onChange={(e) => setLastName(e.target.value)}
-//             required
-//           />
-//         </div>
-//         <div>
-//           <label>Email:</label>
-//           <input
-//             type="email"
-//             value={email}
-//             onChange={(e) => setEmail(e.target.value)}
-//             required
-//           />
-//         </div>
-//         <div>
-//           <label>Password:</label>
-//           <input
-//             type="password"
-//             value={password}
-//             onChange={(e) => setPassword(e.target.value)}
-//             required
-//           />
-//         </div>
-//         <div>
-//           <label>Country:</label>
-//           <input
-//             type="text"
-//             value={country}
-//             onChange={(e) => setCountry(e.target.value)}
-//             required
-//           />
-//         </div>
-//         <div>
-//           <label>Programme:</label>
-//           <input
-//             type="text"
-//             value={programme}
-//             onChange={(e) => setProgramme(e.target.value)}
-//           />
-//         </div>
-//         <div>
-//           <label>Role</label>
-//           <select
-//             value={role}
-//             onChange={(e) => setRole(e.target.value)}
-//             required
-//           >
-//             <option value="user">User</option>
-//             <option value="admin">Admin</option>
-//           </select>
-//         </div>
-//         <button type="submit">Update User</button>
-//       </form>
-//       <button onClick={() => setEditUser(null)}>Cancel</button>
-//     </div>
-//   );
-// };
 
  return (
     <div className="mt-10 bg-white shadow-md rounded-lg p-6 max-w-xl mx-auto">

@@ -13,6 +13,11 @@ function Sidebar() {
     }
   });
 
+  const contentStyles = {
+    transition: 'margin-left 0.3s ease', // Smooth transition
+    marginLeft: isOpen ? '250px' : '0', // Adjust margin when sidebar is open
+  };
+
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
@@ -25,7 +30,7 @@ function Sidebar() {
     setIsAuthenticated(false);
   };
 
-  const styles = {
+const styles = {
     burgerIcon: {
       fontSize: '24px',
       cursor: 'pointer',
@@ -50,6 +55,9 @@ function Sidebar() {
       zIndex: 999,
       padding: '20px 16px',  // More padding inside the sidebar
       boxShadow: '2px 0 8px rgba(0, 0, 0, 0.05)',
+      display: 'flex', // Add this
+      flexDirection: 'column', // Add this
+      justifyContent: 'space-between', // Push bottom items down
     },
     logo: {
       width: '100%',
@@ -78,38 +86,33 @@ function Sidebar() {
       )}
 
       <div ref={sidebarRef} style={styles.sidebar as React.CSSProperties}>
-        <img src="/assets/images/UoA-Logo-Primary-RGB-Large.png" alt="Logo" style={styles.logo}/>
+        <img src="/assets/images/UoA-Logo-Primary-RGB-Large.png" alt="Logo" style={styles.logo} />
 
         <nav>
           <ul style={styles.nav}>
-            <li>
-              <Link to="/modules/home">
-                <Button label="Home" href="/modules/home" />
-              </Link>
-            </li>
-            <li>
-              <Link to="/modules/content">
-                <Button label="Content Management" href="/modules/content" />
-              </Link>
-            </li>
-            <li>
-              <Link to="/modules/users">
-                <Button label="User Management" href="/modules/users" />
-              </Link>
-            </li>
-            <li>
-              <Link to="/modules/analytics">
-                <Button label="Analytics" href="/modules/analytics" />
-              </Link>
-            </li>
-            <li>
-              <button onClick={handleLogout} className="w-full text-left">
-                <Button label="Logout" href="/" />
-              </button>
-            </li>
+            <li><Link to="/modules/home"><Button label="Home" href="/modules/home" /></Link></li>
+            <li><Link to="/modules/content"><Button label="Content Management" href="/modules/content" /></Link></li>
+            <li><Link to="/modules/users"><Button label="User Management" href="/modules/users" /></Link></li>
+            <li><Link to="/modules/analytics"><Button label="Analytics" href="/modules/analytics" /></Link></li>
           </ul>
         </nav>
+
+        {/* Logout button at bottom */}
+        <div className="mt-auto pt-6">
+          <Link
+            to="/"
+            onClick={handleLogout}
+            className="w-full text-red-600 hover:text-white hover:bg-red-600 border border-red-600 font-semibold py-2 px-4 rounded transition duration-200 text-sm text-center block"
+          >
+            Logout
+          </Link>
+        </div>
       </div>
+
+      <div style={{ transition: 'transform 0.3s ease', transform: isOpen ? 'translateX(250px)' : 'translateX(0)' }}>
+        {/* Main content */}
+      </div>
+
     </div>
   );
 }
