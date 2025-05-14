@@ -18,6 +18,7 @@ const ModulesPage = () => {
   const [sortOption, setSortOption] = useState("title");
   const [showCreateModule, setCreateModule] = useState(false);
   const [editModule, setEditModule] = useState<Module | null>(null);
+  const [deleteConfirmModule, setDeleteConfirmModule] = useState<Module | null>(null);
 
   const fetchModules = async () => {
     try {
@@ -32,6 +33,22 @@ const ModulesPage = () => {
   useEffect(() => {
     fetchModules();
   }, []);
+
+  const handleDeleteModule = async (moduleId: string) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      await axios.delete(`http://localhost:3000/modules/${moduleId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      fetchModules();
+      setDeleteConfirmModule(null);
+    } catch (error) {
+      console.error("Failed to delete module:", error);
+      alert("Failed to delete module. Please try again.");
+    }
+  };
 
   const sortedModules = [...modules].sort((a, b) => {
     if (sortOption === "title") {
@@ -111,11 +128,18 @@ const ModulesPage = () => {
                     Last modified: {new Date(module.updatedAt).toLocaleString()}
                   </p>
                 </div>
-                <ModuleButton
-                  label="Edit"
-                  onClick={() => setEditModule(module)}
-                  color="#007bff"
-                />
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <ModuleButton
+                    label="Edit"
+                    onClick={() => setEditModule(module)}
+                    color="#007bff"
+                  />
+                  <ModuleButton
+                    label="Delete"
+                    onClick={() => setDeleteConfirmModule(module)}
+                    color="#dc3545"
+                  />
+                </div>
               </div>
             ))}
         </div>
@@ -133,6 +157,7 @@ const ModulesPage = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            zIndex: 1000,
           }}
         >
           <div
@@ -140,7 +165,10 @@ const ModulesPage = () => {
               backgroundColor: "#ffffff",
               borderRadius: "10px",
               padding: "2rem",
-              width: "500px",
+              width: "90%",
+              maxWidth: "800px",
+              maxHeight: "90vh",
+              overflowY: "auto",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
             }}
           >
@@ -190,6 +218,69 @@ const ModulesPage = () => {
               }}
               setEditModule={setEditModule}
             />
+          </div>
+        </div>
+      )}
+
+      {deleteConfirmModule && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#ffffff",
+              borderRadius: "10px",
+              padding: "2rem",
+              width: "90%",
+              maxWidth: "500px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+              textAlign: "center"
+            }}
+          >
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete the module "{deleteConfirmModule.title}"?</p>
+            <p style={{ color: "#dc3545", fontWeight: "bold" }}>
+              This action will also delete all subsections of this module and cannot be undone.
+            </p>
+            <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "2rem" }}>
+              <button
+                onClick={() => handleDeleteModule(deleteConfirmModule.id)}
+                style={{
+                  backgroundColor: "#dc3545",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "5px",
+                  padding: "0.5rem 1rem",
+                  cursor: "pointer",
+                }}
+              >
+                Yes, Delete
+              </button>
+              <button
+                onClick={() => setDeleteConfirmModule(null)}
+                style={{
+                  backgroundColor: "#6c757d",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "5px",
+                  padding: "0.5rem 1rem",
+                  cursor: "pointer",
+                }}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
