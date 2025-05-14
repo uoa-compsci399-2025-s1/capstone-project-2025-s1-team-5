@@ -36,7 +36,7 @@ const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email, 
         <Image source={profileAvatars[avatar] || profileAvatars.default} style={[styles.profileImage,{ borderColor: theme.primary }]}/>
       </TouchableOpacity>
       <View style={styles.profileInfo}>
-        <StyledText type="title" style={{ color: theme.text }}>{name}</StyledText>
+        <StyledText type="title" style={{ color: '#ffffff' }}>{name}</StyledText>
         <StyledText type="subtitle" style={{ color: theme.subtextOne }}>{email}</StyledText>
         <CountryTag country={country}/>
       </View>

@@ -10,9 +10,7 @@ import ProfileOptionButton from '@/components/ProfileOptionButton';
 import ProfileSettingButton from '@/components/ProfileSettingButton';
 import ProfileSettingBox from '@/components/ProfileSettingBox';
 import ProfileUserCard from '@/components/ProfileUserCard';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import StyledText from '@/components/StyledText';
-import { Text } from 'react-native';
 
 const FEATURES = ['Programme', 'Support', 'Calendar', 'Map'] as const;
 
@@ -55,8 +53,8 @@ const ProfileScreen: React.FC = () => {
             />
           </View>
         </View>
-
-      <View style={styles.bodyContent}> //This is the buttons for programme, support, calendar, and map...
+      {/* This is the buttons for programme, support, calendar, and map */}
+      <View style={styles.bodyContent}> 
         <View style={styles.buttonGrid}>
           {featureRoutes.map(({ title, route }, index) => {
             const isLeftmost = index % 2 === 0;
@@ -84,7 +82,7 @@ const ProfileScreen: React.FC = () => {
           })}
         </View>
 
-        <ProfileSettingBox> //This is the settings box
+        <ProfileSettingBox> {/* This is the settings box */}
            <ProfileSettingButton
              label="Change Profile Picture"
              iconName="tag-faces"
@@ -95,7 +93,6 @@ const ProfileScreen: React.FC = () => {
             label="Change Password"
             iconName="vpn-key"
             onPress={() => router.push('/Profile/changepassword' as ValidRoutes)}
-            style={styles.Button}
           />
           <ProfileSettingButton
             label="Theme Preference"
@@ -122,13 +119,14 @@ const styles = StyleSheet.create({
   bodyContent: {
     flex: 1,
     width: '100%',
-    marginTop: '10%',
+    marginTop: 10,
+    marginBottom: 10,
   },
   buttonGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 130, //ok this might need to change as well
+    marginBottom: 100, //ok this might need to change as well
   },
   topButton: {
     borderTopLeftRadius: 10,
@@ -151,7 +149,7 @@ const styles = StyleSheet.create({
       width: '100%',
       padding: 16,
       borderWidth: 2,
-      borderColor: 'rgba(255,255,255,1)',
+      borderColor: '#ffffff',
     },
     buttonOuter: {
       width: '48%',

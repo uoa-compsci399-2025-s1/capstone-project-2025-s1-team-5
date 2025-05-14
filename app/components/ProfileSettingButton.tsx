@@ -7,9 +7,10 @@ import StyledText from '@/components/StyledText';
 interface ProfileSettingButtonProps {
   label: string;
   onPress: () => void;
-  iconName?: 'vpn-key' | 'palette' | 'help' | 'exit-to-app' | 'person' | 'edit' | 'mail' | 'language';
+  iconName?: 'vpn-key' | 'palette' | 'help' | 'exit-to-app' | 'person' | 'edit' | 'mail' | 'language' | 'tag-faces';
   isLast?: boolean;
   style?: StyleProp<ViewStyle>;
+  showDivider?: boolean;
 }
 const ProfileSettingButton: React.FC<ProfileSettingButtonProps> = ({
   label,
