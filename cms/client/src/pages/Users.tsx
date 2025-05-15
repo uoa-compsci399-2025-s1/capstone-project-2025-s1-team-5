@@ -158,7 +158,7 @@ const UsersPage = () => {
               isEditModalVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
             }`}
           >
-            <h2 className="text-xl font-semibold mb-4">Edit User</h2>
+            <h2 className="text-xl font-semibold mb-4"></h2>
             <button
               onClick={() => {
                 setIsEditModalVisible(false);
@@ -202,7 +202,7 @@ const UsersPage = () => {
                 isCreateModalVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
               }`}
             >
-              <h2 className="text-xl font-semibold mb-4">Create User</h2>
+              <h2 className="text-xl font-semibold mb-4"></h2>
               <button
                 onClick={() => {
                   setIsCreateModalVisible(false);
