@@ -59,15 +59,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-//   profileImage: { //The pfp avatar
-//     width: 120,
-//     height: 120,
-//     borderRadius: 100,
-//   },
   profileImage: {
-      width: width * 0.3, // 30% of screen width
-      height: width * 0.3, // square image
-      borderRadius: (width * 0.3) / 2, // perfect circle
+      width: width * 0.3,
+      height: width * 0.3,
+      borderRadius: (width * 0.3) / 2,
     },
   profileInfo: {
     marginLeft: "6%",
