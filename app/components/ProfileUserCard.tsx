@@ -35,7 +35,7 @@ const CountryTag: React.FC<{ country: string }> = ({ country }) => {
   )
 };
 
-const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email, country, programme }) => {
+const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email, country }) => {
   const router = useRouter();
   const { theme } = useContext(ThemeContext);
   return (
@@ -90,12 +90,6 @@ const styles = StyleSheet.create({
   },
   countryWrapper: {
     marginTop: "2%",
-  },
-  countryContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    maxWidth: "80%",
   },
 });
 
