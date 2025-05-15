@@ -9,7 +9,7 @@ type TextInputBoxProps = {
   onChangeText: React.Dispatch<React.SetStateAction<string>>;
   keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'url';
   secureTextEntry?: boolean;
-  iconName?: 'email' | 'lock' | 'person' | 'edit' | 'group';
+  iconName?: 'email' | 'lock' | 'person' | 'edit' | 'group' | 'phone';
   iconSize?: number;
   style?: StyleProp<TextStyle>;
 };
