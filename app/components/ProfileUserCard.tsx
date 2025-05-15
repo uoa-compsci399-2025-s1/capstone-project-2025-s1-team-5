@@ -22,7 +22,7 @@ const CountryTag: React.FC<{ country: string }> = ({ country }) => {
   return (
     <View style={styles.countryContainer}>
       <Image source={{ uri }} style={styles.countryFlag} />
-      <StyledText type="label" style={{ color: theme.subtextOne }}>{country}</StyledText>
+      <StyledText type="label" style={{ color: '#ffffff' }}>{country}</StyledText>
     </View>
   )
 };
@@ -36,10 +36,12 @@ const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email, 
         <Image source={profileAvatars[avatar] || profileAvatars.default} style={[styles.profileImage,{ borderColor: theme.primary }]}/>
       </TouchableOpacity>
       <View style={styles.profileInfo}>
-        <StyledText type="title" style={{ color: '#ffffff' }}>{name}</StyledText>
-        <StyledText type="subtitle" style={{ color: theme.subtextOne }}>{email}</StyledText>
-        <CountryTag country={country}/>
-      </View>
+       <StyledText type="title" style={[styles.name, { color: '#ffffff' }]}>{name}</StyledText>
+       <StyledText type="subtitle" style={[styles.email, { color: '#ffffff' }]}>{email}</StyledText>
+       <View style={styles.countryWrapper}>
+         <CountryTag country={country} />
+       </View>
+     </View>
     </View>
   );
 };
@@ -65,8 +67,18 @@ const styles = StyleSheet.create({
   countryFlag: {
     width: 30,
     height: 20,
+    marginTop: "4%",
     marginRight: 8,
   },
+  name: {
+      marginBottom: "12%",
+    },
+    email: {
+      marginBottom: "4%",
+    },
+    countryWrapper: {
+      marginTop: "4%",
+    },
 });
 
 export default ProfileUserCard;
