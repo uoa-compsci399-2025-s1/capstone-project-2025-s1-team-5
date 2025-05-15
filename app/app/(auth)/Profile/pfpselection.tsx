@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     currentAvatarContainer: {
         alignItems: 'center',
         marginBottom: verticalScale(20),
-        marginTop: verticalScale(16),
+        marginTop: verticalScale(20),
     },
     currentAvatar: {
         width: moderateScale(120),
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     avatarItem: {
         flex: 1,
         alignItems: 'center',
-        margin: moderateScale(8),
+        margin: moderateScale(16),
         maxWidth: width / 3 - moderateScale(16), // Ensure 3 items fit across
     },
     presetImage: {
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
         borderColor: '#0c0c48',
     },
     confirmButtonContainer: {
-        marginBottom: verticalScale(16),
+        marginBottom: verticalScale(20),
         paddingHorizontal: moderateScale(16),
     },
 });
