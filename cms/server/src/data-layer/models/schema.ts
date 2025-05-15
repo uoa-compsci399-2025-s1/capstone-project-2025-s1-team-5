@@ -52,9 +52,10 @@ const moduleSchema: Schema<IModule> = new Schema(
     {
       title: { type: String, required: true },
       description: { type: String, required: true },
-      subsectionIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Subsection" }]},
-      
-      { timestamps: true }
+      subsectionIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Subsection" }],
+      quizIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Quiz" }]
+    },
+    { timestamps: true }
   );
 
 const programmeSchema: Schema<IProgramme> = new Schema(
@@ -96,7 +97,7 @@ const questionSchema: Schema<IQuestion> = new Schema(
             type: String,
             required: true
         },
-        answers: {
+        options: {
             type: [String], 
             required: true
         },
@@ -116,17 +117,14 @@ const quizSchema: Schema<IQuiz> = new Schema({
         type: String,
         required: true
     },
-    questions: {
-        type: [questionSchema],
-        required: true
-    },
+    questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question", required: true }],
     createdAt: {
         type: Date,
         default: Date.now
     }
 }, 
     {timestamps: true}
-); 
+);
 
 
 

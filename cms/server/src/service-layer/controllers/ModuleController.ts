@@ -3,6 +3,7 @@ import {
     Controller,
     Delete,
     Get,
+    Patch,
     Path,
     Post,
     Put,
@@ -12,44 +13,44 @@ import {
 } from "tsoa";
 import { ModuleService } from "../../data-layer/services/ModuleService";
 import { ModuleGetResponse, ModulesGetResponse } from "../response-models/ModuleResponse";
-import { IModule, ISubsection } from "../../data-layer/models/models";
+import { IModule, IQuestion, IQuiz, ISubsection } from "../../data-layer/models/models";
 import { moduleToResponse } from "../../data-layer/adapter/ModuleAdapter";
 
 @Route("modules")
-export class ModuleController extends Controller {  
+export class ModuleController extends Controller {
+    private moduleService: ModuleService;
+
+    constructor() {
+        super();
+        this.moduleService = new ModuleService();
+    }
+
     @Get("/")
     @SuccessResponse(200, "Modules Fetched")
     public async getModules(): Promise<ModulesGetResponse | null> {
-        const moduleService = new ModuleService();
-        const dataModules = await moduleService.getAllModules();
-        const total = dataModules.length
-      return { modules: dataModules, total}
+        const dataModules = await this.moduleService.getAllModules();
+        const total = dataModules.length;
+        return { modules: dataModules, total };
     }
 
     @Get("{moduleId}")
     @SuccessResponse(200, "Module fetched")
-    public async getModule(
-        @Path() moduleId: string,
-      ): Promise<ModuleGetResponse> {
-        const moduleService = new ModuleService();
-        
-        const moduleData = await moduleService.getModule(moduleId);
-    
+    public async getModule(@Path() moduleId: string): Promise<ModuleGetResponse> {
+        const moduleData = await this.moduleService.getModule(moduleId);
         if (!moduleData) {
-          this.setStatus(404);
-          throw new Error("Module not found");
+            this.setStatus(404);
+            throw new Error("Module not found");
         }
-    
         return moduleToResponse(moduleData);
-      }
+    }
 
     @Security("jwt", ["admin"])
     @Post()
     @SuccessResponse(201, "Module Created")
-    public async addModule(@Body() body: {title: string, description: string}): Promise<IModule> {
-        const moduleService = new ModuleService();
-        const newModule = await moduleService.createModule(body);
-        return newModule;
+    public async addModule(
+        @Body() body: { title: string; description: string }
+    ): Promise<IModule> {
+        return this.moduleService.createModule(body);
     }
 
     @Put("{moduleId}")
@@ -66,28 +67,23 @@ export class ModuleController extends Controller {
 
     @Delete("{moduleId}")
     @SuccessResponse(202, "Module Deleted")
-    public async deleteModule(
-        @Path() moduleId: string
-    ): Promise<{message: string}> {
-        const moduleService = new ModuleService();
-        const wasDeleted = await moduleService.deleteModule(moduleId)
+    public async deleteModule(@Path() moduleId: string): Promise<{ message: string }> {
+        const wasDeleted = await this.moduleService.deleteModule(moduleId);
         if (!wasDeleted) {
             this.setStatus(404);
             return { message: "Module not found or already deleted" };
         }
         return { message: "Module successfully deleted" };
     }
-    
 
+    //Add Subsection
     @Post("{moduleId}")
     @SuccessResponse(201, "Subsection added")
     public async addSubsection(
-        moduleId: string,
+        @Path() moduleId: string,
         @Body() subsectionData: { title: string; body: string; authorID: string }
-      ): Promise<ISubsection> {
-        const moduleService = new ModuleService()
-        const result = await moduleService.addSubsection(moduleId, subsectionData);
-        return result;
+    ): Promise<ISubsection> {
+        return this.moduleService.addSubsection(moduleId, subsectionData);
     }
 
     @Put("subsection/{subsectionId}")
@@ -109,26 +105,112 @@ export class ModuleController extends Controller {
         const subsection = await moduleService.getSubsectionById(subsectionId);
         return subsection;
     }
-
-    @Delete("{moduleId}/{subsectionId}")
-    public async deleteSubsectionFromModule(
-      @Path() moduleId: string,
-      @Path() subsectionId: string
+    
+    //Edit Subsection
+    @Put("{moduleId}/{subsectionId}")
+    @SuccessResponse(200, "Subsection updated")
+    public async editSubsection(
+        @Path() moduleId: string,
+        @Path() subsectionId: string,
+        @Body() subsectionChanges: { title?: string; body?: string }
     ): Promise<{ success: boolean }> {
-        const moduleService = new ModuleService()
-        const result = await moduleService.deleteSubsection(moduleId, subsectionId);
+        const result = await this.moduleService.editSubsection(moduleId, subsectionId, subsectionChanges);
         return { success: result };
     }
-  
-}
+
+    //Delete Subsection
+    @Delete("{moduleId}/{subsectionId}")
+    public async deleteSubsectionFromModule(
+        @Path() moduleId: string,
+        @Path() subsectionId: string
+    ): Promise<{ success: boolean }> {
+        
+        const result = await this.moduleService.deleteSubsection(moduleId, subsectionId);
+        return { success: result };
+    }
+
+    //Create Quiz
+    @Post("{moduleId}/quiz")
+    public async addQuiz(
+        @Path() moduleId: string,
+        @Body() quizData: {title: string, description: string}
+    ): Promise<IQuiz> {
+        const result = await this.moduleService.addQuiz(moduleId, quizData);
+        return result;
+    }
+
+    //Get Quiz
+    @Get("quiz/{quizId}")
+    public async getQuizById(@Path() quizId: string): Promise<IQuiz> {
+      const quiz = await this.moduleService.getQuizById(quizId);
+      if (!quiz) {
+        this.setStatus?.(404);
+        throw new Error("Quiz not found");
+      }
+      return quiz;
+    }
+
+    //Delete Quiz        
+    @Delete("/quiz/{moduleId}/{quizId}")
+    @SuccessResponse(200, "Quiz deleted")
+    public async deleteQuiz(
+        @Path() moduleId: string,
+        @Path() quizId: string
+    ): Promise<{ success: boolean; message: string }> {
+        const wasDeleted = await this.moduleService.deleteQuiz(quizId, moduleId);
+        
+        if (!wasDeleted) {
+            this.setStatus(404);
+            return { success: false, message: "Quiz not found or could not be deleted" };
+        }
+
+        return { success: true, message: "Quiz successfully deleted" };
+    }
+
+    //Add Question
+    @Post("/quiz/{quizId}")
+    public async addQuestion(
+        @Path() quizId: string,
+        @Body() questionData: {question: string, options: string[], correctAnswer: string}) : Promise<IQuestion> {
+            const newQuestion = await this.moduleService.addQuestionToQuiz(quizId, questionData);
+            if (!newQuestion) {
+              this.setStatus(404);
+              throw new Error("Quiz not found or invalid ID");
+            }
+            return newQuestion;
+    }
     
-    // @Post("{moduleId/{subsectionId}")
-    // public async addQuizSubsection(
-    //     @Path() moduleId: string,
-    //     @Path() subsectionId: string
-    // ): Promise< {success: boolean} > {
-    //     const moduleService = new ModuleService()
-    //     const 
-    // }
+    //EditQuestion
+    @Patch("/question/{questionId}")
+    public async editQuestion(
+      @Path() questionId: string,
+      @Body() questionData: { question: string; options: string[]; correctAnswer: string }
+    ): Promise<IQuestion> {
+      const updated = await this.moduleService.updateQuestion(questionId, questionData);
+    
+      if (!updated) {
+        this.setStatus(404);
+        throw new Error("Question not found");
+      }
+    
+      return updated;
+    }
+    // Delete Question
+    @Delete("/quiz/{quizId}/question/{questionId}")
+    @SuccessResponse(200, "Question deleted")
+    public async deleteQuestion(
+      @Path() quizId: string,
+      @Path() questionId: string
+    ): Promise<{ success: boolean; message: string }> {
+      const wasDeleted = await this.moduleService.deleteQuestion(questionId, quizId);
+    
+      if (!wasDeleted) {
+        this.setStatus(404);
+        return { success: false, message: "Quiz or question not found" };
+      }
+    
+      return { success: true, message: "Question successfully deleted" };
+    }
+}
 
 
