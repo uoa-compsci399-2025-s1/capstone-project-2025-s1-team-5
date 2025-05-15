@@ -25,7 +25,8 @@ export interface IModule {
     description: string;
     createdAt: Date;
     updatedAt?: Date;
-    subsectionIds: Types.ObjectId[];    
+    subsectionIds: Types.ObjectId[];
+    quizIds: Types.ObjectId[]
 }
 
 export interface IProgramme {
@@ -37,7 +38,7 @@ export interface IProgramme {
 export interface IQuestion {
     id: string;
     question: string;
-    answers: string[];
+    options: string[];
     correctAnswer: string;
     createdAt: Date;
 }
@@ -45,11 +46,11 @@ export interface IQuestion {
 export interface IQuiz {
     title: string;
     description: string;
-    questions: IQuestion[];
+    questions: Types.ObjectId[];
     createdAt: Date;
 }
 
-export interface ISubsection {
+export interface    ISubsection {
     id: string;
     title: string;
     body: string;
@@ -64,16 +65,10 @@ export interface ChangePasswordRequest {
     newPassword: string;
 }
 
-export interface IQuestion {
-    question: string;
-    options: string[];
-    correctAnswer: string;
-}
-
 export interface IQuiz {
     title: string;
     description: string;
-    questions: IQuestion[];
+    questions: Types.ObjectId[];
     createdAt: Date;
     updatedAt: Date;
 

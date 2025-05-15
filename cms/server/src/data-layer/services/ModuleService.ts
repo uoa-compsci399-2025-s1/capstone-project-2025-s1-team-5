@@ -205,7 +205,7 @@ export class ModuleService {
        * @returns 
        */
 
-    public async addSubsectionQuiz(
+    public async addQuiz(
       moduleId: string,
       quizData: {title: string, description: string}
     ): Promise<IQuiz> {
@@ -224,51 +224,106 @@ export class ModuleService {
         return error;
     }
   }
-    public async addQuestion(quizId: string, 
-      questionData: { question: string, options: string[], correctAnswer: string})
-      : Promise<IQuestion> { 
-        try {
-          const quiz = await Quiz.findById(quizId)
-          if (!quiz) {
-            throw new Error("Subsection Not Found")
-          }
 
-          const question = new Question(questionData)
-          await question.save()
-          quiz.questions.push(question._id);
-          quiz.save()
-          return question
-        } catch (error) {
-          console.error(error)
-          return null
-        }
+  public async getQuizById(quizId: string): Promise<IQuiz | null> {
+    try {
+      const quiz = await Quiz.findById(quizId).populate("questions").exec();
+      if (!quiz) {
+        return null;
       }
-      
-    public async deleteQuestion(questionId: string, quizId: string): Promise<boolean> {
-      try {
-      const quiz = await Quiz.findById(quizId) ;
-      await Question.findByIdAndDelete(questionId);
-      quiz.questions = quiz.questions.filter(
-        (questionid) => questionid.toString() !== questionId
+      return quiz;
+    } catch (error) {
+      console.error("Error fetching quiz by ID:", error);
+      return null;
+    }
+  }
+
+  public async deleteQuiz(quizId: string, moduleId: string): Promise<boolean> {
+    try {
+      const module = await newModule.findById(moduleId)
+      module.quizIds = module.quizIds.filter(
+        (id) => id.toString() !== quizId
       );
-      return true;
+      await Quiz.findByIdAndDelete(quizId)  
+      return true
     } catch (error) {
       console.error(error)
       return false
     }
+  }
+  public async addQuestionToQuiz(
+    quizId: string,
+    questionData: { question: string; options: string[]; correctAnswer: string }
+  ): Promise<IQuestion | null> {
+    // 1. Validate quizId
+    if (!mongoose.Types.ObjectId.isValid(quizId)) {
+      console.error(`Invalid quizId: ${quizId}`);
+      return null;
     }
-    public async deleteQuiz(quizId: string, moduleId: string): Promise<boolean> {
-      try {
-        const module = await newModule.findById(moduleId)
-        module.quizIds = module.quizIds.filter(
-          (id) => id.toString() !== quizId
-        );
-        await Quiz.findByIdAndDelete(quizId)  
-        return true
-      } catch (error) {
-        console.error(error)
-        return false
-      }
+
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) {
+      console.error(`Quiz not found: ${quizId}`);
+      return null;
     }
-    
+
+    const newQuestion = new Question({
+      question: questionData.question,
+      answers: questionData.options,   
+      correctAnswer: questionData.correctAnswer,
+    });
+    await newQuestion.save();
+
+    quiz.questions.push(newQuestion._id);
+    await quiz.save();
+
+    return newQuestion;
+  }
+
+  public async updateQuestion(
+    questionId: string,
+    questionData: { question: string; options: string[]; correctAnswer: string }
+  ): Promise<IQuestion | null> {
+    // Optionally validate questionId format
+    if (!mongoose.Types.ObjectId.isValid(questionId)) {
+      return null;
+    }
+
+    const updated = await Question.findByIdAndUpdate(
+      questionId,
+      {
+        question: questionData.question,
+        answers: questionData.options,
+        correctAnswer: questionData.correctAnswer
+      },
+      { new: true }
+    )
+
+    return updated;
+  }
+      
+public async deleteQuestion(questionId: string, quizId: string): Promise<boolean> {
+  const quiz = await Quiz.findById(quizId);
+  if (!quiz) {
+    console.error(`Quiz ${quizId} not found`);
+    return false;
+  }
+
+  try {
+    const deleted = await Question.findByIdAndDelete(questionId);
+    if (!deleted) {
+      console.error(`Question ${questionId} not found`);
+      return false;
+    }
+
+    quiz.questions = quiz.questions.filter(id => id.toString() !== questionId);
+    await quiz.save();
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting question:", error);
+    return false;
+  }
+}
+
 }
