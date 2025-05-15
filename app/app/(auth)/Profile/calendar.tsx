@@ -5,7 +5,6 @@ import StyledText from '@/components/StyledText';
 export default function CalendarScreen() {
   return (
     <View style={styles.container}>
-      <StyledText type="title">Calendar</StyledText>
       <StyledText type="subtitle" style={styles.subtitle}>Upcoming Events</StyledText>
       <StyledText type="default" style={styles.content}>
         TBD
@@ -20,7 +19,6 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   subtitle: {
-    marginTop: 8,
     marginBottom: 16,
   },
   content: {
