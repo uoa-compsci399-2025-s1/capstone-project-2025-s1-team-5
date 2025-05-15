@@ -32,7 +32,7 @@ export default function ProfileLayout() {
       <Stack.Screen name="theme" options={{ 
           title: '',
           headerStyle: { backgroundColor: '#0c0c48' },
-          headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Theme</StyledText>,
+          headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Theme Preference</StyledText>,
           headerTintColor: '#ffffff', 
         }}/>
       <Stack.Screen name="programme" options={{ 

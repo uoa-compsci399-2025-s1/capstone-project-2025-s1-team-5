@@ -1,33 +1,9 @@
 import { moduleAdaptor } from "../adapter/ModuleAdapter";
-import { IModule, ISubsection } from "../models/models";
-import { newModule, Subsection } from "../../data-layer/models/schema";
+import type { IModule, IQuestion, IQuiz, ISubsection } from "../models/models";
+import { newModule, Question, Quiz, Subsection } from "../../data-layer/models/schema";
 import mongoose from "mongoose";
 
 export class ModuleService {
-
-    // /**
-    //  * For future use when MVP is done
-    //  * @param subsectionId 
-    //  * @param fromModuleId 
-    //  * @param toModuleId 
-    //  * @returns 
-    //  */
-    // public async moveSubsectionToAnotherModule(
-    //     subsectionId: string,
-    //     fromModuleId: string,
-    //     toModuleId: string
-    //   ) {
-    //     await Module.findByIdAndUpdate(fromModuleId, {
-    //       $pull: { subsectionIds: subsectionId }
-    //     });
-    
-    //     await Module.findByIdAndUpdate(toModuleId, {
-    //       $push: { subsectionIds: subsectionId }
-    //     });
-    
-    //     return { success: true };
-    //   }
-
     /**
      * Method to fetch all modules
      * @returns List of all modules
@@ -222,5 +198,132 @@ export class ModuleService {
           return false;
         }
       }
+      /**
+       * 
+       * @param moduleId Id of the Module, where we are inserting new Quiz Documment
+       * @param quizData Title and Description of Quiz
+       * @returns 
+       */
+
+    public async addQuiz(
+      moduleId: string,
+      quizData: {title: string, description: string}
+    ): Promise<IQuiz> {
+      try {
+        const module = await newModule.findById(moduleId);
+        if (!module) {
+          throw new Error("Module not found");
+        }
     
+        const newQuiz = new Quiz(quizData);
+        await newQuiz.save();
+        module.quizIds.push(newQuiz._id);        
+        await module.save();
+        return newQuiz;
+      } catch (error: any) {
+        return error;
+    }
+  }
+
+  public async getQuizById(quizId: string): Promise<IQuiz | null> {
+    try {
+      const quiz = await Quiz.findById(quizId).populate("questions").exec();
+      if (!quiz) {
+        return null;
+      }
+      return quiz;
+    } catch (error) {
+      console.error("Error fetching quiz by ID:", error);
+      return null;
+    }
+  }
+
+  public async deleteQuiz(quizId: string, moduleId: string): Promise<boolean> {
+    try {
+      const module = await newModule.findById(moduleId)
+      module.quizIds = module.quizIds.filter(
+        (id) => id.toString() !== quizId
+      );
+      await Quiz.findByIdAndDelete(quizId)  
+      return true
+    } catch (error) {
+      console.error(error)
+      return false
+    }
+  }
+  public async addQuestionToQuiz(
+    quizId: string,
+    questionData: { question: string; options: string[]; correctAnswer: string }
+  ): Promise<IQuestion | null> {
+    // 1. Validate quizId
+    if (!mongoose.Types.ObjectId.isValid(quizId)) {
+      console.error(`Invalid quizId: ${quizId}`);
+      return null;
+    }
+
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) {
+      console.error(`Quiz not found: ${quizId}`);
+      return null;
+    }
+
+    const newQuestion = new Question({
+      question: questionData.question,
+      answers: questionData.options,   
+      correctAnswer: questionData.correctAnswer,
+    });
+    await newQuestion.save();
+
+    quiz.questions.push(newQuestion._id);
+    await quiz.save();
+
+    return newQuestion;
+  }
+
+  public async updateQuestion(
+    questionId: string,
+    questionData: { question: string; options: string[]; correctAnswer: string }
+  ): Promise<IQuestion | null> {
+    // Optionally validate questionId format
+    if (!mongoose.Types.ObjectId.isValid(questionId)) {
+      return null;
+    }
+
+    const updated = await Question.findByIdAndUpdate(
+      questionId,
+      {
+        question: questionData.question,
+        answers: questionData.options,
+        correctAnswer: questionData.correctAnswer
+      },
+      { new: true }
+    )
+
+    return updated;
+  }
+      
+public async deleteQuestion(questionId: string, quizId: string): Promise<boolean> {
+  const quiz = await Quiz.findById(quizId);
+  if (!quiz) {
+    console.error(`Quiz ${quizId} not found`);
+    return false;
+  }
+
+  try {
+    const deleted = await Question.findByIdAndDelete(questionId);
+    if (!deleted) {
+      console.error(`Question ${questionId} not found`);
+      return false;
+    }
+
+    quiz.questions = quiz.questions.filter(id => id.toString() !== questionId);
+    await quiz.save();
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting question:", error);
+    return false;
+  }
+}
+
 }
