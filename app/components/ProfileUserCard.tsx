@@ -62,33 +62,32 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   profileInfo: {
-    marginLeft: 16,
+    marginLeft: "6%",
   },
   countryContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
   },
   countryFlag: {
-    width: 30,
-    height: 20,
-    marginTop: 0,
-    marginRight: 8,
+    width: "15%",
+    height: "50%",
+    marginTop: "0%",
+    marginRight: "4%",
   },
   name: {
-    marginBottom: 6,
+    marginBottom: "2%",
   },
   email: {
-    marginBottom: 4,
+    marginBottom: "2%",
   },
   countryWrapper: {
-    marginTop: 2,
+    marginTop: "2%",
   },
   countryContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
-    maxWidth: 200, // adjust this based on your layout
+    maxWidth: "80%",
   },
 });
 

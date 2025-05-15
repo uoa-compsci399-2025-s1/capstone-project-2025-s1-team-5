@@ -52,11 +52,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: "17%",
-    paddingHorizontal: 15,
-    borderRadius: 0,
+    paddingHorizontal: "6%",
   },
   icon: {
-    marginRight: 15,
+    marginRight: "6%",
   },
   label: {
     fontSize: 16,

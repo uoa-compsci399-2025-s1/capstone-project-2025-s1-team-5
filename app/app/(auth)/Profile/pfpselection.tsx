@@ -59,13 +59,13 @@ const ProfilePicSelectionScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      padding: 16,
-      backgroundColor: '#fff',
+      padding: "4%",
+      backgroundColor: '#ffffff',
     },
     currentAvatarContainer: {
       alignItems: 'center',
-      marginBottom: 20,
-      marginTop: 15,
+      marginBottom: "6%",
+      marginTop: "4.5%",
     },
     currentAvatar: {
       width: 120,
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     avatarItem: {
       flex: 1,
       alignItems: 'center',
-      margin: 12,
+      margin: "3.25%",
     },
     presetImage: {
       width: 90,
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
       borderColor: '#0c0c48',
     },
     confirmButtonContainer: {
-      marginBottom: 10,
+      marginBottom: "1%",
     },
   });
 export default ProfilePicSelectionScreen;

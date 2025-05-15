@@ -107,19 +107,19 @@ console.log("User context object:", user);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: "5%",
   },
   bodyContent: {
     flex: 1,
     width: '100%',
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: "3%",
+    marginBottom: "3%",
   },
   buttonGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 93,
+    marginBottom: "25.5%",
   },
   topButton: {
     borderTopLeftRadius: 10,
@@ -130,27 +130,27 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
   },
   profileCardOuter: {
-    padding: 2,
+    padding: "0%",
     borderRadius: 16,
     backgroundColor: '#0c0c48',
     alignItems: 'center',
-    marginBottom: 13
+    marginBottom: "3.5%",
   },
   profileCardInner: {
     backgroundColor: '#0c0c48',
     borderRadius: 14,
     width: '100%',
-    padding: 16,
+    padding: "4.5%",
     borderWidth: 2,
     borderColor: '#0c0c48',
   },
   buttonOuter: {
     width: '48%',
     aspectRatio: 1.8,
-    marginBottom: 12,
+    marginBottom: "4%",
     borderRadius: 12,
     backgroundColor: '#0c0c48',
-    padding: 5,
+    padding: "1%",
   },
   buttonInner: {
     flex: 1,
