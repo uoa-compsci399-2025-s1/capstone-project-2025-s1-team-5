@@ -11,7 +11,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const contentStyle = {
-    marginLeft: isSidebarOpen ? '250px' : '0',
+    marginLeft: isSidebarOpen && isAuthenticated? '250px' : '0',
     transition: 'margin-left 0.3s ease',
     width: '100%',
   };
