@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
     currentAvatarContainer: {
       alignItems: 'center',
       marginBottom: 20,
+      marginTop: 15,
     },
     currentAvatar: {
       width: 120,
@@ -76,19 +77,19 @@ const styles = StyleSheet.create({
     avatarItem: {
       flex: 1,
       alignItems: 'center',
-      margin: 8,
+      margin: 12,
     },
     presetImage: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
+      width: 90,
+      height: 90,
+      borderRadius: 100,
     },
     selectedImage: {
       borderWidth: 3,
       borderColor: '#0c0c48',
     },
     confirmButtonContainer: {
-      marginTop: 20,
+      marginBottom: 10,
     },
   });
 export default ProfilePicSelectionScreen;
