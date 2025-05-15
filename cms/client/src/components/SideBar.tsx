@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Button from './Button';
 import { useAuth } from '../auth/AuthProvider';
 import { useOutsideClick } from '../hooks/useOutsideClick';
 
@@ -67,10 +66,12 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       margin: 0,
     },
     navItem: {
-      padding: '12px 0',
-      borderBottom: '1px solid #eee',
+      padding: '4px 0',
+
     },
   };
+
+  const buttonClass = "w-full text-blue-600 hover:text-white hover:bg-blue-600 border border-blue-600 font-semibold py-2 px-4 rounded transition duration-200 text-sm text-center block mb-3";
 
   return (
     <>
@@ -92,10 +93,26 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
         <nav>
           <ul style={styles.nav}>
-            <li><Link to="/modules/home"><Button label="Home" href="/modules/home" /></Link></li>
-            <li><Link to="/modules/content"><Button label="Content Management" href="/modules/content" /></Link></li>
-            <li><Link to="/modules/users"><Button label="User Management" href="/modules/users" /></Link></li>
-            <li><Link to="/modules/analytics"><Button label="Analytics" href="/modules/analytics" /></Link></li>
+            <li style={styles.navItem}>
+              <Link to="/modules/home" className={buttonClass}>
+                Home
+              </Link>
+            </li>
+            <li style={styles.navItem}>
+              <Link to="/modules/modules" className={buttonClass}>
+                Module Management
+              </Link>
+            </li>
+            <li style={styles.navItem}>
+              <Link to="/modules/users" className={buttonClass}>
+                User Management
+              </Link>
+            </li>
+            <li style={styles.navItem}>
+              <Link to="/modules/analytics" className={buttonClass}>
+                Analytics
+              </Link>
+            </li>
           </ul>
         </nav>
 

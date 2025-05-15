@@ -48,11 +48,27 @@ export class ModuleService {
      * @returns 
      */
     public async deleteModule(moduleId: string): Promise<boolean> {
-        if (!mongoose.Types.ObjectId.isValid(moduleId)) {
-            return false;
-        }
-        const deletedModule = await newModule.findByIdAndDelete(moduleId);
-        return !!deletedModule;
+      try {
+          if (!mongoose.Types.ObjectId.isValid(moduleId)) {
+              return false;
+          }
+
+          const module = await newModule.findById(moduleId);
+
+          if (module.subsectionIds.length > 0) {
+            await Promise.all(
+              module.subsectionIds.map(async (subsectionId) => {
+                return await Subsection.findByIdAndDelete(subsectionId);
+              })
+            );
+          }
+
+          const deletedModule = await newModule.findByIdAndDelete(moduleId);
+          return !!deletedModule;
+      } catch (error) {
+          console.error("Error deleting module:", error);
+          return false;
+      }
     }
     /**
      * Updates Module title and 
@@ -62,7 +78,7 @@ export class ModuleService {
      */
     public async updateModule(
         moduleId: string,
-        moduleChanges: { title?: string; description?: string }
+        moduleChanges: { title?: string; description?: string; subsectionIds?: string[] }
       ): Promise<boolean> {
         try {
           const module = await newModule.findById(moduleId);
@@ -72,6 +88,7 @@ export class ModuleService {
           }
           module.title = moduleChanges.title;
           module.description = moduleChanges.description;
+          module.subsectionIds = moduleChanges.subsectionIds?.map(id => new mongoose.Types.ObjectId(id));
     
           await module.save();
           return true;
@@ -115,6 +132,15 @@ export class ModuleService {
         return error;
       }
     }
+    
+    public async getSubsectionById(subsectionId: string): Promise<ISubsection> {
+        const subsection = await Subsection.findById(subsectionId)
+      if (!subsection) {
+        throw new Error("Subsection Not Found")
+      }
+      return subsection
+    }
+
     /**
      * Deletes Subsection of a module
      * @param moduleId 
@@ -147,15 +173,10 @@ export class ModuleService {
        * @returns 
        */
       public async editSubsection(
-        moduleId: string,
         subsectionId: string,
         changes: { title?: string; body?: string }
       ): Promise<boolean> {
         try {
-          const module = await newModule.findById(moduleId);
-          if (!module) {
-            throw new Error("Module not found");
-          }
       
           const subsection = await Subsection.findById(subsectionId);
           if (!subsection) {

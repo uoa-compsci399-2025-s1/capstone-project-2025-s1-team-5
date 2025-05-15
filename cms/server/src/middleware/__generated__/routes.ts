@@ -597,6 +597,37 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsModuleController_updateModule: Record<string, TsoaRoute.ParameterSchema> = {
+                moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
+                moduleChanges: {"in":"body","name":"moduleChanges","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"subsectionIds":{"dataType":"array","array":{"dataType":"string"}},"description":{"dataType":"string"},"title":{"dataType":"string"}}},
+        };
+        app.put('/modules/:moduleId',
+            ...(fetchMiddlewares<RequestHandler>(ModuleController)),
+            ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.updateModule)),
+
+            async function ModuleController_updateModule(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsModuleController_updateModule, request, response });
+
+                const controller = new ModuleController();
+
+              await templateService.apiHandler({
+                methodName: 'updateModule',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_deleteModule: Record<string, TsoaRoute.ParameterSchema> = {
                 moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
         };
@@ -659,11 +690,10 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_editSubsection: Record<string, TsoaRoute.ParameterSchema> = {
-                moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
                 subsectionId: {"in":"path","name":"subsectionId","required":true,"dataType":"string"},
                 subsectionChanges: {"in":"body","name":"subsectionChanges","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"body":{"dataType":"string"},"title":{"dataType":"string"}}},
         };
-        app.put('/modules/:moduleId/:subsectionId',
+        app.put('/modules/subsection/:subsectionId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.editSubsection)),
 
@@ -683,7 +713,37 @@ export function RegisterRoutes(app: Router) {
                 response,
                 next,
                 validatedArgs,
-                successStatus: 200,
+                successStatus: 202,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsModuleController_getSubseciton: Record<string, TsoaRoute.ParameterSchema> = {
+                subsectionId: {"in":"path","name":"subsectionId","required":true,"dataType":"string"},
+        };
+        app.get('/modules/subsection/:subsectionId',
+            ...(fetchMiddlewares<RequestHandler>(ModuleController)),
+            ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.getSubseciton)),
+
+            async function ModuleController_getSubseciton(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsModuleController_getSubseciton, request, response });
+
+                const controller = new ModuleController();
+
+              await templateService.apiHandler({
+                methodName: 'getSubseciton',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
               });
             } catch (err) {
                 return next(err);
@@ -815,7 +875,7 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_addQuestion: Record<string, TsoaRoute.ParameterSchema> = {
                 quizId: {"in":"path","name":"quizId","required":true,"dataType":"string"},
-                question: {"in":"body","name":"question","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"correctAnswer":{"dataType":"string","required":true},"options":{"dataType":"array","array":{"dataType":"string"},"required":true},"question":{"dataType":"string","required":true}}},
+                questionData: {"in":"body","name":"questionData","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"correctAnswer":{"dataType":"string","required":true},"options":{"dataType":"array","array":{"dataType":"string"},"required":true},"question":{"dataType":"string","required":true}}},
         };
         app.post('/modules/quiz/:quizId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),

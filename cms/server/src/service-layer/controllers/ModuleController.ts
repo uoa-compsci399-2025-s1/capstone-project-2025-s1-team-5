@@ -53,6 +53,18 @@ export class ModuleController extends Controller {
         return this.moduleService.createModule(body);
     }
 
+    @Put("{moduleId}")
+    @SuccessResponse(200, "Module Updated")
+    public async updateModule(
+      @Path() moduleId: string,
+      @Body() moduleChanges: { title?: string; description?: string; subsectionIds?: string[] }
+    ): Promise<{ success: boolean }> {
+
+      const moduleService = new ModuleService();
+      const result = await moduleService.updateModule(moduleId, moduleChanges);
+      return { success: result };
+    }
+
     @Delete("{moduleId}")
     @SuccessResponse(202, "Module Deleted")
     public async deleteModule(@Path() moduleId: string): Promise<{ message: string }> {
@@ -74,16 +86,24 @@ export class ModuleController extends Controller {
         return this.moduleService.addSubsection(moduleId, subsectionData);
     }
 
-    //Edit Subsection
-    @Put("{moduleId}/{subsectionId}")
-    @SuccessResponse(200, "Subsection updated")
+    @Put("subsection/{subsectionId}")
+    @SuccessResponse(202, "Subsection updated")
     public async editSubsection(
-        @Path() moduleId: string,
-        @Path() subsectionId: string,
-        @Body() subsectionChanges: { title?: string; body?: string }
+    subsectionId: string,
+    @Body() subsectionChanges: { title?: string; body?: string }
     ): Promise<{ success: boolean }> {
-        const result = await this.moduleService.editSubsection(moduleId, subsectionId, subsectionChanges);
-        return { success: result };
+    const moduleService = new ModuleService();
+    const result = await moduleService.editSubsection(subsectionId, subsectionChanges);
+    return { success: result };
+    }
+    
+    @Get("subsection/{subsectionId}")
+    public async getSubseciton(
+      @Path() subsectionId: string
+    ): Promise<ISubsection> {
+        const moduleService = new ModuleService()
+        const subsection = await moduleService.getSubsectionById(subsectionId);
+        return subsection;
     }
 
     //Delete Subsection
@@ -180,4 +200,5 @@ export class ModuleController extends Controller {
       return { success: true, message: "Question successfully deleted" };
     }
 }
+
 
