@@ -18,8 +18,6 @@ export default function SubmoduleScreen() {
 
   return (
     <View style={styles.container}>
-      <StyledText type="title">Module {moduleIndex}</StyledText>
-      <StyledText type="subtitle" style={styles.subtitle}>{submodule.title}</StyledText>
       <StyledText type="default" style={styles.content}>This is where content for "{submodule.title}" would go.</StyledText>
     </View>
   );

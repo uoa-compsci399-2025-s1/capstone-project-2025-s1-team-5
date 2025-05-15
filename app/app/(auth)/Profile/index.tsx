@@ -1,5 +1,5 @@
 import React, { useContext, useMemo, useCallback } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Dimensions, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 
@@ -10,6 +10,15 @@ import ProfileOptionButton from '@/components/ProfileOptionButton';
 import ProfileSettingButton from '@/components/ProfileSettingButton';
 import ProfileSettingBox from '@/components/ProfileSettingBox';
 import ProfileUserCard from '@/components/ProfileUserCard';
+import StyledText from '@/components/StyledText';
+
+const { width, height } = Dimensions.get('window');
+const isSmallDevice = width < 375;
+
+// Helper functions for responsive design
+const scale = (size: number) => (width / 375) * size;
+const verticalScale = (size: number) => (height / 812) * size;
+const moderateScale = (size: number, factor = 0.5) => size + (scale(size) - size) * factor;
 
 const FEATURES = ['Programme', 'Support', 'Calendar', 'Map'] as const;
 
@@ -42,40 +51,52 @@ const ProfileScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <ProfileUserCard
-        avatar={user.avatar}
-        name={user.first_name}
-        email={user.email}
-        country={user.country}
-      />
+      <View style={styles.profileCardOuter}>
+        <View style={styles.profileCardInner}>
+          <ProfileUserCard
+            avatar={user.avatar}
+            name={user.first_name}
+            email={user.email}
+            country={user.country}
+          />
+        </View>
+      </View>
 
-      <View style={styles.bodyContent}>
+      <View style={styles.bodyContent}> 
         <View style={styles.buttonGrid}>
           {featureRoutes.map(({ title, route }, index) => {
-            const isLeftmost = index % 2 === 0; 
-            const isRightmost = index % 2 === 1; 
+            const isLeftmost = index % 2 === 0;
+            const isRightmost = index % 2 === 1;
 
             return (
-              <ProfileOptionButton
-                key={title}
-                title={title}
-                onPress={() => router.push(route)}
-                isLeftmost={isLeftmost}
-                isRightmost={isRightmost}
-              />
+              <View key={title} style={styles.buttonOuter}>
+                <View style={styles.buttonInner}>
+                  <ProfileOptionButton
+                    title={title}
+                    onPress={() => router.push(route)}
+                    isLeftmost={isLeftmost}
+                    isRightmost={isRightmost}
+                  />
+                </View>
+              </View>
             );
           })}
         </View>
 
         <ProfileSettingBox>
           <ProfileSettingButton
-            label="Change Password"
-            iconName="vpn-key"
-            onPress={() => router.push('/Profile/changepassword' as ValidRoutes)}
+            label="Change Profile Picture"
+            iconName="tag-faces"
+            onPress={() => router.push('/Profile/pfpselection' as ValidRoutes)}
             style={styles.topButton}
           />
           <ProfileSettingButton
-            label="Theme"
+            label="Change Password"
+            iconName="vpn-key"
+            onPress={() => router.push('/Profile/changepassword' as ValidRoutes)}
+          />
+          <ProfileSettingButton
+            label="Theme Preference"
             iconName="palette"
             onPress={() => router.push('/Profile/theme' as ValidRoutes)}
           />
@@ -94,25 +115,83 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: moderateScale(16),
+    paddingTop: verticalScale(16),
+    paddingBottom: verticalScale(8),
   },
   bodyContent: {
     flex: 1,
     width: '100%',
-    marginTop: 10,
+    marginTop: verticalScale(16),
+    marginBottom: verticalScale(16),
   },
   buttonGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+    marginBottom: verticalScale(5),
   },
   topButton: {
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    borderTopLeftRadius: moderateScale(10),
+    borderTopRightRadius: moderateScale(10),
   },
   bottomButton: {
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
+    borderBottomLeftRadius: moderateScale(10),
+    borderBottomRightRadius: moderateScale(10),
+  },
+  profileCardOuter: {
+    padding: moderateScale(4),
+    borderRadius: moderateScale(16),
+    backgroundColor: '#0c0c48',
+    alignItems: 'center',
+    marginBottom: verticalScale(5),
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
+  },
+  profileCardInner: {
+    backgroundColor: '#0c0c48',
+    borderRadius: moderateScale(14),
+    width: '100%',
+    padding: moderateScale(16),
+    borderWidth: moderateScale(2),
+    borderColor: '#0c0c48',
+  },
+  buttonOuter: {
+    width: '48%',
+    aspectRatio: 1.8,
+    marginBottom: verticalScale(16),
+    borderRadius: moderateScale(12),
+    backgroundColor: '#0c0c48',
+    padding: moderateScale(4),
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
+  },
+  buttonInner: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: '#0c0c48',
+    borderRadius: moderateScale(10),
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
 });
 

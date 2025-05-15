@@ -37,10 +37,10 @@ function LayoutInner() {
           }
           return null;
         },
-        tabBarActiveTintColor: isDarkMode ? '#ffffff' : theme.primary,
+        tabBarActiveTintColor: isDarkMode ? '#ffffff' : '#ffffff',
         tabBarInactiveTintColor: isDarkMode ? theme.subtextOne : theme.subtextOne,
         tabBarStyle: {
-          backgroundColor: isDarkMode ? theme.primary : theme.backgroundSecondary,
+          backgroundColor: isDarkMode ? theme.primary : "#0c0c48",
           borderTopWidth: isDarkMode ? 0 : 1, 
           borderTopColor: isDarkMode ? 'transparent' : theme.primary, 
           elevation: 0,
