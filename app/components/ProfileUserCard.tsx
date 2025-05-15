@@ -6,6 +6,9 @@ import StyledText from '@/components/StyledText';
 import profileAvatars from '@/constants/profileAvatars';
 import countries from 'world-countries';
 
+import { Dimensions } from 'react-native';
+const { width } = Dimensions.get('window');
+
 interface ProfileUserCardProps {
   avatar: string;
   name: string;
@@ -56,11 +59,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  profileImage: { //The pfp avatar
-    width: 120,
-    height: 120,
-    borderRadius: 100,
-  },
+//   profileImage: { //The pfp avatar
+//     width: 120,
+//     height: 120,
+//     borderRadius: 100,
+//   },
+  profileImage: {
+      width: width * 0.3, // 30% of screen width
+      height: width * 0.3, // square image
+      borderRadius: (width * 0.3) / 2, // perfect circle
+    },
   profileInfo: {
     marginLeft: "6%",
   },

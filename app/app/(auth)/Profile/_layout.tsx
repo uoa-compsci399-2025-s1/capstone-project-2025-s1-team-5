@@ -9,7 +9,7 @@ export default function ProfileLayout() {
         name="index"
         options={{
           title: '',
-          headerStyle: { backgroundColor: '#0c0c48' }, //Navigation bar
+          headerStyle: { backgroundColor: '#0c0c48' },
           headerTitle: 'Profile',
           headerTintColor: '#ffffff',
         }}

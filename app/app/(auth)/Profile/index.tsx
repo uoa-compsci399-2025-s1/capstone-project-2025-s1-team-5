@@ -53,7 +53,7 @@ console.log("User context object:", user);
             />
           </View>
         </View>
-      {/* This is the buttons for programme, support, calendar, and map */}
+
       <View style={styles.bodyContent}> 
         <View style={styles.buttonGrid}>
           {featureRoutes.map(({ title, route }, index) => {
@@ -75,7 +75,7 @@ console.log("User context object:", user);
           })}
         </View>
 
-        <ProfileSettingBox> {/* This is the settings box */}
+        <ProfileSettingBox>
            <ProfileSettingButton
              label="Change Profile Picture"
              iconName="tag-faces"
@@ -155,7 +155,6 @@ const styles = StyleSheet.create({
   buttonInner: {
     flex: 1,
     width: '100%',
-    padding: 1,
     backgroundColor: '#0c0c48',
     borderRadius: 10,
     alignItems: 'center',

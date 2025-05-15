@@ -43,10 +43,9 @@ const styles = StyleSheet.create({
   },
 });
 
-// If you don't need a title for the screen, simply remove or modify the options.
+
 DisplayModulesScreen.options = {
-  // You can either omit the title or change it based on your needs
-  // title: 'All Modules',
+
 };
 
 export default DisplayModulesScreen;
