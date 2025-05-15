@@ -40,7 +40,7 @@ const ProfileScreen: React.FC = () => {
       }),
     []
   );
-
+console.log("User context object:", user);
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
         <View style={styles.profileCardOuter}>
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: "25%", //ok this might need to change as well
+    marginBottom: 93,
   },
   topButton: {
     borderTopLeftRadius: 10,
@@ -130,11 +130,11 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
   },
   profileCardOuter: {
-    padding: 2, // inner border thickness
+    padding: 2,
     borderRadius: 16,
-    backgroundColor: '#0c0c48', // outer edge if needed
+    backgroundColor: '#0c0c48',
     alignItems: 'center',
-    marginBottom: "3%",
+    marginBottom: 13
   },
   profileCardInner: {
     backgroundColor: '#0c0c48',
@@ -146,15 +146,15 @@ const styles = StyleSheet.create({
   },
   buttonOuter: {
     width: '48%',
-    aspectRatio: 1.8, // maintain square-ish buttons
+    aspectRatio: 1.8,
     marginBottom: 12,
     borderRadius: 12,
-    backgroundColor: '#0c0c48', // outer border color
-    padding: 5, // border thickness
+    backgroundColor: '#0c0c48',
+    padding: 5,
   },
   buttonInner: {
-    flex: 1,                       // Fills vertical space
-    width: '100%',                // Fills horizontal space
+    flex: 1,
+    width: '100%',
     padding: 1,
     backgroundColor: '#0c0c48',
     borderRadius: 10,

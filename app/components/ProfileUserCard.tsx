@@ -22,12 +22,17 @@ const CountryTag: React.FC<{ country: string }> = ({ country }) => {
   return (
     <View style={styles.countryContainer}>
       <Image source={{ uri }} style={styles.countryFlag} />
-      <StyledText type="label" style={{ color: '#ffffff' }}>{country}</StyledText>
+        <StyledText
+          type="label"
+          style={{ color: '#ffffff', flexShrink: 1, flexWrap: 'wrap' }}
+        >
+          {country}
+        </StyledText>
     </View>
   )
 };
 
-const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email, country}) => {
+const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email, country, programme }) => {
   const router = useRouter();
   const { theme } = useContext(ThemeContext);
   return (
@@ -67,18 +72,24 @@ const styles = StyleSheet.create({
   countryFlag: {
     width: 30,
     height: 20,
-    marginTop: "4%",
+    marginTop: 0,
     marginRight: 8,
   },
   name: {
-      marginBottom: "12%",
-    },
-    email: {
-      marginBottom: "4%",
-    },
-    countryWrapper: {
-      marginTop: "4%",
-    },
+    marginBottom: 6,
+  },
+  email: {
+    marginBottom: 4,
+  },
+  countryWrapper: {
+    marginTop: 2,
+  },
+  countryContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    maxWidth: 200, // adjust this based on your layout
+  },
 });
 
 export default ProfileUserCard;

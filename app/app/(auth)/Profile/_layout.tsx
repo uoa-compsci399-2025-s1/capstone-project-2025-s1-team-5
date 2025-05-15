@@ -10,7 +10,7 @@ export default function ProfileLayout() {
         options={{
           title: '',
           headerStyle: { backgroundColor: '#0c0c48' }, //Navigation bar
-          headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Profile</StyledText>,
+          headerTitle: 'Profile',
           headerTintColor: '#ffffff',
         }}
       />
