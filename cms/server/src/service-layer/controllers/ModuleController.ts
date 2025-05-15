@@ -105,18 +105,6 @@ export class ModuleController extends Controller {
         const subsection = await moduleService.getSubsectionById(subsectionId);
         return subsection;
     }
-    
-    //Edit Subsection
-    @Put("{moduleId}/{subsectionId}")
-    @SuccessResponse(200, "Subsection updated")
-    public async editSubsection(
-        @Path() moduleId: string,
-        @Path() subsectionId: string,
-        @Body() subsectionChanges: { title?: string; body?: string }
-    ): Promise<{ success: boolean }> {
-        const result = await this.moduleService.editSubsection(moduleId, subsectionId, subsectionChanges);
-        return { success: result };
-    }
 
     //Delete Subsection
     @Delete("{moduleId}/{subsectionId}")

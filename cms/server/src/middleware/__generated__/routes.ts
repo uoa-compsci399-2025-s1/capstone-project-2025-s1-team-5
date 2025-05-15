@@ -875,7 +875,7 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_addQuestion: Record<string, TsoaRoute.ParameterSchema> = {
                 quizId: {"in":"path","name":"quizId","required":true,"dataType":"string"},
-                question: {"in":"body","name":"question","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"correctAnswer":{"dataType":"string","required":true},"options":{"dataType":"array","array":{"dataType":"string"},"required":true},"question":{"dataType":"string","required":true}}},
+                questionData: {"in":"body","name":"questionData","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"correctAnswer":{"dataType":"string","required":true},"options":{"dataType":"array","array":{"dataType":"string"},"required":true},"question":{"dataType":"string","required":true}}},
         };
         app.post('/modules/quiz/:quizId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
