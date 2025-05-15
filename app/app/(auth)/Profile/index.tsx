@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 100, //ok this might need to change as well
+    marginBottom: "25%", //ok this might need to change as well
   },
   topButton: {
     borderTopLeftRadius: 10,
@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: '#0c0c48', // outer edge if needed
     alignItems: 'center',
+    marginBottom: "3%",
   },
   profileCardInner: {
     backgroundColor: '#0c0c48',

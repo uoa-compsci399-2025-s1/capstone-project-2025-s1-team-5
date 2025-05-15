@@ -49,10 +49,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
+  profileImage: { //The pfp avatar
+    width: 120,
+    height: 120,
+    borderRadius: 100,
   },
   profileInfo: {
     marginLeft: 16,
