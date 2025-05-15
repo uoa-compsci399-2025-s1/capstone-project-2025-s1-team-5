@@ -6,6 +6,9 @@ import StyledText from '@/components/StyledText';
 import profileAvatars from '@/constants/profileAvatars';
 import countries from 'world-countries';
 
+import { Dimensions } from 'react-native';
+const { width } = Dimensions.get('window');
+
 interface ProfileUserCardProps {
   avatar: string;
   name: string;
@@ -22,12 +25,17 @@ const CountryTag: React.FC<{ country: string }> = ({ country }) => {
   return (
     <View style={styles.countryContainer}>
       <Image source={{ uri }} style={styles.countryFlag} />
-      <StyledText type="label" style={{ color: theme.subtextOne }}>{country}</StyledText>
+        <StyledText
+          type="label"
+          style={{ color: '#ffffff', flexShrink: 1, flexWrap: 'wrap' }}
+        >
+          {country}
+        </StyledText>
     </View>
   )
 };
 
-const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email, country}) => {
+const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email, country }) => {
   const router = useRouter();
   const { theme } = useContext(ThemeContext);
   return (
@@ -36,10 +44,12 @@ const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email, 
         <Image source={profileAvatars[avatar] || profileAvatars.default} style={[styles.profileImage,{ borderColor: theme.primary }]}/>
       </TouchableOpacity>
       <View style={styles.profileInfo}>
-        <StyledText type="title" style={{ color: theme.text }}>{name}</StyledText>
-        <StyledText type="subtitle" style={{ color: theme.subtextOne }}>{email}</StyledText>
-        <CountryTag country={country}/>
-      </View>
+       <StyledText type="title" style={[styles.name, { color: '#ffffff' }]}>{name}</StyledText>
+       <StyledText type="subtitle" style={[styles.email, { color: '#ffffff' }]}>{email}</StyledText>
+       <View style={styles.countryWrapper}>
+         <CountryTag country={country} />
+       </View>
+     </View>
     </View>
   );
 };
@@ -50,22 +60,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-  },
+      width: width * 0.3,
+      height: width * 0.3,
+      borderRadius: (width * 0.3) / 2,
+    },
   profileInfo: {
-    marginLeft: 16,
+    marginLeft: "6%",
   },
   countryContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
   },
   countryFlag: {
-    width: 30,
-    height: 20,
-    marginRight: 8,
+    width: "15%",
+    height: "50%",
+    marginTop: "0%",
+    marginRight: "4%",
+  },
+  name: {
+    marginBottom: "2%",
+  },
+  email: {
+    marginBottom: "2%",
+  },
+  countryWrapper: {
+    marginTop: "2%",
   },
 });
 

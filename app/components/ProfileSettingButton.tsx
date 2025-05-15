@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import { TouchableOpacity, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { TouchableOpacity, StyleSheet, StyleProp, ViewStyle, View } from 'react-native';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import StyledText from '@/components/StyledText';
@@ -7,22 +7,43 @@ import StyledText from '@/components/StyledText';
 interface ProfileSettingButtonProps {
   label: string;
   onPress: () => void;
-  iconName?: 'vpn-key' | 'palette' | 'help' | 'exit-to-app' | 'person' | 'edit' | 'mail' | 'language';
+  iconName?: 'vpn-key' | 'palette' | 'help' | 'exit-to-app' | 'person' | 'edit' | 'mail' | 'language' | 'tag-faces';
   isLast?: boolean;
   style?: StyleProp<ViewStyle>;
+  showDivider?: boolean;
 }
-
-const ProfileSettingButton: React.FC<ProfileSettingButtonProps> = ({ label, onPress, iconName, isLast = false, style }) => {
+const ProfileSettingButton: React.FC<ProfileSettingButtonProps> = ({
+  label,
+  onPress,
+  iconName,
+  style,
+  showDivider = true,
+}) => {
   const { theme } = useContext(ThemeContext);
 
-  // const greyBackgroundColor = '#D3D3D3'; // light grey background for visualisation before darklight theme is implemented
-
   return (
-    <TouchableOpacity style={[styles.button, { backgroundColor: theme.backgroundSecondary }, style]} onPress={onPress}>
-      {iconName && <MaterialIcons name={iconName} size={24} color={theme.text} />}
-      <StyledText type="label" style={iconName ? { marginLeft: 15 } : null}>{label}</StyledText>
-      <MaterialIcons name="chevron-right" size={24} color={theme.text} style={styles.arrow} />
-    </TouchableOpacity>
+    <>
+      <TouchableOpacity
+        style={[
+          styles.button,
+          {
+            backgroundColor: '#0c0c48',
+          },
+          style,
+        ]}
+        onPress={onPress}
+        activeOpacity={0.8}
+      >
+        {iconName && (
+          <MaterialIcons name={iconName} size={24} color="#ffffff" style={styles.icon} />
+        )}
+        <StyledText type="label" style={styles.label}>
+          {label}
+        </StyledText>
+        <MaterialIcons name="chevron-right" size={24} color="#ffffff" style={styles.arrow} />
+      </TouchableOpacity>
+      {showDivider && <View style={styles.divider} />}
+    </>
   );
 };
 
@@ -30,11 +51,22 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 60,
-    paddingHorizontal: 15,
+    height: "17.7%",
+    paddingHorizontal: "6%",
+  },
+  icon: {
+    marginRight: "6%",
+  },
+  label: {
+    fontSize: 16,
+    color: '#ffffff',
   },
   arrow: {
     marginLeft: 'auto',
+  },
+  divider: {
+    height: 1,
+
   },
 });
 
