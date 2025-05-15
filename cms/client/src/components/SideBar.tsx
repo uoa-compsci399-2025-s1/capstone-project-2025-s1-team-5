@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import Button from './Button';
 import { useAuth } from '../auth/AuthProvider';
 import { useOutsideClick } from '../hooks/useOutsideClick';
 
-function Sidebar() {
-  const [isOpen, setIsOpen] = useState(false);
+interface SidebarProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}
+
+function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const { setIsAuthenticated } = useAuth();
   const sidebarRef = useOutsideClick(() => {
     if (isOpen) {
@@ -18,10 +21,7 @@ function Sidebar() {
   };
 
   const handleLogout = () => {
-    // Clear the token from localStorage
     localStorage.removeItem('authToken');
-    
-    // Update the authentication state to false
     setIsAuthenticated(false);
   };
 
@@ -33,23 +33,26 @@ function Sidebar() {
       border: 'none',
       position: 'fixed',
       top: '20px',
-      left: isOpen ? '265px' : '20px',  // Make room when sidebar is open
+      left: isOpen ? '265px' : '20px',
       transition: 'left 0.3s ease',
       zIndex: 1000,
     },
     sidebar: {
       position: 'fixed',
       top: 0,
-      left: isOpen ? '0' : '-270px',  // Adjust to match width + some buffer
+      left: isOpen ? '0' : '-270px',
       width: '250px',
       height: '100%',
       backgroundColor: 'white',
-      borderRight: '1px solid #ddd',  // Optional, adds definition
+      borderRight: '1px solid #ddd',
       overflowY: 'auto',
       transition: 'left 0.3s ease',
       zIndex: 999,
-      padding: '20px 16px',  // More padding inside the sidebar
+      padding: '20px 16px',
       boxShadow: '2px 0 8px rgba(0, 0, 0, 0.05)',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
     },
     logo: {
       width: '100%',
@@ -63,50 +66,67 @@ function Sidebar() {
       margin: 0,
     },
     navItem: {
-      padding: '12px 0',
-      borderBottom: '1px solid #eee',
+      padding: '4px 0',
+
     },
   };
-  
+
+  const buttonClass = "w-full text-blue-600 hover:text-white hover:bg-blue-600 border border-blue-600 font-semibold py-2 px-4 rounded transition duration-200 text-sm text-center block mb-3";
 
   return (
-    <div>
+    <>
       {!isOpen && (
-        <button style={styles.burgerIcon as React.CSSProperties} onClick={toggleSidebar}>
+        <button 
+          style={styles.burgerIcon as React.CSSProperties} 
+          onClick={toggleSidebar}
+        >
           ☰
         </button>
       )}
 
       <div ref={sidebarRef} style={styles.sidebar as React.CSSProperties}>
-        <img src="/assets/images/UoA-Logo-Primary-RGB-Large.png" alt="Logo" style={styles.logo}/>
+        <img 
+          src="/assets/images/UoA-Logo-Primary-RGB-Large.png" 
+          alt="Logo" 
+          style={styles.logo} 
+        />
 
         <nav>
           <ul style={styles.nav}>
-            <li>
-              <Link to="/modules/home">
-                <Button label="Home" href="/modules/home" />
+            <li style={styles.navItem}>
+              <Link to="/modules/home" className={buttonClass}>
+                Home
               </Link>
             </li>
             <li style={styles.navItem}>
-              <Button label="Module Management" href="/modules/modules" />
-            </li>
-            <li style={styles.navItem}>
-              <Button label="User Management" href="/modules/users" />
-            </li>
-            <li>
-              <Link to="/modules/analytics">
-                <Button label="Analytics" href="/modules/analytics" />
+              <Link to="/modules/modules" className={buttonClass}>
+                Module Management
               </Link>
             </li>
-            <li>
-              <button onClick={handleLogout} className="w-full text-left">
-                <Button label="Logout" href="/" />
-              </button>
+            <li style={styles.navItem}>
+              <Link to="/modules/users" className={buttonClass}>
+                User Management
+              </Link>
+            </li>
+            <li style={styles.navItem}>
+              <Link to="/modules/analytics" className={buttonClass}>
+                Analytics
+              </Link>
             </li>
           </ul>
         </nav>
+
+        <div className="mt-auto pt-6">
+          <Link
+            to="/"
+            onClick={handleLogout}
+            className="w-full text-red-600 hover:text-white hover:bg-red-600 border border-red-600 font-semibold py-2 px-4 rounded transition duration-200 text-sm text-center block"
+          >
+            Logout
+          </Link>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

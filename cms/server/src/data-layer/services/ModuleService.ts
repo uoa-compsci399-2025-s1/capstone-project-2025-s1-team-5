@@ -48,11 +48,27 @@ export class ModuleService {
      * @returns 
      */
     public async deleteModule(moduleId: string): Promise<boolean> {
-        if (!mongoose.Types.ObjectId.isValid(moduleId)) {
-            return false;
-        }
-        const deletedModule = await newModule.findByIdAndDelete(moduleId);
-        return !!deletedModule;
+      try {
+          if (!mongoose.Types.ObjectId.isValid(moduleId)) {
+              return false;
+          }
+
+          const module = await newModule.findById(moduleId);
+
+          if (module.subsectionIds.length > 0) {
+            await Promise.all(
+              module.subsectionIds.map(async (subsectionId) => {
+                return await Subsection.findByIdAndDelete(subsectionId);
+              })
+            );
+          }
+
+          const deletedModule = await newModule.findByIdAndDelete(moduleId);
+          return !!deletedModule;
+      } catch (error) {
+          console.error("Error deleting module:", error);
+          return false;
+      }
     }
     /**
      * Updates Module title and 

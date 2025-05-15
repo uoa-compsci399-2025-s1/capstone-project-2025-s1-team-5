@@ -26,6 +26,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
   const [description, setDescription] = useState(module.description);
   const [subsections, setSubsections] = useState<Subsection[]>([]);
   const [moduleSubsectionIds, setModuleSubsectionIds] = useState<string[]>(module.subsectionIds || []);
+  const [deleteConfirmSubsection, setDeleteConfirmSubsection] = useState<Subsection | null>(null);
 
   useEffect(() => {
     const fetchSubsections = async () => {
@@ -84,6 +85,28 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
       
     } catch (error) {
       console.error("Failed to add subsection:", error);
+    }
+  };
+
+  const handleDeleteSubsection = async (subsectionId: string) => {
+    try {
+      const token = localStorage.getItem("authToken");
+
+      await axios.delete(
+        `http://localhost:3000/modules/${module.id}/${subsectionId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      setSubsections(subsections.filter(sub => sub.id !== subsectionId));
+      setModuleSubsectionIds(moduleSubsectionIds.filter(id => id !== subsectionId));
+      setDeleteConfirmSubsection(null);
+    } catch (error) {
+      console.error("Failed to delete subsection:", error);
+      alert("Failed to delete subsection. Please try again.");
     }
   };
 
@@ -147,15 +170,30 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
           <h3>Subsections</h3>
           {subsections.map((subsection) => (
             <div key={subsection.id} style={{ marginBottom: "1rem", padding: "1rem", border: "1px solid #ccc", borderRadius: "5px" }}>
-              <div style={{ marginBottom: "0.5rem" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
                 <label>Title:</label>
-                <input
-                  type="text"
-                  value={subsection.title}
-                  onChange={(e) => handleSubsectionChange(subsection.id, "title", e.target.value)}
-                  style={{ width: "100%" }}
-                />
+                <button
+                  type="button"
+                  onClick={() => setDeleteConfirmSubsection(subsection)}
+                  style={{
+                    backgroundColor: "#dc3545",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "3px",
+                    padding: "0.2rem 0.5rem",
+                    fontSize: "0.8rem",
+                    cursor: "pointer",
+                  }}
+                >
+                  Delete Subsection
+                </button>
               </div>
+              <input
+                type="text"
+                value={subsection.title}
+                onChange={(e) => handleSubsectionChange(subsection.id, "title", e.target.value)}
+                style={{ width: "100%", marginBottom: "0.5rem" }}
+              />
               <div>
                 <label>Body:</label>
                 <textarea
@@ -214,6 +252,69 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
           </button>
         </div>
       </form>
+
+      {deleteConfirmSubsection && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#ffffff",
+              borderRadius: "10px",
+              padding: "2rem",
+              width: "90%",
+              maxWidth: "500px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+              textAlign: "center"
+            }}
+          >
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete the subsection "{deleteConfirmSubsection.title}"?</p>
+            <p style={{ color: "#dc3545", fontWeight: "bold" }}>
+              This action cannot be undone.
+            </p>
+            <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "2rem" }}>
+              <button
+                onClick={() => handleDeleteSubsection(deleteConfirmSubsection.id)}
+                style={{
+                  backgroundColor: "#dc3545",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "5px",
+                  padding: "0.5rem 1rem",
+                  cursor: "pointer",
+                }}
+              >
+                Yes, Delete
+              </button>
+              <button
+                onClick={() => setDeleteConfirmSubsection(null)}
+                style={{
+                  backgroundColor: "#6c757d",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "5px",
+                  padding: "0.5rem 1rem",
+                  cursor: "pointer",
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
