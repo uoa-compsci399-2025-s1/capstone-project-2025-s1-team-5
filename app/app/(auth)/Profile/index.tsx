@@ -61,13 +61,6 @@ const ProfileScreen: React.FC = () => {
             const isRightmost = index % 2 === 1;
 
             return (
-//               <ProfileOptionButton
-//                 key={title}
-//                 title={title}
-//                 onPress={() => router.push(route)}
-//                 isLeftmost={isLeftmost}
-//                 isRightmost={isRightmost}
-//               />
                 <View key={title} style={styles.buttonOuter}>
                   <View style={styles.buttonInner}>
                     <ProfileOptionButton
@@ -148,7 +141,7 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 16,
     borderWidth: 2,
-    borderColor: '#ffffff',
+    borderColor: '#0c0c48',
   },
   buttonOuter: {
     width: '48%',
@@ -156,13 +149,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderRadius: 12,
     backgroundColor: '#0c0c48', // outer border color
-    padding: 2, // border thickness
+    padding: 5, // border thickness
   },
   buttonInner: {
     flex: 1,                       // Fills vertical space
     width: '100%',                // Fills horizontal space
-    padding: 2,
-    backgroundColor: '#fff',
+    padding: 1,
+    backgroundColor: '#0c0c48',
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
