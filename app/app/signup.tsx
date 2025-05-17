@@ -28,6 +28,10 @@ export default function SignUpScreen() {
       return;
     }
 
+    if (password.length < 6) {
+      setDisplayedError('Password must be at least 6 characters long.');
+      return
+    }
     setDisplayedError('');
     console.log('Signing up with:', { email, password });
 
