@@ -165,4 +165,10 @@ export class UserService {
         );
         return !!result;
     }
+
+    public async findByEmail(email: string): Promise<boolean> {
+        const user = await User.findOne({ email }).exec();
+        return !!user;
+    }
+
 }

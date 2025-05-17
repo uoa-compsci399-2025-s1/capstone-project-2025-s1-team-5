@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { View, StyleSheet, Image, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
+import api from './lib/api'; 
 
 import SubmitButton from '@/components/SubmitButton';
 import TextInputBox from '@/components/TextInputBox';
@@ -17,9 +18,22 @@ export default function SignUpScreen() {
 
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/; 
 
-  const handleSignUp = () => {
+  const handleSignUp = async() => {
+    setDisplayedError('');
     if (!emailRegex.test(email)) {
       setDisplayedError('Please enter a valid email address');
+      return;
+    }
+
+    try {
+      const res = await api.post<{ exists: boolean }>('/auth/check-email', { email });
+      if (res.data.exists) {
+        setDisplayedError('This email is already in use');
+        return;
+      }
+    } catch (err) {
+      console.error('Email check failed', err);
+      setDisplayedError('Unable to verify email, please try again');
       return;
     }
 
@@ -28,6 +42,10 @@ export default function SignUpScreen() {
       return;
     }
 
+    if (password.length < 6) {
+      setDisplayedError('Password must be at least 6 characters long.');
+      return
+    }
     setDisplayedError('');
     console.log('Signing up with:', { email, password });
 
