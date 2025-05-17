@@ -75,4 +75,13 @@ export class AuthController extends Controller {
     }
     return userInfo;
   }
+
+  @Post("/check-email")
+  public async checkEmail(
+    @Body() body: { email: string }
+  ): Promise<{ exists: boolean }> {
+    const userService = new UserService();
+    const user = await userService.findByEmail(body.email);
+    return { exists: user };
+  }
 }

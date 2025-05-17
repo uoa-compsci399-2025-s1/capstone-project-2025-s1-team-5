@@ -1641,6 +1641,54 @@
 				],
 				"parameters": []
 			}
+		},
+		"/auth/check-email": {
+			"post": {
+				"operationId": "CheckEmail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"exists": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"exists"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"servers": [
