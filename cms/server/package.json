@@ -4,7 +4,7 @@
   "main": "src/dist/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsoa spec-and-routes && tsc",
+    "build": "npx tsoa spec-and-routes && tsc",
     "start": "concurrently \"yarn nodemon -e ts,js --exec\" \"yarn tsoa spec-and-routes && tsc\"",
     "nodemon": "nodemon"
   },
@@ -27,7 +27,10 @@
     "@types/bcryptjs": "^3.0.0",
     "@types/cors": "^2.8.17",
     "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.15.18",
     "@types/swagger-ui-express": "^4.1.8",
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "tsoa": "^6.6.0",
+    "typescript": "^5.8.3"
   }
 }
