@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import TextEditor from "./TextEditor";
 
 interface Subsection {
   title: string;
@@ -28,8 +29,11 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
   };
 
   const handleAddSubsection = () => {
-    setSubsections([...subsections, { title: "New Subsection", body: "Enter content here..." }]);
-  };
+    setSubsections([...subsections, { 
+      title: "New Subsection", 
+      body: "<p>Enter content here...</p>" // Changed from plain text to HTML
+    }]);
+};
 
   const handleDeleteSubsection = (index: number) => {
     setSubsections(subsections.filter((_, i) => i !== index));
@@ -143,13 +147,12 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
                 style={{ width: "100%", marginBottom: "0.5rem" }}
               />
               <div>
-                <label>Body:</label>
-                <textarea
-                  value={subsection.body}
-                  onChange={(e) => handleSubsectionChange(index, "body", e.target.value)}
-                  style={{ width: "100%", height: "80px" }}
-                />
-              </div>
+            <label>Body:</label>
+              <TextEditor
+                content={subsection.body}
+                onChange={(content) => handleSubsectionChange(index, "body", content)}
+            />
+          </div>
             </div>
           ))}
           
