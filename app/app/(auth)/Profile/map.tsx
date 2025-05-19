@@ -1,27 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, StyleSheet, Image, Animated, PanResponder } from 'react-native';
+import { ThemeContext } from '@/contexts/ThemeContext';
 import StyledText from '@/components/StyledText';
 
 export default function MapScreen() {
-  const [scale, setScale] = useState(new Animated.Value(1)); 
+  const { theme } = useContext(ThemeContext);
+  const [scale, setScale] = useState(new Animated.Value(1));
+
   const panResponder = PanResponder.create({
-    onMoveShouldSetPanResponder: (evt, gestureState) => true,
+    onMoveShouldSetPanResponder: () => true,
     onPanResponderMove: Animated.event(
-      [
-        null, 
-        { dy: scale }, 
-      ],
+      [null, { dy: scale }],
       { useNativeDriver: false }
     ),
     onPanResponderRelease: () => {},
   });
-  
-  //link to cms/backend?
-
+  //neeed to link to cms so admin can update the map
   return (
-    <View style={styles.container}>
-      <StyledText type="subtitle" style={styles.subtitle}>Explore the Campus</StyledText>
-      <StyledText type="default" style={styles.content}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <StyledText type="subtitle" style={[styles.subtitle, { color: theme.text }]}>
+        Explore the Campus
+      </StyledText>
+      <StyledText type="default" style={[styles.content, { color: theme.text }]}>
         Get to know the vibrant heart of our city campus and uncover key locations and landmarks.
       </StyledText>
 
