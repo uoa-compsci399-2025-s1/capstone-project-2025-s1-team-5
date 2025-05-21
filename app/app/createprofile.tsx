@@ -47,7 +47,6 @@ export default function CreateProfileScreen() {
       setDisplayedError('Please fill in all fields')
       return
     }
-
     try {
       await api.post('/users', {
         first_name: firstName,

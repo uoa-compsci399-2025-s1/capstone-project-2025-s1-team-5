@@ -1,8 +1,9 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useContext } from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import StyledText from '@/components/StyledText';
 import { moduleSubmodules } from './modulescreen';
+import { ThemeContext } from '@/contexts/ThemeContext'; // Adjust if needed
 
 export default function SubmoduleScreen() {
   const { moduleNumber, submoduleNumber } = useLocalSearchParams();
@@ -10,18 +11,28 @@ export default function SubmoduleScreen() {
   const submoduleIndex = Number(submoduleNumber);
   const submodule = moduleSubmodules[moduleIndex]?.[submoduleIndex];
 
+  const { theme } = useContext(ThemeContext);
+
   if (!submodule) {
     return (
-      <View style={styles.container}><StyledText type="error">Submodule not found</StyledText></View>
+      <ScrollView
+        style={[styles.container, { backgroundColor: theme.background }]}
+        showsVerticalScrollIndicator={false}
+      >
+        <StyledText type="error">Submodule not found</StyledText>
+      </ScrollView>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <StyledText type="title">Module {moduleIndex}</StyledText>
-      <StyledText type="subtitle" style={styles.subtitle}>{submodule.title}</StyledText>
-      <StyledText type="default" style={styles.content}>This is where content for "{submodule.title}" would go.</StyledText>
-    </View>
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      showsVerticalScrollIndicator={false}
+    >
+      <StyledText style={{ ...styles.content, color: theme.text }}>
+        This is where content for "{submodule.title}" would go.
+      </StyledText>
+    </ScrollView>
   );
 }
 
@@ -29,10 +40,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-  },
-  subtitle: {
-    marginTop: 8,
-    marginBottom: 16,
   },
   content: {
     lineHeight: 24,

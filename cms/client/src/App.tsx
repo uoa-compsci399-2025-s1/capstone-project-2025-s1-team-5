@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
-import ContentPage from './pages/Content';
+import ModulesPage from './pages/Modules';
 import UsersPage from './pages/Users';
 import Layout from './components/Layout';
 import Analytics from './pages/Analytics';
@@ -16,9 +16,10 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/modules/home" element={<Home />} />
-            <Route path="/modules/content" element={<ContentPage />} />
+            <Route path="/modules/modules" element={<ModulesPage />} />
             <Route path="/modules/users" element={<UsersPage />} />
             <Route path="/modules/analytics" element={<Analytics />} />
+            <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>
       </Layout>
     </Router>

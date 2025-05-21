@@ -23,7 +23,7 @@ export const lightTheme: AppTheme = {
   link: '#1f2bd4',
   highlight: '#00caef',
   success: '#4CAF50',
-  buttonText: '#ffffff', 
+  buttonText: '#ffffff',
 };
 
 export const darkTheme: AppTheme = {

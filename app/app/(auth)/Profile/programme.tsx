@@ -5,7 +5,7 @@ import StyledText from '@/components/StyledText';
 export default function ProgrammeScreen() {
   return (
     <View style={styles.container}>
-      <StyledText type="title">Programme Information</StyledText>
+      <StyledText type="title">Programme Name</StyledText>
       <StyledText type="subtitle" style={styles.subtitle}>Overview</StyledText>
       <StyledText type="default" style={styles.content}>
         This is where programme details and relevant information will be shown. 

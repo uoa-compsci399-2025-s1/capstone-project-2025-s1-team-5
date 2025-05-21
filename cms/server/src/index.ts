@@ -23,7 +23,8 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(helmet())
-app.use(cors())
+// app.use(cors())
+app.use(cors({ origin: "*" }));
 
 RegisterRoutes(app);
 app.use("/swagger", swaggerUI.serve, swaggerUI.setup(swaggerJson));

@@ -1,19 +1,29 @@
-import React, { createContext, useState, useEffect, ReactNode, useContext} from 'react';
-import { useColorScheme } from 'react-native';
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useContext,
+} from 'react';
+import { useColorScheme, ColorSchemeName } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { lightTheme, darkTheme } from '@/theme/theme';
 import { UserContext } from './UserContext';
 
+// Define allowable theme preferences
+type ColorPreference = 'light' | 'dark' | 'system';
 
 interface ThemeContextProps {
   theme: typeof lightTheme;
   isDarkMode: boolean;
-  setCustomTheme: (useDark: boolean) => Promise<void>;
+  colorPreference: ColorPreference;
+  setCustomTheme: (pref: ColorPreference) => Promise<void>;
 }
 
 export const ThemeContext = createContext<ThemeContextProps>({
   theme: lightTheme,
   isDarkMode: false,
+  colorPreference: 'system',
   setCustomTheme: async () => {},
 });
 
@@ -21,34 +31,59 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
+// Type guard to validate stored string as ColorPreference
+const isColorPreference = (val: string | null): val is ColorPreference =>
+  val === 'light' || val === 'dark' || val === 'system';
+
+// Determine dark mode based on preference and system setting
+const resolveIsDarkMode = (
+  pref: ColorPreference,
+  system: ColorSchemeName
+): boolean => {
+  if (pref === 'dark') return true;
+  if (pref === 'light') return false;
+  return system === 'dark';
+};
+
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const systemColorScheme = useColorScheme();
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
-  const {user} = useContext(UserContext);
+  const [colorPreference, setColorPreference] =
+    useState<ColorPreference>('system');
+
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     (async () => {
-      if (user.colorPref === 'light' || user.colorPref === 'dark') {
-        setIsDarkMode(user.colorPref === 'dark')
-        return
+      let pref: ColorPreference = 'system';
+
+      if (user.colorPref === 'light' || user.colorPref === 'dark' || user.colorPref === 'system') {
+        pref = user.colorPref;
+      } else {
+        const stored = await AsyncStorage.getItem('USER_THEME_PREFERENCE');
+        if (isColorPreference(stored)) {
+          pref = stored;
+        }
       }
-      const stored = await AsyncStorage.getItem('USER_THEME_PREFERENCE');
-      if (stored === 'light' || stored === 'dark') {
-        setIsDarkMode(stored === 'dark');
-        return
-      } 
-      setIsDarkMode(systemColorScheme === 'dark')
+
+      setColorPreference(pref);
+      setIsDarkMode(resolveIsDarkMode(pref, systemColorScheme));
     })();
   }, [user.colorPref, systemColorScheme]);
 
-  const setCustomTheme = async (useDark: boolean) => {
-    setIsDarkMode(useDark);
-    await AsyncStorage.setItem('USER_THEME_PREFERENCE', useDark ? 'dark' : 'light');
+  const setCustomTheme = async (pref: ColorPreference) => {
+    setColorPreference(pref);
+    setIsDarkMode(resolveIsDarkMode(pref, systemColorScheme));
+    await AsyncStorage.setItem('USER_THEME_PREFERENCE', pref);
   };
 
   const theme = isDarkMode ? darkTheme : lightTheme;
 
   return (
-    <ThemeContext.Provider value={{ theme, isDarkMode, setCustomTheme}}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider
+      value={{ theme, isDarkMode, colorPreference, setCustomTheme }}
+    >
+      {children}
+    </ThemeContext.Provider>
   );
 };
