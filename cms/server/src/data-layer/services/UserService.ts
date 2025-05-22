@@ -29,22 +29,23 @@ export class UserService {
      * @param pageNumber page number
      * @returns list of users
      */
-    public async getPaginatedUsers(limit = 10, page = 1) : Promise<PaginatedUserResponse | null> {
+    public async getPaginatedUsers(limit = 10, page = 1): Promise<PaginatedUserResponse | null> {
         try {
-            const skip = (page - 1) * limit
+            const skip = (page - 1) * limit;
             const fetchedUsers = await User.find().skip(skip).limit(limit);
-            const total = await User.countDocuments()
+            const total = await User.countDocuments();
+
             return {
-                users: fetchedUsers.map(userAdaptor),
-                total, 
-                page,
-                limit
+            users: fetchedUsers.map(userAdaptor),
+            total,
+            page,
+            limit,
             };
         } catch (error) {
             console.error("Error fetching users", error);
-            return null
+            return null;
         }
-    }
+        }
     /**
      * Method to create new User
      * @param UserCreationsParams - user information from input
