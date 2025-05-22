@@ -3704,7 +3704,7 @@ cliui@^8.0.1:
     strip-ansi "^6.0.1"
     wrap-ansi "^7.0.0"
 
-"cms-frontend@file:E:\\Jack\\399\\capstone-project-2025-s1-team-5\\cms\\client":
+"cms-frontend@file:C:\\Users\\Derri\\OneDrive\\Documents\\CapstoneProject\\capstone-project-2025-s1-team-5\\cms\\client":
   version "0.1.0"
   resolved "file:client"
   dependencies:
@@ -9382,7 +9382,7 @@ serve-static@1.16.2:
     parseurl "~1.3.3"
     send "0.19.0"
 
-"server@file:E:\\Jack\\399\\capstone-project-2025-s1-team-5\\cms\\server":
+"server@file:C:\\Users\\Derri\\OneDrive\\Documents\\CapstoneProject\\capstone-project-2025-s1-team-5\\cms\\server":
   version "1.0.0"
   resolved "file:server"
   dependencies:

@@ -27,7 +27,7 @@ const UsersPage = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/users`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/users`);
       setUsers(res.data.users);
     } catch (error) {
       console.error("Failed to fetch users:", error);
@@ -69,7 +69,7 @@ const UsersPage = () => {
   const handleDelete = async (userId: string) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
-        await axios.delete(`${process.env.REACT_APP_API_URL}/users/${userId}`);
+        await axios.delete(`${process.env.REACT_APP_API_URL}/api/users/${userId}`);
         fetchUsers();
       } catch (error) {
         console.error("Failed to delete user:", error);

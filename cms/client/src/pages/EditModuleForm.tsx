@@ -33,7 +33,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
       try {
         const responses = await Promise.all(
           moduleSubsectionIds.map((id) =>
-            axios.get(`${process.env.REACT_APP_API_URL}/modules/subsection/${id}`)
+            axios.get(`${process.env.REACT_APP_API_URL}/api/modules/subsection/${id}`)
           )
         );
         setSubsections(
@@ -67,7 +67,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
       };
       
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/modules/${module.id}`, 
+        `${process.env.REACT_APP_API_URL}/api/modules/${module.id}`, 
         newSubsectionData
       );
       
@@ -93,7 +93,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
       const token = localStorage.getItem("authToken");
 
       await axios.delete(
-        `${process.env.REACT_APP_API_URL}/modules/${module.id}/${subsectionId}`,
+        `${process.env.REACT_APP_API_URL}/api/modules/${module.id}/${subsectionId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -121,12 +121,12 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
 
     try {
       // Update the module
-      await axios.put(`${process.env.REACT_APP_API_URL}modules/${module.id}`, updatedModule);
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/modules/${module.id}`, updatedModule);
 
       // Update subsections
       await Promise.all(
         subsections.map((subsection) =>
-          axios.put(`${process.env.REACT_APP_API_URL}/modules/subsection/${subsection.id}`, {
+          axios.put(`${process.env.REACT_APP_API_URL}/api/modules/subsection/${subsection.id}`, {
             title: subsection.title,
             body: subsection.body,
           })

@@ -48,7 +48,7 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
       const token = localStorage.getItem("authToken");
       
       const moduleResponse = await axios.post(
-        `${process.env.REACT_APP_API_URL}/modules`, 
+        `${process.env.REACT_APP_API_URL}/api/modules`, 
         moduleData,
         {
           headers: {
@@ -63,7 +63,7 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
         await Promise.all(
           subsections.map(subsection => 
             axios.post(
-              `${process.env.REACT_APP_API_URL}/modules/${moduleId}`, 
+              `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`, 
               {
                 title: subsection.title,
                 body: subsection.body,

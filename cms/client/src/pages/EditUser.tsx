@@ -46,7 +46,7 @@ const EditUserForm: React.FC<EditUserFormProps> = ({ user, onUserUpdated, setEdi
       };
 
     try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/users/${user.id}`, updatedUser);
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/users/${user.id}`, updatedUser);
       onUserUpdated(); // Refresh the list of users
       setEditUser(null); // Close the edit form
       setSuccess("User successfully edited")
