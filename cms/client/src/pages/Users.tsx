@@ -24,19 +24,27 @@ const UsersPage = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false); //transition
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false); //transition
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [limit] = useState(10);
 
   const fetchUsers = async () => {
-    try {
-      const res = await axios.get("http://localhost:3000/users");
-      setUsers(res.data.users);
-    } catch (error) {
-      console.error("Failed to fetch users:", error);
-    }
-  };
+  try {
+    const res = await axios.get("http://localhost:3000/users", {
+      params: { limit, page },
+    });
+    setUsers(res.data.users);
+    setTotalPages(Math.ceil(res.data.total / limit)); // 👈 Here’s the important part
+  } catch (error) {
+    console.error("Failed to fetch users:", error);
+  }
+};
+
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+  fetchUsers();
+}, [page]);
+
 
   const sortUsers = (data: User[]) => {
     if (!sortKey) return data;
