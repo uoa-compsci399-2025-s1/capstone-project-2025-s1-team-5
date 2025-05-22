@@ -1,5 +1,5 @@
 import { moduleAdaptor } from "../adapter/ModuleAdapter";
-import type { IModule, IQuestion, IQuiz, ISubsection } from "../models/models";
+import type { IModule, IQuestion, IQuiz, ISubsection, LayoutConfig } from "../models/models";
 import { newModule, Question, Quiz, Subsection } from "../../data-layer/models/schema";
 import mongoose from "mongoose";
 
@@ -323,28 +323,49 @@ export class ModuleService {
     return updated;
   }
       
-public async deleteQuestion(questionId: string, quizId: string): Promise<boolean> {
-  const quiz = await Quiz.findById(quizId);
-  if (!quiz) {
-    console.error(`Quiz ${quizId} not found`);
-    return false;
-  }
-
-  try {
-    const deleted = await Question.findByIdAndDelete(questionId);
-    if (!deleted) {
-      console.error(`Question ${questionId} not found`);
+  public async deleteQuestion(questionId: string, quizId: string): Promise<boolean> {
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) {
+      console.error(`Quiz ${quizId} not found`);
       return false;
     }
 
-    quiz.questions = quiz.questions.filter(id => id.toString() !== questionId);
-    await quiz.save();
+    try {
+      const deleted = await Question.findByIdAndDelete(questionId);
+      if (!deleted) {
+        console.error(`Question ${questionId} not found`);
+        return false;
+      }
 
-    return true;
-  } catch (error) {
-    console.error("Error deleting question:", error);
-    return false;
+      quiz.questions = quiz.questions.filter(id => id.toString() !== questionId);
+      await quiz.save();
+
+      return true;
+    } catch (error) {
+      console.error("Error deleting question:", error);
+      return false;
+    }
   }
-}
+
+  public async updateSubsectionLayout(
+    subsectionId: string,
+    layout: LayoutConfig
+  ): Promise<boolean> {
+    try {
+      const sub = await Subsection.findById(subsectionId);
+      if (!sub) {
+        console.error(`Subsection ${subsectionId} not found`);
+        return false;
+      }
+      sub.layout = layout;
+      sub.updatedAt = new Date();
+      await sub.save();
+      return true;
+    } catch (err) {
+      console.error("Error updating layout:", err);
+      return false;
+    }
+  }
+
 
 }

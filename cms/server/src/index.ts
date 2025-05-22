@@ -11,6 +11,8 @@ import { RegisterRoutes } from "./middleware/__generated__/routes";
 
 import connectToDatabase from "./data-layer/adapter/mongodb";
 
+import "reflect-metadata";
+
 export const app = express();
 
 // Use body parser to read sent json payloads

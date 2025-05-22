@@ -85,7 +85,10 @@ const subsectionSchema: Schema<ISubsection> = new Schema(
         published: {
             type: Boolean,
             default: false
-        }
+        },
+        layout: { 
+            type: Schema.Types.Mixed,
+            default: { split: [50,50], blocks: [] } },
     },
     { timestamps: true }
 );

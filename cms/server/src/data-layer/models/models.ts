@@ -50,7 +50,18 @@ export interface IQuiz {
     createdAt: Date;
 }
 
-export interface    ISubsection {
+export interface LayoutBlock {
+  blockId: string;
+  side: "left" | "right";
+  order: number;
+}
+
+export interface LayoutConfig {
+  split: number[];           
+  blocks: LayoutBlock[];             
+}
+
+export interface ISubsection {
     id: string;
     title: string;
     body: string;
@@ -58,6 +69,7 @@ export interface    ISubsection {
     published: boolean;
     createdAt: Date;
     updatedAt: Date;
+    layout: LayoutConfig,
 }
 
 export interface ChangePasswordRequest {

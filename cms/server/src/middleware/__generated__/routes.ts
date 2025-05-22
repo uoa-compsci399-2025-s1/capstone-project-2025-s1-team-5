@@ -167,6 +167,25 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "LayoutBlock": {
+        "dataType": "refObject",
+        "properties": {
+            "blockId": {"dataType":"string","required":true},
+            "side": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["left"]},{"dataType":"enum","enums":["right"]}],"required":true},
+            "order": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "LayoutConfig": {
+        "dataType": "refObject",
+        "properties": {
+            "split": {"dataType":"array","array":{"dataType":"double"},"required":true},
+            "blocks": {"dataType":"array","array":{"dataType":"refObject","ref":"LayoutBlock"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ISubsection": {
         "dataType": "refObject",
         "properties": {
@@ -177,6 +196,26 @@ const models: TsoaRoute.Models = {
             "published": {"dataType":"boolean","required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
+            "layout": {"ref":"LayoutConfig","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "LayoutBlockDTO": {
+        "dataType": "refObject",
+        "properties": {
+            "blockId": {"dataType":"string","required":true},
+            "side": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["left"]},{"dataType":"enum","enums":["right"]}],"required":true},
+            "order": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "LayoutConfigDTO": {
+        "dataType": "refObject",
+        "properties": {
+            "split": {"dataType":"array","array":{"dataType":"double"},"required":true},
+            "blocks": {"dataType":"array","array":{"dataType":"refObject","ref":"LayoutBlockDTO"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -775,6 +814,37 @@ export function RegisterRoutes(app: Router) {
                 next,
                 validatedArgs,
                 successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsModuleController_updateSubsectionLayout: Record<string, TsoaRoute.ParameterSchema> = {
+                subsectionId: {"in":"path","name":"subsectionId","required":true,"dataType":"string"},
+                layout: {"in":"body","name":"layout","required":true,"ref":"LayoutConfigDTO"},
+        };
+        app.put('/modules/subsection/:subsectionId/layout',
+            ...(fetchMiddlewares<RequestHandler>(ModuleController)),
+            ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.updateSubsectionLayout)),
+
+            async function ModuleController_updateSubsectionLayout(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsModuleController_updateSubsectionLayout, request, response });
+
+                const controller = new ModuleController();
+
+              await templateService.apiHandler({
+                methodName: 'updateSubsectionLayout',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
               });
             } catch (err) {
                 return next(err);

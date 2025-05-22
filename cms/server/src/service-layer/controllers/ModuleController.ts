@@ -12,7 +12,7 @@ import {
     SuccessResponse,
 } from "tsoa";
 import { ModuleService } from "../../data-layer/services/ModuleService";
-import { ModuleGetResponse, ModulesGetResponse } from "../response-models/ModuleResponse";
+import { ModuleGetResponse, ModulesGetResponse, LayoutConfigDTO } from "../response-models/ModuleResponse";
 import { IModule, IQuestion, IQuiz, ISubsection } from "../../data-layer/models/models";
 import { moduleToResponse } from "../../data-layer/adapter/ModuleAdapter";
 
@@ -115,6 +115,24 @@ export class ModuleController extends Controller {
         
         const result = await this.moduleService.deleteSubsection(moduleId, subsectionId);
         return { success: result };
+    }
+
+    // @Security("jwt", ["admin"])   
+    @Put("subsection/{subsectionId}/layout")
+    @SuccessResponse(200, "Layout updated")
+    public async updateSubsectionLayout(
+      @Path() subsectionId: string,
+      @Body() layout: LayoutConfigDTO
+    ): Promise<{ success: boolean }> {
+      const ok = await this.moduleService.updateSubsectionLayout(
+        subsectionId,
+        layout as any
+      );
+      if (!ok) {
+        this.setStatus(400);
+        return { success: false };
+      }
+      return { success: true };
     }
 
     //Create Quiz

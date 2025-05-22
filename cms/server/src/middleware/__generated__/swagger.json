@@ -367,6 +367,54 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"LayoutBlock": {
+				"properties": {
+					"blockId": {
+						"type": "string"
+					},
+					"side": {
+						"type": "string",
+						"enum": [
+							"left",
+							"right"
+						]
+					},
+					"order": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"blockId",
+					"side",
+					"order"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LayoutConfig": {
+				"properties": {
+					"split": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					},
+					"blocks": {
+						"items": {
+							"$ref": "#/components/schemas/LayoutBlock"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"split",
+					"blocks"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ISubsection": {
 				"properties": {
 					"id": {
@@ -391,6 +439,9 @@
 					"updatedAt": {
 						"type": "string",
 						"format": "date-time"
+					},
+					"layout": {
+						"$ref": "#/components/schemas/LayoutConfig"
 					}
 				},
 				"required": [
@@ -400,7 +451,56 @@
 					"authorID",
 					"published",
 					"createdAt",
-					"updatedAt"
+					"updatedAt",
+					"layout"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LayoutBlockDTO": {
+				"properties": {
+					"blockId": {
+						"type": "string"
+					},
+					"side": {
+						"type": "string",
+						"enum": [
+							"left",
+							"right"
+						]
+					},
+					"order": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"blockId",
+					"side",
+					"order"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LayoutConfigDTO": {
+				"properties": {
+					"split": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					},
+					"blocks": {
+						"items": {
+							"$ref": "#/components/schemas/LayoutBlockDTO"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"split",
+					"blocks"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1204,6 +1304,52 @@
 						}
 					}
 				]
+			}
+		},
+		"/modules/subsection/{subsectionId}/layout": {
+			"put": {
+				"operationId": "UpdateSubsectionLayout",
+				"responses": {
+					"200": {
+						"description": "Layout updated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "subsectionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LayoutConfigDTO"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/modules/{moduleId}/quiz": {
