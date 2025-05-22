@@ -57,7 +57,7 @@ export class ModuleController extends Controller {
     @SuccessResponse(200, "Module Updated")
     public async updateModule(
       @Path() moduleId: string,
-      @Body() moduleChanges: { title?: string; description?: string; subsectionIds?: string[] }
+      @Body() moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[] }
     ): Promise<{ success: boolean }> {
 
       const moduleService = new ModuleService();
@@ -89,7 +89,7 @@ export class ModuleController extends Controller {
     @Put("subsection/{subsectionId}")
     @SuccessResponse(202, "Subsection updated")
     public async editSubsection(
-    subsectionId: string,
+    @Path() subsectionId: string,
     @Body() subsectionChanges: { title?: string; body?: string }
     ): Promise<{ success: boolean }> {
     const moduleService = new ModuleService();
@@ -98,7 +98,7 @@ export class ModuleController extends Controller {
     }
     
     @Get("subsection/{subsectionId}")
-    public async getSubseciton(
+    public async getSubsection(
       @Path() subsectionId: string
     ): Promise<ISubsection> {
         const moduleService = new ModuleService()
@@ -138,6 +138,19 @@ export class ModuleController extends Controller {
       return quiz;
     }
 
+    @Put("/quiz/{quizId}")
+    public async updateQuiz(
+      @Path() quizId: string,
+      @Body() quizData: { title: string; description: string }
+    ): Promise<IQuiz> {
+      const moduleService = new ModuleService();
+      const updatedQuiz = await moduleService.updateQuiz(quizId, quizData);
+      if (!updatedQuiz) {
+        throw new Error("Failed to update quiz");
+      }
+      return updatedQuiz;
+    }
+
     //Delete Quiz        
     @Delete("/quiz/{moduleId}/{quizId}")
     @SuccessResponse(200, "Quiz deleted")
@@ -153,6 +166,16 @@ export class ModuleController extends Controller {
         }
 
         return { success: true, message: "Quiz successfully deleted" };
+    }
+
+    @Get("/question/{questionId}")
+    public async getQuestion(@Path() questionId: string): Promise<IQuestion> {
+      const moduleService = new ModuleService();
+      const question = await moduleService.getQuestionById(questionId);
+      if (!question) {
+        throw new Error("Question not found");
+      }
+      return question;
     }
 
     //Add Question

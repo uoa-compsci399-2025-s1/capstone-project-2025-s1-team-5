@@ -599,7 +599,7 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_updateModule: Record<string, TsoaRoute.ParameterSchema> = {
                 moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
-                moduleChanges: {"in":"body","name":"moduleChanges","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"subsectionIds":{"dataType":"array","array":{"dataType":"string"}},"description":{"dataType":"string"},"title":{"dataType":"string"}}},
+                moduleChanges: {"in":"body","name":"moduleChanges","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"quizIds":{"dataType":"array","array":{"dataType":"string"}},"subsectionIds":{"dataType":"array","array":{"dataType":"string"}},"description":{"dataType":"string"},"title":{"dataType":"string"}}},
         };
         app.put('/modules/:moduleId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
@@ -720,25 +720,25 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsModuleController_getSubseciton: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsModuleController_getSubsection: Record<string, TsoaRoute.ParameterSchema> = {
                 subsectionId: {"in":"path","name":"subsectionId","required":true,"dataType":"string"},
         };
         app.get('/modules/subsection/:subsectionId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
-            ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.getSubseciton)),
+            ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.getSubsection)),
 
-            async function ModuleController_getSubseciton(request: ExRequest, response: ExResponse, next: any) {
+            async function ModuleController_getSubsection(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsModuleController_getSubseciton, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsModuleController_getSubsection, request, response });
 
                 const controller = new ModuleController();
 
               await templateService.apiHandler({
-                methodName: 'getSubseciton',
+                methodName: 'getSubsection',
                 controller,
                 response,
                 next,
@@ -842,6 +842,37 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsModuleController_updateQuiz: Record<string, TsoaRoute.ParameterSchema> = {
+                quizId: {"in":"path","name":"quizId","required":true,"dataType":"string"},
+                quizData: {"in":"body","name":"quizData","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true}}},
+        };
+        app.put('/modules/quiz/:quizId',
+            ...(fetchMiddlewares<RequestHandler>(ModuleController)),
+            ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.updateQuiz)),
+
+            async function ModuleController_updateQuiz(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsModuleController_updateQuiz, request, response });
+
+                const controller = new ModuleController();
+
+              await templateService.apiHandler({
+                methodName: 'updateQuiz',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_deleteQuiz: Record<string, TsoaRoute.ParameterSchema> = {
                 moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
                 quizId: {"in":"path","name":"quizId","required":true,"dataType":"string"},
@@ -867,6 +898,36 @@ export function RegisterRoutes(app: Router) {
                 next,
                 validatedArgs,
                 successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsModuleController_getQuestion: Record<string, TsoaRoute.ParameterSchema> = {
+                questionId: {"in":"path","name":"questionId","required":true,"dataType":"string"},
+        };
+        app.get('/modules/question/:questionId',
+            ...(fetchMiddlewares<RequestHandler>(ModuleController)),
+            ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.getQuestion)),
+
+            async function ModuleController_getQuestion(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsModuleController_getQuestion, request, response });
+
+                const controller = new ModuleController();
+
+              await templateService.apiHandler({
+                methodName: 'getQuestion',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
               });
             } catch (err) {
                 return next(err);
