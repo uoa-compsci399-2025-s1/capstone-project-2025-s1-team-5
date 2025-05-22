@@ -9,7 +9,7 @@ function Analytics() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/users");
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/users`);
         const users = response.data.users
         setUserCount(response.data.total);
         const countries = new Set(users.map((user: { country: any; }) => user.country));
