@@ -13,7 +13,10 @@ export interface ModuleGetResponse {
     description: string;
     createdAt: Date;
     updatedAt?: Date;
-    subsectionIds: string[];
+    subsections: Array<{
+        id: string;
+        title: string;
+    }>;
 }
 
 export interface SubsectionResponse {

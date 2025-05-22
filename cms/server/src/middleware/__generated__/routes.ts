@@ -162,7 +162,7 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"string","required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime"},
-            "subsectionIds": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "subsections": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"title":{"dataType":"string","required":true},"id":{"dataType":"string","required":true}}},"required":true},
         },
         "additionalProperties": false,
     },

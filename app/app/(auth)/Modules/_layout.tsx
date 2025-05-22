@@ -39,7 +39,7 @@ export default function ModulesLayout() {
 
       {/* Modules/[moduleId]/index.tsx */}
       <Stack.Screen
-        name="[moduleId]"
+        name="[moduleId]/index"
         options={{
           headerTitle,
         }}

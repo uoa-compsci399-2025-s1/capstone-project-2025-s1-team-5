@@ -14,13 +14,16 @@ export function moduleAdaptor(doc: any): IModule {
     };
   }
 
-  export function moduleToResponse(module: IModule): ModuleGetResponse {
-    return {
-      id: module.id,
-      title: module.title,
-      description: module.description,
-      createdAt: module.createdAt,
-      updatedAt: module.updatedAt,
-      subsectionIds: module.subsectionIds?.map((id: any) => id.toString()) || []
-    };
-  }
+export function moduleToResponse(module: IModule): ModuleGetResponse {
+  return {
+    id: module.id,
+    title: module.title,
+    description: module.description,
+    createdAt: module.createdAt,
+    updatedAt: module.updatedAt,
+    subsections: module.subsectionIds?.map((sub: any) => ({
+      id: sub._id.toString(), 
+      title: sub.title,
+    })) || [],
+  };
+}

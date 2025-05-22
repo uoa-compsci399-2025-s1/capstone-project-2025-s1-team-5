@@ -350,9 +350,21 @@
 						"type": "string",
 						"format": "date-time"
 					},
-					"subsectionIds": {
+					"subsections": {
 						"items": {
-							"type": "string"
+							"properties": {
+								"title": {
+									"type": "string"
+								},
+								"id": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"title",
+								"id"
+							],
+							"type": "object"
 						},
 						"type": "array"
 					}
@@ -362,7 +374,7 @@
 					"title",
 					"description",
 					"createdAt",
-					"subsectionIds"
+					"subsections"
 				],
 				"type": "object",
 				"additionalProperties": false
