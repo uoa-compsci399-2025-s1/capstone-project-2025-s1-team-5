@@ -6,16 +6,14 @@ import StyledText from '@/components/StyledText';
 import TextInputBox from '@/components/TextInputBox';
 import SubmitButton from '@/components/SubmitButton';
 
-const SERVICE_ID = 'service_cfsiigh';      
-const TEMPLATE_ID = 'template_renrx8p';    
-const PUBLIC_KEY = '7_hkd-tDAgRDQsDiA';      
-
 export default function SupportScreen() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [contact, setContact] = useState('');
   const { theme } = useContext(ThemeContext);
+
+  const GETFORM_ENDPOINT = 'https://getform.io/f/bpjpjpvb';
 
   const handleSubmit = async () => {
     if (!firstName || !lastName || !email || !contact) {
@@ -24,37 +22,32 @@ export default function SupportScreen() {
     }
 
     const data = {
-      service_id: SERVICE_ID,
-      template_id: TEMPLATE_ID,
-      user_id: PUBLIC_KEY,
-      template_params: {
-        first_name: firstName,
-        last_name: lastName,
-        preferred_email: email,
-        contact_number: contact,
-      }
+      first_name: firstName,
+      last_name: lastName,
+      preferred_email: email,
+      contact_number: contact,
     };
+    const formBody = new URLSearchParams(data).toString();
 
     try {
-      const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      const response = await fetch(GETFORM_ENDPOINT, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify(data)
+        body: formBody,
       });
 
       if (response.ok) {
         Alert.alert('Success', 'Your enquiry has been sent.');
 
-        // Reset form fields
         setFirstName('');
         setLastName('');
         setEmail('');
         setContact('');
       } else {
         const errText = await response.text();
-        console.error('Email send failed:', errText);
+        console.error('Form submission failed:', errText);
         Alert.alert('Error', 'Failed to send enquiry.');
       }
     } catch (error) {
