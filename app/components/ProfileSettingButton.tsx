@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: "17.7%",
+    height: "19.7%",
     paddingHorizontal: "6%",
   },
   icon: {

@@ -166,7 +166,8 @@ const styles = StyleSheet.create({
   buttonOuter: {
     width: '48%',
     aspectRatio: 1.0,
-    marginBottom: verticalScale(16),
+    marginBottom: verticalScale(21),
+    marginTop: verticalScale(7),
     borderRadius: moderateScale(12),
     backgroundColor: '#0c0c48',
     padding: moderateScale(4),
