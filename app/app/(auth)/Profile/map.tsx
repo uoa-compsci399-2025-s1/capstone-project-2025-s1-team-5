@@ -18,19 +18,16 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 export default function MapScreen() {
   const { theme } = useContext(ThemeContext);
 
-  // Shared values for animation
   const scale = useSharedValue(1);
   const savedScale = useSharedValue(1);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const offset = useSharedValue({ x: 0, y: 0 });
 
-  // Calculate the initial scale to fit the image perfectly
   const [imageRatio, setImageRatio] = React.useState(1);
   const containerWidth = screenWidth;
-  const containerHeight = screenHeight * 0.7;
+  const containerHeight = screenHeight * 0.61;
 
-  // Pinch to zoom gesture
   const pinchGesture = Gesture.Pinch()
     .onStart(() => {
       savedScale.value = scale.value;
@@ -40,16 +37,13 @@ export default function MapScreen() {
     })
     .onEnd(() => {
       savedScale.value = scale.value;
-      // Limit minimum scale to fit the container
       const minScale = Math.min(
         containerWidth / (containerWidth * imageRatio),
         containerHeight / (containerHeight * imageRatio)
       );
-      
       if (scale.value < minScale) {
         scale.value = withTiming(minScale);
         savedScale.value = minScale;
-        // Reset position when returning to min scale
         translateX.value = withTiming(0);
         translateY.value = withTiming(0);
         offset.value = { x: 0, y: 0 };
@@ -59,7 +53,6 @@ export default function MapScreen() {
       }
     });
 
-  // Pan gesture with boundaries
   const panGesture = Gesture.Pan()
     .minDistance(10)
     .onStart(() => {
@@ -72,12 +65,8 @@ export default function MapScreen() {
       if (savedScale.value > 1) {
         const scaledWidth = containerWidth * savedScale.value;
         const scaledHeight = containerHeight * savedScale.value;
-        
-        // Calculate maximum allowed translation
         const maxX = (scaledWidth - containerWidth) / 2;
         const maxY = (scaledHeight - containerHeight) / 2;
-        
-        // Apply translation with boundaries
         translateX.value = Math.max(
           Math.min(offset.value.x + e.translationX, maxX),
           -maxX
@@ -89,7 +78,6 @@ export default function MapScreen() {
       }
     });
 
-  // Double tap gesture
   const doubleTapGesture = Gesture.Tap()
     .numberOfTaps(2)
     .maxDuration(250)
@@ -98,27 +86,19 @@ export default function MapScreen() {
         containerWidth / (containerWidth * imageRatio),
         containerHeight / (containerHeight * imageRatio)
       );
-      
       if (savedScale.value > minScale) {
-        // Zoom out to fit size
         scale.value = withTiming(minScale);
         translateX.value = withTiming(0);
         translateY.value = withTiming(0);
         savedScale.value = minScale;
         offset.value = { x: 0, y: 0 };
       } else {
-        // Zoom in to 2x scale
         scale.value = withTiming(2);
         savedScale.value = 2;
-        
-        // Calculate new position to center on tap
         const tapX = e.absoluteX - screenWidth / 2;
-        const tapY = e.absoluteY - (screenHeight * 0.35); // Adjusted for container
-        
-        // Apply new translation with boundaries
+        const tapY = e.absoluteY - (screenHeight * 0.325);
         const maxX = (containerWidth * (2 - 1)) / 2;
         const maxY = (containerHeight * (2 - 1)) / 2;
-        
         translateX.value = withTiming(Math.max(Math.min(-tapX, maxX), -maxX));
         translateY.value = withTiming(Math.max(Math.min(-tapY, maxY), -maxY));
         offset.value = {
@@ -128,13 +108,11 @@ export default function MapScreen() {
       }
     });
 
-  // Combine gestures
   const composedGestures = Gesture.Simultaneous(
     pinchGesture,
     Gesture.Race(doubleTapGesture, panGesture)
   );
 
-  // Animated style for the image
   const imageAnimatedStyle = useAnimatedStyle(() => {
     return {
       width: containerWidth,
