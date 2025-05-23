@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ThemeContext } from '@/contexts/ThemeContext'; 
 import StyledText from '@/components/StyledText';
-
+//programme name, header, information etc needs to be dynamic and implemented so it is able to be changed by the CMS
 export default function ProgrammeScreen() {
   const { theme } = useContext(ThemeContext); 
   return (

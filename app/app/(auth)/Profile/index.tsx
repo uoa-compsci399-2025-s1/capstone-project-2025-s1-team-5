@@ -10,7 +10,6 @@ import ProfileOptionButton from '@/components/ProfileOptionButton';
 import ProfileSettingButton from '@/components/ProfileSettingButton';
 import ProfileSettingBox from '@/components/ProfileSettingBox';
 import ProfileUserCard from '@/components/ProfileUserCard';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const { width, height } = Dimensions.get('window');
 const isSmallDevice = width < 375;
@@ -20,7 +19,7 @@ const verticalScale = (size: number) => (height / 812) * size;
 const moderateScale = (size: number, factor = 0.5) => size + (scale(size) - size) * factor;
 
 const FEATURES = ['Programme', 'Map'] as const;
-const ICONS = ['insights','location-on' ] as const;
+const ICONS = ['insights', 'location-on'] as const;
 
 type ExtractRouteParams<T> = T extends `${infer Start}?${infer Rest}` ? Start : T;
 type ValidRoutes = ExtractRouteParams<Parameters<ReturnType<typeof useRouter>['push']>[0]>;
@@ -39,11 +38,12 @@ const ProfileScreen: React.FC = () => {
 
   const featureRoutes = useMemo(
     () =>
-      FEATURES.map((feature) => {
+      FEATURES.map((feature, index) => {
         const path = feature.toLowerCase().replace(/\s+/g, '-');
         return {
           title: feature,
           route: `/Profile/${path}` as ValidRoutes,
+          iconName: ICONS[index],
         };
       }),
     []
@@ -64,18 +64,17 @@ const ProfileScreen: React.FC = () => {
 
       <View style={styles.bodyContent}>
         <View style={styles.buttonGrid}>
-          {featureRoutes.map(({ title, route }, index) => {
+          {featureRoutes.map(({ title, route, iconName }, index) => {
             const isLeftmost = index % 2 === 0;
             const isRightmost = index % 2 === 1;
 
             return (
               <View key={title} style={styles.buttonOuter}>
-
                 <View style={styles.buttonInner}>
-                <MaterialIcons name={ICONS[index]} size={70} color="#ffffff" style={styles.arrow} />
                   <ProfileOptionButton
                     title={title}
                     onPress={() => router.push(route)}
+                    iconName={iconName}
                     isLeftmost={isLeftmost}
                     isRightmost={isRightmost}
                   />

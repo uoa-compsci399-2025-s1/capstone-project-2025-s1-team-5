@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import StyledText from '@/components/StyledText';
 import { moduleSubmodules } from './modulescreen';
-import { ThemeContext } from '@/contexts/ThemeContext'; // Adjust if needed
+import { ThemeContext } from '@/contexts/ThemeContext'; 
 
 export default function SubmoduleScreen() {
   const { moduleNumber, submoduleNumber } = useLocalSearchParams();
