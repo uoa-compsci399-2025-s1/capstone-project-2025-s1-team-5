@@ -113,8 +113,8 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: moderateScale(16),
-    paddingTop: verticalScale(16),
+    paddingHorizontal: moderateScale(24),
+    paddingTop: verticalScale(28),
     paddingBottom: verticalScale(8),
   },
   bodyContent: {
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
   profileCardOuter: {
     padding: moderateScale(4),
-    borderRadius: moderateScale(16),
+    borderRadius: moderateScale(12),
     backgroundColor: '#0c0c48',
     alignItems: 'center',
     marginBottom: verticalScale(5),
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   },
   buttonOuter: {
     width: '48%',
-    aspectRatio: 1.8,
+    aspectRatio: 1.0,
     marginBottom: verticalScale(16),
     borderRadius: moderateScale(12),
     backgroundColor: '#0c0c48',
