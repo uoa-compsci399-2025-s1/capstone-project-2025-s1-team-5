@@ -59,9 +59,7 @@ export class ModuleController extends Controller {
       @Path() moduleId: string,
       @Body() moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[] }
     ): Promise<{ success: boolean }> {
-
-      const moduleService = new ModuleService();
-      const result = await moduleService.updateModule(moduleId, moduleChanges);
+      const result = await this.moduleService.updateModule(moduleId, moduleChanges);
       return { success: result };
     }
 
@@ -92,8 +90,7 @@ export class ModuleController extends Controller {
     @Path() subsectionId: string,
     @Body() subsectionChanges: { title?: string; body?: string }
     ): Promise<{ success: boolean }> {
-    const moduleService = new ModuleService();
-    const result = await moduleService.editSubsection(subsectionId, subsectionChanges);
+    const result = await this.moduleService.editSubsection(subsectionId, subsectionChanges);
     return { success: result };
     }
     
@@ -101,8 +98,7 @@ export class ModuleController extends Controller {
     public async getSubsection(
       @Path() subsectionId: string
     ): Promise<ISubsection> {
-        const moduleService = new ModuleService()
-        const subsection = await moduleService.getSubsectionById(subsectionId);
+        const subsection = await this.moduleService.getSubsectionById(subsectionId);
         return subsection;
     }
 
@@ -143,8 +139,7 @@ export class ModuleController extends Controller {
       @Path() quizId: string,
       @Body() quizData: { title: string; description: string }
     ): Promise<IQuiz> {
-      const moduleService = new ModuleService();
-      const updatedQuiz = await moduleService.updateQuiz(quizId, quizData);
+      const updatedQuiz = await this.moduleService.updateQuiz(quizId, quizData);
       if (!updatedQuiz) {
         throw new Error("Failed to update quiz");
       }
@@ -170,8 +165,7 @@ export class ModuleController extends Controller {
 
     @Get("/question/{questionId}")
     public async getQuestion(@Path() questionId: string): Promise<IQuestion> {
-      const moduleService = new ModuleService();
-      const question = await moduleService.getQuestionById(questionId);
+      const question = await this.moduleService.getQuestionById(questionId);
       if (!question) {
         throw new Error("Question not found");
       }
