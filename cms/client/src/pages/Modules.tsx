@@ -3,30 +3,32 @@ import axios from "axios";
 import CreateModule from "./CreateModule";
 import EditModuleForm from "./EditModuleForm";
 import ModuleButton from "../components/ModuleButton";
-
-interface Module {
-  id: string;
-  title: string;
-  description: string;
-  subsectionIds: string[];
-  updatedAt: string;
-}
+import { Module, ModulesResponse } from "../types/interfaces";
 
 const ModulesPage = () => {
   const [modules, setModules] = useState<Module[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm] = useState("");
   const [sortOption, setSortOption] = useState("title");
   const [showCreateModule, setCreateModule] = useState(false);
   const [editModule, setEditModule] = useState<Module | null>(null);
   const [deleteConfirmModule, setDeleteConfirmModule] = useState<Module | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchModules = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/modules`);
+      const res = await axios.get<ModulesResponse>(`${process.env.REACT_APP_API_URL}/api/modules`);
       console.log("Fetched modules:", res.data);
-      setModules(res.data.modules);
+      
+      const mappedModules = res.data.modules.map(module => ({
+        ...module,
+        _id: module._id || module.id || '',
+      }));
+      
+      setModules(mappedModules);
+      setError(null);
     } catch (error) {
       console.error("Failed to fetch modules:", error);
+      setError("Failed to fetch modules. Please refresh the page.");
     }
   };
 
@@ -36,58 +38,60 @@ const ModulesPage = () => {
 
   const handleDeleteModule = async (moduleId: string) => {
     try {
+      if (!moduleId) {
+        console.error('Module ID is undefined or empty');
+        setError('Cannot delete module: ID is missing');
+        return;
+      }
+      
+      console.log("Deleting module with ID:", moduleId);
+      
       const token = localStorage.getItem("authToken");
       await axios.delete(`${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
+      
       fetchModules();
       setDeleteConfirmModule(null);
+      setError(null);
     } catch (error) {
       console.error("Failed to delete module:", error);
-      alert("Failed to delete module. Please try again.");
+      setError("Failed to delete module. Please try again.");
     }
   };
 
   const sortedModules = [...modules].sort((a, b) => {
     if (sortOption === "title") {
       return a.title.localeCompare(b.title);
-    } else if (sortOption === "lastModified") {
+    } else if (sortOption === "lastModified" && a.updatedAt && b.updatedAt) {
       return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(); 
     }
     return 0;
   });
 
   return (
-    <div style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
-      <h1 style={{ fontSize: "2.5rem", textAlign: "center", marginBottom: "2rem" }}>
+    <div className="p-8 font-sans">
+      <h1 className="text-4xl text-center mb-8">
         UOA YOUR WAY: Module Management
       </h1>
 
-      <div
-        style={{
-          backgroundColor: "#f0f0f0",
-          borderRadius: "10px",
-          padding: "2rem",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "1.5rem",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <label htmlFor="sort" style={{ marginRight: "0.5rem" }}>
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <p>{error}</p>
+        </div>
+      )}
+
+      <div className="bg-gray-100 rounded-lg p-8 shadow-md">
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center">
+            <label htmlFor="sort" className="mr-2">
               Sort by:
             </label>
             <select
               id="sort"
-              style={{ padding: "0.5rem", borderRadius: "5px" }}
+              className="p-2 rounded"
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value)}
             >
@@ -103,75 +107,50 @@ const ModulesPage = () => {
         </div>
 
         <div>
-          {sortedModules
-            .filter((module) =>
-              module.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              module.description.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-            .map((module) => (
-              <div
-                key={module.id}
-                style={{
-                  backgroundColor: "#ffffff",
-                  borderRadius: "8px",
-                  padding: "1rem",
-                  marginBottom: "1rem",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                }}
-              >
-                <div>
-                  <h3 style={{ margin: 0 }}>{module.title}</h3>
-                  <p style={{ margin: "0.5rem 0 0 0", fontSize: "0.9rem", color: "#555" }}>
-                    Last modified: {new Date(module.updatedAt).toLocaleString()}
-                  </p>
+          {sortedModules.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              No modules found. Create your first module to get started.
+            </div>
+          ) : (
+            sortedModules
+              .filter((module) =>
+                module.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                module.description.toLowerCase().includes(searchTerm.toLowerCase())
+              )
+              .map((module) => (
+                <div
+                  key={module._id}
+                  className="bg-white rounded-lg p-4 mb-4 flex justify-between items-center shadow-sm"
+                >
+                  <div>
+                    <h3 className="m-0">{module.title}</h3>
+                    {module.updatedAt && (
+                      <p className="mt-2 mb-0 text-sm text-gray-600">
+                        Last modified: {new Date(module.updatedAt).toLocaleString()}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <ModuleButton
+                      label="Edit"
+                      onClick={() => setEditModule(module)}
+                      color="#007bff"
+                    />
+                    <ModuleButton
+                      label="Delete"
+                      onClick={() => setDeleteConfirmModule(module)}
+                      color="#dc3545"
+                    />
+                  </div>
                 </div>
-                <div style={{ display: "flex", gap: "10px" }}>
-                  <ModuleButton
-                    label="Edit"
-                    onClick={() => setEditModule(module)}
-                    color="#007bff"
-                  />
-                  <ModuleButton
-                    label="Delete"
-                    onClick={() => setDeleteConfirmModule(module)}
-                    color="#dc3545"
-                  />
-                </div>
-              </div>
-            ))}
+              ))
+          )}
         </div>
       </div>
 
       {showCreateModule && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              borderRadius: "10px",
-              padding: "2rem",
-              width: "90%",
-              maxWidth: "800px",
-              maxHeight: "90vh",
-              overflowY: "auto",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-            }}
-          >
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg p-8 w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto shadow-lg">
             <CreateModule
               onModuleCreated={() => {
                 fetchModules();
@@ -184,32 +163,8 @@ const ModulesPage = () => {
       )}
 
       {editModule && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              borderRadius: "10px",
-              padding: "2rem",
-              width: "90%",
-              maxWidth: "800px",
-              maxHeight: "90vh",
-              overflowY: "auto",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-            }}
-          >
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg p-8 w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto shadow-lg">
             <EditModuleForm
               module={editModule}
               onModuleUpdated={() => {
@@ -223,60 +178,23 @@ const ModulesPage = () => {
       )}
 
       {deleteConfirmModule && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              borderRadius: "10px",
-              padding: "2rem",
-              width: "90%",
-              maxWidth: "500px",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-              textAlign: "center"
-            }}
-          >
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg p-8 w-11/12 max-w-lg shadow-lg text-center">
             <h2>Confirm Deletion</h2>
             <p>Are you sure you want to delete the module "{deleteConfirmModule.title}"?</p>
-            <p style={{ color: "#dc3545", fontWeight: "bold" }}>
+            <p className="text-red-600 font-bold">
               This action will also delete all subsections of this module and cannot be undone.
             </p>
-            <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "2rem" }}>
+            <div className="flex justify-center gap-4 mt-8">
               <button
-                onClick={() => handleDeleteModule(deleteConfirmModule.id)}
-                style={{
-                  backgroundColor: "#dc3545",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "5px",
-                  padding: "0.5rem 1rem",
-                  cursor: "pointer",
-                }}
+                onClick={() => handleDeleteModule(deleteConfirmModule._id || deleteConfirmModule.id || '')}
+                className="bg-red-600 text-white border-none rounded py-2 px-4 cursor-pointer"
               >
                 Yes, Delete
               </button>
               <button
                 onClick={() => setDeleteConfirmModule(null)}
-                style={{
-                  backgroundColor: "#6c757d",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "5px",
-                  padding: "0.5rem 1rem",
-                  cursor: "pointer",
-                }}
+                className="bg-gray-500 text-white border-none rounded py-2 px-4 cursor-pointer"
               >
                 Cancel
               </button>
