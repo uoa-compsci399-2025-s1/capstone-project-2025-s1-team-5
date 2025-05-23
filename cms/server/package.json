@@ -4,7 +4,7 @@
   "main": "src/dist/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "npx tsoa spec-and-routes && tsc",
+    "build": "tsoa spec-and-routes && tsc",
     "start": "concurrently \"yarn nodemon -e ts,js --exec\" \"yarn tsoa spec-and-routes && tsc\"",
     "nodemon": "nodemon"
   },

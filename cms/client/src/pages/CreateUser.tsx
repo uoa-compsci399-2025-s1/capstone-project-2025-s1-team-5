@@ -28,7 +28,7 @@ const CreateUser: React.FC<CreateUserProps> = ({ onUserCreated }) => {
     };
 
     try {
-      const response = await axios.post("http://localhost:3000/users", userData);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/users`, userData);
       if (onUserCreated) onUserCreated();
       setSuccess("User created successfully!");
       setFirstName("");

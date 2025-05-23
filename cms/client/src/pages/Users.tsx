@@ -29,17 +29,16 @@ const UsersPage = () => {
   const [limit] = useState(10);
 
   const fetchUsers = async () => {
-  try {
-    const res = await axios.get("http://localhost:3000/users", {
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/users`, {
       params: { limit, page },
     });
-    setUsers(res.data.users);
-    setTotalPages(Math.ceil(res.data.total / limit)); // 👈 Here’s the important part
-  } catch (error) {
-    console.error("Failed to fetch users:", error);
-  }
-};
-
+      setUsers(res.data.users);
+      setTotalPages(Math.ceil(res.data.total / limit)); // 👈 Here’s the important part
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
+  };
 
   useEffect(() => {
   fetchUsers();
@@ -77,7 +76,7 @@ const UsersPage = () => {
   const handleDelete = async (userId: string) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
-        await axios.delete(`http://localhost:3000/users/${userId}`);
+        await axios.delete(`${process.env.REACT_APP_API_URL}/api/users/${userId}`);
         fetchUsers();
       } catch (error) {
         console.error("Failed to delete user:", error);
