@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import StyledText from '@/components/StyledText';
 import {
@@ -15,7 +15,7 @@ import Animated, {
 
 export default function MapScreen() {
   const { theme } = useContext(ThemeContext);
-  
+
   // Shared values for animation
   const scale = useSharedValue(1);
   const savedScale = useSharedValue(1);
@@ -33,10 +33,10 @@ export default function MapScreen() {
     })
     .onEnd(() => {
       savedScale.value = scale.value;
-      // Limit scale between 0.5 and 3
-      if (scale.value < 0.5) {
-        scale.value = withTiming(0.5);
-        savedScale.value = 0.5;
+      // Limit scale between 1 and 3 (no zoom out beyond original size)
+      if (scale.value < 1) {
+        scale.value = withTiming(1);
+        savedScale.value = 1;
       } else if (scale.value > 3) {
         scale.value = withTiming(3);
         savedScale.value = 3;
@@ -66,7 +66,7 @@ export default function MapScreen() {
     .maxDuration(250)
     .onStart((e) => {
       if (savedScale.value > 1) {
-        // Zoom out
+        // Zoom out to original size (scale = 1)
         scale.value = withTiming(1);
         translateX.value = withTiming(0);
         translateY.value = withTiming(0);
