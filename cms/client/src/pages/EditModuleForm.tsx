@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import TextEditor from "./TextEditor";
 
 interface Subsection {
   id: string;
@@ -61,10 +62,10 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
   const handleAddSubsection = async () => {
     try {
       const newSubsectionData = {
-        title: "New Subsection",
-        body: "Enter content here...",
-        authorID: "system"
-      };
+          title: "New Subsection",
+          body: "<p>Enter content here...</p>", // Changed from plain text to HTML
+          authorID: "system"
+        };
       
       const response = await axios.post(
         `http://localhost:3000/modules/${module.id}`, 
@@ -195,13 +196,12 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
                 style={{ width: "100%", marginBottom: "0.5rem" }}
               />
               <div>
-                <label>Body:</label>
-                <textarea
-                  value={subsection.body}
-                  onChange={(e) => handleSubsectionChange(subsection.id, "body", e.target.value)}
-                  style={{ width: "100%", height: "80px" }}
-                />
-              </div>
+            <label>Body:</label>
+              <TextEditor
+                content={subsection.body}
+                onChange={(content) => handleSubsectionChange(subsection.id, "body", content)}
+            />
+          </div>
             </div>
           ))}
           
