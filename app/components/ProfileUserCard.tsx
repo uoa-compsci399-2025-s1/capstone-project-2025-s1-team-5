@@ -6,7 +6,6 @@ import StyledText from '@/components/StyledText';
 import profileAvatars from '@/constants/profileAvatars';
 import countries from 'world-countries';
 
-
 import { Dimensions } from 'react-native';
 const { width } = Dimensions.get('window');
 
