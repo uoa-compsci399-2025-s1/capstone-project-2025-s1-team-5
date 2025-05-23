@@ -210,7 +210,7 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
         await Promise.all(
           quizzes.map(async (quiz) => {
             const quizResponse = await axios.post(
-              `http://localhost:3000/modules/${moduleId}/quiz`,
+              `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}/quiz`,
               {
                 title: quiz.title,
                 description: quiz.description
@@ -228,7 +228,7 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
               await Promise.all(
                 quiz.questions.map(question =>
                   axios.post(
-                    `http://localhost:3000/modules/quiz/${quizId}`,
+                    `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}`,
                     {
                       question: question.question,
                       options: question.options,
