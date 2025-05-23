@@ -13,6 +13,7 @@ export default function SupportScreen() {
   const [contact, setContact] = useState('');
   const { theme } = useContext(ThemeContext);
   //link to cms/let the form be sent to Programme Consultant’s queue?
+  //do we need to add a text input box for the user to write their problem?
   const GETFORM_ENDPOINT = 'https://getform.io/f/bpjpjpvb';
 
   const handleSubmit = async () => {
@@ -65,7 +66,7 @@ export default function SupportScreen() {
       <StyledText type="default" style={[styles.introText, { color: theme.text }]}>
         Please submit your contact details below and a Programme Consultant will be in touch.
       </StyledText>
-
+      
       <TextInputBox
         placeholder="First Name"
         value={firstName}
