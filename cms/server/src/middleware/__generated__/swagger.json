@@ -519,6 +519,9 @@
 					},
 					"html": {
 						"type": "string"
+					},
+					"src": {
+						"type": "string"
 					}
 				},
 				"required": [

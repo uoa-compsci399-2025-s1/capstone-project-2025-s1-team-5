@@ -1,5 +1,5 @@
 import { moduleAdaptor } from "../adapter/ModuleAdapter";
-import type { IModule, IQuestion, IQuiz, ISubsection, LayoutConfig } from "../models/models";
+import type { IModule, IQuestion, IQuiz, ISubsection, SectionConfig } from "../models/models";
 import { newModule, Question, Quiz, Subsection } from "../../data-layer/models/schema";
 import mongoose from "mongoose";
 
@@ -349,7 +349,7 @@ export class ModuleService {
 
   public async updateSubsectionLayout(
     subsectionId: string,
-    layout: LayoutConfig
+    sections: SectionConfig[]
   ): Promise<boolean> {
     try {
       const sub = await Subsection.findById(subsectionId);
@@ -357,7 +357,7 @@ export class ModuleService {
         console.error(`Subsection ${subsectionId} not found`);
         return false;
       }
-      sub.layout = layout;
+      sub.layout = {sections};
       sub.updatedAt = new Date();
       await sub.save();
       return true;

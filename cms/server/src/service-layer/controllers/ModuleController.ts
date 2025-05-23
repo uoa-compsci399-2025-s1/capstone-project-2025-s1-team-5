@@ -12,7 +12,7 @@ import {
     SuccessResponse,
 } from "tsoa";
 import { ModuleService } from "../../data-layer/services/ModuleService";
-import { ModuleGetResponse, ModulesGetResponse, LayoutConfigDTO } from "../response-models/ModuleResponse";
+import { ModuleGetResponse, ModulesGetResponse, LayoutSectionsDTO } from "../response-models/ModuleResponse";
 import { IModule, IQuestion, IQuiz, ISubsection } from "../../data-layer/models/models";
 import { moduleToResponse } from "../../data-layer/adapter/ModuleAdapter";
 
@@ -117,16 +117,16 @@ export class ModuleController extends Controller {
         return { success: result };
     }
 
-    @Security("jwt", ["admin"])   
-    @Put("subsection/{subsectionId}/layout")
-    @SuccessResponse(200, "Layout updated")
+    @Security('jwt', ['admin'])
+    @Put('subsection/{subsectionId}/layout')
+    @SuccessResponse(200, 'Layout updated')
     public async updateSubsectionLayout(
       @Path() subsectionId: string,
-      @Body() body: LayoutConfigDTO
+      @Body() dto: LayoutSectionsDTO
     ): Promise<{ success: boolean }> {
       const ok = await this.moduleService.updateSubsectionLayout(
         subsectionId,
-        body
+        dto.sections    // 或者直接传 dto，看你 service 怎么写
       );
       if (!ok) {
         this.setStatus(400);

@@ -224,6 +224,7 @@ const models: TsoaRoute.Models = {
             "id": {"dataType":"string","required":true},
             "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["text"]},{"dataType":"enum","enums":["image"]},{"dataType":"enum","enums":["video"]}],"required":true},
             "html": {"dataType":"string","required":true},
+            "src": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -857,7 +858,7 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_updateSubsectionLayout: Record<string, TsoaRoute.ParameterSchema> = {
                 subsectionId: {"in":"path","name":"subsectionId","required":true,"dataType":"string"},
-                body: {"in":"body","name":"body","required":true,"ref":"LayoutConfigDTO"},
+                layout: {"in":"body","name":"layout","required":true,"ref":"LayoutConfigDTO"},
         };
         app.put('/modules/subsection/:subsectionId/layout',
             authenticateMiddleware([{"jwt":["admin"]}]),

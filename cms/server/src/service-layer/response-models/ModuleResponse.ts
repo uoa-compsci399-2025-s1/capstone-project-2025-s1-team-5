@@ -34,47 +34,36 @@ export interface SubsectionResponse {
     published: boolean;
 }
 
-export class BlockConfigDTO {
-  @IsString()
-  id!: string;
-
-  @IsEnum(["text","image","video"] as const)  // 根据你支持的块类型来改
-  type!: "text" | "image" | "video";
-
-  @IsString()
-  html!: string;      // 或者 image/video 的 url 字段
+// 对应前端 BlockConfig
+class BlockDTO {
+  @IsString()              id!: string;
+  @IsEnum(['text','image','video'] as const)
+                           type!: 'text' | 'image' | 'video';
+  @IsString()              html!: string;
+  @IsOptional() @IsString()
+                           src?: string;
 }
 
-export class ColumnConfigDTO {
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => BlockConfigDTO)
-  blocks!: BlockConfigDTO[];
+// 对应前端 ColumnConfig
+class ColumnDTO {
+  @IsArray() @ValidateNested({ each: true }) @Type(() => BlockDTO)
+                           blocks!: BlockDTO[];
 }
 
-export class SectionConfigDTO {
-  @IsString()
-  id!: string;
-
-  @IsEnum(["full","split"] as const)
-  layout!: "full" | "split";
-
+// 对应前端 SectionConfig
+class SectionDTO {
+  @IsString()                             id!: string;
+  @IsEnum(['full','split'] as const)     layout!: 'full' | 'split';
   @IsOptional()
-  @IsArray()
-  @ArrayMinSize(2)
-  @ArrayMaxSize(2)
+  @IsArray() @ArrayMinSize(2) @ArrayMaxSize(2)
   @IsNumber({}, { each: true })
-  splitRatio?: number[];   // split 时的比例
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ColumnConfigDTO)
-  columns!: ColumnConfigDTO[];
+                                         splitRatio?: number[];
+  @IsArray() @ValidateNested({ each: true }) @Type(() => ColumnDTO)
+                                         columns!: ColumnDTO[];
 }
 
-export class LayoutConfigDTO {
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => SectionConfigDTO)
-  sections!: SectionConfigDTO[];
+// 最外层 payload
+export class LayoutSectionsDTO {
+  @IsArray() @ValidateNested({ each: true }) @Type(() => SectionDTO)
+  sections!: SectionDTO[];
 }
