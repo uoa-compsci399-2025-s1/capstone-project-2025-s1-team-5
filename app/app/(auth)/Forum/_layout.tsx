@@ -10,7 +10,7 @@ export default function ForumLayout() {
         options={{ 
           title: '',
           headerStyle: { backgroundColor: '#0c0c48' },
-          headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Forum</StyledText>,
+          headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Support</StyledText>,
         }} 
       />
     </Stack>

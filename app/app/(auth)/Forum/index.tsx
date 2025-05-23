@@ -9,7 +9,7 @@ export default function ForumScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <ScrollView contentContainerStyle={styles.scrollView}>
-        <QuizComponent />
+
       </ScrollView>
     </View>
   );

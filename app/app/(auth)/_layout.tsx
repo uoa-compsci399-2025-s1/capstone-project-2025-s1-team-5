@@ -25,7 +25,7 @@ function LayoutInner() {
           if (route.name === 'Modules') {
             return <MaterialIcons name="menu-book" size={size} color={iconColor} />;
           } else if (route.name === 'Forum') {
-            return <MaterialIcons name="forum" size={size} color={iconColor} />;
+            return <MaterialIcons name="attribution" size={size} color={iconColor} />;
           } else if (route.name === 'Profile') {
             return (
               <MaterialIcons
