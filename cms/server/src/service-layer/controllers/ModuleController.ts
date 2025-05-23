@@ -57,11 +57,9 @@ export class ModuleController extends Controller {
     @SuccessResponse(200, "Module Updated")
     public async updateModule(
       @Path() moduleId: string,
-      @Body() moduleChanges: { title?: string; description?: string; subsectionIds?: string[] }
+      @Body() moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[] }
     ): Promise<{ success: boolean }> {
-
-      const moduleService = new ModuleService();
-      const result = await moduleService.updateModule(moduleId, moduleChanges);
+      const result = await this.moduleService.updateModule(moduleId, moduleChanges);
       return { success: result };
     }
 
@@ -89,20 +87,18 @@ export class ModuleController extends Controller {
     @Put("subsection/{subsectionId}")
     @SuccessResponse(202, "Subsection updated")
     public async editSubsection(
-    subsectionId: string,
+    @Path() subsectionId: string,
     @Body() subsectionChanges: { title?: string; body?: string }
     ): Promise<{ success: boolean }> {
-    const moduleService = new ModuleService();
-    const result = await moduleService.editSubsection(subsectionId, subsectionChanges);
+    const result = await this.moduleService.editSubsection(subsectionId, subsectionChanges);
     return { success: result };
     }
     
     @Get("subsection/{subsectionId}")
-    public async getSubseciton(
+    public async getSubsection(
       @Path() subsectionId: string
     ): Promise<ISubsection> {
-        const moduleService = new ModuleService()
-        const subsection = await moduleService.getSubsectionById(subsectionId);
+        const subsection = await this.moduleService.getSubsectionById(subsectionId);
         return subsection;
     }
 
@@ -138,6 +134,18 @@ export class ModuleController extends Controller {
       return quiz;
     }
 
+    @Put("/quiz/{quizId}")
+    public async updateQuiz(
+      @Path() quizId: string,
+      @Body() quizData: { title: string; description: string }
+    ): Promise<IQuiz> {
+      const updatedQuiz = await this.moduleService.updateQuiz(quizId, quizData);
+      if (!updatedQuiz) {
+        throw new Error("Failed to update quiz");
+      }
+      return updatedQuiz;
+    }
+
     //Delete Quiz        
     @Delete("/quiz/{moduleId}/{quizId}")
     @SuccessResponse(200, "Quiz deleted")
@@ -153,6 +161,15 @@ export class ModuleController extends Controller {
         }
 
         return { success: true, message: "Quiz successfully deleted" };
+    }
+
+    @Get("/question/{questionId}")
+    public async getQuestion(@Path() questionId: string): Promise<IQuestion> {
+      const question = await this.moduleService.getQuestionById(questionId);
+      if (!question) {
+        throw new Error("Question not found");
+      }
+      return question;
     }
 
     //Add Question

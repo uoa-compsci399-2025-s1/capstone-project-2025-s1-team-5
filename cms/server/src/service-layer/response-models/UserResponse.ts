@@ -8,7 +8,7 @@ export interface PaginatedUserResponse {
     users: IUser[];
     total: number;      
     page: number;        
-    limit: number;       
+    limit: number;  
   }
 
 export interface UserUpdateResponse {

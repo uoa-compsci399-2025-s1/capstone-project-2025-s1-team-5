@@ -24,19 +24,26 @@ const UsersPage = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false); //transition
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false); //transition
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [limit] = useState(10);
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/users");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/users`, {
+      params: { limit, page },
+    });
       setUsers(res.data.users);
+      setTotalPages(Math.ceil(res.data.total / limit)); // 👈 Here’s the important part
     } catch (error) {
       console.error("Failed to fetch users:", error);
     }
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+  fetchUsers();
+}, [page]);
+
 
   const sortUsers = (data: User[]) => {
     if (!sortKey) return data;
@@ -69,7 +76,7 @@ const UsersPage = () => {
   const handleDelete = async (userId: string) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
-        await axios.delete(`http://localhost:3000/users/${userId}`);
+        await axios.delete(`${process.env.REACT_APP_API_URL}/api/users/${userId}`);
         fetchUsers();
       } catch (error) {
         console.error("Failed to delete user:", error);
@@ -181,7 +188,23 @@ const UsersPage = () => {
           </div>
         </div>
       )}
-
+      <div className="mt-6 flex justify-center gap-4">
+        <button
+          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+          disabled={page === 1}
+          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <span className="text-gray-700 self-center">Page {page} of {totalPages}</span>
+        <button
+          onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={page === totalPages}
+          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
       <div className="mt-12">
         {!showCreateForm && (
           <button
@@ -225,7 +248,7 @@ const UsersPage = () => {
           </div>
         )}
       </div>
-
+        
     </div>
   );
 };

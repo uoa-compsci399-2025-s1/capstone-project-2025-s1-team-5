@@ -976,6 +976,12 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"quizIds": {
+										"items": {
+											"type": "string"
+										},
+										"type": "array"
+									},
 									"subsectionIds": {
 										"items": {
 											"type": "string"
@@ -1136,7 +1142,7 @@
 				}
 			},
 			"get": {
-				"operationId": "GetSubseciton",
+				"operationId": "GetSubsection",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -1283,6 +1289,54 @@
 					}
 				]
 			},
+			"put": {
+				"operationId": "UpdateQuiz",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IQuiz"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "quizId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"description": {
+										"type": "string"
+									},
+									"title": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"description",
+									"title"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			},
 			"post": {
 				"operationId": "AddQuestion",
 				"responses": {
@@ -1388,6 +1442,32 @@
 			}
 		},
 		"/modules/question/{questionId}": {
+			"get": {
+				"operationId": "GetQuestion",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IQuestion"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "questionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
 			"patch": {
 				"operationId": "EditQuestion",
 				"responses": {
@@ -1693,7 +1773,7 @@
 	},
 	"servers": [
 		{
-			"url": "/"
+			"url": "/api"
 		}
 	]
 }
