@@ -40,37 +40,37 @@ const TextEditor = ({ content, onChange }: TextEditorProps) => {
   return (
     <div className="border border-gray-300 rounded-md">
       <div className="flex flex-wrap gap-2 p-2 border-b border-gray-300 bg-gray-50">
-        <button
+        <button type='button'
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={`p-2 rounded ${editor.isActive('bold') ? 'bg-gray-200' : 'bg-white'}`}
         >
           <span className="font-bold">B</span>
         </button>
-        <button
+        <button type='button'
           onClick={() => editor.chain().focus().toggleItalic().run()}
           className={`p-2 rounded ${editor.isActive('italic') ? 'bg-gray-200' : 'bg-white'}`}
         >
           <span className="italic">I</span>
         </button>
-        <button
+        <button type='button'
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           className={`p-2 rounded ${editor.isActive('heading', { level: 2 }) ? 'bg-gray-200' : 'bg-white'}`}
         >
           H2
         </button>
-        <button
+        <button type='button'
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           className={`p-2 rounded ${editor.isActive('heading', { level: 3 }) ? 'bg-gray-200' : 'bg-white'}`}
         >
           H3
         </button>
-        <button
+        <button type='button'
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={`p-2 rounded ${editor.isActive('bulletList') ? 'bg-gray-200' : 'bg-white'}`}
         >
           • List
         </button>
-        <button
+        <button type='button'
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           className={`p-2 rounded ${editor.isActive('orderedList') ? 'bg-gray-200' : 'bg-white'}`}
         >

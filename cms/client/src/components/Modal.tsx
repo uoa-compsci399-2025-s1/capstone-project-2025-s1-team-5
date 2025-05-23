@@ -1,18 +1,16 @@
 // src/components/Modal.tsx
-import React, { ReactNode } from 'react';
-import styles from './Modal.module.css';
-export interface ModalProps {
+import React, { ReactNode } from "react";
+import styles from "./Modal.module.css";
+
+interface ModalProps {
   children: ReactNode;
-  onClose: () => void;      // ← 一定要有这个
+  onClose: () => void;
 }
 
 export default function Modal({ children, onClose }: ModalProps) {
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
-      <div
-        className={styles.modalContent}
-        onClick={e => e.stopPropagation()}
-      >
+    <div className={styles.overlay} onClick={onClose}>
+      <div className={styles.content} onClick={(e) => e.stopPropagation()}>
         {children}
       </div>
     </div>

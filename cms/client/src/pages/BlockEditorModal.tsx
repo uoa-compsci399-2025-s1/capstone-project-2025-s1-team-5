@@ -1,68 +1,155 @@
+// src/pages/BlockEditorModal.tsx
 import React, { useState, useEffect } from "react";
+import LayoutEditor, { LayoutConfig } from "../components/LayoutEditor";
 import api from "../lib/api";
-import LayoutEditor from "../components/LayoutEditor";
 
-interface BlockEditorModalProps {
+export interface BlockEditorModalProps {
   subsectionId: string;
-  onClose: () => void;
   initialTitle: string;
   onTitleChange: (newTitle: string) => void;
+  onClose: () => void;
 }
 
-function BlockEditorModal({
+export default function BlockEditorModal({
   subsectionId,
   initialTitle,
   onTitleChange,
   onClose,
 }: BlockEditorModalProps) {
-  // 本地 title state
+  // 本地标题状态
   const [title, setTitle] = useState(initialTitle);
+  // 本地布局状态，用于一次性保存
+  const [layout, setLayout] = useState<LayoutConfig>({ sections: [] });
+  const [loading, setLoading] = useState(true);
 
-  // 当父组件 initialTitle 变化时同步
+  // 1) 同步 initialTitle
   useEffect(() => {
     setTitle(initialTitle);
   }, [initialTitle]);
 
-  // 点击“保存布局”时，一并提交 title
+  // 2) 拉布局
+  useEffect(() => {
+    setLoading(true);
+    api
+      .get<{ layout: LayoutConfig }>(
+        `/modules/subsection/${subsectionId}`
+      )
+      .then((res) => {
+        setLayout(res.data.layout);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, [subsectionId]);
+
+  // 3) 点击保存：先更新 title，再更新 layout
   const handleSaveAll = async () => {
-    // 1) 先保存布局
-    // （假设 LayoutEditor 里有一个 saveLayout 方法，可以暴露出来，或者
-    //  你也可以让 LayoutEditor 把最新 layout 通过回调给这里，然后一并 PUT）
-    // 2) 再保存 title
-    await api.put(`/modules/subsection/${subsectionId}`, {
-      title,
-      // 如果你要也更新 body，可以额外传 body
-    });
-    onTitleChange(title);
-    onClose();
+    try {
+      // 更新标题
+      await api.put(`/modules/subsection/${subsectionId}`, {
+        title,
+      });
+      // 更新布局
+      await api.put(`/modules/subsection/${subsectionId}/layout`, {
+        layout,
+      });
+      // 通知父组件
+      onTitleChange(title);
+      onClose();
+    } catch (err) {
+      console.error(err);
+      alert("保存失败，请重试");
+    }
   };
 
   return (
-    <div >
-      <h3>Editing Subsection</h3>
+    // 整层蒙版
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "rgba(0,0,0,0.5)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1000,
+      }}
+      onClick={onClose}
+    >
+      {/* 内容容器 */}
+      <div
+        style={{
+          position: "relative",
+          width: "90vw",
+          maxWidth: 1200,
+          maxHeight: "90vh",
+          backgroundColor: "#fff",
+          padding: 32,
+          borderRadius: 8,
+          overflowY: "auto",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* 标题编辑 */}
+        <h2 style={{ marginTop: 0 }}>编辑 Subsection</h2>
+        <div style={{ marginBottom: 24 }}>
+          <label style={{ display: "block", marginBottom: 8 }}>标题：</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "8px",
+              fontSize: "1rem",
+              borderRadius: 4,
+              border: "1px solid #ccc",
+            }}
+          />
+        </div>
 
-      {/* 新增：标题编辑 */}
-      <div style={{ marginBottom: 12 }}>
-        <label>Subsection Title:</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          style={{ width: "100%", padding: 4, fontSize: "1rem" }}
-        />
-      </div>
+        {/* 布局编辑器 */}
+        {loading ? (
+          <div>加载布局中…</div>
+        ) : (
+          <LayoutEditor
+            layout={layout}
+            onChange={setLayout}
+          />
+        )}
 
-      {/* 原来的布局编辑区 */}
-      <LayoutEditor subsectionId={subsectionId} />
-
-      {/* 底部按钮：保存标题+布局，一起提交 */}
-      <div style={{ textAlign: "right", marginTop: 12 }}>
-        <button type="button" onClick={handleSaveAll}>
-          保存
-        </button>
-        <button type="button" onClick={onClose} style={{ marginLeft: 8 }}>
-          取消
-        </button>
+        {/* 底部操作按钮 */}
+        <div style={{ marginTop: 24, textAlign: "right" }}>
+          <button
+            onClick={handleSaveAll}
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "#28a745",
+              color: "#fff",
+              border: "none",
+              borderRadius: 4,
+              cursor: "pointer",
+            }}
+          >
+            保存全部
+          </button>
+          <button
+            onClick={onClose}
+            style={{
+              marginLeft: 12,
+              padding: "8px 16px",
+              backgroundColor: "#6c757d",
+              color: "#fff",
+              border: "none",
+              borderRadius: 4,
+              cursor: "pointer",
+            }}
+          >
+            取消
+          </button>
+        </div>
       </div>
     </div>
   );

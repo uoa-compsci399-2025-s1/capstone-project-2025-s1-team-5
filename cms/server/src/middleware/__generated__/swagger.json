@@ -371,50 +371,90 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"LayoutBlock": {
+			"BlockConfig": {
 				"properties": {
-					"blockId": {
+					"id": {
 						"type": "string"
 					},
-					"side": {
+					"type": {
 						"type": "string",
 						"enum": [
-							"left",
-							"right"
-						]
+							"text"
+						],
+						"nullable": false
 					},
-					"order": {
-						"type": "number",
-						"format": "double"
+					"html": {
+						"type": "string"
 					}
 				},
 				"required": [
-					"blockId",
-					"side",
-					"order"
+					"id",
+					"type",
+					"html"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"LayoutConfig": {
+			"ColumnConfig": {
 				"properties": {
-					"split": {
+					"blocks": {
+						"items": {
+							"$ref": "#/components/schemas/BlockConfig"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"blocks"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SectionConfig": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"layout": {
+						"type": "string",
+						"enum": [
+							"full",
+							"split"
+						]
+					},
+					"splitRatio": {
 						"items": {
 							"type": "number",
 							"format": "double"
 						},
 						"type": "array"
 					},
-					"blocks": {
+					"columns": {
 						"items": {
-							"$ref": "#/components/schemas/LayoutBlock"
+							"$ref": "#/components/schemas/ColumnConfig"
 						},
 						"type": "array"
 					}
 				},
 				"required": [
-					"split",
-					"blocks"
+					"id",
+					"layout",
+					"columns"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LayoutConfig": {
+				"properties": {
+					"sections": {
+						"items": {
+							"$ref": "#/components/schemas/SectionConfig"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"sections"
 				],
 				"type": "object",
 				"additionalProperties": false

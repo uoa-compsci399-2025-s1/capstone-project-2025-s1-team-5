@@ -1,180 +1,322 @@
 // src/components/LayoutEditor.tsx
-import React, { useEffect, useState } from 'react';
-import {
-  DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  SortableContext, verticalListSortingStrategy, arrayMove, useSortable
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { v4 as uuidv4 } from 'uuid';
-import api from '../lib/api';
-import TextEditor from './TextEditor';  // 你现有的富文本编辑器
+import React, {useState} from "react";
+import { v4 as uuid } from "uuid";
+import TextEditor from "./TextEditor";
 
-// Block 类型
-interface LayoutBlock {
-  id: string;               // 唯一 ID
-  type: 'text';             // 暂时只做 text
-  html: string;             // 文本的 HTML
-  side: 'left' | 'right';   // 左右列
-  order: number;            // 排序
+export interface BlockConfig {
+  id: string;
+  type: "text";
+  html: string;
 }
 
-// 布局配置
-interface LayoutConfig {
-  split: [number, number];  // 左右比例
-  blocks: LayoutBlock[];
+export interface ColumnConfig {
+  blocks: BlockConfig[];
 }
 
-export default function LayoutEditor({ subsectionId }: { subsectionId: string }) {
-  const [layout, setLayout] = useState<LayoutConfig>({
-    split: [50, 50],
-    blocks: [],
-  });
-  const [showAdd, setShowAdd] = useState(false);
-  const [tempHtml, setTempHtml] = useState('<p>Enter text…</p>');
-  const [tempSide, setTempSide] = useState<'left'|'right'>('left');
+export interface SectionConfig {
+  id: string;
+  layout: "full" | "split";
+  splitRatio?: number[];
+  columns: ColumnConfig[];
+}
 
-  const sensors = useSensors(useSensor(PointerSensor));
+export interface LayoutConfig {
+  sections: SectionConfig[];
+}
 
-  // 拉取现有 layout
-  useEffect(() => {
-    api.get<{ layout: LayoutConfig }>(`/modules/subsection/${subsectionId}`)
-      .then(res => setLayout(res.data.layout))
-      .catch(console.error);
-  }, [subsectionId]);
+interface LayoutEditorProps {
+  layout: LayoutConfig;
+  onChange: (newLayout: LayoutConfig) => void;
+}
 
-  // 添加文本区块
-  const handleAddBlock = () => {
-    const newBlock: LayoutBlock = {
-      id: uuidv4(),
-      type: 'text',
-      html: tempHtml,
-      side: tempSide,
-      order: layout.blocks.length + 1,
+export default function LayoutEditor({
+  layout,
+  onChange,
+}: LayoutEditorProps) {
+  // —— 1. 新增 Section
+  const handleAddSection = () => {
+    // 明确告诉 TS：这是一个 SectionConfig
+    const newSection: SectionConfig = {
+      id: uuid(),
+      layout: "full",           // 这里 "full" 就是字面量类型，不会被宽化
+      columns: [{ blocks: [] }],
     };
-    setLayout(prev => ({
-      ...prev,
-      blocks: [...prev.blocks, newBlock],
-    }));
-    setShowAdd(false);
-  };
 
-  // 拖拽结束：更新 order
-  const handleDragEnd = (e: DragEndEvent) => {
-    const { active, over } = e;
-    if (!over || active.id === over.id) return;
-    setLayout(prev => {
-      const old = prev.blocks.findIndex(b => b.id === active.id);
-      const nw  = prev.blocks.findIndex(b => b.id === over.id);
-      const sorted = arrayMove(prev.blocks, old, nw)
-        .map((b,i) => ({ ...b, order: i+1 }));
-      return { ...prev, blocks: sorted };
+    onChange({
+      sections: [...layout.sections, newSection],
     });
   };
 
-  // 保存到后端
-  const handleSave = () => {
-    api.put(`/modules/subsection/${subsectionId}/layout`, layout)
-      .then(() => alert('保存成功'))
-      .catch(() => alert('保存失败'));
+  // —— 2. 删除 Section
+  const handleDeleteSection = (secId: string) => {
+    onChange({
+      sections: layout.sections.filter((s) => s.id !== secId),
+    });
   };
 
-  // 分栏渲染
-  const left  = layout.blocks.filter(b => b.side==='left').sort((a,b)=>a.order-b.order);
-  const right = layout.blocks.filter(b => b.side==='right').sort((a,b)=>a.order-b.order);
+  // —— 3. 切换 Section 布局
+  const handleToggleLayout = (i: number, mode: "full" | "split") => {
+    const newSections = [...layout.sections];
+    const sec = { ...newSections[i] };
+    if (mode === "full") {
+      const all = sec.columns.flatMap((c) => c.blocks);
+      sec.layout = "full";
+      delete sec.splitRatio;
+      sec.columns = [{ blocks: all }];
+    } else {
+      const all = sec.columns.flatMap((c) => c.blocks);
+      sec.layout = "split";
+      sec.splitRatio = [50, 50];
+      sec.columns = [{ blocks: all }, { blocks: [] }];
+    }
+    newSections[i] = sec;
+    onChange({ sections: newSections });
+  };
+
+  // —— 4. 修改比例
+  const handleSplitRatio = (i: number, a: number, b: number) => {
+    const newSections = [...layout.sections];
+    newSections[i] = { ...newSections[i], splitRatio: [a, b] };
+    onChange({ sections: newSections });
+  };
+
+  // —— 5. 删除 Block
+  const handleDeleteBlock = (
+    si: number,
+    ci: number,
+    blockId: string
+  ) => {
+    const newSections = [...layout.sections];
+    newSections[si].columns[ci].blocks = newSections[si].columns[ci].blocks.filter(
+      (b) => b.id !== blockId
+    );
+    onChange({ sections: newSections });
+  };
+
+  // —— 6. 添加文本 Block
+  const handleAddTextBlock = (
+    si: number,
+    ci: number,
+    html: string
+  ) => {
+    const newSections = [...layout.sections];
+    newSections[si].columns[ci].blocks.push({
+      id: uuid(),
+      type: "text",
+      html,
+    });
+    onChange({ sections: newSections });
+  };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      {/* 添加文本区块按钮 */}
-      <button type="button" onClick={() => setShowAdd(x=>!x)}>
-        {showAdd ? '取消添加' : '添加文本区块'}
-      </button>
+    <div style={{ padding: 12, border: "1px solid #ddd", borderRadius: 6 }}>
+      <h3>Sections 布局管理</h3>
 
-      {/* 文本编辑 & 侧边选择 */}
-      {showAdd && (
-        <div style={{ border: '1px solid #ccc', padding: 12 }}>
-          <TextEditor content={tempHtml} onChange={setTempHtml} />
-          <div style={{ marginTop: 8 }}>
-            <label>
-              侧边:
-              <select
-                value={tempSide}
-                onChange={e => setTempSide(e.target.value as 'left'|'right')}
-              >
-                <option value="left">左栏</option>
-                <option value="right">右栏</option>
-              </select>
+      {layout.sections.map((sec, si) => (
+        <div
+          key={sec.id}
+          style={{
+            position: "relative",
+            marginBottom: 24,
+            padding: 12,
+            border: "1px solid #ccc",
+            borderRadius: 6,
+          }}
+        >
+          {/* 删除 Section */}
+          <button
+            onClick={() => handleDeleteSection(sec.id)}
+            style={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              border: "none",
+              background: "transparent",
+              fontSize: 16,
+              cursor: "pointer",
+            }}
+          >
+            ×
+          </button>
+
+          {/* 布局切换 */}
+          <div style={{ marginBottom: 8 }}>
+            <strong>Section {si + 1}:</strong>
+            <label style={{ marginLeft: 12 }}>
+              <input
+                type="radio"
+                checked={sec.layout === "full"}
+                onChange={() => handleToggleLayout(si, "full")}
+              />{" "}
+              Full
             </label>
-            <button onClick={handleAddBlock} style={{ marginLeft: 12 }}>
-              确定添加
-            </button>
+            <label style={{ marginLeft: 12 }}>
+              <input
+                type="radio"
+                checked={sec.layout === "split"}
+                onChange={() => handleToggleLayout(si, "split")}
+              />{" "}
+              Split
+            </label>
+
+            {/* 比例选择 */}
+            {sec.layout === "split" && (
+              <select
+                value={sec.splitRatio?.join("-")}
+                onChange={(e) => {
+                  const [a, b] = e.target.value.split("-").map(Number);
+                  handleSplitRatio(si, a, b);
+                }}
+                style={{ marginLeft: 12 }}
+              >
+                <option value="30-70">30 / 70</option>
+                <option value="50-50">50 / 50</option>
+                <option value="70-30">70 / 30</option>
+              </select>
+            )}
+          </div>
+
+          {/* 列 渲染 */}
+          <div style={{ display: "flex", gap: 12 }}>
+            {sec.columns.map((col, ci) => (
+              <div
+                key={ci}
+                style={{
+                  flex:
+                    sec.layout === "split" && sec.splitRatio
+                      ? sec.splitRatio[ci]
+                      : 1,
+                  border: "1px dashed #ccc",
+                  padding: 8,
+                  borderRadius: 4,
+                }}
+              >
+                <strong>
+                  {sec.layout === "split"
+                    ? ci === 0
+                      ? "左栏"
+                      : "右栏"
+                    : "整行"}
+                </strong>
+
+                {/* 文本 Block 列表 */}
+                {col.blocks.map((blk) => (
+                  <div
+                    key={blk.id}
+                    style={{
+                      position: "relative",
+                      margin: "8px 0",
+                      padding: 8,
+                      background: "#f9f9f9",
+                      borderRadius: 4,
+                    }}
+                  >
+                    <button
+                      onClick={() => handleDeleteBlock(si, ci, blk.id)}
+                      style={{
+                        position: "absolute",
+                        top: 4,
+                        right: 4,
+                        background: "red",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 4,
+                        padding: "2px 6px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      ×
+                    </button>
+                    <div dangerouslySetInnerHTML={{ __html: blk.html }} />
+                  </div>
+                ))}
+
+                {/* 添加 文本 Block */}
+                <TextBlockAdder onSave={(html) => handleAddTextBlock(si, ci, html)} />
+              </div>
+            ))}
           </div>
         </div>
-      )}
+      ))}
 
-      {/* 拖拽布局 */}
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
+      {/* 新增 Section */}
+      <button
+        type="button"
+        onClick={handleAddSection}
+        style={{
+          background: "#007bff",
+          color: "#fff",
+          border: "none",
+          borderRadius: 4,
+          padding: "6px 12px",
+          cursor: "pointer",
+        }}
       >
-        <div style={{ display: 'flex', gap: 12 }}>
-          {/* 左栏 */}
-          <SortableContext
-            items={left.map(b => b.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            <div style={{ flex: layout.split[0], padding: 8, border: '1px solid #ddd' }}>
-              <h4>左栏</h4>
-              {left.map(b => (
-                <BlockItem key={b.id} block={b} />
-              ))}
-            </div>
-          </SortableContext>
-          {/* 右栏 */}
-          <SortableContext
-            items={right.map(b => b.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            <div style={{ flex: layout.split[1], padding: 8, border: '1px solid #ddd' }}>
-              <h4>右栏</h4>
-              {right.map(b => (
-                <BlockItem key={b.id} block={b} />
-              ))}
-            </div>
-          </SortableContext>
-        </div>
-      </DndContext>
-
-      {/* 保存按钮 */}
-      <div style={{ textAlign: 'right' }}>
-        <button onClick={handleSave}>保存布局</button>
-      </div>
+        + 新增 Section
+      </button>
     </div>
   );
 }
 
-// Block 渲染和拖拽句柄
-function BlockItem({ block }: { block: LayoutBlock }) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: block.id });
+// TextBlockAdder 保持不变
+function TextBlockAdder({ onSave }: { onSave: (html: string) => void }) {
+  const [editing, setEditing] = useState(false);
+  const [html, setHtml] = useState("<p>请输入内容…</p>");
+
+  if (!editing) {
+    return (
+      <button
+        onClick={() => setEditing(true)}
+        style={{
+          marginTop: 8,
+          background: "#007bff",
+          color: "#fff",
+          border: "none",
+          padding: "6px 12px",
+          borderRadius: 4,
+          cursor: "pointer",
+        }}
+      >
+        + 添加文本
+      </button>
+    );
+  }
+
   return (
-    <div
-      ref={setNodeRef}
-      style={{
-        display: 'flex',
-        transform: CSS.Transform.toString(transform),
-        transition,
-        padding: 8,
-        marginBottom: 8,
-        background: '#fafafa',
-        border: '1px solid #ccc',
-        borderRadius: 4,
-      }}
-      {...attributes}
-      {...listeners}
-    >
-      <div style={{ flex: 1 }} dangerouslySetInnerHTML={{ __html: block.html }} />
+    <div style={{ marginTop: 8 }}>
+      <TextEditor content={html} onChange={setHtml} />
+      <div style={{ marginTop: 4, textAlign: "right" }}>
+        <button
+          onClick={() => {
+            onSave(html);
+            setEditing(false);
+          }}
+          style={{
+            background: "#28a745",
+            color: "#fff",
+            border: "none",
+            padding: "4px 12px",
+            borderRadius: 4,
+            cursor: "pointer",
+            marginRight: 8,
+          }}
+        >
+          保存块
+        </button>
+        <button
+          onClick={() => setEditing(false)}
+          style={{
+            background: "#6c757d",
+            color: "#fff",
+            border: "none",
+            padding: "4px 12px",
+            borderRadius: 4,
+            cursor: "pointer",
+          }}
+        >
+          取消
+        </button>
+      </div>
     </div>
   );
 }

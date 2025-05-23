@@ -136,6 +136,9 @@ export class ModuleService {
       if (!subsection) {
         throw new Error("Subsection Not Found")
       }
+      if (!subsection.layout || !Array.isArray(subsection.layout.sections)) {
+        subsection.layout = { sections: [] };
+      }
       return subsection
     }
 
@@ -364,15 +367,5 @@ export class ModuleService {
     }
   }
 
-  public async getSubsectionById(subsectionId: string): Promise<ISubsection> {
-  const subsection = await Subsection.findById(subsectionId).lean();
-  if (!subsection) throw new Error("Subsection Not Found");
 
-  // 补默认
-  if (!subsection.layout || !Array.isArray(subsection.layout.sections)) {
-    subsection.layout = { sections: [] };
-  }
-
-  return subsection as ISubsection;
-}
 }

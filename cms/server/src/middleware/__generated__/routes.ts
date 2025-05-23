@@ -165,12 +165,31 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "LayoutBlock": {
+    "BlockConfig": {
         "dataType": "refObject",
         "properties": {
-            "blockId": {"dataType":"string","required":true},
-            "side": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["left"]},{"dataType":"enum","enums":["right"]}],"required":true},
-            "order": {"dataType":"double","required":true},
+            "id": {"dataType":"string","required":true},
+            "type": {"dataType":"enum","enums":["text"],"required":true},
+            "html": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ColumnConfig": {
+        "dataType": "refObject",
+        "properties": {
+            "blocks": {"dataType":"array","array":{"dataType":"refObject","ref":"BlockConfig"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SectionConfig": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string","required":true},
+            "layout": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["full"]},{"dataType":"enum","enums":["split"]}],"required":true},
+            "splitRatio": {"dataType":"array","array":{"dataType":"double"}},
+            "columns": {"dataType":"array","array":{"dataType":"refObject","ref":"ColumnConfig"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -178,8 +197,7 @@ const models: TsoaRoute.Models = {
     "LayoutConfig": {
         "dataType": "refObject",
         "properties": {
-            "split": {"dataType":"array","array":{"dataType":"double"},"required":true},
-            "blocks": {"dataType":"array","array":{"dataType":"refObject","ref":"LayoutBlock"},"required":true},
+            "sections": {"dataType":"array","array":{"dataType":"refObject","ref":"SectionConfig"},"required":true},
         },
         "additionalProperties": false,
     },

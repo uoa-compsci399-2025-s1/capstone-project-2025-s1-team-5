@@ -1,30 +1,22 @@
 // src/pages/Modules.tsx
 import React, { useEffect, useState } from "react";
-import api from "../lib/api";               // your axios instance
+import api from "../lib/api";
 import CreateModule from "./CreateModule";
-import EditModuleForm from "./EditModuleForm";
+import EditModuleForm, { ModuleType as ModuleType } from "./EditModuleForm";
 import ModuleButton from "../components/ModuleButton";
 import Modal from "../components/Modal";
 
-export interface Module {
-  id: string;
-  title: string;
-  subsectionIds: string[];
-  updatedAt: string;
-}
-
-const ModulesPage: React.FC = () => {
-  const [modules, setModules] = useState<Module[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+export default function ModulesPage() {
+  const [modules, setModules] = useState<ModuleType[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState<"title" | "lastModified">("title");
-  const [showCreateModule, setShowCreateModule] = useState<boolean>(false);
-  const [editModule, setEditModule] = useState<Module | null>(null);
-  const [deleteConfirmModule, setDeleteConfirmModule] = useState<Module | null>(null);
+  const [showCreateModule, setShowCreateModule] = useState(false);
+  const [editModule, setEditModule] = useState<ModuleType | null>(null);
+  const [deleteConfirmModule, setDeleteConfirmModule] = useState<ModuleType | null>(null);
 
-  // Fetch modules from backend
   const fetchModules = async () => {
     try {
-      const res = await api.get<{ modules: Module[] }>("/modules");
+      const res = await api.get<{ modules: ModuleType[] }>("/modules");
       setModules(res.data.modules);
     } catch (err) {
       console.error("Failed to fetch modules:", err);
@@ -35,25 +27,21 @@ const ModulesPage: React.FC = () => {
     fetchModules();
   }, []);
 
-  // Delete a module (and its subsections)
-  const handleDeleteModule = async (moduleId: string) => {
+  const handleDeleteModule = async (id: string) => {
     try {
-      await api.delete(`/modules/${moduleId}`);
+      await api.delete(`/modules/${id}`);
       fetchModules();
       setDeleteConfirmModule(null);
     } catch (err) {
-      console.error("Failed to delete module:", err);
+      console.error(err);
       alert("删除失败，请重试");
     }
   };
 
-  // Filter by title only (no description)
   const filtered = modules.filter((m) =>
     m.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  // Sort by title or lastModified
-  const sortedModules = [...filtered].sort((a, b) => {
+  const sorted = [...filtered].sort((a, b) => {
     if (sortOption === "title") {
       return a.title.localeCompare(b.title);
     }
@@ -61,22 +49,18 @@ const ModulesPage: React.FC = () => {
   });
 
   return (
-    <div style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
+    <div style={{ padding: 24, fontFamily: "Arial, sans-serif" }}>
       {/* Header */}
-      <h1 style={{ fontSize: "2.5rem", textAlign: "center", marginBottom: "2rem" }}>
+      <h1 style={{ textAlign: "center", marginBottom: 24 }}>
         UOA YOUR WAY: Module Management
       </h1>
 
-      {/* Controls: Search, Sort, Create */}
+      {/* Controls */}
       <div
         style={{
-          backgroundColor: "#f0f0f0",
-          borderRadius: 10,
-          padding: "1.5rem",
-          boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-          marginBottom: "2rem",
           display: "flex",
-          gap: "1rem",
+          gap: 12,
+          marginBottom: 24,
           alignItems: "center",
         }}
       >
@@ -85,39 +69,28 @@ const ModulesPage: React.FC = () => {
           placeholder="Search modules..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{
-            flex: 1,
-            padding: "0.5rem",
-            borderRadius: 5,
-            border: "1px solid #ccc",
-          }}
+          style={{ flex: 1, padding: 8, borderRadius: 4, border: "1px solid #ccc" }}
         />
-        <label htmlFor="sort">Sort by:</label>
         <select
-          id="sort"
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value as any)}
-          style={{ padding: "0.5rem", borderRadius: 5 }}
+          style={{ padding: 8, borderRadius: 4 }}
         >
           <option value="title">Title</option>
           <option value="lastModified">Last Modified</option>
         </select>
-        <ModuleButton
-          label="Create Module"
-          onClick={() => setShowCreateModule(true)}
-          color="#28a745"
-        />
+        <ModuleButton label="Create Module" onClick={() => setShowCreateModule(true)} color="#28a745" />
       </div>
 
       {/* Module List */}
-      <div style={{ display: "grid", gap: "1rem" }}>
-        {sortedModules.map((m) => (
+      <div style={{ display: "grid", gap: 12 }}>
+        {sorted.map((m) => (
           <div
             key={m.id}
             style={{
+              padding: 16,
               backgroundColor: "#fff",
               borderRadius: 8,
-              padding: "1rem",
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
@@ -126,21 +99,13 @@ const ModulesPage: React.FC = () => {
           >
             <div>
               <h3 style={{ margin: 0 }}>{m.title}</h3>
-              <p style={{ margin: "0.5rem 0 0", fontSize: "0.9rem", color: "#555" }}>
+              <small style={{ color: "#666" }}>
                 Last modified: {new Date(m.updatedAt).toLocaleString()}
-              </p>
+              </small>
             </div>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <ModuleButton
-                label="Edit"
-                onClick={() => setEditModule(m)}
-                color="#007bff"
-              />
-              <ModuleButton
-                label="Delete"
-                onClick={() => setDeleteConfirmModule(m)}
-                color="#dc3545"
-              />
+            <div style={{ display: "flex", gap: 8 }}>
+              <ModuleButton label="Edit" onClick={() => setEditModule(m)} color="#007bff" />
+              <ModuleButton label="Delete" onClick={() => setDeleteConfirmModule(m)} color="#dc3545" />
             </div>
           </div>
         ))}
@@ -177,34 +142,20 @@ const ModulesPage: React.FC = () => {
       {deleteConfirmModule && (
         <Modal onClose={() => setDeleteConfirmModule(null)}>
           <h2>Confirm Deletion</h2>
-          <p>Are you sure you want to delete “{deleteConfirmModule.title}”?</p>
-          <p style={{ color: "#dc3545", fontWeight: "bold" }}>
-            This will also delete its subsections.
+          <p>
+            Are you sure you want to delete “{deleteConfirmModule.title}”?
+            This will remove all its subsections as well.
           </p>
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
             <button
-              type="button"
               onClick={() => handleDeleteModule(deleteConfirmModule.id)}
-              style={{
-                backgroundColor: "#dc3545",
-                color: "#fff",
-                padding: "0.5rem 1rem",
-                border: "none",
-                borderRadius: 5,
-              }}
+              style={{ background: "#dc3545", color: "#fff", padding: "8px 16px", border: "none", borderRadius: 4 }}
             >
               Yes, Delete
             </button>
             <button
-              type="button"
               onClick={() => setDeleteConfirmModule(null)}
-              style={{
-                backgroundColor: "#6c757d",
-                color: "#fff",
-                padding: "0.5rem 1rem",
-                border: "none",
-                borderRadius: 5,
-              }}
+              style={{ background: "#6c757d", color: "#fff", padding: "8px 16px", border: "none", borderRadius: 4 }}
             >
               Cancel
             </button>
@@ -213,6 +164,4 @@ const ModulesPage: React.FC = () => {
       )}
     </div>
   );
-};
-
-export default ModulesPage;
+}

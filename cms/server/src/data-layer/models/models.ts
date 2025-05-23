@@ -62,7 +62,7 @@ export interface LayoutConfig {
 export interface SectionConfig {
   id: string;
   layout: "full" | "split";
-  splitRatio?: [number, number];
+  splitRatio?: number[];
   columns: ColumnConfig[];
 }
 
