@@ -10,7 +10,6 @@ import ProfileOptionButton from '@/components/ProfileOptionButton';
 import ProfileSettingButton from '@/components/ProfileSettingButton';
 import ProfileSettingBox from '@/components/ProfileSettingBox';
 import ProfileUserCard from '@/components/ProfileUserCard';
-import StyledText from '@/components/StyledText';
 
 const { width, height } = Dimensions.get('window');
 const isSmallDevice = width < 375;
@@ -20,7 +19,7 @@ const scale = (size: number) => (width / 375) * size;
 const verticalScale = (size: number) => (height / 812) * size;
 const moderateScale = (size: number, factor = 0.5) => size + (scale(size) - size) * factor;
 
-const FEATURES = ['Programme', 'Support', 'Calendar', 'Map'] as const;
+const FEATURES = ['Programme', 'Support', 'Map'] as const;
 
 type ExtractRouteParams<T> = T extends `${infer Start}?${infer Rest}` ? Start : T;
 type ValidRoutes = ExtractRouteParams<Parameters<ReturnType<typeof useRouter>['push']>[0]>;
