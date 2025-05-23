@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { ThemeContext } from '@/contexts/ThemeContext'; 
 import QuizComponent from '@/components/Quiz'; 
 
-export default function ForumScreen() {
+export default function SupportScreen() {
   const { theme } = useContext(ThemeContext); 
 
   return (
