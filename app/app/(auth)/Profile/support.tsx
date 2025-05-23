@@ -1,15 +1,14 @@
 import React, { useState, useContext } from 'react';
 import { Alert, StyleSheet, ScrollView } from 'react-native';
 import { ThemeContext } from '@/contexts/ThemeContext';
-import emailjs from '@emailjs/browser';
 
 import StyledText from '@/components/StyledText';
 import TextInputBox from '@/components/TextInputBox';
 import SubmitButton from '@/components/SubmitButton';
 
-const SERVICE_ID = 'service_cfsiigh';       
-const TEMPLATE_ID = 'template_renrx8p';     
-const USER_ID = '7_hkd-tDAgRDQsDiA';           
+const SERVICE_ID = 'service_cfsiigh';      
+const TEMPLATE_ID = 'template_renrx8p';    
+const PUBLIC_KEY = '7_hkd-tDAgRDQsDiA';      
 
 export default function SupportScreen() {
   const [firstName, setFirstName] = useState('');
@@ -18,35 +17,49 @@ export default function SupportScreen() {
   const [contact, setContact] = useState('');
   const { theme } = useContext(ThemeContext);
 
-  //link to cms/Programme Consultant's queue?
   const handleSubmit = async () => {
     if (!firstName || !lastName || !email || !contact) {
       Alert.alert('Missing Info', 'Please fill in all the fields.');
       return;
     }
 
+    const data = {
+      service_id: SERVICE_ID,
+      template_id: TEMPLATE_ID,
+      user_id: PUBLIC_KEY,
+      template_params: {
+        first_name: firstName,
+        last_name: lastName,
+        preferred_email: email,
+        contact_number: contact,
+      }
+    };
+
     try {
-      await emailjs.send(
-        SERVICE_ID,
-        TEMPLATE_ID,
-        {
-          first_name: firstName,
-          last_name: lastName,
-          preferred_email: email,  
-          contact_number: contact, 
+      const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        USER_ID
-      );
+        body: JSON.stringify(data)
+      });
 
-      Alert.alert('Success', 'Your enquiry has been sent.');
+      if (response.ok) {
+        Alert.alert('Success', 'Your enquiry has been sent.');
 
-      setFirstName('');
-      setLastName('');
-      setEmail('');
-      setContact('');
+        // Reset form fields
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setContact('');
+      } else {
+        const errText = await response.text();
+        console.error('Email send failed:', errText);
+        Alert.alert('Error', 'Failed to send enquiry.');
+      }
     } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Failed to send enquiry.');
+      console.error('Fetch error:', error);
+      Alert.alert('Error', 'Network error while sending enquiry.');
     }
   };
 
