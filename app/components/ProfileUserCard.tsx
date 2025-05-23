@@ -6,6 +6,7 @@ import StyledText from '@/components/StyledText';
 import profileAvatars from '@/constants/profileAvatars';
 import countries from 'world-countries';
 
+
 import { Dimensions } from 'react-native';
 const { width } = Dimensions.get('window');
 
@@ -16,23 +17,28 @@ interface ProfileUserCardProps {
   country: string;
 }
 
-
 const CountryTag: React.FC<{ country: string }> = ({ country }) => {
   const { theme } = useContext(ThemeContext);
-  const countryObj = countries.find(c => c.name.common === country)
-  const code =countryObj?.cca2.toLowerCase();
-  const uri = `https://flagcdn.com/256x192/${code}.png`
+  const countryObj = countries.find(c => c.name.common === country);
+  const code = countryObj?.cca2.toLowerCase();
+  const uri = `https://flagcdn.com/256x192/${code}.png`;
+
   return (
     <View style={styles.countryContainer}>
       <Image source={{ uri }} style={styles.countryFlag} />
-        <StyledText
-          type="label"
-          style={{ color: '#ffffff', flexShrink: 1, flexWrap: 'wrap' }}
-        >
-          {country}
-        </StyledText>
+      <StyledText
+        type="label"
+        style={{
+          color: '#ffffff',
+          flexShrink: 1,
+          flexWrap: 'wrap',
+          flex: 1,
+        }}
+      >
+        {country}
+      </StyledText>
     </View>
-  )
+  );
 };
 
 const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email, country }) => {
@@ -70,12 +76,13 @@ const styles = StyleSheet.create({
   countryContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'wrap',
+    maxWidth: width * 0.6,
   },
   countryFlag: {
-    width: "15%",
-    height: "50%",
-    marginTop: "0%",
-    marginRight: "4%",
+    width: "23%",
+    height: "30",
+    marginRight: "8%",
   },
   name: {
     marginBottom: "2%",
