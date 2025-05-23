@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import TextEditor from "./TextEditor";
+import TextEditor from "../components/TextEditor";
 
 interface Subsection {
   title: string;
@@ -14,7 +14,6 @@ interface CreateModuleProps {
 
 const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateModule }) => {
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [subsections, setSubsections] = useState<Subsection[]>([]);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +44,6 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
 
     const moduleData = {
       title,
-      description,
     };
 
     try {
@@ -105,16 +103,6 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
             onChange={(e) => setTitle(e.target.value)}
             style={{ fontSize: "1.5rem", fontWeight: "bold", width: "100%" }}
             placeholder="Enter module title"
-            required
-          />
-        </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <label style={{ display: "block", marginBottom: "0.5rem" }}>Description Content:</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            style={{ width: "100%", height: "100px" }}
-            placeholder="Enter module description"
             required
           />
         </div>

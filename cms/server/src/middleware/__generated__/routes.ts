@@ -136,7 +136,6 @@ const models: TsoaRoute.Models = {
         "properties": {
             "id": {"dataType":"string","required":true},
             "title": {"dataType":"string","required":true},
-            "description": {"dataType":"string","required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime"},
             "subsectionIds": {"dataType":"array","array":{"dataType":"refAlias","ref":"mongoose.Types.ObjectId"},"required":true},
@@ -159,7 +158,6 @@ const models: TsoaRoute.Models = {
         "properties": {
             "id": {"dataType":"string","required":true},
             "title": {"dataType":"string","required":true},
-            "description": {"dataType":"string","required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime"},
             "subsections": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"title":{"dataType":"string","required":true},"id":{"dataType":"string","required":true}}},"required":true},
@@ -606,7 +604,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_addModule: Record<string, TsoaRoute.ParameterSchema> = {
-                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true}}},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"title":{"dataType":"string","required":true}}},
         };
         app.post('/modules',
             authenticateMiddleware([{"jwt":["admin"]}]),
@@ -638,7 +636,7 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_updateModule: Record<string, TsoaRoute.ParameterSchema> = {
                 moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
-                moduleChanges: {"in":"body","name":"moduleChanges","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"subsectionIds":{"dataType":"array","array":{"dataType":"string"}},"description":{"dataType":"string"},"title":{"dataType":"string"}}},
+                moduleChanges: {"in":"body","name":"moduleChanges","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"subsectionIds":{"dataType":"array","array":{"dataType":"string"}},"title":{"dataType":"string"}}},
         };
         app.put('/modules/:moduleId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),

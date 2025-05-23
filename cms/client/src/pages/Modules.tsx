@@ -1,32 +1,33 @@
+// src/pages/Modules.tsx
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../lib/api";               // your axios instance
 import CreateModule from "./CreateModule";
 import EditModuleForm from "./EditModuleForm";
 import ModuleButton from "../components/ModuleButton";
+import Modal from "../components/Modal";
 
-interface Module {
+export interface Module {
   id: string;
   title: string;
-  description: string;
   subsectionIds: string[];
   updatedAt: string;
 }
 
-const ModulesPage = () => {
+const ModulesPage: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("title");
-  const [showCreateModule, setCreateModule] = useState(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [sortOption, setSortOption] = useState<"title" | "lastModified">("title");
+  const [showCreateModule, setShowCreateModule] = useState<boolean>(false);
   const [editModule, setEditModule] = useState<Module | null>(null);
   const [deleteConfirmModule, setDeleteConfirmModule] = useState<Module | null>(null);
 
+  // Fetch modules from backend
   const fetchModules = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/modules");
-      console.log("Fetched modules:", res.data);
+      const res = await api.get<{ modules: Module[] }>("/modules");
       setModules(res.data.modules);
-    } catch (error) {
-      console.error("Failed to fetch modules:", error);
+    } catch (err) {
+      console.error("Failed to fetch modules:", err);
     }
   };
 
@@ -34,264 +35,184 @@ const ModulesPage = () => {
     fetchModules();
   }, []);
 
+  // Delete a module (and its subsections)
   const handleDeleteModule = async (moduleId: string) => {
     try {
-      const token = localStorage.getItem("authToken");
-      await axios.delete(`http://localhost:3000/modules/${moduleId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      await api.delete(`/modules/${moduleId}`);
       fetchModules();
       setDeleteConfirmModule(null);
-    } catch (error) {
-      console.error("Failed to delete module:", error);
-      alert("Failed to delete module. Please try again.");
+    } catch (err) {
+      console.error("Failed to delete module:", err);
+      alert("删除失败，请重试");
     }
   };
 
-  const sortedModules = [...modules].sort((a, b) => {
+  // Filter by title only (no description)
+  const filtered = modules.filter((m) =>
+    m.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Sort by title or lastModified
+  const sortedModules = [...filtered].sort((a, b) => {
     if (sortOption === "title") {
       return a.title.localeCompare(b.title);
-    } else if (sortOption === "lastModified") {
-      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(); 
     }
-    return 0;
+    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
   });
 
   return (
     <div style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
+      {/* Header */}
       <h1 style={{ fontSize: "2.5rem", textAlign: "center", marginBottom: "2rem" }}>
         UOA YOUR WAY: Module Management
       </h1>
 
+      {/* Controls: Search, Sort, Create */}
       <div
         style={{
           backgroundColor: "#f0f0f0",
-          borderRadius: "10px",
-          padding: "2rem",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          borderRadius: 10,
+          padding: "1.5rem",
+          boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+          marginBottom: "2rem",
+          display: "flex",
+          gap: "1rem",
+          alignItems: "center",
         }}
       >
-        <div
+        <input
+          type="text"
+          placeholder="Search modules..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "1.5rem",
+            flex: 1,
+            padding: "0.5rem",
+            borderRadius: 5,
+            border: "1px solid #ccc",
           }}
+        />
+        <label htmlFor="sort">Sort by:</label>
+        <select
+          id="sort"
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value as any)}
+          style={{ padding: "0.5rem", borderRadius: 5 }}
         >
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <label htmlFor="sort" style={{ marginRight: "0.5rem" }}>
-              Sort by:
-            </label>
-            <select
-              id="sort"
-              style={{ padding: "0.5rem", borderRadius: "5px" }}
-              value={sortOption}
-              onChange={(e) => setSortOption(e.target.value)}
-            >
-              <option value="title">Title</option>
-              <option value="lastModified">Last Modified</option>
-            </select>
-          </div>
-          <ModuleButton
-            label="Create Module"
-            onClick={() => setCreateModule(true)}
-            color="#28a745"
-          />
-        </div>
-
-        <div>
-          {sortedModules
-            .filter((module) =>
-              module.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              module.description.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-            .map((module) => (
-              <div
-                key={module.id}
-                style={{
-                  backgroundColor: "#ffffff",
-                  borderRadius: "8px",
-                  padding: "1rem",
-                  marginBottom: "1rem",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                }}
-              >
-                <div>
-                  <h3 style={{ margin: 0 }}>{module.title}</h3>
-                  <p style={{ margin: "0.5rem 0 0 0", fontSize: "0.9rem", color: "#555" }}>
-                    Last modified: {new Date(module.updatedAt).toLocaleString()}
-                  </p>
-                </div>
-                <div style={{ display: "flex", gap: "10px" }}>
-                  <ModuleButton
-                    label="Edit"
-                    onClick={() => setEditModule(module)}
-                    color="#007bff"
-                  />
-                  <ModuleButton
-                    label="Delete"
-                    onClick={() => setDeleteConfirmModule(module)}
-                    color="#dc3545"
-                  />
-                </div>
-              </div>
-            ))}
-        </div>
+          <option value="title">Title</option>
+          <option value="lastModified">Last Modified</option>
+        </select>
+        <ModuleButton
+          label="Create Module"
+          onClick={() => setShowCreateModule(true)}
+          color="#28a745"
+        />
       </div>
 
-      {showCreateModule && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-        >
+      {/* Module List */}
+      <div style={{ display: "grid", gap: "1rem" }}>
+        {sortedModules.map((m) => (
           <div
+            key={m.id}
             style={{
-              backgroundColor: "#ffffff",
-              borderRadius: "10px",
-              padding: "2rem",
-              width: "90%",
-              maxWidth: "800px",
-              maxHeight: "90vh",
-              overflowY: "auto",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+              backgroundColor: "#fff",
+              borderRadius: 8,
+              padding: "1rem",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
             }}
           >
-            <CreateModule
-              onModuleCreated={() => {
-                fetchModules();
-                setCreateModule(false);
-              }}
-              setCreateModule={setCreateModule}
-            />
-          </div>
-        </div>
-      )}
-
-      {editModule && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              borderRadius: "10px",
-              padding: "2rem",
-              width: "90%",
-              maxWidth: "800px",
-              maxHeight: "90vh",
-              overflowY: "auto",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-            }}
-          >
-            <EditModuleForm
-              module={editModule}
-              onModuleUpdated={() => {
-                fetchModules();
-                setEditModule(null);
-              }}
-              setEditModule={setEditModule}
-            />
-          </div>
-        </div>
-      )}
-
-      {deleteConfirmModule && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              borderRadius: "10px",
-              padding: "2rem",
-              width: "90%",
-              maxWidth: "500px",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-              textAlign: "center"
-            }}
-          >
-            <h2>Confirm Deletion</h2>
-            <p>Are you sure you want to delete the module "{deleteConfirmModule.title}"?</p>
-            <p style={{ color: "#dc3545", fontWeight: "bold" }}>
-              This action will also delete all subsections of this module and cannot be undone.
-            </p>
-            <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "2rem" }}>
-              <button
-                onClick={() => handleDeleteModule(deleteConfirmModule.id)}
-                style={{
-                  backgroundColor: "#dc3545",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "5px",
-                  padding: "0.5rem 1rem",
-                  cursor: "pointer",
-                }}
-              >
-                Yes, Delete
-              </button>
-              <button
-                onClick={() => setDeleteConfirmModule(null)}
-                style={{
-                  backgroundColor: "#6c757d",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "5px",
-                  padding: "0.5rem 1rem",
-                  cursor: "pointer",
-                }}
-              >
-                Cancel
-              </button>
+            <div>
+              <h3 style={{ margin: 0 }}>{m.title}</h3>
+              <p style={{ margin: "0.5rem 0 0", fontSize: "0.9rem", color: "#555" }}>
+                Last modified: {new Date(m.updatedAt).toLocaleString()}
+              </p>
+            </div>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <ModuleButton
+                label="Edit"
+                onClick={() => setEditModule(m)}
+                color="#007bff"
+              />
+              <ModuleButton
+                label="Delete"
+                onClick={() => setDeleteConfirmModule(m)}
+                color="#dc3545"
+              />
             </div>
           </div>
-        </div>
+        ))}
+      </div>
+
+      {/* Create Module Modal */}
+      {showCreateModule && (
+        <Modal onClose={() => setShowCreateModule(false)}>
+          <CreateModule
+            onModuleCreated={() => {
+              fetchModules();
+              setShowCreateModule(false);
+            }}
+            setCreateModule={setShowCreateModule}
+          />
+        </Modal>
+      )}
+
+      {/* Edit Module Modal */}
+      {editModule && (
+        <Modal onClose={() => setEditModule(null)}>
+          <EditModuleForm
+            module={editModule}
+            onModuleUpdated={() => {
+              fetchModules();
+              setEditModule(null);
+            }}
+            setEditModule={setEditModule}
+          />
+        </Modal>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmModule && (
+        <Modal onClose={() => setDeleteConfirmModule(null)}>
+          <h2>Confirm Deletion</h2>
+          <p>Are you sure you want to delete “{deleteConfirmModule.title}”?</p>
+          <p style={{ color: "#dc3545", fontWeight: "bold" }}>
+            This will also delete its subsections.
+          </p>
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
+            <button
+              type="button"
+              onClick={() => handleDeleteModule(deleteConfirmModule.id)}
+              style={{
+                backgroundColor: "#dc3545",
+                color: "#fff",
+                padding: "0.5rem 1rem",
+                border: "none",
+                borderRadius: 5,
+              }}
+            >
+              Yes, Delete
+            </button>
+            <button
+              type="button"
+              onClick={() => setDeleteConfirmModule(null)}
+              style={{
+                backgroundColor: "#6c757d",
+                color: "#fff",
+                padding: "0.5rem 1rem",
+                border: "none",
+                borderRadius: 5,
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </Modal>
       )}
     </div>
   );
 };
 
-export default function ModulesPageWithLayout() {
-  return (
-    <div>
-      <ModulesPage />
-    </div>
-  );
-}
+export default ModulesPage;

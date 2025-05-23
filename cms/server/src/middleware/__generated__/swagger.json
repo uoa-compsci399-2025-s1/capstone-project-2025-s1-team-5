@@ -276,9 +276,6 @@
 					"title": {
 						"type": "string"
 					},
-					"description": {
-						"type": "string"
-					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -303,7 +300,6 @@
 				"required": [
 					"id",
 					"title",
-					"description",
 					"createdAt",
 					"subsectionIds",
 					"quizIds"
@@ -339,9 +335,6 @@
 					"title": {
 						"type": "string"
 					},
-					"description": {
-						"type": "string"
-					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -372,7 +365,6 @@
 				"required": [
 					"id",
 					"title",
-					"description",
 					"createdAt",
 					"subsections"
 				],
@@ -1004,15 +996,11 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"description": {
-										"type": "string"
-									},
 									"title": {
 										"type": "string"
 									}
 								},
 								"required": [
-									"description",
 									"title"
 								],
 								"type": "object"
@@ -1093,9 +1081,6 @@
 											"type": "string"
 										},
 										"type": "array"
-									},
-									"description": {
-										"type": "string"
 									},
 									"title": {
 										"type": "string"

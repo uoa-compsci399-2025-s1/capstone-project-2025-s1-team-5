@@ -10,7 +10,6 @@ export interface ModulesGetResponse {
 export interface ModuleGetResponse {
     id: string;
     title: string;
-    description: string;
     createdAt: Date;
     updatedAt?: Date;
     subsections: Array<{

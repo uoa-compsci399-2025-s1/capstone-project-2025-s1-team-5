@@ -35,7 +35,6 @@ export class ModuleService {
     public async createModule(data: Partial<IModule>): Promise<IModule> {
         const module = new newModule({
             title: data.title,
-            description: data.description,
             subsectionIds: []
           });
       
@@ -87,7 +86,6 @@ export class ModuleService {
             throw new Error("Module not found");
           }
           module.title = moduleChanges.title;
-          module.description = moduleChanges.description;
           module.subsectionIds = moduleChanges.subsectionIds?.map(id => new mongoose.Types.ObjectId(id));
     
           await module.save();
@@ -210,7 +208,6 @@ export class ModuleService {
           }
       
           if (changes.title !== undefined) module.title = changes.title;
-          if (changes.description !== undefined) module.description = changes.description;
       
           await module.save();
           return true;
@@ -367,5 +364,15 @@ export class ModuleService {
     }
   }
 
+  public async getSubsectionById(subsectionId: string): Promise<ISubsection> {
+  const subsection = await Subsection.findById(subsectionId).lean();
+  if (!subsection) throw new Error("Subsection Not Found");
 
+  // 补默认
+  if (!subsection.layout || !Array.isArray(subsection.layout.sections)) {
+    subsection.layout = { sections: [] };
+  }
+
+  return subsection as ISubsection;
+}
 }

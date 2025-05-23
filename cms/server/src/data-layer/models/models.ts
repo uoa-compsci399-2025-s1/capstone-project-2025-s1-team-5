@@ -22,7 +22,6 @@ export interface IUser {
 export interface IModule {
     id: string;
     title: string;
-    description: string;
     createdAt: Date;
     updatedAt?: Date;
     subsectionIds: Types.ObjectId[];
@@ -57,8 +56,24 @@ export interface LayoutBlock {
 }
 
 export interface LayoutConfig {
-  split: number[];           
-  blocks: LayoutBlock[];             
+  sections: SectionConfig[];          
+}
+
+export interface SectionConfig {
+  id: string;
+  layout: "full" | "split";
+  splitRatio?: [number, number];
+  columns: ColumnConfig[];
+}
+
+export interface ColumnConfig {
+  blocks: BlockConfig[];
+}
+
+export interface BlockConfig {
+  id: string;
+  type: "text"; 
+  html: string;
 }
 
 export interface ISubsection {

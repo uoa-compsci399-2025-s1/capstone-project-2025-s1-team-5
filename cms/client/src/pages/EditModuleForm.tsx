@@ -1,6 +1,22 @@
+// src/pages/EditModuleForm.tsx
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import TextEditor from "./TextEditor";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import LayoutEditor from "../components/LayoutEditor";
+import api from "../lib/api";
 
 interface Subsection {
   id: string;
@@ -11,312 +27,295 @@ interface Subsection {
 interface Module {
   id: string;
   title: string;
-  description: string;
   subsectionIds: string[];
   updatedAt: string;
 }
 
-interface EditModuleFormProps {
+interface Props {
   module: Module;
   onModuleUpdated: () => void;
   setEditModule: React.Dispatch<React.SetStateAction<Module | null>>;
 }
 
-const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated, setEditModule }) => {
+export default function EditModuleForm({
+  module,
+  onModuleUpdated,
+  setEditModule,
+}: Props) {
+  // —— 基本信息
   const [title, setTitle] = useState(module.title);
-  const [description, setDescription] = useState(module.description);
+
+  // —— 子节数据 & 顺序
   const [subsections, setSubsections] = useState<Subsection[]>([]);
-  const [moduleSubsectionIds, setModuleSubsectionIds] = useState<string[]>(module.subsectionIds || []);
-  const [deleteConfirmSubsection, setDeleteConfirmSubsection] = useState<Subsection | null>(null);
+  const [subOrder, setSubOrder] = useState<string[]>(module.subsectionIds);
 
-  useEffect(() => {
-    const fetchSubsections = async () => {
-      try {
-        const responses = await Promise.all(
-          moduleSubsectionIds.map((id) =>
-            axios.get(`http://localhost:3000/modules/subsection/${id}`)
-          )
-        );
-        setSubsections(
-          responses.map((res) => ({
-            ...res.data,
-            id: res.data._id,
-          }))
-        );
-      } catch (error) {
-        console.error("Failed to fetch subsections:", error);
-      }
-    };
+  // —— 当前打开布局编辑的子节 ID
+  const [editingLayoutFor, setEditingLayoutFor] = useState<string | null>(null);
 
-    fetchSubsections();
-  }, [moduleSubsectionIds]);
+  // —— 双击编辑标题的状态
+  const [titleEditId, setTitleEditId] = useState<string | null>(null);
+  const [titleEditValue, setTitleEditValue] = useState<string>("");
 
-  const handleSubsectionChange = (id: string, field: keyof Subsection, value: string) => {
-    setSubsections((prev) =>
-      prev.map((subsection) =>
-        subsection.id === id ? { ...subsection, [field]: value } : subsection
-      )
-    );
+  // dnd-kit 需要的 sensor
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  // 拉取子节详情
+  const fetchSubsections = async (order: string[]) => {
+    try {
+      const resList = await Promise.all(
+        order.map((id) => api.get(`/modules/subsection/${id}`))
+      );
+      setSubsections(
+        resList.map((r) => ({
+          id: r.data._id,
+          title: r.data.title,
+          body: r.data.body,
+        }))
+      );
+    } catch (err) {
+      console.error("拉取子节失败", err);
+    }
   };
 
+  // 初始加载 & subOrder 变化时重新拉
+  useEffect(() => {
+    fetchSubsections(subOrder);
+  }, [subOrder]);
+
+  // 拖拽排序结束
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    setSubsections((prev) => {
+      const oldIdx = prev.findIndex((s) => s.id === active.id);
+      const newIdx = prev.findIndex((s) => s.id === over.id);
+      const newArr = arrayMove(prev, oldIdx, newIdx);
+      setSubOrder(newArr.map((s) => s.id));
+      return newArr;
+    });
+  };
+
+  // 新增子节
   const handleAddSubsection = async () => {
     try {
-      const newSubsectionData = {
-          title: "New Subsection",
-          body: "<p>Enter content here...</p>", // Changed from plain text to HTML
-          authorID: "system"
-        };
-      
-      const response = await axios.post(
-        `http://localhost:3000/modules/${module.id}`, 
-        newSubsectionData
-      );
-      
-      const newSubsectionId = response.data._id.toString();
-      
-      const newSubsection = {
-        id: newSubsectionId,
-        title: response.data.title,
-        body: response.data.body
-      };
-      
-      setSubsections([...subsections, newSubsection]);
-      
-      setModuleSubsectionIds([...moduleSubsectionIds, newSubsectionId]);
-      
-    } catch (error) {
-      console.error("Failed to add subsection:", error);
+      const res = await api.post(`/modules/${module.id}`, {
+        title: "New Subsection",
+        body: "<p>Enter content here...</p>",
+        authorID: "system",
+      });
+      const newId = res.data._id;
+      setSubOrder((prev) => [...prev, newId]);
+    } catch (err) {
+      console.error("添加子节失败", err);
+      alert("添加失败");
     }
   };
 
-  const handleDeleteSubsection = async (subsectionId: string) => {
+  // 保存子节标题
+  const saveSubsectionTitle = async (id: string) => {
     try {
-      const token = localStorage.getItem("authToken");
-
-      await axios.delete(
-        `http://localhost:3000/modules/${module.id}/${subsectionId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-
-      setSubsections(subsections.filter(sub => sub.id !== subsectionId));
-      setModuleSubsectionIds(moduleSubsectionIds.filter(id => id !== subsectionId));
-      setDeleteConfirmSubsection(null);
-    } catch (error) {
-      console.error("Failed to delete subsection:", error);
-      alert("Failed to delete subsection. Please try again.");
-    }
-  };
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-    const updatedModule = {
-      title,
-      description,
-      subsectionIds: moduleSubsectionIds,
-    };
-
-    try {
-      // Update the module
-      await axios.put(`http://localhost:3000/modules/${module.id}`, updatedModule);
-
-      // Update subsections
-      await Promise.all(
-        subsections.map((subsection) =>
-          axios.put(`http://localhost:3000/modules/subsection/${subsection.id}`, {
-            title: subsection.title,
-            body: subsection.body,
-          })
+      await api.put(`/modules/subsection/${id}`, { title: titleEditValue });
+      setSubsections((prev) =>
+        prev.map((s) =>
+          s.id === id ? { ...s, title: titleEditValue } : s
         )
       );
-
-      onModuleUpdated();
-      setEditModule(null);
-    } catch (error) {
-      console.error("Failed to update module or subsections:", error);
+    } catch (err) {
+      console.error("更新小节标题失败", err);
+      alert("标题保存失败");
+    } finally {
+      setTitleEditId(null);
     }
   };
 
-  return (
-    <div>
-      <h1>Edit Module</h1>
-      <p style={{ fontSize: "1rem", color: "#555" }}>
-        Last modified: {new Date(module.updatedAt).toLocaleString()}
-      </p>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "1rem" }}>
-          <label style={{ display: "block", marginBottom: "0.5rem" }}>Title:</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            style={{ fontSize: "1.5rem", fontWeight: "bold", width: "100%" }}
-            required
-          />
-        </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <label style={{ display: "block", marginBottom: "0.5rem" }}>Description:</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            style={{ width: "100%", height: "100px" }}
-            required
-          />
-        </div>
-        <div style={{ marginBottom: "1.5rem" }}>
-          <h3>Subsections</h3>
-          {subsections.map((subsection) => (
-            <div key={subsection.id} style={{ marginBottom: "1rem", padding: "1rem", border: "1px solid #ccc", borderRadius: "5px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                <label>Title:</label>
-                <button
-                  type="button"
-                  onClick={() => setDeleteConfirmSubsection(subsection)}
-                  style={{
-                    backgroundColor: "#dc3545",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "3px",
-                    padding: "0.2rem 0.5rem",
-                    fontSize: "0.8rem",
-                    cursor: "pointer",
-                  }}
-                >
-                  Delete Subsection
-                </button>
-              </div>
-              <input
-                type="text"
-                value={subsection.title}
-                onChange={(e) => handleSubsectionChange(subsection.id, "title", e.target.value)}
-                style={{ width: "100%", marginBottom: "0.5rem" }}
-              />
-              <div>
-            <label>Body:</label>
-              <TextEditor
-                content={subsection.body}
-                onChange={(content) => handleSubsectionChange(subsection.id, "body", content)}
+  // 提交模块基本信息 + 顺序
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await api.put(`/modules/${module.id}`, {
+        title,
+        subsectionIds: subOrder,
+      });
+      onModuleUpdated();
+      setEditModule(null);
+    } catch (err) {
+      console.error("更新模块失败", err);
+      alert("更新失败");
+    }
+  };
+
+  // —— 把 SubsectionItem 定义在这里，闭包可以访问上面所有 state & handler
+  function SubsectionItem({
+    sub,
+    onEditLayout,
+  }: {
+    sub: Subsection;
+    onEditLayout: () => void;
+  }) {
+    const { attributes, listeners, setNodeRef, transform, transition } =
+      useSortable({ id: sub.id });
+
+    return (
+      <div
+        ref={setNodeRef}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          padding: 8,
+          margin: "6px 0",
+          border: "1px solid #ccc",
+          borderRadius: 4,
+          transform: CSS.Transform.toString(transform),
+          transition,
+        }}
+      >
+        {/* 拖拽把手 */}
+        <div 
+          {...attributes}
+          {...listeners}
+          style={{ cursor: "grab", padding: "0 8px", userSelect: "none",}}>☰</div>
+
+        {/* 可双击编辑的标题 */}
+        <div style={{ flex: 1 }}>
+          {titleEditId === sub.id ? (
+            <input
+              autoFocus
+              value={titleEditValue}
+              onChange={(e) => setTitleEditValue(e.target.value)}
+              onBlur={() => saveSubsectionTitle(sub.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") saveSubsectionTitle(sub.id);
+              }}
+              style={{ width: "100%", padding: 4, fontSize: "1rem" }}
             />
-          </div>
-            </div>
-          ))}
-          
-          <button
-            type="button"
-            onClick={handleAddSubsection}
-            style={{
-              backgroundColor: "#28a745",
-              color: "#fff",
-              border: "none",
-              borderRadius: "5px",
-              padding: "0.5rem 1rem",
-              cursor: "pointer",
-              marginTop: "1rem",
-              width: "100%"
-            }}
-          >
-            Add Subsection
-          </button>
+          ) : (
+            <span
+              onDoubleClick={() => {
+                setTitleEditId(sub.id);
+                setTitleEditValue(sub.title);
+              }}
+              style={{ cursor: "pointer" }}
+            >
+              {sub.title}
+            </span>
+          )}
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1.5rem" }}>
-          <button
-            type="submit"
-            style={{
-              backgroundColor: "#007bff",
-              color: "#fff",
-              border: "none",
-              borderRadius: "5px",
-              padding: "0.5rem 1rem",
-              cursor: "pointer",
-            }}
-          >
-            Update Module
-          </button>
-          <button
-            type="button"
-            style={{
-              backgroundColor: "#dc3545",
-              color: "#fff",
-              border: "none",
-              borderRadius: "5px",
-              padding: "0.5rem 1rem",
-              cursor: "pointer",
-            }}
-            onClick={() => setEditModule(null)}
-          >
+
+        {/* 编辑内容按钮 */}
+        <button type="button" onClick={onEditLayout}>
+          Edit Content
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} style={{ padding: 20 }}>
+      {/* 模块基本信息 */}
+      <h1>Edit Module</h1>
+      <label>Title:</label>
+      <input
+        type="text"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        required
+        style={{ width: "100%", marginBottom: 12 }}
+      />
+
+      {/* 子节列表 & 拖拽排序 */}
+      <h2>Subsections (drag to reorder)</h2>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={subsections.map((s) => s.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          {subsections.map((sub) => (
+            <SubsectionItem
+              key={sub.id}
+              sub={sub}
+              onEditLayout={() =>
+                setEditingLayoutFor((prev) => (prev === sub.id ? null : sub.id))
+              }
+            />
+          ))}
+        </SortableContext>
+      </DndContext>
+      <button
+        type="button"
+        onClick={handleAddSubsection}
+        style={{ marginTop: 12 }}
+      >
+        Add Subsection
+      </button>
+
+      {/* 提交 & 关闭 */}
+      <div style={{ marginTop: 24 }}>
+        <button type="submit">Update Module</button>
+        <button
+          type="button"
+          onClick={() => setEditModule(null)}
+          style={{ marginLeft: 12 }}
+        >
+          Close
+        </button>
+      </div>
+
+      {/* 弹窗：布局编辑 */}
+      {editingLayoutFor && (
+        <BlockEditorModal
+          subsectionId={editingLayoutFor}
+          onClose={() => setEditingLayoutFor(null)}
+        />
+      )}
+    </form>
+  );
+}
+
+// —— 弹窗：区块布局编辑器
+function BlockEditorModal({
+  subsectionId,
+  onClose,
+}: {
+  subsectionId: string;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(0,0,0,0.5)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1000,
+      }}
+    >
+      <div
+        style={{
+          width: 700,
+          maxHeight: "85%",
+          backgroundColor: "#fff",
+          padding: 20,
+          borderRadius: 8,
+          overflowY: "auto",
+        }}
+      >
+        <h3>Editing Subsection: {subsectionId}</h3>
+        <LayoutEditor subsectionId={subsectionId} />
+        <div style={{ textAlign: "right", marginTop: 12 }}>
+          <button type="button" onClick={onClose}>
             Close
           </button>
         </div>
-      </form>
-
-      {deleteConfirmSubsection && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              borderRadius: "10px",
-              padding: "2rem",
-              width: "90%",
-              maxWidth: "500px",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-              textAlign: "center"
-            }}
-          >
-            <h2>Confirm Deletion</h2>
-            <p>Are you sure you want to delete the subsection "{deleteConfirmSubsection.title}"?</p>
-            <p style={{ color: "#dc3545", fontWeight: "bold" }}>
-              This action cannot be undone.
-            </p>
-            <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "2rem" }}>
-              <button
-                onClick={() => handleDeleteSubsection(deleteConfirmSubsection.id)}
-                style={{
-                  backgroundColor: "#dc3545",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "5px",
-                  padding: "0.5rem 1rem",
-                  cursor: "pointer",
-                }}
-              >
-                Yes, Delete
-              </button>
-              <button
-                onClick={() => setDeleteConfirmSubsection(null)}
-                style={{
-                  backgroundColor: "#6c757d",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "5px",
-                  padding: "0.5rem 1rem",
-                  cursor: "pointer",
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
-};
-
-export default EditModuleForm;
+}

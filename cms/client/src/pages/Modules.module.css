@@ -1,0 +1,22 @@
+.subItem {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 8px;
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.subItem:hover {
+  background: #f0f8ff;
+}
+.dragHandle {
+  cursor: grab;
+  margin-right: 12px;
+  font-size: 1.2rem;
+}
+.subTitle {
+  flex: 1;
+  font-weight: 500;
+}

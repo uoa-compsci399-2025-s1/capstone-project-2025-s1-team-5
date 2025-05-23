@@ -51,7 +51,6 @@ const userSchema: Schema<IUser> = new Schema(
 const moduleSchema: Schema<IModule> = new Schema(
     {
       title: { type: String, required: true },
-      description: { type: String, required: true },
       subsectionIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Subsection" }],
       quizIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Quiz" }]
     },
@@ -86,10 +85,21 @@ const subsectionSchema: Schema<ISubsection> = new Schema(
             type: Boolean,
             default: false
         },
-        layout: { 
-            type: Schema.Types.Mixed,
-            default: { split: [50,50], blocks: [] } },
-    },
+        layout: {
+            sections: [{
+                id: { type: String, required: true },            // 前端自己生成 uuid
+                layout: { type: String, enum: ["full","split"], default: "full" },
+                splitRatio: { type: [Number], default: [100] },   // full 时只用第一个
+                columns: [{
+                    blocks: [{
+                        id: { type: String, required: true },         // block 自己生成 uuid
+                        type: { type: String, enum: ["text"], default: "text" },
+                        html: { type: String, default: "" },
+                    }]
+                }]
+            }]
+        },
+        },
     { timestamps: true }
 );
 

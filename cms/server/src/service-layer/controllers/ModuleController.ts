@@ -48,7 +48,7 @@ export class ModuleController extends Controller {
     @Post()
     @SuccessResponse(201, "Module Created")
     public async addModule(
-        @Body() body: { title: string; description: string }
+        @Body() body: { title: string}
     ): Promise<IModule> {
         return this.moduleService.createModule(body);
     }
@@ -57,7 +57,7 @@ export class ModuleController extends Controller {
     @SuccessResponse(200, "Module Updated")
     public async updateModule(
       @Path() moduleId: string,
-      @Body() moduleChanges: { title?: string; description?: string; subsectionIds?: string[] }
+      @Body() moduleChanges: { title?: string; subsectionIds?: string[] }
     ): Promise<{ success: boolean }> {
 
       const moduleService = new ModuleService();
