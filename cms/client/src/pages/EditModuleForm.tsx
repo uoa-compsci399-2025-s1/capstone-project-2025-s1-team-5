@@ -31,7 +31,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
       try {
         if (moduleSubsectionIds.length > 0) {
           const subsectionPromises = moduleSubsectionIds.map(id =>
-            axios.get<Subsection>(`http://localhost:3000/modules/subsection/${id}`)
+            axios.get<Subsection>(`${process.env.REACT_APP_API_URL}/api/modules/subsection/${id}`)
           );
           const subsectionResponses = await Promise.all(subsectionPromises);
           const fetchedSubsections = subsectionResponses.map(res => res.data);
@@ -40,7 +40,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
 
         if (moduleQuizIds && moduleQuizIds.length > 0) {
           const quizPromises = moduleQuizIds.map(id =>
-            axios.get<Quiz>(`http://localhost:3000/modules/quiz/${id}`)
+            axios.get<Quiz>(`${process.env.REACT_APP_API_URL}/api/modules/quiz/${id}`)
           );
           const quizResponses = await Promise.all(quizPromises);
           const fetchedQuizzes = quizResponses.map(res => res.data);
@@ -77,7 +77,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
 
       const token = localStorage.getItem("authToken");
       const response = await axios.post<Subsection>(
-        `http://localhost:3000/modules/${moduleId}`,
+        `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`,
         {
           title: "New Subsection",
           body: "Enter content here...",
@@ -117,7 +117,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
 
       const token = localStorage.getItem("authToken");
       await axios.delete(
-        `http://localhost:3000/modules/${moduleId}/${subsectionId}`,
+        `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}/${subsectionId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -147,7 +147,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
 
       const token = localStorage.getItem("authToken");
       const response = await axios.post<Quiz>(
-        `http://localhost:3000/modules/${moduleId}/quiz`,
+        `${process.env.REACT_APP_API_URL}/api/${moduleId}/quiz`,
         {
           title: "New Quiz",
           description: "Quiz description..."
@@ -200,7 +200,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
           try {
             console.log(`Deleting question: ${question._id}`);
             await axios.delete(
-              `http://localhost:3000/modules/quiz/${quizId}/question/${question._id}`,
+              `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}/question/${question._id}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`
@@ -214,7 +214,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
       }
       
       await axios.delete(
-        `http://localhost:3000/modules/quiz/${moduleId}/${quizId}`,
+        `${process.env.REACT_APP_API_URL}/api/modules/quiz/${moduleId}/${quizId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -290,7 +290,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
 
       const token = localStorage.getItem("authToken");
       const response = await axios.post<Question>(
-        `http://localhost:3000/modules/quiz/${quizId}`,
+        `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}`,
         {
           question: "Enter your question here",
           options: ["Option 1", "Option 2", "Option 3", "Option 4"],
@@ -335,7 +335,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
       
       const token = localStorage.getItem("authToken");
       await axios.delete(
-        `http://localhost:3000/modules/quiz/${quizId}/question/${questionId}`,
+        `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}/question/${questionId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -385,7 +385,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
       const token = localStorage.getItem("authToken");
       
       await axios.put(
-        `http://localhost:3000/modules/${moduleId}`,
+        `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`,
         updatedModule,
         {
           headers: {
@@ -397,7 +397,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
       await Promise.all(
         subsections.map(subsection =>
           axios.put(
-            `http://localhost:3000/modules/subsection/${subsection._id}`,
+            `${process.env.REACT_APP_API_URL}/api/modules/subsection/${subsection._id}`,
             {
               title: subsection.title,
               body: subsection.body
@@ -414,7 +414,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
       await Promise.all(
         quizzes.map(async (quiz) => {
           await axios.put(
-            `http://localhost:3000/modules/quiz/${quiz._id}`,
+            `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quiz._id}`,
             {
               title: quiz.title,
               description: quiz.description
@@ -430,7 +430,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
             await Promise.all(
               quiz.questions.map(question =>
                 axios.patch(
-                  `http://localhost:3000/modules/question/${question._id}`,
+                  `${process.env.REACT_APP_API_URL}/api/modules/question/${question._id}`,
                   {
                     question: question.question,
                     options: question.options,

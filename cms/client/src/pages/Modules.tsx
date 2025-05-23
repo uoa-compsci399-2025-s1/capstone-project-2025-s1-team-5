@@ -16,7 +16,7 @@ const ModulesPage = () => {
 
   const fetchModules = async () => {
     try {
-      const res = await axios.get<ModulesResponse>("http://localhost:3000/modules");
+      const res = await axios.get<ModulesResponse>(`${process.env.REACT_APP_API_URL}/api/modules`);
       console.log("Fetched modules:", res.data);
       
       const mappedModules = res.data.modules.map(module => ({
@@ -47,7 +47,7 @@ const ModulesPage = () => {
       console.log("Deleting module with ID:", moduleId);
       
       const token = localStorage.getItem("authToken");
-      await axios.delete(`http://localhost:3000/modules/${moduleId}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
