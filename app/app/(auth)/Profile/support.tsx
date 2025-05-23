@@ -1,9 +1,15 @@
 import React, { useState, useContext } from 'react';
 import { Alert, StyleSheet, ScrollView } from 'react-native';
+import { ThemeContext } from '@/contexts/ThemeContext';
+import emailjs from '@emailjs/browser';
+
 import StyledText from '@/components/StyledText';
 import TextInputBox from '@/components/TextInputBox';
 import SubmitButton from '@/components/SubmitButton';
-import { ThemeContext } from '@/contexts/ThemeContext';
+
+const SERVICE_ID = 'service_cfsiigh';       
+const TEMPLATE_ID = 'template_renrx8p';     
+const USER_ID = '7_hkd-tDAgRDQsDiA';           
 
 export default function SupportScreen() {
   const [firstName, setFirstName] = useState('');
@@ -12,32 +18,28 @@ export default function SupportScreen() {
   const [contact, setContact] = useState('');
   const { theme } = useContext(ThemeContext);
 
+  //link to cms/Programme Consultant's queue?
   const handleSubmit = async () => {
     if (!firstName || !lastName || !email || !contact) {
       Alert.alert('Missing Info', 'Please fill in all the fields.');
       return;
     }
-    //need to link to cms?
-    
+
     try {
-      // Uncomment for real integration
-      /*
       await emailjs.send(
-        'your_service_id',
-        'your_template_id',
+        SERVICE_ID,
+        TEMPLATE_ID,
         {
           first_name: firstName,
           last_name: lastName,
-          email,
-          contact,
+          preferred_email: email,  
+          contact_number: contact, 
         },
-        'your_public_key'
+        USER_ID
       );
-      */
 
       Alert.alert('Success', 'Your enquiry has been sent.');
 
-      // Clear all fields
       setFirstName('');
       setLastName('');
       setEmail('');
