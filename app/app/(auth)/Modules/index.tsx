@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { moduleTitles } from './modulescreen';
@@ -23,7 +23,8 @@ const DisplayModulesScreen = () => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme?.background || '#fff' }]}>
+    <ScrollView style={[styles.container, { backgroundColor: theme?.background || '#fff' }]}
+    showsVerticalScrollIndicator={false}>
       {modules.map((module) => (
         <ModuleButton
           key={module.moduleNumber}
@@ -32,7 +33,7 @@ const DisplayModulesScreen = () => {
           iconName={module.iconName}
         />
       ))}
-    </View>
+    </ScrollView>
   );
 };
 
