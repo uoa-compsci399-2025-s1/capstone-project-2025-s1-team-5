@@ -379,18 +379,21 @@
 					"type": {
 						"type": "string",
 						"enum": [
-							"text"
-						],
-						"nullable": false
+							"text",
+							"image",
+							"video"
+						]
 					},
 					"html": {
+						"type": "string"
+					},
+					"src": {
 						"type": "string"
 					}
 				},
 				"required": [
 					"id",
-					"type",
-					"html"
+					"type"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -501,50 +504,91 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"LayoutBlockDTO": {
+			"BlockConfigDTO": {
 				"properties": {
-					"blockId": {
+					"id": {
 						"type": "string"
 					},
-					"side": {
+					"type": {
 						"type": "string",
 						"enum": [
-							"left",
-							"right"
+							"text",
+							"image",
+							"video"
 						]
 					},
-					"order": {
-						"type": "number",
-						"format": "double"
+					"html": {
+						"type": "string"
 					}
 				},
 				"required": [
-					"blockId",
-					"side",
-					"order"
+					"id",
+					"type",
+					"html"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"LayoutConfigDTO": {
+			"ColumnConfigDTO": {
 				"properties": {
-					"split": {
+					"blocks": {
+						"items": {
+							"$ref": "#/components/schemas/BlockConfigDTO"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"blocks"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SectionConfigDTO": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"layout": {
+						"type": "string",
+						"enum": [
+							"full",
+							"split"
+						]
+					},
+					"splitRatio": {
 						"items": {
 							"type": "number",
 							"format": "double"
 						},
 						"type": "array"
 					},
-					"blocks": {
+					"columns": {
 						"items": {
-							"$ref": "#/components/schemas/LayoutBlockDTO"
+							"$ref": "#/components/schemas/ColumnConfigDTO"
 						},
 						"type": "array"
 					}
 				},
 				"required": [
-					"split",
-					"blocks"
+					"id",
+					"layout",
+					"columns"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LayoutConfigDTO": {
+				"properties": {
+					"sections": {
+						"items": {
+							"$ref": "#/components/schemas/SectionConfigDTO"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"sections"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1366,7 +1410,13 @@
 						}
 					}
 				},
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",

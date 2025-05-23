@@ -169,8 +169,9 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "id": {"dataType":"string","required":true},
-            "type": {"dataType":"enum","enums":["text"],"required":true},
-            "html": {"dataType":"string","required":true},
+            "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["text"]},{"dataType":"enum","enums":["image"]},{"dataType":"enum","enums":["video"]}],"required":true},
+            "html": {"dataType":"string"},
+            "src": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -217,12 +218,31 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "LayoutBlockDTO": {
+    "BlockConfigDTO": {
         "dataType": "refObject",
         "properties": {
-            "blockId": {"dataType":"string","required":true},
-            "side": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["left"]},{"dataType":"enum","enums":["right"]}],"required":true},
-            "order": {"dataType":"double","required":true},
+            "id": {"dataType":"string","required":true},
+            "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["text"]},{"dataType":"enum","enums":["image"]},{"dataType":"enum","enums":["video"]}],"required":true},
+            "html": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ColumnConfigDTO": {
+        "dataType": "refObject",
+        "properties": {
+            "blocks": {"dataType":"array","array":{"dataType":"refObject","ref":"BlockConfigDTO"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SectionConfigDTO": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string","required":true},
+            "layout": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["full"]},{"dataType":"enum","enums":["split"]}],"required":true},
+            "splitRatio": {"dataType":"array","array":{"dataType":"double"}},
+            "columns": {"dataType":"array","array":{"dataType":"refObject","ref":"ColumnConfigDTO"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -230,8 +250,7 @@ const models: TsoaRoute.Models = {
     "LayoutConfigDTO": {
         "dataType": "refObject",
         "properties": {
-            "split": {"dataType":"array","array":{"dataType":"double"},"required":true},
-            "blocks": {"dataType":"array","array":{"dataType":"refObject","ref":"LayoutBlockDTO"},"required":true},
+            "sections": {"dataType":"array","array":{"dataType":"refObject","ref":"SectionConfigDTO"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -838,9 +857,10 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_updateSubsectionLayout: Record<string, TsoaRoute.ParameterSchema> = {
                 subsectionId: {"in":"path","name":"subsectionId","required":true,"dataType":"string"},
-                layout: {"in":"body","name":"layout","required":true,"ref":"LayoutConfigDTO"},
+                body: {"in":"body","name":"body","required":true,"ref":"LayoutConfigDTO"},
         };
         app.put('/modules/subsection/:subsectionId/layout',
+            authenticateMiddleware([{"jwt":["admin"]}]),
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.updateSubsectionLayout)),
 

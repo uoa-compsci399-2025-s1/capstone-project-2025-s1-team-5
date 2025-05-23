@@ -8,6 +8,7 @@ export interface BlockEditorModalProps {
   initialTitle: string;
   onTitleChange: (newTitle: string) => void;
   onClose: () => void;
+  onLayoutChange: (layout: LayoutConfig) => void;
 }
 
 export default function BlockEditorModal({
@@ -15,6 +16,7 @@ export default function BlockEditorModal({
   initialTitle,
   onTitleChange,
   onClose,
+  onLayoutChange, 
 }: BlockEditorModalProps) {
   // 本地标题状态
   const [title, setTitle] = useState(initialTitle);
@@ -49,10 +51,9 @@ export default function BlockEditorModal({
         title,
       });
       // 更新布局
-      await api.put(`/modules/subsection/${subsectionId}/layout`, {
-        layout,
-      });
+      await api.put(`/modules/subsection/${subsectionId}/layout`, { sections: layout.sections });
       // 通知父组件
+      onLayoutChange(layout); 
       onTitleChange(title);
       onClose();
     } catch (err) {
@@ -116,7 +117,10 @@ export default function BlockEditorModal({
         ) : (
           <LayoutEditor
             layout={layout}
-            onChange={setLayout}
+            onChange={(newLayout) => {
+              setLayout(newLayout);
+              onLayoutChange(newLayout);   // 让外层也能拿到最新 layout
+            }}
           />
         )}
 

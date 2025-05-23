@@ -198,6 +198,23 @@ export default function EditModuleForm({
     }
   };
 
+  const fetchSubsections = async (order: string[]) => {
+    try {
+      const resList = await Promise.all(
+        order.map((id) => api.get(`/modules/subsection/${id}`))
+      );
+      setSubsections(
+        resList.map((r) => ({ id: r.data._id, title: r.data.title }))
+      );
+    } catch (err) {
+      console.error("拉取子节失败", err);
+    }
+  };
+
+  useEffect(() => {
+    // 初始或 order 改变时拉一次
+    fetchSubsections(order);
+  }, [order]);
   return (
     <>
       <form
@@ -272,6 +289,7 @@ export default function EditModuleForm({
               )
             )
           }
+          onLayoutChange={(newLayout) => {fetchSubsections(order)}}
           onClose={() => setEditingSubId(null)}
         />
       )}

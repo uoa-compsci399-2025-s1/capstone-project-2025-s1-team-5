@@ -117,16 +117,16 @@ export class ModuleController extends Controller {
         return { success: result };
     }
 
-    // @Security("jwt", ["admin"])   
+    @Security("jwt", ["admin"])   
     @Put("subsection/{subsectionId}/layout")
     @SuccessResponse(200, "Layout updated")
     public async updateSubsectionLayout(
       @Path() subsectionId: string,
-      @Body() layout: LayoutConfigDTO
+      @Body() body: LayoutConfigDTO
     ): Promise<{ success: boolean }> {
       const ok = await this.moduleService.updateSubsectionLayout(
         subsectionId,
-        layout as any
+        body
       );
       if (!ok) {
         this.setStatus(400);

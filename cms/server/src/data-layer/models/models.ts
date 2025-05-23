@@ -72,8 +72,9 @@ export interface ColumnConfig {
 
 export interface BlockConfig {
   id: string;
-  type: "text"; 
-  html: string;
+  type: "text" | "image" | "video";
+  html?: string;   // text 用
+  src?: string;    // image/video 用
 }
 
 export interface ISubsection {
