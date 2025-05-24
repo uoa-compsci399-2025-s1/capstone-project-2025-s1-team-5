@@ -11,6 +11,7 @@ import {
 import { useLocalSearchParams } from 'expo-router'
 import api from '@/app/lib/api'
 import { ThemeContext } from '@/contexts/ThemeContext'
+import RenderHTML from 'react-native-render-html'
 // 如果你要支持视频，安装 expo-av 并引入
 // import { Video } from 'expo-av'
 
@@ -56,10 +57,16 @@ export default function SubmoduleScreen() {
       case 'text':
         // 最简单用原始 html 作为纯文本
         return (
-          <Text style={[styles.content, { color: theme.text }]}>
-            {blk.html.replace(/<[^>]+>/g, '')}
-          </Text>
-        )
+        <RenderHTML
+          contentWidth={width}
+          source={{ html: blk.html }}
+          tagsStyles={{
+            h3: { fontSize: 20, fontWeight: 'bold', marginVertical: 8 },
+            p: { fontSize: 16, marginVertical: 4 },
+            /* 你可以根据需要继续覆写 other tags */
+          }}
+        />
+      )
       case 'image':
         return (
           <Image
