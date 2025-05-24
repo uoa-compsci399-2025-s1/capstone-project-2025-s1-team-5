@@ -1,13 +1,7 @@
 import { IModule } from "../../data-layer/models/models";
 import {
-  IsArray,
-  ValidateNested,
-  ArrayMinSize,
-  ArrayMaxSize,
-  IsString,
-  IsEnum,
-  IsOptional,
-  IsNumber,
+  IsArray, ArrayMinSize, ArrayMaxSize,
+  ValidateNested, IsString, IsEnum, IsOptional, IsMongoId
 } from "class-validator";
 import { Type } from "class-transformer";
 
@@ -34,36 +28,48 @@ export interface SubsectionResponse {
     published: boolean;
 }
 
-// 对应前端 BlockConfig
-class BlockDTO {
-  @IsString()              id!: string;
-  @IsEnum(['text','image','video'] as const)
-                           type!: 'text' | 'image' | 'video';
-  @IsString()              html!: string;
-  @IsOptional() @IsString()
-                           src?: string;
-}
-
-// 对应前端 ColumnConfig
-class ColumnDTO {
-  @IsArray() @ValidateNested({ each: true }) @Type(() => BlockDTO)
-                           blocks!: BlockDTO[];
-}
-
-// 对应前端 SectionConfig
-class SectionDTO {
-  @IsString()                             id!: string;
-  @IsEnum(['full','split'] as const)     layout!: 'full' | 'split';
+export class BlockConfigDTO {
+  @IsString()            id!: string;
   @IsOptional()
-  @IsArray() @ArrayMinSize(2) @ArrayMaxSize(2)
-  @IsNumber({}, { each: true })
-                                         splitRatio?: number[];
-  @IsArray() @ValidateNested({ each: true }) @Type(() => ColumnDTO)
-                                         columns!: ColumnDTO[];
+  @IsMongoId()
+  _id?: string;
+  @IsEnum(["text","image","video"])  type!: "text"|"image"|"video";
+  @IsString()            html!: string;
 }
 
-// 最外层 payload
+export class ColumnConfigDTO {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => BlockConfigDTO)
+  blocks!: BlockConfigDTO[];
+  @IsOptional()
+  @IsMongoId()
+  _id?: string;
+}
+
+export class SectionConfigDTO {
+  @IsString()  id!: string;
+  @IsEnum(["full","split"])  layout!: "full"|"split";
+  @IsOptional()
+  @IsArray()
+  @ArrayMinSize(2)
+  @ArrayMaxSize(2)
+  splitRatio?: number[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ColumnConfigDTO)
+  columns!: ColumnConfigDTO[];
+  @IsOptional()
+  @IsMongoId()
+  _id?: string;
+}
+
 export class LayoutSectionsDTO {
-  @IsArray() @ValidateNested({ each: true }) @Type(() => SectionDTO)
-  sections!: SectionDTO[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SectionConfigDTO)
+  sections!: SectionConfigDTO[];
+  @IsOptional()
+  @IsMongoId()
+  _id?: string;
 }

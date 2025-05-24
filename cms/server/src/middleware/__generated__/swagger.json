@@ -398,21 +398,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"ColumnConfig": {
-				"properties": {
-					"blocks": {
-						"items": {
-							"$ref": "#/components/schemas/BlockConfig"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"blocks"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"SectionConfig": {
 				"properties": {
 					"id": {
@@ -434,7 +419,18 @@
 					},
 					"columns": {
 						"items": {
-							"$ref": "#/components/schemas/ColumnConfig"
+							"properties": {
+								"blocks": {
+									"items": {
+										"$ref": "#/components/schemas/BlockConfig"
+									},
+									"type": "array"
+								}
+							},
+							"required": [
+								"blocks"
+							],
+							"type": "object"
 						},
 						"type": "array"
 					}
@@ -509,6 +505,9 @@
 					"id": {
 						"type": "string"
 					},
+					"_id": {
+						"type": "string"
+					},
 					"type": {
 						"type": "string",
 						"enum": [
@@ -518,9 +517,6 @@
 						]
 					},
 					"html": {
-						"type": "string"
-					},
-					"src": {
 						"type": "string"
 					}
 				},
@@ -539,6 +535,9 @@
 							"$ref": "#/components/schemas/BlockConfigDTO"
 						},
 						"type": "array"
+					},
+					"_id": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -571,6 +570,9 @@
 							"$ref": "#/components/schemas/ColumnConfigDTO"
 						},
 						"type": "array"
+					},
+					"_id": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -581,13 +583,16 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"LayoutConfigDTO": {
+			"LayoutSectionsDTO": {
 				"properties": {
 					"sections": {
 						"items": {
 							"$ref": "#/components/schemas/SectionConfigDTO"
 						},
 						"type": "array"
+					},
+					"_id": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -1435,7 +1440,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/LayoutConfigDTO"
+								"$ref": "#/components/schemas/LayoutSectionsDTO"
 							}
 						}
 					}

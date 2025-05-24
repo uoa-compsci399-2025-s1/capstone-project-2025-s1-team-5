@@ -1,5 +1,5 @@
 import "dotenv/config"
-import express, { urlencoded} from "express";
+import express, { urlencoded, Request, Response, NextFunction, ErrorRequestHandler } from "express";
 import helmet from "helmet";
 import cors from "cors"
 import bodyParser from "body-parser";
@@ -12,6 +12,8 @@ import { RegisterRoutes } from "./middleware/__generated__/routes";
 import connectToDatabase from "./data-layer/adapter/mongodb";
 
 import "reflect-metadata";
+
+import { ValidateError } from "@tsoa/runtime";
 
 export const app = express();
 
@@ -30,6 +32,26 @@ app.use(cors({ origin: "*" }));
 
 RegisterRoutes(app);
 app.use("/swagger", swaggerUI.serve, swaggerUI.setup(swaggerJson));
+
+const errorHandler: ErrorRequestHandler = (
+  err: unknown,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (err instanceof ValidateError) {
+    console.error("DTO 校验失败字段:\n", JSON.stringify(err.fields, null, 2));
+    // 注意要 return，TS 才认这条分支“有返回”
+    res.status(422).json({
+      message: "DTO validation failed",
+      details: err.fields,
+    });
+    return;
+  }
+  // 其他错误继续交给 Express 默认处理
+  return next(err);
+};
+app.use(errorHandler);
 
 const port = process.env.PORT || 3000;
 

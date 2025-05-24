@@ -10,6 +10,7 @@ import {
     Route,
     Security,
     SuccessResponse,
+    Request,
 } from "tsoa";
 import { ModuleService } from "../../data-layer/services/ModuleService";
 import { ModuleGetResponse, ModulesGetResponse, LayoutSectionsDTO } from "../response-models/ModuleResponse";
@@ -122,8 +123,10 @@ export class ModuleController extends Controller {
     @SuccessResponse(200, 'Layout updated')
     public async updateSubsectionLayout(
       @Path() subsectionId: string,
-      @Body() dto: LayoutSectionsDTO
+      @Body() dto: LayoutSectionsDTO,
+      @Request() req: any
     ): Promise<{ success: boolean }> {
+      console.log("Incoming payload:", JSON.stringify(req.body, null, 2));
       const ok = await this.moduleService.updateSubsectionLayout(
         subsectionId,
         dto.sections    // 或者直接传 dto，看你 service 怎么写
