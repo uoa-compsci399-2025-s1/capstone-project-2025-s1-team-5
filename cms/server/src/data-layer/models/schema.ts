@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IModule, IProgramme, IQuestion, IQuiz, ISubsection, IUser, RoleType } from "./models";
+import { IModule, IProgramme, IQuestion, IQuiz, ISubsection, IUser, RoleType, IPage } from "./models";
 
 const userSchema: Schema<IUser> = new Schema(
     {
@@ -139,6 +139,34 @@ const quizSchema: Schema<IQuiz> = new Schema({
     {timestamps: true}
 );
 
+const SectionSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    layout: { type: String, enum: ["full", "split"], required: true },
+    splitRatio: { type: [Number], required: false },
+    columns: [
+      {
+        blocks: [
+          {
+            id: String,
+            type: { type: String, enum: ["text", "image", "video"] },
+            html: String,
+          },
+        ],
+      },
+    ],
+  },
+  { _id: false }
+);
+
+const PageSchema = new Schema<IPage>(
+  {
+    key: { type: String, required: true, unique: true },
+    title: { type: String, required: true },
+    layout: { sections: [SectionSchema] },
+  },
+  { timestamps: true }
+);
 
 
 const Question = mongoose.model<IQuestion>('Question', questionSchema);
@@ -147,6 +175,6 @@ const Programme = mongoose.model<IProgramme>('Programme', programmeSchema);
 const User = mongoose.model<IUser>('User', userSchema);
 const Subsection = mongoose.model<ISubsection>('Subsection', subsectionSchema);
 const Quiz = mongoose.model<IQuiz>('Quiz', quizSchema);
+const PageModel = mongoose.model<IPage>("Page", PageSchema);
 
-
-export { Programme, User, Subsection, newModule, Question, Quiz}
+export { Programme, User, Subsection, newModule, Question, Quiz, PageModel}

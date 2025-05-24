@@ -265,6 +265,93 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"BlockConfig": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string",
+						"enum": [
+							"text",
+							"image",
+							"video"
+						]
+					},
+					"html": {
+						"type": "string"
+					},
+					"src": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"type"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SectionConfig": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"layout": {
+						"type": "string",
+						"enum": [
+							"full",
+							"split"
+						]
+					},
+					"splitRatio": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					},
+					"columns": {
+						"items": {
+							"properties": {
+								"blocks": {
+									"items": {
+										"$ref": "#/components/schemas/BlockConfig"
+									},
+									"type": "array"
+								}
+							},
+							"required": [
+								"blocks"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"layout",
+					"columns"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LayoutConfig": {
+				"properties": {
+					"sections": {
+						"items": {
+							"$ref": "#/components/schemas/SectionConfig"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"sections"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"mongoose.Types.ObjectId": {
 				"type": "string"
 			},
@@ -367,93 +454,6 @@
 					"title",
 					"createdAt",
 					"subsections"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"BlockConfig": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"type": {
-						"type": "string",
-						"enum": [
-							"text",
-							"image",
-							"video"
-						]
-					},
-					"html": {
-						"type": "string"
-					},
-					"src": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"id",
-					"type"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SectionConfig": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"layout": {
-						"type": "string",
-						"enum": [
-							"full",
-							"split"
-						]
-					},
-					"splitRatio": {
-						"items": {
-							"type": "number",
-							"format": "double"
-						},
-						"type": "array"
-					},
-					"columns": {
-						"items": {
-							"properties": {
-								"blocks": {
-									"items": {
-										"$ref": "#/components/schemas/BlockConfig"
-									},
-									"type": "array"
-								}
-							},
-							"required": [
-								"blocks"
-							],
-							"type": "object"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"id",
-					"layout",
-					"columns"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"LayoutConfig": {
-				"properties": {
-					"sections": {
-						"items": {
-							"$ref": "#/components/schemas/SectionConfig"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"sections"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1031,6 +1031,114 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/UpdateThemeRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/pages/{key}": {
+			"get": {
+				"operationId": "GetPage",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"layout": {
+											"$ref": "#/components/schemas/LayoutConfig"
+										},
+										"title": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"layout",
+										"title"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdatePage",
+				"responses": {
+					"200": {
+						"description": "Updated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"layout": {
+										"$ref": "#/components/schemas/LayoutConfig"
+									},
+									"title": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"layout",
+									"title"
+								],
+								"type": "object"
 							}
 						}
 					}

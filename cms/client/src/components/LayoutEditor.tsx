@@ -1,5 +1,5 @@
 // src/components/LayoutEditor.tsx
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { v4 as uuid } from "uuid";
 import TextEditor from "./TextEditor";
 
@@ -33,54 +33,57 @@ export default function LayoutEditor({
   layout,
   onChange,
 }: LayoutEditorProps) {
-  // —— 1. 新增 Section
+  // 记录正在编辑的区块：哪一节、哪一列、哪一个区块，以及临时 html
+  const [editing, setEditing] = useState<{
+    sectionIndex: number;
+    columnIndex: number;
+    blockIndex: number;
+    html: string;
+  } | null>(null);
+
+  // 新增 Section
   const handleAddSection = () => {
-    // 明确告诉 TS：这是一个 SectionConfig
     const newSection: SectionConfig = {
       id: uuid(),
-      layout: "full",           // 这里 "full" 就是字面量类型，不会被宽化
+      layout: "full",
       columns: [{ blocks: [] }],
     };
-
-    onChange({
-      sections: [...layout.sections, newSection],
-    });
+    onChange({ sections: [...layout.sections, newSection] });
   };
 
-  // —— 2. 删除 Section
+  // 删除 Section
   const handleDeleteSection = (secId: string) => {
     onChange({
       sections: layout.sections.filter((s) => s.id !== secId),
     });
   };
 
-  // —— 3. 切换 Section 布局
+  // 切换布局模式
   const handleToggleLayout = (i: number, mode: "full" | "split") => {
     const newSections = [...layout.sections];
     const sec = { ...newSections[i] };
+    const allBlocks = sec.columns.flatMap((c) => c.blocks);
     if (mode === "full") {
-      const all = sec.columns.flatMap((c) => c.blocks);
       sec.layout = "full";
       delete sec.splitRatio;
-      sec.columns = [{ blocks: all }];
+      sec.columns = [{ blocks: allBlocks }];
     } else {
-      const all = sec.columns.flatMap((c) => c.blocks);
       sec.layout = "split";
       sec.splitRatio = [50, 50];
-      sec.columns = [{ blocks: all }, { blocks: [] }];
+      sec.columns = [{ blocks: allBlocks }, { blocks: [] }];
     }
     newSections[i] = sec;
     onChange({ sections: newSections });
   };
 
-  // —— 4. 修改比例
+  // 修改 splitRatio
   const handleSplitRatio = (i: number, a: number, b: number) => {
     const newSections = [...layout.sections];
     newSections[i] = { ...newSections[i], splitRatio: [a, b] };
     onChange({ sections: newSections });
   };
 
-  // —— 5. 删除 Block
+  // 删除 Block
   const handleDeleteBlock = (
     si: number,
     ci: number,
@@ -93,7 +96,7 @@ export default function LayoutEditor({
     onChange({ sections: newSections });
   };
 
-  // —— 6. 添加文本 Block
+  // 新增文本 Block
   const handleAddTextBlock = (
     si: number,
     ci: number,
@@ -176,7 +179,7 @@ export default function LayoutEditor({
             )}
           </div>
 
-          {/* 列 渲染 */}
+          {/* 列渲染 */}
           <div style={{ display: "flex", gap: 12 }}>
             {sec.columns.map((col, ci) => (
               <div
@@ -199,40 +202,131 @@ export default function LayoutEditor({
                     : "整行"}
                 </strong>
 
-                {/* 文本 Block 列表 */}
-                {col.blocks.map((blk) => (
-                  <div
-                    key={blk.id}
-                    style={{
-                      position: "relative",
-                      margin: "8px 0",
-                      padding: 8,
-                      background: "#f9f9f9",
-                      borderRadius: 4,
-                    }}
-                  >
-                    <button
-                      onClick={() => handleDeleteBlock(si, ci, blk.id)}
+                {col.blocks.map((blk, bi) => {
+                  const isEditing =
+                    editing &&
+                    editing.sectionIndex === si &&
+                    editing.columnIndex === ci &&
+                    editing.blockIndex === bi;
+
+                  return (
+                    <div
+                      key={blk.id}
                       style={{
-                        position: "absolute",
-                        top: 4,
-                        right: 4,
-                        background: "red",
-                        color: "#fff",
-                        border: "none",
+                        position: "relative",
+                        margin: "8px 0",
+                        padding: 8,
+                        background: "#f9f9f9",
                         borderRadius: 4,
-                        padding: "2px 6px",
-                        cursor: "pointer",
                       }}
                     >
-                      ×
-                    </button>
-                    <div dangerouslySetInnerHTML={{ __html: blk.html }} />
-                  </div>
-                ))}
+                      {/* 删除按钮 */}
+                      <button
+                        onClick={() => handleDeleteBlock(si, ci, blk.id)}
+                        style={{
+                          position: "absolute",
+                          top: 4,
+                          right: 4,
+                          background: "red",
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: 4,
+                          padding: "2px 6px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        ×
+                      </button>
+
+                      {/* 编辑按钮 */}
+                      {!isEditing && (
+                        <button
+                          onClick={() =>
+                            setEditing({
+                              sectionIndex: si,
+                              columnIndex: ci,
+                              blockIndex: bi,
+                              html: blk.html,
+                            })
+                          }
+                          style={{
+                            position: "absolute",
+                            top: 4,
+                            right: 32,
+                            background: "#007bff",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: 4,
+                            padding: "2px 6px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          编辑
+                        </button>
+                      )}
+
+                      {/* 如果在编辑状态，展示 TextEditor */}
+                      {isEditing ? (
+                        <>
+                          <TextEditor
+                            content={editing.html}
+                            onChange={(newHtml) =>
+                              setEditing((e) =>
+                                e ? { ...e, html: newHtml } : e
+                              )
+                            }
+                          />
+                          <div style={{ textAlign: "right", marginTop: 4 }}>
+                            <button
+                              onClick={() => {
+                                // 写回 html
+                                const newLayout = { ...layout };
+                                newLayout.sections[si].columns[ci].blocks[
+                                  bi
+                                ].html = editing.html;
+                                onChange(newLayout);
+                                setEditing(null);
+                              }}
+                              style={{
+                                marginRight: 8,
+                                background: "#28a745",
+                                color: "#fff",
+                                border: "none",
+                                padding: "4px 12px",
+                                borderRadius: 4,
+                                cursor: "pointer",
+                              }}
+                            >
+                              保存
+                            </button>
+                            <button
+                              onClick={() => setEditing(null)}
+                              style={{
+                                background: "#6c757d",
+                                color: "#fff",
+                                border: "none",
+                                padding: "4px 12px",
+                                borderRadius: 4,
+                                cursor: "pointer",
+                              }}
+                            >
+                              取消
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <div
+                          dangerouslySetInnerHTML={{ __html: blk.html }}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
 
                 {/* 添加 文本 Block */}
-                <TextBlockAdder onSave={(html) => handleAddTextBlock(si, ci, html)} />
+                <TextBlockAdder
+                  onSave={(html) => handleAddTextBlock(si, ci, html)}
+                />
               </div>
             ))}
           </div>

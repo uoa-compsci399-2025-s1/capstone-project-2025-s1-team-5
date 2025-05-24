@@ -109,3 +109,12 @@ export interface UpdateAvatarRequest {
 export interface UpdateThemeRequest {
   colorPref: 'light' | 'dark';
 }
+
+export interface IPage extends Document {
+  key: string;
+  title: string;
+  layout: LayoutConfig;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
