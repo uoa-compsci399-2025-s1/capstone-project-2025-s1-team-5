@@ -10,17 +10,16 @@ import ProfileOptionButton from '@/components/ProfileOptionButton';
 import ProfileSettingButton from '@/components/ProfileSettingButton';
 import ProfileSettingBox from '@/components/ProfileSettingBox';
 import ProfileUserCard from '@/components/ProfileUserCard';
-import StyledText from '@/components/StyledText';
 
 const { width, height } = Dimensions.get('window');
 const isSmallDevice = width < 375;
 
-// Helper functions for responsive design
 const scale = (size: number) => (width / 375) * size;
 const verticalScale = (size: number) => (height / 812) * size;
 const moderateScale = (size: number, factor = 0.5) => size + (scale(size) - size) * factor;
 
-const FEATURES = ['Programme', 'Support', 'Calendar', 'Map'] as const;
+const FEATURES = ['Programme', 'Campus Map'] as const;
+const ICONS = ['insights', 'location-on'] as const;
 
 type ExtractRouteParams<T> = T extends `${infer Start}?${infer Rest}` ? Start : T;
 type ValidRoutes = ExtractRouteParams<Parameters<ReturnType<typeof useRouter>['push']>[0]>;
@@ -39,11 +38,12 @@ const ProfileScreen: React.FC = () => {
 
   const featureRoutes = useMemo(
     () =>
-      FEATURES.map((feature) => {
-        const path = feature.toLowerCase().replace(/\s+/g, '-');
+      FEATURES.map((feature, index) => {
+        const path = feature.toLowerCase().replace(/\s+/g, '');
         return {
           title: feature,
           route: `/Profile/${path}` as ValidRoutes,
+          iconName: ICONS[index],
         };
       }),
     []
@@ -62,9 +62,9 @@ const ProfileScreen: React.FC = () => {
         </View>
       </View>
 
-      <View style={styles.bodyContent}> 
+      <View style={styles.bodyContent}>
         <View style={styles.buttonGrid}>
-          {featureRoutes.map(({ title, route }, index) => {
+          {featureRoutes.map(({ title, route, iconName }, index) => {
             const isLeftmost = index % 2 === 0;
             const isRightmost = index % 2 === 1;
 
@@ -74,6 +74,7 @@ const ProfileScreen: React.FC = () => {
                   <ProfileOptionButton
                     title={title}
                     onPress={() => router.push(route)}
+                    iconName={iconName}
                     isLeftmost={isLeftmost}
                     isRightmost={isRightmost}
                   />
@@ -115,8 +116,8 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: moderateScale(16),
-    paddingTop: verticalScale(16),
+    paddingHorizontal: moderateScale(24),
+    paddingTop: verticalScale(28),
     paddingBottom: verticalScale(8),
   },
   bodyContent: {
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
   },
   profileCardOuter: {
     padding: moderateScale(4),
-    borderRadius: moderateScale(16),
+    borderRadius: moderateScale(12),
     backgroundColor: '#0c0c48',
     alignItems: 'center',
     marginBottom: verticalScale(5),
@@ -167,8 +168,9 @@ const styles = StyleSheet.create({
   },
   buttonOuter: {
     width: '48%',
-    aspectRatio: 1.8,
-    marginBottom: verticalScale(16),
+    aspectRatio: 1.0,
+    marginBottom: verticalScale(21),
+    marginTop: verticalScale(7),
     borderRadius: moderateScale(12),
     backgroundColor: '#0c0c48',
     padding: moderateScale(4),
@@ -192,6 +194,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+    flexDirection: 'column',
+    paddingVertical: verticalScale(25),
+    gap: verticalScale(6),
   },
 });
 

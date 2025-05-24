@@ -6,7 +6,7 @@ import StyledText from '@/components/StyledText';
 import TextInputBox from '@/components/TextInputBox';
 import SubmitButton from '@/components/SubmitButton';
 
-export default function SupportScreen() {
+export default function ContactFormScreen() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');

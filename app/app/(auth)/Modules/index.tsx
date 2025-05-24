@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { moduleTitles } from './modulescreen';
@@ -23,17 +23,21 @@ const DisplayModulesScreen = () => {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme?.background || '#fff' }]}
-    showsVerticalScrollIndicator={false}>
-      {modules.map((module) => (
-        <ModuleButton
-          key={module.moduleNumber}
-          title={module.title}
-          onPress={() => handleModulePress(module.moduleNumber)}
-          iconName={module.iconName}
-        />
-      ))}
-    </ScrollView>
+    <View style={[styles.container, { backgroundColor: theme?.background || '#fff' }]}>
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
+        {modules.map((module) => (
+          <ModuleButton
+            key={module.moduleNumber}
+            title={module.title}
+            onPress={() => handleModulePress(module.moduleNumber)}
+            iconName={module.iconName}
+          />
+        ))}
+      </ScrollView>
+    </View>
   );
 };
 
@@ -42,11 +46,9 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
+  scrollView: {
+    padding: 5,
+  },
 });
-
-
-DisplayModulesScreen.options = {
-
-};
 
 export default DisplayModulesScreen;
