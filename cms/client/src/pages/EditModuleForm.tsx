@@ -69,26 +69,18 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
 
   const handleAddSubsection = async () => {
     try {
-      const moduleId = getModuleId();
-      if (!moduleId) {
-        setError("Cannot add subsection: Module ID is missing");
-        return;
-      }
-
-      const token = localStorage.getItem("authToken");
-      const response = await axios.post<Subsection>(
-        `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`,
-        {
-          title: "New Subsection",
-          body: "Enter content here...",
-          authorID: "system"
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
+      const newSubsectionData = {
+        title: "New Subsection",
+        body: "Enter content here...",
+        authorID: "system"
+      };
+      
+      const response = await axios.post(
+        `http://localhost:3000/modules/${module.id}`, 
+        newSubsectionData
       );
+      
+      const newSubsectionId = response.data._id.toString();
       
       const newSubsection = response.data;
       setSubsections([...subsections, newSubsection]);
@@ -489,160 +481,76 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
             required
           />
         </div>
-        
-        <div className="flex mb-4 border-b border-gray-300">
-          <div 
-            onClick={() => setActiveTab('subsections')}
-            className={`px-4 py-2 cursor-pointer ${
-              activeTab === 'subsections' ? 'font-bold border-b-2 border-blue-500' : 'font-normal'
-            }`}
-          >
-            Subsections
-          </div>
-          <div 
-            onClick={() => setActiveTab('quizzes')}
-            className={`px-4 py-2 cursor-pointer ${
-              activeTab === 'quizzes' ? 'font-bold border-b-2 border-blue-500' : 'font-normal'
-            }`}
-          >
-            Quizzes
-          </div>
-        </div>
-        
-        {activeTab === 'subsections' && (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-3">Subsections</h2>
-            {subsections.map((subsection) => (
-              <div key={subsection._id} className="mb-6 border border-gray-300 p-4 rounded">
-                <div className="flex justify-between items-center mb-2">
-                  <input
-                    type="text"
-                    value={subsection.title}
-                    onChange={(e) => handleSubsectionChange(subsection._id, "title", e.target.value)}
-                    className="text-lg font-bold w-4/5 p-2 border border-gray-300 rounded"
-                    placeholder="Subsection title"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setDeleteConfirmSubsection(subsection)}
-                    className="bg-red-500 text-white border-none py-1 px-2 rounded cursor-pointer"
-                  >
-                    Delete
-                  </button>
-                </div>
-                <textarea
-                  value={subsection.body}
-                  onChange={(e) => handleSubsectionChange(subsection._id, "body", e.target.value)}
-                  className="w-full min-h-[150px] p-2 border border-gray-300 rounded"
-                  placeholder="Subsection content"
-                />
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={handleAddSubsection}
-              className="bg-green-500 text-white border-none py-2 px-4 rounded cursor-pointer mt-4"
-            >
-              + Add Subsection
-            </button>
-          </div>
-        )}
-        
-        {activeTab === 'quizzes' && (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-3">Quizzes</h2>
-            {quizzes.map((quiz) => (
-              <div key={quiz._id} className="mb-6 border border-gray-300 p-4 rounded">
-                <div className="flex justify-between items-center mb-2">
-                  <input
-                    type="text"
-                    value={quiz.title}
-                    onChange={(e) => handleQuizChange(quiz._id, "title", e.target.value)}
-                    className="text-lg font-bold w-4/5 p-2 border border-gray-300 rounded"
-                    placeholder="Quiz title"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setDeleteConfirmQuiz(quiz)}
-                    className="bg-red-500 text-white border-none py-1 px-2 rounded cursor-pointer"
-                  >
-                    Delete
-                  </button>
-                </div>
-                <textarea
-                  value={quiz.description}
-                  onChange={(e) => handleQuizChange(quiz._id, "description", e.target.value)}
-                  className="w-full mb-4 h-20 p-2 border border-gray-300 rounded"
-                  placeholder="Quiz description"
-                />
-                
-                <h3 className="font-medium mb-2">Questions</h3>
-                {quiz.questions && quiz.questions.map((question) => (
-                  <div key={question._id} className="mb-6 border border-gray-300 p-4 rounded">
-                    <div className="flex justify-between items-center mb-2">
-                      <h4 className="font-bold">Question</h4>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveQuestion(quiz._id, question._id)}
-                        className="bg-red-500 text-white border-none py-1 px-2 rounded cursor-pointer"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                    
-                    <input
-                      type="text"
-                      value={question.question}
-                      onChange={(e) => handleQuestionChange(quiz._id, question._id, "question", e.target.value)}
-                      className="w-full p-2 mb-4 border border-gray-300 rounded"
-                      placeholder="Enter question"
-                    />
-                    
-                    <div className="mb-2">
-                      <label className="font-bold block mb-2">Options:</label>
-                      {question.options.map((option, optionIndex) => (
-                        <div key={optionIndex} className="flex items-center mb-2">
-                          <input
-                            type="radio"
-                            name={`correct-${quiz._id}-${question._id}`}
-                            checked={question.correctAnswer === option}
-                            onChange={() => handleQuestionChange(quiz._id, question._id, "correctAnswer", option)}
-                            className="mr-2"
-                          />
-                          <input
-                            type="text"
-                            value={option}
-                            onChange={(e) => handleOptionChange(quiz._id, question._id, optionIndex, e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded"
-                            placeholder={`Option ${optionIndex + 1}`}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-                
+        <div style={{ marginBottom: "1.5rem" }}>
+          <h3>Subsections</h3>
+          {subsections.map((subsection) => (
+            <div key={subsection.id} style={{ marginBottom: "1rem", padding: "1rem", border: "1px solid #ccc", borderRadius: "5px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                <label>Title:</label>
                 <button
                   type="button"
-                  onClick={() => handleAddQuestion(quiz._id)}
-                  className="bg-blue-500 text-white border-none py-1 px-3 rounded cursor-pointer"
+                  onClick={() => setDeleteConfirmSubsection(subsection)}
+                  style={{
+                    backgroundColor: "#dc3545",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "3px",
+                    padding: "0.2rem 0.5rem",
+                    fontSize: "0.8rem",
+                    cursor: "pointer",
+                  }}
                 >
-                  + Add Question
+                  Delete Subsection
                 </button>
               </div>
-            ))}
-            
-            <button
-              type="button"
-              onClick={handleAddQuiz}
-              className="bg-green-500 text-white border-none py-2 px-4 rounded cursor-pointer mt-4"
-            >
-              + Add Quiz
-            </button>
-          </div>
-        )}
-        
-        <div className="flex justify-between mt-4">
+              <input
+                type="text"
+                value={subsection.title}
+                onChange={(e) => handleSubsectionChange(subsection.id, "title", e.target.value)}
+                style={{ width: "100%", marginBottom: "0.5rem" }}
+              />
+              <div>
+                <label>Body:</label>
+                <textarea
+                  value={subsection.body}
+                  onChange={(e) => handleSubsectionChange(subsection.id, "body", e.target.value)}
+                  style={{ width: "100%", height: "80px" }}
+                />
+              </div>
+            </div>
+          ))}
+          
+          <button
+            type="button"
+            onClick={handleAddSubsection}
+            style={{
+              backgroundColor: "#28a745",
+              color: "#fff",
+              border: "none",
+              borderRadius: "5px",
+              padding: "0.5rem 1rem",
+              cursor: "pointer",
+              marginTop: "1rem",
+              width: "100%"
+            }}
+          >
+            Add Subsection
+          </button>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1.5rem" }}>
+          <button
+            type="submit"
+            style={{
+              backgroundColor: "#007bff",
+              color: "#fff",
+              border: "none",
+              borderRadius: "5px",
+              padding: "0.5rem 1rem",
+              cursor: "pointer",
+            }}
+          >
+            Update Module
+          </button>
           <button
             type="button"
             onClick={() => setEditModule(null)}
