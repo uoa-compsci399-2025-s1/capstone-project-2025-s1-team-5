@@ -60,10 +60,70 @@ export default function SubmoduleScreen() {
         <RenderHTML
           contentWidth={width}
           source={{ html: blk.html }}
+          enableCSSInlineProcessing={true}
+           allowedStyles={[
+            // 文本格式
+            'color',
+            'fontSize',
+            'fontWeight',
+            'fontStyle',
+            'lineHeight',
+            // 对齐
+            'textAlign',
+            // 外边距
+            'marginTop',
+            'marginBottom',
+            'marginLeft',
+            'marginRight',
+            // 内边距
+            'paddingTop',
+            'paddingBottom',
+            'paddingLeft',
+            'paddingRight',
+          ]}
           tagsStyles={{
-            h3: { fontSize: 20, fontWeight: 'bold', marginVertical: 8 },
-            p: { fontSize: 16, marginVertical: 4 },
-            /* 你可以根据需要继续覆写 other tags */
+            /* 标题 */
+            h2: {
+              fontSize: 24,
+              fontWeight: 'bold',
+              marginVertical: 12,
+            },
+            h3: {
+              fontSize: 20,
+              fontWeight: 'bold',
+              marginVertical: 10,
+            },
+
+            /* 段落 */
+            p: {
+              fontSize: 16,
+              marginVertical: 8,
+              lineHeight: 24,
+            },
+
+            /* 加粗/斜体 */
+            strong: { fontWeight: 'bold' },
+            em:     { fontStyle: 'italic' },
+
+            /* 无序列表 */
+            ul: {
+              marginVertical: 8,
+              paddingLeft: 20,
+              listStyleType: 'disc',
+            },
+
+            /* 有序列表 */
+            ol: {
+              marginVertical: 8,
+              paddingLeft: 20,
+              listStyleType: 'decimal',
+            },
+
+            /* 列表项 */
+            li: {
+              marginVertical: 4,
+              lineHeight: 24,
+            },
           }}
         />
       )
@@ -127,7 +187,6 @@ export default function SubmoduleScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
   },
   row: {
     flexDirection: 'row',
