@@ -78,9 +78,7 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 10,
   },
-  emailInput: {
-    marginTop: '3%',
-  },
+
   submitButton: {
       marginTop: '3%',
     },
