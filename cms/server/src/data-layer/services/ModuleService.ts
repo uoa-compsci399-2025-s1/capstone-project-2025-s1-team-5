@@ -86,7 +86,7 @@ export class ModuleService {
      */
     public async updateModule(
         moduleId: string,
-        moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[] }
+        moduleChanges: { title?: string; subsectionIds?: string[]; quizIds?: string[] }
       ): Promise<boolean> {
         try {
           const module = await newModule.findById(moduleId);
