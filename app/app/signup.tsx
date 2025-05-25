@@ -2,6 +2,8 @@ import React, { useContext, useState } from 'react';
 import { View, StyleSheet, Image, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
+import { UserContext } from '@/contexts/UserContext';
+
 import api from './lib/api'; 
 
 import SubmitButton from '@/components/SubmitButton';
@@ -9,7 +11,7 @@ import TextInputBox from '@/components/TextInputBox';
 import StyledText from '@/components/StyledText';
 
 export default function SignUpScreen() {
-  const { theme } = useContext(ThemeContext);
+  const { theme, isDarkMode } = useContext(ThemeContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -54,11 +56,16 @@ export default function SignUpScreen() {
       params: { email, password },
     });
   };
-
+  const logoSource = isDarkMode
+            ? require('@/assets/logos/VerticalWhiteLogo.png')
+            : require('@/assets/logos/VerticalColourLogo.png');
+//Here isDarkMode ? require('@/assets/logos/VerticalWhiteLogo.png') : require('@/assets/logos/VerticalColourLogo.png')
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <View style={styles.appLogo}><Image source={require('@/assets/logos/VerticalColourLogo.png')} style={styles.logoImage}/></View>
+      <View style={styles.appLogo}>
+      <Image source={logoSource} style={styles.logoImage} />
+      </View>
 
       <TextInputBox placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" iconName="email"/>
       <TextInputBox placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry iconName="lock"/>
