@@ -1,7 +1,10 @@
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
-import { useEffect } from 'react'
+import { useEffect, useCallback, useRef } from 'react'
+import { CustomIframe } from './CustomIframe'
+import axios from 'axios'
+import Image from '@tiptap/extension-image'
 
 interface TextEditorProps {
   content: string
@@ -9,6 +12,26 @@ interface TextEditorProps {
 }
 
 const TextEditor = ({ content, onChange }: TextEditorProps) => {
+  const initialLoad = useRef(true)
+  const convertToEmbedUrl = useCallback((url: string) => {
+    const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+    const vimeoRegex = /^(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com\/(\d+)|player\.vimeo\.com\/video\/(\d+))/
+
+    const youtubeMatch = url.match(youtubeRegex)
+    const vimeoMatch = url.match(vimeoRegex)
+
+    if (youtubeMatch) {
+      return `https://www.youtube.com/embed/${youtubeMatch[1]}`
+    }
+    
+    if (vimeoMatch) {
+      const videoId = vimeoMatch[1] || vimeoMatch[2]
+      return `https://player.vimeo.com/video/${videoId}`
+    }
+
+    return null
+  }, [])
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -21,6 +44,8 @@ const TextEditor = ({ content, onChange }: TextEditorProps) => {
         alignments: ['left', 'center', 'right', 'justify'],
         defaultAlignment: 'left',
       }),
+      CustomIframe,
+      Image,
     ],
     content: content,
     onUpdate: ({ editor }) => {
@@ -28,16 +53,21 @@ const TextEditor = ({ content, onChange }: TextEditorProps) => {
     },
     editorProps: {
       attributes: {
-        class: 'prose focus:outline-none min-h-[150px] p-4',
+        class: 'prose focus:outline-none min-h-[150px] p-4 max-w-full [&_.iframe-wrapper]:my-4 [&_iframe]:rounded-lg',
       },
     },
   })
 
-  useEffect(() => {
-    if (editor && content !== editor.getHTML()) {
-      editor.commands.setContent(content)
+useEffect(() => {
+  if (editor) {
+    if (initialLoad.current) {
+      editor.commands.setContent(content || '')
+      initialLoad.current = false
+    } else if (!content && editor.getHTML().trim() === '') {
+      editor.commands.setContent('')
     }
-  }, [content, editor])
+  }
+}, [editor, content])
 
   const handleButtonClick = (e: React.MouseEvent, command: () => void) => {
     e.preventDefault();
@@ -50,6 +80,25 @@ const TextEditor = ({ content, onChange }: TextEditorProps) => {
     return <div className="p-4 text-gray-500">Loading editor...</div>
   }
 
+    const handleImageUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const imageUrl = res.data.url;
+      editor.chain().focus().setImage({ src: imageUrl }).run();
+    } catch (err) {
+      console.error("Image upload failed", err);
+      alert("Failed to upload image.");
+    }
+  };
+    
   return (
     <div className="border border-gray-300 rounded-md">
       <div className="flex flex-wrap gap-2 p-2 border-b border-gray-300 bg-gray-50">
@@ -133,6 +182,41 @@ const TextEditor = ({ content, onChange }: TextEditorProps) => {
             <line x1="3" y1="18" x2="21" y2="18"></line>
           </svg>
         </button>
+        <button
+          onClick={(e) => {
+            e.preventDefault()
+            const url = prompt('Enter YouTube or Vimeo URL:')
+            if (url) {
+              const embedUrl = convertToEmbedUrl(url)
+              if (embedUrl && editor) {
+                editor
+                  .chain()
+                  .focus()
+                  .insertIframe({ src: embedUrl })
+                  .run()
+              } else {
+                alert('Please enter a valid YouTube or Vimeo URL.')
+              }
+            }
+          }}
+          className="p-2 rounded-md bg-white hover:bg-gray-100 border border-gray-300 transition-colors"
+        >
+          <span className="mr-2">🎥</span>
+          Add Video
+        </button>
+        <input
+          type="file"
+          accept="image/*"
+          hidden
+          id="upload-image"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) handleImageUpload(file);
+          }}
+        />
+        <label htmlFor="upload-image" className="p-2 rounded bg-white hover:bg-gray-100 border border-gray-300 cursor-pointer">
+          🖼️ Upload Image
+        </label>
       </div>
       <EditorContent editor={editor} />
     </div>

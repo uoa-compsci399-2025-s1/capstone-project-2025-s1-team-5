@@ -77,19 +77,18 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
       };
       
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/modules/${module.id}`, 
+        `${process.env.REACT_APP_API_URL}/api/modules/${module._id}/subsection`,
         newSubsectionData
       );
-      
-      const newSubsectionId = response.data._id.toString();
+   
       const newSubsection = response.data;
-      setSubsections([...subsections, newSubsection]);
-      setModuleSubsectionIds([...moduleSubsectionIds, newSubsection._id]);
+      setSubsections(prev => [...prev, newSubsection]);
+      setModuleSubsectionIds(prev => [...prev, newSubsection._id]);
       setSuccess("Subsection added successfully");
       setError(null);
     } catch (error) {
       console.error("Failed to add subsection:", error);
-      setError("Failed to add subsection");
+      setError(`Failed to add subsection: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setSuccess(null);
     }
   };
@@ -167,43 +166,23 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
 
   const handleDeleteQuiz = async (quizId: string) => {
     try {
-      if (!quizId) {
-        setError("Cannot delete quiz: Quiz ID is missing");
-        return;
-      }
-
       const moduleId = getModuleId();
-      if (!moduleId) {
-        setError("Cannot delete quiz: Module ID is missing");
-        return;
-      }
-
       const token = localStorage.getItem("authToken");
-      const quizToDelete = quizzes.find(q => q._id === quizId);
       
-      if (quizToDelete?.questions?.length) {
-        for (const question of quizToDelete.questions) {
-          if (!question._id) continue;
-          await axios.delete(
-            `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}/question/${question._id}`,
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-        }
-      }
-      
+      // Fix the deletion endpoint
       await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/modules/quiz/${moduleId}/${quizId}`,
+        `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
-      setQuizzes(quizzes.filter(q => q._id !== quizId));
-      setModuleQuizIds(moduleQuizIds.filter(id => id !== quizId));
+      setQuizzes(prev => prev.filter(q => q._id !== quizId));
+      setModuleQuizIds(prev => prev.filter(id => id !== quizId));
       setDeleteConfirmQuiz(null);
       setSuccess("Quiz deleted successfully");
       setError(null);
     } catch (error) {
       console.error("Failed to delete quiz:", error);
-      setError("Failed to delete quiz");
+      setError(`Failed to delete quiz: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setSuccess(null);
     }
   };
@@ -252,7 +231,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.post<Question>(
-        `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}`,
+        `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}/question`, // Fixed endpoint
         {
           question: "Enter your question here",
           options: ["Option 1", "Option 2", "Option 3", "Option 4"],
@@ -262,17 +241,18 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
       );
       
       const newQuestion = response.data;
-      setQuizzes((prevQuizzes) =>
-        prevQuizzes.map((quiz) => {
-          if (quiz._id !== quizId) return quiz;
-          return { ...quiz, questions: [...quiz.questions, newQuestion] };
-        })
+      setQuizzes(prev => 
+        prev.map(quiz => 
+          quiz._id === quizId 
+            ? { ...quiz, questions: [...quiz.questions, newQuestion] } 
+            : quiz
+        )
       );
       setSuccess("Question added successfully");
       setError(null);
     } catch (error) {
       console.error("Failed to add question:", error);
-      setError("Failed to add question");
+      setError(`Failed to add question: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setSuccess(null);
     }
   };
