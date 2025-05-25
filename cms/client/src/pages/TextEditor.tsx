@@ -1,8 +1,10 @@
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useRef } from 'react'
 import { CustomIframe } from './CustomIframe'
+import axios from 'axios'
+import Image from '@tiptap/extension-image'
 
 interface TextEditorProps {
   content: string
@@ -10,6 +12,7 @@ interface TextEditorProps {
 }
 
 const TextEditor = ({ content, onChange }: TextEditorProps) => {
+  const initialLoad = useRef(true)
   const convertToEmbedUrl = useCallback((url: string) => {
     const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
     const vimeoRegex = /^(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com\/(\d+)|player\.vimeo\.com\/video\/(\d+))/
@@ -42,6 +45,7 @@ const TextEditor = ({ content, onChange }: TextEditorProps) => {
         defaultAlignment: 'left',
       }),
       CustomIframe,
+      Image,
     ],
     content: content,
     onUpdate: ({ editor }) => {
@@ -55,10 +59,11 @@ const TextEditor = ({ content, onChange }: TextEditorProps) => {
   })
 
   useEffect(() => {
-    if (editor && content !== editor.getHTML()) {
-      editor.commands.setContent(content)
-    }
-  }, [content, editor])
+      if (editor && initialLoad.current) {
+        editor.commands.setContent(content)
+        initialLoad.current = false
+      }
+    }, [editor, content])
 
   const handleButtonClick = (e: React.MouseEvent, command: () => void) => {
     e.preventDefault();
@@ -71,7 +76,24 @@ const TextEditor = ({ content, onChange }: TextEditorProps) => {
     return <div className="p-4 text-gray-500">Loading editor...</div>
   }
 
+    const handleImageUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
 
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const imageUrl = res.data.url;
+      editor.chain().focus().setImage({ src: imageUrl }).run();
+    } catch (err) {
+      console.error("Image upload failed", err);
+      alert("Failed to upload image.");
+    }
+  };
     
   return (
     <div className="border border-gray-300 rounded-md">
@@ -178,6 +200,19 @@ const TextEditor = ({ content, onChange }: TextEditorProps) => {
           <span className="mr-2">🎥</span>
           Add Video
         </button>
+        <input
+          type="file"
+          accept="image/*"
+          hidden
+          id="upload-image"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) handleImageUpload(file);
+          }}
+        />
+        <label htmlFor="upload-image" className="p-2 rounded bg-white hover:bg-gray-100 border border-gray-300 cursor-pointer">
+          🖼️ Upload Image
+        </label>
       </div>
       <EditorContent editor={editor} />
     </div>
