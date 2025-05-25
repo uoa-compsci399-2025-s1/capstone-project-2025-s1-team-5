@@ -10,6 +10,9 @@ module.exports = {
           },
         },
       },
+      aspectRatio:{
+        video: '16 / 9'
+      },
     },
   },
   plugins: [
