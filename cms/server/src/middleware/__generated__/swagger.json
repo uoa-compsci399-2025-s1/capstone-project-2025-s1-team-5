@@ -601,8 +601,11 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"IQuiz": {
+			"QuizDto": {
 				"properties": {
+					"_id": {
+						"type": "string"
+					},
 					"title": {
 						"type": "string"
 					},
@@ -611,7 +614,7 @@
 					},
 					"questions": {
 						"items": {
-							"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+							"type": "string"
 						},
 						"type": "array"
 					},
@@ -625,6 +628,7 @@
 					}
 				},
 				"required": [
+					"_id",
 					"title",
 					"description",
 					"questions",
@@ -1570,7 +1574,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IQuiz"
+									"$ref": "#/components/schemas/QuizDto"
 								}
 							}
 						}
@@ -1620,7 +1624,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IQuiz"
+									"$ref": "#/components/schemas/QuizDto"
 								}
 							}
 						}
@@ -1646,7 +1650,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IQuiz"
+									"$ref": "#/components/schemas/QuizDto"
 								}
 							}
 						}

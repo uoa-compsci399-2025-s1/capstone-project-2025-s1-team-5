@@ -1,7 +1,8 @@
 import { moduleAdaptor } from "../adapter/ModuleAdapter";
 import type { IModule, IQuestion, IQuiz, ISubsection, SectionConfig } from "../models/models";
 import { newModule, Question, Quiz, Subsection } from "../../data-layer/models/schema";
-import mongoose from "mongoose";
+import mongoose, {Types} from "mongoose";
+
 
 export class ModuleService {
     /**
@@ -247,11 +248,11 @@ export class ModuleService {
     
         const newQuiz = new Quiz(quizData);
         await newQuiz.save();
-        module.quizIds.push(newQuiz._id);        
+        module.quizIds.push(newQuiz._id as Types.ObjectId);        
         await module.save();
         return newQuiz;
       } catch (error: any) {
-        return error;
+        throw error;
     }
   }
 

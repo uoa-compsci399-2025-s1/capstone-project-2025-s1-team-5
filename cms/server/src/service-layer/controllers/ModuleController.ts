@@ -13,8 +13,8 @@ import {
     Request,
 } from "tsoa";
 import { ModuleService } from "../../data-layer/services/ModuleService";
-import { ModuleGetResponse, ModulesGetResponse, LayoutSectionsDTO } from "../response-models/ModuleResponse";
-import { IModule, IQuestion, IQuiz, ISubsection } from "../../data-layer/models/models";
+import { ModuleGetResponse, ModulesGetResponse, LayoutSectionsDTO , QuizDto} from "../response-models/ModuleResponse";
+import { IModule, IQuestion, ISubsection } from "../../data-layer/models/models";
 import { moduleToResponse } from "../../data-layer/adapter/ModuleAdapter";
 
 @Route("modules")
@@ -139,32 +139,53 @@ export class ModuleController extends Controller {
     public async addQuiz(
         @Path() moduleId: string,
         @Body() quizData: {title: string, description: string}
-    ): Promise<IQuiz> {
-        const result = await this.moduleService.addQuiz(moduleId, quizData);
-        return result;
+    ): Promise<QuizDto> {
+        const newQuiz  = await this.moduleService.addQuiz(moduleId, quizData);
+        return {
+          _id: newQuiz._id.toString(),
+          title: newQuiz.title,
+          description: newQuiz.description,
+          questions: newQuiz.questions.map(q => q.toString()),
+          createdAt: newQuiz.createdAt,
+          updatedAt: newQuiz.updatedAt,
+         };
     }
 
     //Get Quiz
     @Get("quiz/{quizId}")
-    public async getQuizById(@Path() quizId: string): Promise<IQuiz> {
-      const quiz = await this.moduleService.getQuizById(quizId);
-      if (!quiz) {
+    public async getQuizById(@Path() quizId: string): Promise<QuizDto> {
+      const newQuiz = await this.moduleService.getQuizById(quizId);
+      if (!newQuiz) {
         this.setStatus?.(404);
         throw new Error("Quiz not found");
       }
-      return quiz;
+     return {
+    _id: newQuiz._id.toString(),
+    title: newQuiz.title,
+    description: newQuiz.description,
+    questions: newQuiz.questions.map(q => q.toString()),
+    createdAt: newQuiz.createdAt,
+    updatedAt: newQuiz.updatedAt,
+  };
     }
 
     @Put("/quiz/{quizId}")
     public async updateQuiz(
       @Path() quizId: string,
       @Body() quizData: { title: string; description: string }
-    ): Promise<IQuiz> {
+    ): Promise<QuizDto> {
       const updatedQuiz = await this.moduleService.updateQuiz(quizId, quizData);
       if (!updatedQuiz) {
         throw new Error("Failed to update quiz");
       }
-      return updatedQuiz;
+      return {
+        _id: updatedQuiz._id.toString(),
+        title: updatedQuiz.title,
+        description: updatedQuiz.description,
+        questions: updatedQuiz.questions.map(q => q.toString()),
+        createdAt: updatedQuiz.createdAt,
+        updatedAt: updatedQuiz.updatedAt,
+      };
     }
 
     //Delete Quiz        

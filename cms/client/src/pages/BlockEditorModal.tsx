@@ -94,9 +94,19 @@ export default function BlockEditorModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* 标题编辑 */}
-        <h2 style={{ marginTop: 0 }}>编辑 Subsection</h2>
+        <h2 style={{ 
+          marginTop: 0, 
+          display: "block",
+          marginBottom: 12,
+          fontSize: "1.25rem", 
+          fontWeight: 600,  }}>Edit Subsection</h2>
         <div style={{ marginBottom: 24 }}>
-          <label style={{ display: "block", marginBottom: 8 }}>标题：</label>
+          <label style={{
+            display: "block",
+            marginBottom: 12,
+            fontSize: "1.25rem", 
+            fontWeight: 600,     
+          }}>Title:</label>
           <input
             type="text"
             value={title}
@@ -113,7 +123,7 @@ export default function BlockEditorModal({
 
         {/* 布局编辑器 */}
         {loading ? (
-          <div>加载布局中…</div>
+          <div>Loading Layout...</div>
         ) : (
           <LayoutEditor
             layout={layout}
@@ -137,7 +147,7 @@ export default function BlockEditorModal({
               cursor: "pointer",
             }}
           >
-            保存全部
+            Save all
           </button>
           <button
             onClick={onClose}
@@ -151,7 +161,7 @@ export default function BlockEditorModal({
               cursor: "pointer",
             }}
           >
-            取消
+            Cancel
           </button>
         </div>
       </div>

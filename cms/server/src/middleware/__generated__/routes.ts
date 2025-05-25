@@ -253,12 +253,13 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IQuiz": {
+    "QuizDto": {
         "dataType": "refObject",
         "properties": {
+            "_id": {"dataType":"string","required":true},
             "title": {"dataType":"string","required":true},
             "description": {"dataType":"string","required":true},
-            "questions": {"dataType":"array","array":{"dataType":"refAlias","ref":"mongoose.Types.ObjectId"},"required":true},
+            "questions": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
@@ -582,7 +583,7 @@ export function RegisterRoutes(app: Router) {
         const argsPageController_getPage: Record<string, TsoaRoute.ParameterSchema> = {
                 key: {"in":"path","name":"key","required":true,"dataType":"string"},
         };
-        app.get('/pages/:key',
+        app.get('/api/pages/:key',
             authenticateMiddleware([{"jwt":["admin"]}]),
             ...(fetchMiddlewares<RequestHandler>(PageController)),
             ...(fetchMiddlewares<RequestHandler>(PageController.prototype.getPage)),
@@ -614,7 +615,7 @@ export function RegisterRoutes(app: Router) {
                 key: {"in":"path","name":"key","required":true,"dataType":"string"},
                 body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"layout":{"ref":"LayoutConfig","required":true},"title":{"dataType":"string","required":true}}},
         };
-        app.put('/pages/:key',
+        app.put('/api/pages/:key',
             authenticateMiddleware([{"jwt":["admin"]}]),
             ...(fetchMiddlewares<RequestHandler>(PageController)),
             ...(fetchMiddlewares<RequestHandler>(PageController.prototype.updatePage)),
@@ -734,12 +735,7 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_updateModule: Record<string, TsoaRoute.ParameterSchema> = {
                 moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
-                moduleChanges: {"in":"body","name":"moduleChanges","required":true,
-                    "dataType":"nestedObjectLiteral",
-                    "nestedProperties":{
-                        "quizIds":{"dataType":"array","array":{"dataType":"string"}},
-                        "subsectionIds":{"dataType":"array","array":{"dataType":"string"}},
-                        "title":{"dataType":"string"}}},
+                moduleChanges: {"in":"body","name":"moduleChanges","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"quizIds":{"dataType":"array","array":{"dataType":"string"}},"subsectionIds":{"dataType":"array","array":{"dataType":"string"}},"title":{"dataType":"string"}}},
         };
         app.put('/api/modules/:moduleId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
@@ -926,7 +922,7 @@ export function RegisterRoutes(app: Router) {
                 dto: {"in":"body","name":"dto","required":true,"ref":"LayoutSectionsDTO"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.put('/modules/subsection/:subsectionId/layout',
+        app.put('/api/modules/subsection/:subsectionId/layout',
             authenticateMiddleware([{"jwt":["admin"]}]),
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.updateSubsectionLayout)),
@@ -1019,7 +1015,7 @@ export function RegisterRoutes(app: Router) {
                 quizId: {"in":"path","name":"quizId","required":true,"dataType":"string"},
                 quizData: {"in":"body","name":"quizData","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true}}},
         };
-        app.put('/modules/quiz/:quizId',
+        app.put('/api/modules/quiz/:quizId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.updateQuiz)),
 
@@ -1080,7 +1076,7 @@ export function RegisterRoutes(app: Router) {
         const argsModuleController_getQuestion: Record<string, TsoaRoute.ParameterSchema> = {
                 questionId: {"in":"path","name":"questionId","required":true,"dataType":"string"},
         };
-        app.get('/modules/question/:questionId',
+        app.get('/api/modules/question/:questionId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.getQuestion)),
 

@@ -61,6 +61,8 @@ function SubItem({
   onChangeEdit,
   onSaveEdit,
   onEditContent,
+  selected,
+  onToggleSelect,
 }: {
   sub: { id: string; title: string };
   isEditing: boolean;
@@ -69,6 +71,8 @@ function SubItem({
   onChangeEdit: (v: string) => void;
   onSaveEdit: () => void;
   onEditContent: () => void;
+  selected: boolean;
+  onToggleSelect: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: sub.id });
@@ -83,8 +87,18 @@ function SubItem({
         padding: 8,
         border: "1px solid #ddd",
         borderRadius: 4,
+        backgroundColor: selected ? "#e0f2ff" : "white",
+        cursor: "pointer",
         transform: CSS.Transform.toString(transform),
         transition,
+      }}
+      onClick={(e) => {
+        // 避免点击 Edit Content 或输入框时触发选中
+        if ((e.target as HTMLElement).tagName !== "BUTTON" &&
+            (e.target as HTMLElement).tagName !== "INPUT" &&
+            (e.target as HTMLElement).tagName !== "TEXTAREA") {
+          onToggleSelect();
+        }
       }}
     >
       {/* 拖拽把手 */}
@@ -144,6 +158,8 @@ export default function EditModuleForm({
   const [editingTitleValue, setEditingTitleValue] = useState<string>("");
   const [editingSubId, setEditingSubId] = useState<string | null>(null);
   const [deleteConfirmSub, setDeleteConfirmSub] = useState<string | null>(null);
+  const [selectedSubId, setSelectedSubId] = useState<string | null>(null);
+  const [moduleTitle, setModuleTitle] = useState<string>(module.title);
 
   // --- Quiz 相关状态 ---
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
@@ -189,6 +205,7 @@ export default function EditModuleForm({
 
   // 新增 Subsection
   const handleAddSubsection = async () => {
+    console.log(module.id);
     const res = await api.post(`/modules/${module.id}`, {
       title: "New Subsection",
       body: "<p>Enter content…</p>",
@@ -200,7 +217,7 @@ export default function EditModuleForm({
 
   // 删除 Subsection
   const handleDeleteSubsection = async (id: string) => {
-    await api.delete(`/modules/${module.id}/${id}`);
+     await api.delete(`/modules/${module.id}/${id}`);
     setOrder((o) => o.filter((x) => x !== id));
     setDeleteConfirmSub(null);
   };
@@ -224,12 +241,13 @@ export default function EditModuleForm({
       title: "New Quiz",
       description: "",
     });
+    console.log(res.data)
     setQuizzes((q) => [...q, { ...(res.data as Quiz), questions: [] }]);
   };
 
   // 删除 Quiz
   const handleDeleteQuiz = async (id: string) => {
-    await api.delete(`/modules/${module.id}/quiz/${id}`);
+    await api.delete(`/modules/quiz/${module.id}/${id}`);
     setQuizzes((q) => q.filter((x) => x._id !== id));
     setDeleteConfirmQuiz(null);
   };
@@ -237,7 +255,7 @@ export default function EditModuleForm({
   // ---------------------- 提交模块顺序 & quizIds ----------------------
   const handleSaveModule = async () => {
     await api.put(`/modules/${module.id}`, {
-      title: module.title, // 标题目前无法修改
+      title: moduleTitle, // 标题目前无法修改
       subsectionIds: order,
       quizIds: quizzes.map((q) => q._id),
     });
@@ -246,9 +264,19 @@ export default function EditModuleForm({
   };
 
   return (
-    <div className="p-6 w-full max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Edit Module: {module.title}</h1>
-
+    <div className="p-6 w-full max-w-6xl mx-auto">
+      <div className="mb-4">
+        <label className="block text-lg font-medium text-gray-600 mb-1">
+        Module Title
+      </label>
+      <input
+      className="text-2xl font-bold mb-4 w-full border-b focus:outline-none"
+      value={moduleTitle}
+      onChange={e => setModuleTitle(e.target.value)}
+      placeholder="Enter module title"
+      />
+      </div>
+    
       {/* Tab 切换 */}
       <div className="flex border-b mb-6">
         {["subsections", "quizzes"].map((tab) => (
@@ -291,6 +319,10 @@ export default function EditModuleForm({
                   onChangeEdit={setEditingTitleValue}
                   onSaveEdit={() => saveSubsectionTitle(sub._id)}
                   onEditContent={() => setEditingSubId(sub._id)}
+                  selected={selectedSubId === sub._id}
+                  onToggleSelect={() =>
+                    setSelectedSubId((prev) => (prev === sub._id ? null : sub._id))
+                  }
                 />
               ))}
             </SortableContext>
@@ -305,7 +337,7 @@ export default function EditModuleForm({
             </button>
             {editingTitleId === null && (
               <button
-                onClick={() => editingSubId && setDeleteConfirmSub(editingSubId)}
+                onClick={() => selectedSubId && setDeleteConfirmSub(selectedSubId)}
                 className="bg-red-500 text-white px-4 py-2 rounded"
               >
                 Delete Selected
@@ -324,6 +356,11 @@ export default function EditModuleForm({
       {/* Quizzes Tab */}
       {activeTab === "quizzes" && (
         <div className="mb-6">
+          {quizzes.length === 0 && (
+            <p className="text-gray-500 mb-4">
+              No quizzes yet. Click button below to add a quiz
+            </p>
+          )}
           {quizzes.map((quiz) => (
             <div key={quiz._id} className="border p-4 rounded mb-4">
               <div className="flex justify-between items-center mb-2">
@@ -369,6 +406,15 @@ export default function EditModuleForm({
               </button>
             </div>
           ))}
+
+          <div className="mt-2">
+           <button
+             onClick={handleAddQuiz}
+             className="bg-green-500 text-white px-4 py-2 rounded"
+          >
+             + Add Quiz
+           </button>
+         </div>
         </div>
       )}
 

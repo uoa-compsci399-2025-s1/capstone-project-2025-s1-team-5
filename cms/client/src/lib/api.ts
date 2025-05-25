@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AxiosRequestHeaders } from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://172.23.46.18:3000',
+  baseURL: 'http://172.23.46.18:3000/api',
 });
 
 api.interceptors.request.use((config) => {

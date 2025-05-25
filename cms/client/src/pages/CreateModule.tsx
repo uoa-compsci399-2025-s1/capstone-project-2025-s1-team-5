@@ -1,7 +1,7 @@
 // src/pages/CreateModule.tsx
 import React, { useState } from "react";
-import axios from "axios";
 import TextEditor from "../components/TextEditor";
+import api from "../lib/api";
 
 interface Subsection {
   title: string;
@@ -180,8 +180,8 @@ const CreateModule: React.FC<CreateModuleProps> = ({
     try {
       const token = localStorage.getItem("authToken");
       // 1) 创建 Module
-      const resMod = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/modules`,
+      const resMod = await api.post(
+        `/modules`,
         { title },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -191,8 +191,8 @@ const CreateModule: React.FC<CreateModuleProps> = ({
       if (subsections.length) {
         await Promise.all(
           subsections.map((s) =>
-            axios.post(
-              `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`,
+            api.post(
+              `/modules/${moduleId}`,
               { title: s.title, body: s.body, authorID: "system" },
               { headers: { Authorization: `Bearer ${token}` } }
             )
@@ -204,8 +204,8 @@ const CreateModule: React.FC<CreateModuleProps> = ({
       if (quizzes.length) {
         await Promise.all(
           quizzes.map(async (quiz) => {
-            const resQuiz = await axios.post(
-              `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}/quiz`,
+            const resQuiz = await api.post(
+              `/modules/${moduleId}/quiz`,
               { title: quiz.title, description: quiz.description },
               { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -213,8 +213,8 @@ const CreateModule: React.FC<CreateModuleProps> = ({
             if (quiz.questions.length) {
               await Promise.all(
                 quiz.questions.map((ques) =>
-                  axios.post(
-                    `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}`,
+                  api.post(
+                    `/modules/quiz/${quizId}`,
                     {
                       question: ques.question,
                       options: ques.options,

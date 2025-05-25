@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../lib/api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
 
@@ -14,7 +14,7 @@ const Login: React.FC = () => {
     event.preventDefault();
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
+      const response = await api.post(`auth/login`, {
         email,
         password,
       });

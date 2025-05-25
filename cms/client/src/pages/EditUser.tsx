@@ -1,6 +1,5 @@
-// EditUserForm.tsx
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../lib/api";
 
 interface User {
   id: string;
@@ -46,7 +45,7 @@ const EditUserForm: React.FC<EditUserFormProps> = ({ user, onUserUpdated, setEdi
       };
 
     try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/api/users/${user.id}`, updatedUser);
+      await api.put(`/users/${user.id}`, updatedUser);
       onUserUpdated(); // Refresh the list of users
       setEditUser(null); // Close the edit form
       setSuccess("User successfully edited")

@@ -113,7 +113,7 @@ export default function LayoutEditor({
 
   return (
     <div style={{ padding: 12, border: "1px solid #ddd", borderRadius: 6 }}>
-      <h3>Sections 布局管理</h3>
+      <h3>Layout Management</h3>
 
       {layout.sections.map((sec, si) => (
         <div
@@ -197,9 +197,9 @@ export default function LayoutEditor({
                 <strong>
                   {sec.layout === "split"
                     ? ci === 0
-                      ? "左栏"
-                      : "右栏"
-                    : "整行"}
+                      ? "Left Column"
+                      : "Right Column"
+                    : "Full Width"}
                 </strong>
 
                 {col.blocks.map((blk, bi) => {
@@ -261,7 +261,7 @@ export default function LayoutEditor({
                             cursor: "pointer",
                           }}
                         >
-                          编辑
+                          Edit
                         </button>
                       )}
 
@@ -297,7 +297,7 @@ export default function LayoutEditor({
                                 cursor: "pointer",
                               }}
                             >
-                              保存
+                              Save
                             </button>
                             <button
                               onClick={() => setEditing(null)}
@@ -310,7 +310,7 @@ export default function LayoutEditor({
                                 cursor: "pointer",
                               }}
                             >
-                              取消
+                              Cancel
                             </button>
                           </div>
                         </>
@@ -346,7 +346,7 @@ export default function LayoutEditor({
           cursor: "pointer",
         }}
       >
-        + 新增 Section
+        + Add Section
       </button>
     </div>
   );
@@ -355,7 +355,7 @@ export default function LayoutEditor({
 // TextBlockAdder 保持不变
 function TextBlockAdder({ onSave }: { onSave: (html: string) => void }) {
   const [editing, setEditing] = useState(false);
-  const [html, setHtml] = useState("<p>请输入内容…</p>");
+  const [html, setHtml] = useState("<p>Enter content...</p>");
 
   if (!editing) {
     return (
@@ -371,7 +371,7 @@ function TextBlockAdder({ onSave }: { onSave: (html: string) => void }) {
           cursor: "pointer",
         }}
       >
-        + 添加文本
+        + Add Text Area
       </button>
     );
   }
@@ -395,7 +395,7 @@ function TextBlockAdder({ onSave }: { onSave: (html: string) => void }) {
             marginRight: 8,
           }}
         >
-          保存块
+          Save Block
         </button>
         <button
           onClick={() => setEditing(false)}
@@ -408,7 +408,7 @@ function TextBlockAdder({ onSave }: { onSave: (html: string) => void }) {
             cursor: "pointer",
           }}
         >
-          取消
+          Cancel
         </button>
       </div>
     </div>

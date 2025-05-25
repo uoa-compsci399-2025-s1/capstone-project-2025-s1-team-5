@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Types, Document } from "mongoose";
 
 export enum RoleType {
     admin= "admin",
@@ -42,7 +42,7 @@ export interface IQuestion {
     createdAt: Date;
 }
 
-export interface IQuiz {
+export interface IQuiz extends Document {
     title: string;
     description: string;
     questions: Types.ObjectId[];

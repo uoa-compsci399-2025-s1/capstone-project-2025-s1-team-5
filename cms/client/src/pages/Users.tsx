@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CreateUser from "../pages/CreateUser";
-import axios from "axios";
+import api from "../lib/api";
 import EditUserForm from "./EditUser";
 
 interface User {
@@ -30,7 +30,7 @@ const UsersPage = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/users`, {
+      const res = await api.get(`/users`, {
       params: { limit, page },
     });
       setUsers(res.data.users);
@@ -76,7 +76,7 @@ const UsersPage = () => {
   const handleDelete = async (userId: string) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
-        await axios.delete(`${process.env.REACT_APP_API_URL}/api/users/${userId}`);
+        await api.delete(`/users/${userId}`);
         fetchUsers();
       } catch (error) {
         console.error("Failed to delete user:", error);

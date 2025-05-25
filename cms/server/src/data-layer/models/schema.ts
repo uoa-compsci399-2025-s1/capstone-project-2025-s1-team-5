@@ -128,9 +128,12 @@ const quizSchema: Schema<IQuiz> = new Schema({
     },
     description: {
         type: String,
-        required: true
+        default: ""
     },
-    questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question", required: true }],
+    questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question", 
+        required: true,
+        default: [],
+    }],
     createdAt: {
         type: Date,
         default: Date.now
