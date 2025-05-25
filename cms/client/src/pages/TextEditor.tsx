@@ -58,12 +58,16 @@ const TextEditor = ({ content, onChange }: TextEditorProps) => {
     },
   })
 
-  useEffect(() => {
-      if (editor && initialLoad.current) {
-        editor.commands.setContent(content)
-        initialLoad.current = false
-      }
-    }, [editor, content])
+useEffect(() => {
+  if (editor) {
+    if (initialLoad.current) {
+      editor.commands.setContent(content || '')
+      initialLoad.current = false
+    } else if (!content && editor.getHTML().trim() === '') {
+      editor.commands.setContent('')
+    }
+  }
+}, [editor, content])
 
   const handleButtonClick = (e: React.MouseEvent, command: () => void) => {
     e.preventDefault();

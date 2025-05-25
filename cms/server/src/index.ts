@@ -59,13 +59,14 @@ app.post("/api/upload", upload.single("file"), (req: Request, res: Response): vo
 RegisterRoutes(app);
 app.use("/swagger", swaggerUI.serve, swaggerUI.setup(swaggerJson));
 
-const port = process.env.PORT || 3000;
+const port = Number(process.env.PORT) || 3000;
+
 
 const startServer = async () => {
   try {
     await connectToDatabase();
-    app.listen(port, () =>
-      console.log(`Server running at http://localhost:${port}`)
+    app.listen(port, '0.0.0.0', () =>
+      console.log(`Server running on port ${port}`)
     );
   } catch (error) {
     console.error("ERROR Connecting to Database", error);
