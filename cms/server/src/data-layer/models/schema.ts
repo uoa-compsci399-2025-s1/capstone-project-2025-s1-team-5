@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IModule, IProgramme, IQuestion, IQuiz, ISubsection, IUser, RoleType } from "./models";
+import { ILink, IModule, IProgramme, IQuestion, IQuiz, ISubsection, IUser, RoleType } from "./models";
 
 const userSchema: Schema<IUser> = new Schema(
     {
@@ -53,7 +53,9 @@ const moduleSchema: Schema<IModule> = new Schema(
       title: { type: String, required: true },
       description: { type: String, required: true },
       subsectionIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Subsection" }],
-      quizIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Quiz" }]
+      quizIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Quiz" }],
+      linkIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Link" }]
+
     },
     { timestamps: true }
   );
@@ -126,6 +128,23 @@ const quizSchema: Schema<IQuiz> = new Schema({
     {timestamps: true}
 );
 
+const linkSchema: Schema<ILink> = new Schema({
+        title: {
+            type: String,
+            required: true
+        },
+        link: {
+            type: String,
+            required: true
+        },
+        createdAt: {
+        type: Date,
+        default: Date.now
+    }
+}, 
+    {timestamps: true}
+)
+
 
 
 const Question = mongoose.model<IQuestion>('Question', questionSchema);
@@ -134,6 +153,8 @@ const Programme = mongoose.model<IProgramme>('Programme', programmeSchema);
 const User = mongoose.model<IUser>('User', userSchema);
 const Subsection = mongoose.model<ISubsection>('Subsection', subsectionSchema);
 const Quiz = mongoose.model<IQuiz>('Quiz', quizSchema);
+const Link = mongoose.model<ILink>('Link', linkSchema)
 
 
-export { Programme, User, Subsection, newModule, Question, Quiz}
+
+export { Programme, User, Subsection, newModule, Question, Quiz, Link}
