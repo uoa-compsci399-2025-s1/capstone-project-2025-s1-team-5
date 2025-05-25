@@ -77,6 +77,15 @@ export default function RootLayout() {
             }} 
           />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="forgotpassword"
+            options={{
+              title: '',
+              headerStyle: { backgroundColor: '#0c0c48' },
+              headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>Forgot Password</StyledText>,
+              headerTintColor: '#ffffff',
+            }}
+          />
         </Stack>
       </ThemeProvider>
     </UserProvider> 
