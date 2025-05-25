@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import TextEditor from "./TextEditor";
 
 interface Subsection {
   title: string;
@@ -43,7 +44,10 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
   };
 
   const handleAddSubsection = () => {
-    setSubsections([...subsections, { title: "New Subsection", body: "Enter content here..." }]);
+    setSubsections([...subsections, { 
+      title: "New Subsection", 
+      body: "<p>Enter content here...</p>" 
+    }]);
   };
 
   const handleDeleteSubsection = (index: number) => {
@@ -80,12 +84,10 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
     setQuizzes((prevQuizzes) =>
       prevQuizzes.map((quiz, qIdx) => {
         if (qIdx !== quizIndex) return quiz;
-        
         const updatedQuestions = quiz.questions.map((question, idx) => {
           if (idx !== questionIndex) return question;
           return { ...question, [field]: value };
         });
-        
         return { ...quiz, questions: updatedQuestions };
       })
     );
@@ -95,21 +97,16 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
     setQuizzes((prevQuizzes) =>
       prevQuizzes.map((quiz, qIdx) => {
         if (qIdx !== quizIndex) return quiz;
-        
         const updatedQuestions = quiz.questions.map((question, idx) => {
           if (idx !== questionIndex) return question;
-          
           const newOptions = [...question.options];
           newOptions[optionIndex] = value;
-          
           let correctAnswer = question.correctAnswer;
           if (correctAnswer === question.options[optionIndex]) {
             correctAnswer = value;
           }
-          
           return { ...question, options: newOptions, correctAnswer };
         });
-        
         return { ...quiz, questions: updatedQuestions };
       })
     );
@@ -119,12 +116,10 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
     setQuizzes((prevQuizzes) =>
       prevQuizzes.map((quiz, qIdx) => {
         if (qIdx !== quizIndex) return quiz;
-        
         const updatedQuestions = quiz.questions.map((question, idx) => {
           if (idx !== questionIndex) return question;
           return { ...question, correctAnswer: value };
         });
-        
         return { ...quiz, questions: updatedQuestions };
       })
     );
@@ -134,7 +129,6 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
     setQuizzes((prevQuizzes) =>
       prevQuizzes.map((quiz, idx) => {
         if (idx !== quizIndex) return quiz;
-        
         return {
           ...quiz,
           questions: [
@@ -154,7 +148,6 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
     setQuizzes((prevQuizzes) =>
       prevQuizzes.map((quiz, idx) => {
         if (idx !== quizIndex) return quiz;
-        
         return {
           ...quiz,
           questions: quiz.questions.filter((_, qIdx) => qIdx !== questionIndex)
@@ -173,15 +166,10 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
 
     try {
       const token = localStorage.getItem("authToken");
-      
       const moduleResponse = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/modules`, 
         moduleData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const moduleId = moduleResponse.data.id || moduleResponse.data._id;
@@ -191,16 +179,8 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
           subsections.map(subsection => 
             axios.post(
               `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`, 
-              {
-                title: subsection.title,
-                body: subsection.body,
-                authorID: "system"
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`
-                }
-              }
+              { ...subsection, authorID: "system" },
+              { headers: { Authorization: `Bearer ${token}` } }
             )
           )
         );
@@ -211,15 +191,8 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
           quizzes.map(async (quiz) => {
             const quizResponse = await axios.post(
               `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}/quiz`,
-              {
-                title: quiz.title,
-                description: quiz.description
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`
-                }
-              }
+              { title: quiz.title, description: quiz.description },
+              { headers: { Authorization: `Bearer ${token}` } }
             );
             
             const quizId = quizResponse.data._id;
@@ -229,16 +202,8 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
                 quiz.questions.map(question =>
                   axios.post(
                     `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}`,
-                    {
-                      question: question.question,
-                      options: question.options,
-                      correctAnswer: question.correctAnswer
-                    },
-                    {
-                      headers: {
-                        Authorization: `Bearer ${token}`
-                      }
-                    }
+                    { ...question },
+                    { headers: { Authorization: `Bearer ${token}` } }
                   )
                 )
               );
@@ -248,254 +213,246 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
       }
       
       setSuccess("Module created successfully!");
-      setError(null);
       if (onModuleCreated) onModuleCreated();
     } catch (error: any) {
       setError("Error creating module: " + (error.response?.data?.message || error.message));
-      setSuccess(null);
       console.error(error);
     }
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Create Module</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">Create New Module</h1>
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+        <div className="mb-6">
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="text-xl font-bold w-full p-2 border border-gray-300 rounded"
-            placeholder="Enter module title"
+            className="w-full p-3 border rounded-lg text-lg font-semibold"
+            placeholder="Module Title"
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-6">
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full h-24 p-2 border border-gray-300 rounded"
-            placeholder="Enter module description"
+            className="w-full p-3 border rounded-lg h-32"
+            placeholder="Module Description"
             required
           />
         </div>
-        
-        <div className="flex mb-4 border-b border-gray-300">
-          <div 
-            onClick={() => setActiveTab('subsections')}
-            className={`px-4 py-2 cursor-pointer ${
-              activeTab === 'subsections' ? 'font-bold border-b-2 border-blue-500' : 'font-normal'
-            }`}
-          >
-            Subsections
-          </div>
-          <div 
-            onClick={() => setActiveTab('quizzes')}
-            className={`px-4 py-2 cursor-pointer ${
-              activeTab === 'quizzes' ? 'font-bold border-b-2 border-blue-500' : 'font-normal'
-            }`}
-          >
-            Quizzes
-          </div>
-        </div>
-        
-        {activeTab === 'subsections' && (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-3">Subsections</h2>
-            {subsections.map((subsection, index) => (
-              <div key={index} className="mb-6 border border-gray-300 p-4 rounded">
-                <div className="flex justify-between items-center mb-2">
-                  <input
-                    type="text"
-                    value={subsection.title}
-                    onChange={(e) => handleSubsectionChange(index, "title", e.target.value)}
-                    className="text-lg font-bold w-4/5 p-2 border border-gray-300 rounded"
-                    placeholder="Subsection title"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setDeleteConfirmSubsection({ index, title: subsection.title })}
-                    className="bg-red-500 text-white border-none py-1 px-2 rounded cursor-pointer"
-                  >
-                    Delete
-                  </button>
-                </div>
-                <textarea
-                  value={subsection.body}
-                  onChange={(e) => handleSubsectionChange(index, "body", e.target.value)}
-                  className="w-full min-h-[150px] p-2 border border-gray-300 rounded"
-                  placeholder="Subsection content"
-                />
-              </div>
-            ))}
+
+        <div className="mb-6">
+          <div className="flex gap-2 mb-4 border-b">
             <button
               type="button"
-              onClick={handleAddSubsection}
-              className="bg-green-500 text-white border-none py-2 px-4 rounded cursor-pointer mt-4"
+              onClick={() => setActiveTab('subsections')}
+              className={`px-4 py-2 rounded-t-lg ${
+                activeTab === 'subsections' ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'
+              }`}
             >
-              + Add Subsection
+              Subsections
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('quizzes')}
+              className={`px-4 py-2 rounded-t-lg ${
+                activeTab === 'quizzes' ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'
+              }`}
+            >
+              Quizzes
             </button>
           </div>
-        )}
-        
-        {activeTab === 'quizzes' && (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-3">Quizzes</h2>
-            {quizzes.map((quiz, quizIndex) => (
-              <div key={quizIndex} className="mb-6 border border-gray-300 p-4 rounded">
-                <div className="flex justify-between items-center mb-2">
-                  <input
-                    type="text"
-                    value={quiz.title}
-                    onChange={(e) => handleQuizChange(quizIndex, "title", e.target.value)}
-                    className="text-lg font-bold w-4/5 p-2 border border-gray-300 rounded"
-                    placeholder="Quiz title"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setDeleteConfirmQuiz({ index: quizIndex, title: quiz.title })}
-                    className="bg-red-500 text-white border-none py-1 px-2 rounded cursor-pointer"
-                  >
-                    Delete
-                  </button>
-                </div>
-                <textarea
-                  value={quiz.description}
-                  onChange={(e) => handleQuizChange(quizIndex, "description", e.target.value)}
-                  className="w-full mb-4 h-20 p-2 border border-gray-300 rounded"
-                  placeholder="Quiz description"
-                />
-                
-                <h3 className="font-medium mb-2">Questions</h3>
-                {quiz.questions.map((question, questionIndex) => (
-                  <div key={questionIndex} className="mb-6 border border-gray-300 p-4 rounded">
-                    <div className="flex justify-between items-center mb-2">
-                      <h4 className="font-bold">Question {questionIndex + 1}</h4>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveQuestion(quizIndex, questionIndex)}
-                        className="bg-red-500 text-white border-none py-1 px-2 rounded cursor-pointer"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                    
+
+          {activeTab === 'subsections' && (
+            <div>
+              {subsections.map((subsection, index) => (
+                <div key={index} className="mb-6 p-4 border rounded-lg bg-gray-50">
+                  <div className="flex justify-between items-center mb-4">
                     <input
                       type="text"
-                      value={question.question}
-                      onChange={(e) => handleQuestionChange(quizIndex, questionIndex, "question", e.target.value)}
-                      className="w-full p-2 mb-4 border border-gray-300 rounded"
-                      placeholder="Enter question"
+                      value={subsection.title}
+                      onChange={(e) => handleSubsectionChange(index, 'title', e.target.value)}
+                      className="w-full p-2 border rounded mr-4"
+                      placeholder="Subsection Title"
                     />
-                    
-                    <div className="mb-2">
-                      <label className="font-bold block mb-2">Options:</label>
-                      {question.options.map((option, optionIndex) => (
-                        <div key={optionIndex} className="flex items-center mb-2">
+                    <button
+                      type="button"
+                      onClick={() => setDeleteConfirmSubsection({index, title: subsection.title})}
+                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  <div className="border rounded-lg overflow-hidden">
+                    <TextEditor
+                      content={subsection.body}
+                      onChange={(content) => handleSubsectionChange(index, 'body', content)}
+                    />
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={handleAddSubsection}
+                className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                Add Subsection
+              </button>
+            </div>
+          )}
+
+          {activeTab === 'quizzes' && (
+            <div>
+              {quizzes.map((quiz, quizIndex) => (
+                <div key={quizIndex} className="mb-6 p-4 border rounded-lg bg-gray-50">
+                  <div className="flex justify-between items-center mb-4">
+                    <input
+                      type="text"
+                      value={quiz.title}
+                      onChange={(e) => handleQuizChange(quizIndex, 'title', e.target.value)}
+                      className="w-full p-2 border rounded mr-4"
+                      placeholder="Quiz Title"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setDeleteConfirmQuiz({index: quizIndex, title: quiz.title})}
+                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  <textarea
+                    value={quiz.description}
+                    onChange={(e) => handleQuizChange(quizIndex, 'description', e.target.value)}
+                    className="w-full p-2 border rounded mb-4"
+                    placeholder="Quiz Description"
+                  />
+                  {quiz.questions.map((question, questionIndex) => (
+                    <div key={questionIndex} className="mb-4 p-3 border rounded bg-white">
+                      <div className="flex justify-between items-center mb-2">
+                        <input
+                          type="text"
+                          value={question.question}
+                          onChange={(e) => handleQuestionChange(quizIndex, questionIndex, 'question', e.target.value)}
+                          className="w-full p-2 border rounded mr-2"
+                          placeholder="Question"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveQuestion(quizIndex, questionIndex)}
+                          className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        {question.options.map((option, optionIndex) => (
                           <input
-                            type="radio"
-                            name={`correct-${quizIndex}-${questionIndex}`}
-                            checked={question.correctAnswer === option}
-                            onChange={() => handleCorrectAnswerChange(quizIndex, questionIndex, option)}
-                            className="mr-2"
-                          />
-                          <input
+                            key={optionIndex}
                             type="text"
                             value={option}
                             onChange={(e) => handleOptionChange(quizIndex, questionIndex, optionIndex, e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded"
+                            className="p-2 border rounded"
                             placeholder={`Option ${optionIndex + 1}`}
                           />
-                        </div>
-                      ))}
+                        ))}
+                      </div>
+                      <select
+                        value={question.correctAnswer}
+                        onChange={(e) => handleCorrectAnswerChange(quizIndex, questionIndex, e.target.value)}
+                        className="mt-2 p-2 border rounded w-full"
+                      >
+                        {question.options.map((option, index) => (
+                          <option key={index} value={option}>
+                            Option {index + 1}
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                  </div>
-                ))}
-                
-                <button
-                  type="button"
-                  onClick={() => handleAddQuestion(quizIndex)}
-                  className="bg-blue-500 text-white border-none py-1 px-3 rounded cursor-pointer"
-                >
-                  + Add Question
-                </button>
-              </div>
-            ))}
-            
-            <button
-              type="button"
-              onClick={handleAddQuiz}
-              className="bg-green-500 text-white border-none py-2 px-4 rounded cursor-pointer mt-4"
-            >
-              + Add Quiz
-            </button>
-          </div>
-        )}
-        
-        <div className="flex justify-between mt-4">
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => handleAddQuestion(quizIndex)}
+                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    Add Question
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={handleAddQuiz}
+                className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                Add Quiz
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="flex justify-end gap-4 mt-8">
           <button
             type="button"
             onClick={() => setCreateModule(false)}
-            className="bg-gray-500 text-white border-none py-2 px-4 rounded cursor-pointer"
+            className="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="bg-blue-500 text-white border-none py-2 px-4 rounded cursor-pointer"
+            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
             Create Module
           </button>
         </div>
       </form>
 
-      {error && <div className="text-red-500 mt-4">{error}</div>}
-      {success && <div className="text-green-500 mt-4">{success}</div>}
+      {error && <div className="mt-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>}
+      {success && <div className="mt-4 p-3 bg-green-100 text-green-700 rounded">{success}</div>}
 
       {deleteConfirmSubsection && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg p-8 w-11/12 max-w-lg shadow-lg text-center">
-            <h2 className="text-xl font-bold mb-3">Confirm Deletion</h2>
-            <p className="mb-4">Are you sure you want to delete the subsection "{deleteConfirmSubsection.title}"?</p>
-            <div className="flex justify-center gap-4 mt-8">
-              <button
-                onClick={() => handleDeleteSubsection(deleteConfirmSubsection.index)}
-                className="bg-red-600 text-white border-none rounded py-2 px-4 cursor-pointer"
-              >
-                Yes, Delete
-              </button>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full">
+            <h2 className="text-xl font-bold mb-4">Confirm Delete</h2>
+            <p className="mb-6">Delete subsection "{deleteConfirmSubsection.title}"?</p>
+            <div className="flex justify-end gap-4">
               <button
                 onClick={() => setDeleteConfirmSubsection(null)}
-                className="bg-gray-500 text-white border-none rounded py-2 px-4 cursor-pointer"
+                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
               >
                 Cancel
+              </button>
+              <button
+                onClick={() => handleDeleteSubsection(deleteConfirmSubsection.index)}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Delete
               </button>
             </div>
           </div>
         </div>
       )}
-      
+
       {deleteConfirmQuiz && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg p-8 w-11/12 max-w-lg shadow-lg text-center">
-            <h2 className="text-xl font-bold mb-3">Confirm Deletion</h2>
-            <p className="mb-2">Are you sure you want to delete the quiz "{deleteConfirmQuiz.title}"?</p>
-            <p className="text-red-600 font-bold mb-4">
-              This action will also delete all questions and cannot be undone.
-            </p>
-            <div className="flex justify-center gap-4 mt-8">
-              <button
-                onClick={() => handleDeleteQuiz(deleteConfirmQuiz.index)}
-                className="bg-red-600 text-white border-none rounded py-2 px-4 cursor-pointer"
-              >
-                Yes, Delete
-              </button>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full">
+            <h2 className="text-xl font-bold mb-4">Confirm Delete</h2>
+            <p className="mb-6">Delete quiz "{deleteConfirmQuiz.title}"?</p>
+            <div className="flex justify-end gap-4">
               <button
                 onClick={() => setDeleteConfirmQuiz(null)}
-                className="bg-gray-500 text-white border-none rounded py-2 px-4 cursor-pointer"
+                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
               >
                 Cancel
+              </button>
+              <button
+                onClick={() => handleDeleteQuiz(deleteConfirmQuiz.index)}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Delete
               </button>
             </div>
           </div>

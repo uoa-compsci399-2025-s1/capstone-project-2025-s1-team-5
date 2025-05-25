@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useState, useEffect } from "react";
 import { useAuth } from "../auth/AuthProvider";
 import Sidebar from "./SideBar";
 
@@ -10,8 +10,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { isAuthenticated } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Reset sidebar state when authentication status changes
+  useEffect(() => {
+    setIsSidebarOpen(false); // Always start with closed sidebar
+  }, [isAuthenticated]);
+
   const contentStyle = {
-    marginLeft: isSidebarOpen && isAuthenticated? '250px' : '0',
+    marginLeft: isSidebarOpen && isAuthenticated ? '250px' : '0',
     transition: 'margin-left 0.3s ease',
     width: '100%',
   };

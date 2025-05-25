@@ -846,7 +846,7 @@ export function RegisterRoutes(app: Router) {
                 quizId: {"in":"path","name":"quizId","required":true,"dataType":"string"},
                 quizData: {"in":"body","name":"quizData","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true}}},
         };
-        app.put('/modules/quiz/:quizId',
+        app.put('/api/modules/quiz/:quizId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.updateQuiz)),
 
@@ -907,7 +907,7 @@ export function RegisterRoutes(app: Router) {
         const argsModuleController_getQuestion: Record<string, TsoaRoute.ParameterSchema> = {
                 questionId: {"in":"path","name":"questionId","required":true,"dataType":"string"},
         };
-        app.get('/modules/question/:questionId',
+        app.get('/api/modules/question/:questionId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.getQuestion)),
 
