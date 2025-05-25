@@ -307,7 +307,7 @@ export function RegisterRoutes(app: Router) {
                 limit: {"default":10,"in":"query","name":"limit","dataType":"double"},
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
         };
-        app.get('/users',
+        app.get('/api/users',
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
             ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.getUsers)),
 
@@ -337,7 +337,7 @@ export function RegisterRoutes(app: Router) {
         const argsUsersController_getUser: Record<string, TsoaRoute.ParameterSchema> = {
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
         };
-        app.get('/users/:userId',
+        app.get('/api/users/:userId',
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
             ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.getUser)),
 
@@ -367,7 +367,7 @@ export function RegisterRoutes(app: Router) {
         const argsUsersController_createUser: Record<string, TsoaRoute.ParameterSchema> = {
                 requestbody: {"in":"body","name":"requestbody","required":true,"ref":"UserCreationParams"},
         };
-        app.post('/users',
+        app.post('/api/users',
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
             ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.createUser)),
 
@@ -397,7 +397,7 @@ export function RegisterRoutes(app: Router) {
         const argsUsersController_GetUserInfo: Record<string, TsoaRoute.ParameterSchema> = {
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
         };
-        app.get('/users/userInfo/:userId',
+        app.get('/api/users/userInfo/:userId',
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
             ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.GetUserInfo)),
 
@@ -428,7 +428,7 @@ export function RegisterRoutes(app: Router) {
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
                 updateParams: {"in":"body","name":"updateParams","required":true,"ref":"UserUpdateParams"},
         };
-        app.put('/users/:userId',
+        app.put('/api/users/:userId',
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
             ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.updateUser)),
 
@@ -458,7 +458,7 @@ export function RegisterRoutes(app: Router) {
         const argsUsersController_deleteUser: Record<string, TsoaRoute.ParameterSchema> = {
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
         };
-        app.delete('/users/:userId',
+        app.delete('/api/users/:userId',
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
             ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.deleteUser)),
 
@@ -488,7 +488,7 @@ export function RegisterRoutes(app: Router) {
         const argsUsersController_login: Record<string, TsoaRoute.ParameterSchema> = {
                 credentials: {"in":"body","name":"credentials","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"password":{"dataType":"string","required":true},"email":{"dataType":"string","required":true}}},
         };
-        app.post('/users/login',
+        app.post('/api/users/login',
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
             ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.login)),
 
@@ -519,7 +519,7 @@ export function RegisterRoutes(app: Router) {
                 body: {"in":"body","name":"body","required":true,"ref":"UpdateAvatarRequest"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.patch('/users/me/avatar',
+        app.patch('/api/users/me/avatar',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
             ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.updateAvatar)),
@@ -551,7 +551,7 @@ export function RegisterRoutes(app: Router) {
                 body: {"in":"body","name":"body","required":true,"ref":"UpdateThemeRequest"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.patch('/users/me/theme',
+        app.patch('/api/users/me/theme',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
             ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.updateTheme)),
@@ -644,7 +644,7 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_getModules: Record<string, TsoaRoute.ParameterSchema> = {
         };
-        app.get('/modules',
+        app.get('/api/modules',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.getModules)),
 
@@ -674,7 +674,7 @@ export function RegisterRoutes(app: Router) {
         const argsModuleController_getModule: Record<string, TsoaRoute.ParameterSchema> = {
                 moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
         };
-        app.get('/modules/:moduleId',
+        app.get('/api/modules/:moduleId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.getModule)),
 
@@ -704,7 +704,7 @@ export function RegisterRoutes(app: Router) {
         const argsModuleController_addModule: Record<string, TsoaRoute.ParameterSchema> = {
                 body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"title":{"dataType":"string","required":true}}},
         };
-        app.post('/modules',
+        app.post('/api/modules',
             authenticateMiddleware([{"jwt":["admin"]}]),
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.addModule)),
@@ -734,9 +734,14 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_updateModule: Record<string, TsoaRoute.ParameterSchema> = {
                 moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
-                moduleChanges: {"in":"body","name":"moduleChanges","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"subsectionIds":{"dataType":"array","array":{"dataType":"string"}},"title":{"dataType":"string"}}},
+                moduleChanges: {"in":"body","name":"moduleChanges","required":true,
+                    "dataType":"nestedObjectLiteral",
+                    "nestedProperties":{
+                        "quizIds":{"dataType":"array","array":{"dataType":"string"}},
+                        "subsectionIds":{"dataType":"array","array":{"dataType":"string"}},
+                        "title":{"dataType":"string"}}},
         };
-        app.put('/modules/:moduleId',
+        app.put('/api/modules/:moduleId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.updateModule)),
 
@@ -766,7 +771,7 @@ export function RegisterRoutes(app: Router) {
         const argsModuleController_deleteModule: Record<string, TsoaRoute.ParameterSchema> = {
                 moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
         };
-        app.delete('/modules/:moduleId',
+        app.delete('/api/modules/:moduleId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.deleteModule)),
 
@@ -797,7 +802,7 @@ export function RegisterRoutes(app: Router) {
                 moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
                 subsectionData: {"in":"body","name":"subsectionData","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"authorID":{"dataType":"string","required":true},"body":{"dataType":"string","required":true},"title":{"dataType":"string","required":true}}},
         };
-        app.post('/modules/:moduleId',
+        app.post('/api/modules/:moduleId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.addSubsection)),
 
@@ -828,7 +833,7 @@ export function RegisterRoutes(app: Router) {
                 subsectionId: {"in":"path","name":"subsectionId","required":true,"dataType":"string"},
                 subsectionChanges: {"in":"body","name":"subsectionChanges","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"body":{"dataType":"string"},"title":{"dataType":"string"}}},
         };
-        app.put('/modules/subsection/:subsectionId',
+        app.put('/api/modules/subsection/:subsectionId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.editSubsection)),
 
@@ -855,25 +860,25 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsModuleController_getSubseciton: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsModuleController_getSubsection: Record<string, TsoaRoute.ParameterSchema> = {
                 subsectionId: {"in":"path","name":"subsectionId","required":true,"dataType":"string"},
         };
-        app.get('/modules/subsection/:subsectionId',
+        app.get('/api/modules/subsection/:subsectionId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
-            ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.getSubseciton)),
+            ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.getSubsection)),
 
-            async function ModuleController_getSubseciton(request: ExRequest, response: ExResponse, next: any) {
+            async function ModuleController_getSubsection(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsModuleController_getSubseciton, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsModuleController_getSubsection, request, response });
 
                 const controller = new ModuleController();
 
               await templateService.apiHandler({
-                methodName: 'getSubseciton',
+                methodName: 'getSubsection',
                 controller,
                 response,
                 next,
@@ -889,7 +894,7 @@ export function RegisterRoutes(app: Router) {
                 moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
                 subsectionId: {"in":"path","name":"subsectionId","required":true,"dataType":"string"},
         };
-        app.delete('/modules/:moduleId/:subsectionId',
+        app.delete('/api/modules/:moduleId/:subsectionId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.deleteSubsectionFromModule)),
 
@@ -953,7 +958,7 @@ export function RegisterRoutes(app: Router) {
                 moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
                 quizData: {"in":"body","name":"quizData","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true}}},
         };
-        app.post('/modules/:moduleId/quiz',
+        app.post('/api/modules/:moduleId/quiz',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.addQuiz)),
 
@@ -983,7 +988,7 @@ export function RegisterRoutes(app: Router) {
         const argsModuleController_getQuizById: Record<string, TsoaRoute.ParameterSchema> = {
                 quizId: {"in":"path","name":"quizId","required":true,"dataType":"string"},
         };
-        app.get('/modules/quiz/:quizId',
+        app.get('/api/modules/quiz/:quizId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.getQuizById)),
 
@@ -1010,11 +1015,42 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsModuleController_updateQuiz: Record<string, TsoaRoute.ParameterSchema> = {
+                quizId: {"in":"path","name":"quizId","required":true,"dataType":"string"},
+                quizData: {"in":"body","name":"quizData","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true}}},
+        };
+        app.put('/modules/quiz/:quizId',
+            ...(fetchMiddlewares<RequestHandler>(ModuleController)),
+            ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.updateQuiz)),
+
+            async function ModuleController_updateQuiz(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsModuleController_updateQuiz, request, response });
+
+                const controller = new ModuleController();
+
+              await templateService.apiHandler({
+                methodName: 'updateQuiz',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_deleteQuiz: Record<string, TsoaRoute.ParameterSchema> = {
                 moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
                 quizId: {"in":"path","name":"quizId","required":true,"dataType":"string"},
         };
-        app.delete('/modules/quiz/:moduleId/:quizId',
+        app.delete('/api/modules/quiz/:moduleId/:quizId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.deleteQuiz)),
 
@@ -1041,11 +1077,41 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsModuleController_getQuestion: Record<string, TsoaRoute.ParameterSchema> = {
+                questionId: {"in":"path","name":"questionId","required":true,"dataType":"string"},
+        };
+        app.get('/modules/question/:questionId',
+            ...(fetchMiddlewares<RequestHandler>(ModuleController)),
+            ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.getQuestion)),
+
+            async function ModuleController_getQuestion(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsModuleController_getQuestion, request, response });
+
+                const controller = new ModuleController();
+
+              await templateService.apiHandler({
+                methodName: 'getQuestion',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_addQuestion: Record<string, TsoaRoute.ParameterSchema> = {
                 quizId: {"in":"path","name":"quizId","required":true,"dataType":"string"},
                 questionData: {"in":"body","name":"questionData","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"correctAnswer":{"dataType":"string","required":true},"options":{"dataType":"array","array":{"dataType":"string"},"required":true},"question":{"dataType":"string","required":true}}},
         };
-        app.post('/modules/quiz/:quizId',
+        app.post('/api/modules/quiz/:quizId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.addQuestion)),
 
@@ -1076,7 +1142,7 @@ export function RegisterRoutes(app: Router) {
                 questionId: {"in":"path","name":"questionId","required":true,"dataType":"string"},
                 questionData: {"in":"body","name":"questionData","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"correctAnswer":{"dataType":"string","required":true},"options":{"dataType":"array","array":{"dataType":"string"},"required":true},"question":{"dataType":"string","required":true}}},
         };
-        app.patch('/modules/question/:questionId',
+        app.patch('/api/modules/question/:questionId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.editQuestion)),
 
@@ -1107,7 +1173,7 @@ export function RegisterRoutes(app: Router) {
                 quizId: {"in":"path","name":"quizId","required":true,"dataType":"string"},
                 questionId: {"in":"path","name":"questionId","required":true,"dataType":"string"},
         };
-        app.delete('/modules/quiz/:quizId/question/:questionId',
+        app.delete('/api/modules/quiz/:quizId/question/:questionId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),
             ...(fetchMiddlewares<RequestHandler>(ModuleController.prototype.deleteQuestion)),
 
@@ -1137,7 +1203,7 @@ export function RegisterRoutes(app: Router) {
         const argsAuthController_login: Record<string, TsoaRoute.ParameterSchema> = {
                 body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"password":{"dataType":"string","required":true},"email":{"dataType":"string","required":true}}},
         };
-        app.post('/auth/login',
+        app.post('/api/auth/login',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.login)),
 
@@ -1168,7 +1234,7 @@ export function RegisterRoutes(app: Router) {
                 body: {"in":"body","name":"body","required":true,"ref":"ChangePasswordRequest"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.post('/auth/changePassword',
+        app.post('/api/auth/changePassword',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.changePassword)),
@@ -1199,7 +1265,7 @@ export function RegisterRoutes(app: Router) {
         const argsAuthController_me: Record<string, TsoaRoute.ParameterSchema> = {
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.get('/auth/me',
+        app.get('/api/auth/me',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.me)),
@@ -1230,7 +1296,7 @@ export function RegisterRoutes(app: Router) {
         const argsAuthController_checkEmail: Record<string, TsoaRoute.ParameterSchema> = {
                 body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string","required":true}}},
         };
-        app.post('/auth/check-email',
+        app.post('/api/auth/check-email',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.checkEmail)),
 

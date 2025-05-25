@@ -54,6 +54,15 @@ export class ModuleService {
 
           const module = await newModule.findById(moduleId);
 
+          if (module.quizIds && module.quizIds.length > 0) {
+            await Promise.all(
+              module.quizIds.map(async (quizId) => {
+                await this.deleteQuiz(quizId.toString(), moduleId);
+              })
+            );
+          }
+
+
           if (module.subsectionIds.length > 0) {
             await Promise.all(
               module.subsectionIds.map(async (subsectionId) => {
@@ -77,7 +86,7 @@ export class ModuleService {
      */
     public async updateModule(
         moduleId: string,
-        moduleChanges: { title?: string; description?: string; subsectionIds?: string[] }
+        moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[] }
       ): Promise<boolean> {
         try {
           const module = await newModule.findById(moduleId);
@@ -259,53 +268,100 @@ export class ModuleService {
     }
   }
 
-  public async deleteQuiz(quizId: string, moduleId: string): Promise<boolean> {
+  public async updateQuiz(
+    quizId: string,
+    quizData: { title: string; description: string }
+  ): Promise<IQuiz | null> {
     try {
-      const module = await newModule.findById(moduleId)
-      module.quizIds = module.quizIds.filter(
-        (id) => id.toString() !== quizId
-      );
-      await Quiz.findByIdAndDelete(quizId)  
-      return true
+      const quiz = await Quiz.findByIdAndUpdate(
+        quizId,
+        { 
+          title: quizData.title,
+          description: quizData.description
+        },
+        { new: true }
+      ).exec();
+      
+      return quiz;
     } catch (error) {
-      console.error(error)
-      return false
+      console.error(`Error updating quiz: ${error}`);
+      return null;
     }
   }
+
+  public async deleteQuiz(quizId: string, moduleId: string): Promise<boolean> {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(quizId) || !mongoose.Types.ObjectId.isValid(moduleId)) {
+        console.error("Invalid quiz or module ID");
+        return false;
+      }
+
+      const module = await newModule.findById(moduleId);
+      if (!module) {
+        console.error(`Module ${moduleId} not found`);
+        return false;
+      }
+
+      const quiz = await Quiz.findById(quizId);
+      if (quiz && quiz.questions && quiz.questions.length > 0) {
+        console.log(`Deleting ${quiz.questions.length} questions from quiz ${quizId}`);
+        
+        for (const questionId of quiz.questions) {
+          await Question.findByIdAndDelete(questionId);
+        }
+      }
+
+      module.quizIds = module.quizIds.filter(id => id.toString() !== quizId);
+      await module.save();
+
+      await Quiz.findByIdAndDelete(quizId);
+      
+      return true;
+    } catch (error) {
+      console.error("Error deleting quiz:", error);
+      return false;
+    }
+  }
+
+  public async getQuestionById(questionId: string): Promise<IQuestion | null> {
+    try {
+      const question = await Question.findById(questionId).exec();
+      return question;
+    } catch (error) {
+      console.error(`Error getting question: ${error}`);
+      return null;
+    }
+  }
+
   public async addQuestionToQuiz(
-    quizId: string,
+    quizId: string, 
     questionData: { question: string; options: string[]; correctAnswer: string }
-  ): Promise<IQuestion | null> {
-    // 1. Validate quizId
-    if (!mongoose.Types.ObjectId.isValid(quizId)) {
-      console.error(`Invalid quizId: ${quizId}`);
-      return null;
+  ): Promise<IQuestion> {
+    try {
+      const newQuestion = new Question({
+        question: questionData.question,
+        options: questionData.options,
+        correctAnswer: questionData.correctAnswer,
+      });
+
+      const savedQuestion = await newQuestion.save();
+      
+      await Quiz.findByIdAndUpdate(
+        quizId,
+        { $push: { questions: savedQuestion._id } }
+      );
+
+      return savedQuestion;
+    } catch (error) {
+      console.error(`Error adding question to quiz: ${error}`);
+      throw error;
     }
-
-    const quiz = await Quiz.findById(quizId);
-    if (!quiz) {
-      console.error(`Quiz not found: ${quizId}`);
-      return null;
-    }
-
-    const newQuestion = new Question({
-      question: questionData.question,
-      answers: questionData.options,   
-      correctAnswer: questionData.correctAnswer,
-    });
-    await newQuestion.save();
-
-    quiz.questions.push(newQuestion._id);
-    await quiz.save();
-
-    return newQuestion;
   }
 
   public async updateQuestion(
     questionId: string,
     questionData: { question: string; options: string[]; correctAnswer: string }
   ): Promise<IQuestion | null> {
-    // Optionally validate questionId format
     if (!mongoose.Types.ObjectId.isValid(questionId)) {
       return null;
     }
@@ -314,7 +370,7 @@ export class ModuleService {
       questionId,
       {
         question: questionData.question,
-        answers: questionData.options,
+        options: questionData.options,
         correctAnswer: questionData.correctAnswer
       },
       { new: true }

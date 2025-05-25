@@ -2,9 +2,11 @@ import React, { useContext } from 'react';
 import { TouchableOpacity, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import StyledText from '@/components/StyledText';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 interface ProfileOptionButtonProps {
   title: string;
+  iconName: 'insights' | 'location-on';  
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
   isLeftmost: boolean;
@@ -13,6 +15,7 @@ interface ProfileOptionButtonProps {
 
 const ProfileOptionButton: React.FC<ProfileOptionButtonProps> = ({
   title,
+  iconName,
   onPress,
   style,
   isLeftmost,
@@ -30,6 +33,7 @@ const ProfileOptionButton: React.FC<ProfileOptionButtonProps> = ({
 
   return (
     <TouchableOpacity style={buttonStyle} onPress={onPress}>
+      <MaterialIcons name={iconName} size={70} color="#fff" />
       <StyledText type="boldLabel" style={styles.text}>
         {title}
       </StyledText>
@@ -38,12 +42,14 @@ const ProfileOptionButton: React.FC<ProfileOptionButtonProps> = ({
 };
 
 const styles = StyleSheet.create({
-    button: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: 10,
-      alignSelf: 'stretch',
+  button: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    alignSelf: 'stretch',
+    paddingVertical: 20,
+    gap: 6,
   },
   text: {
     color: '#fff',

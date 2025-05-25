@@ -1,50 +1,59 @@
 import React, { useState, useContext } from 'react';
 import { Alert, StyleSheet, ScrollView } from 'react-native';
+import { ThemeContext } from '@/contexts/ThemeContext';
+
 import StyledText from '@/components/StyledText';
 import TextInputBox from '@/components/TextInputBox';
 import SubmitButton from '@/components/SubmitButton';
-import { ThemeContext } from '@/contexts/ThemeContext';
 
-export default function SupportScreen() {
+export default function ContactFormScreen() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [contact, setContact] = useState('');
   const { theme } = useContext(ThemeContext);
+  //link to cms/let the form be sent to Programme Consultant’s queue?
+  //do we need to add a text input box for the user to write their problem?
+  const GETFORM_ENDPOINT = 'https://getform.io/f/bpjpjpvb';
 
   const handleSubmit = async () => {
     if (!firstName || !lastName || !email || !contact) {
       Alert.alert('Missing Info', 'Please fill in all the fields.');
       return;
     }
-    //need to link to cms?
-    
+
+    const data = {
+      first_name: firstName,
+      last_name: lastName,
+      preferred_email: email,
+      contact_number: contact,
+    };
+    const formBody = new URLSearchParams(data).toString();
+
     try {
-      // Uncomment for real integration
-      /*
-      await emailjs.send(
-        'your_service_id',
-        'your_template_id',
-        {
-          first_name: firstName,
-          last_name: lastName,
-          email,
-          contact,
+      const response = await fetch(GETFORM_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        'your_public_key'
-      );
-      */
+        body: formBody,
+      });
 
-      Alert.alert('Success', 'Your enquiry has been sent.');
+      if (response.ok) {
+        Alert.alert('Success', 'Your enquiry has been sent.');
 
-      // Clear all fields
-      setFirstName('');
-      setLastName('');
-      setEmail('');
-      setContact('');
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setContact('');
+      } else {
+        const errText = await response.text();
+        console.error('Form submission failed:', errText);
+        Alert.alert('Error', 'Failed to send enquiry.');
+      }
     } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Failed to send enquiry.');
+      console.error('Fetch error:', error);
+      Alert.alert('Error', 'Network error while sending enquiry.');
     }
   };
 
@@ -57,7 +66,7 @@ export default function SupportScreen() {
       <StyledText type="default" style={[styles.introText, { color: theme.text }]}>
         Please submit your contact details below and a Programme Consultant will be in touch.
       </StyledText>
-
+      
       <TextInputBox
         placeholder="First Name"
         value={firstName}

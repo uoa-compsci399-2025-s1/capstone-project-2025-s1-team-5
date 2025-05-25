@@ -24,8 +24,8 @@ function LayoutInner() {
 
           if (route.name === 'Modules') {
             return <MaterialIcons name="menu-book" size={size} color={iconColor} />;
-          } else if (route.name === 'Forum') {
-            return <MaterialIcons name="forum" size={size} color={iconColor} />;
+          } else if (route.name === 'Support') {
+            return <MaterialIcons name="attribution" size={size} color={iconColor} />;
           } else if (route.name === 'Profile') {
             return (
               <MaterialIcons
@@ -58,7 +58,7 @@ function LayoutInner() {
       })}
     >
       <Tabs.Screen name="Modules" />
-      <Tabs.Screen name="Forum" />
+      <Tabs.Screen name="Support" />
       <Tabs.Screen name="Profile" />
     </Tabs>
   );

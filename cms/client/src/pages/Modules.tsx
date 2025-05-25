@@ -1,8 +1,8 @@
 // src/pages/Modules.tsx
 import React, { useEffect, useState } from "react";
-import api from "../lib/api";
+import api from "../lib/api"; // 你自己的 axios 实例
 import CreateModule from "./CreateModule";
-import EditModuleForm, { ModuleType as ModuleType } from "./EditModuleForm";
+import EditModuleForm, { ModuleType } from "./EditModuleForm";
 import ModuleButton from "../components/ModuleButton";
 import Modal from "../components/Modal";
 
@@ -14,12 +14,14 @@ export default function ModulesPage() {
   const [editModule, setEditModule] = useState<ModuleType | null>(null);
   const [deleteConfirmModule, setDeleteConfirmModule] = useState<ModuleType | null>(null);
 
+  // 拉取模块列表
   const fetchModules = async () => {
     try {
       const res = await api.get<{ modules: ModuleType[] }>("/modules");
       setModules(res.data.modules);
     } catch (err) {
       console.error("Failed to fetch modules:", err);
+      alert("拉取模块失败，请重试");
     }
   };
 
@@ -27,6 +29,7 @@ export default function ModulesPage() {
     fetchModules();
   }, []);
 
+  // 删除模块（连带子节）
   const handleDeleteModule = async (id: string) => {
     try {
       await api.delete(`/modules/${id}`);
@@ -38,10 +41,11 @@ export default function ModulesPage() {
     }
   };
 
+  // 搜索 & 排序
   const filtered = modules.filter((m) =>
     m.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  const sorted = [...filtered].sort((a, b) => {
+  const sortedModules = [...filtered].sort((a, b) => {
     if (sortOption === "title") {
       return a.title.localeCompare(b.title);
     }
@@ -49,63 +53,64 @@ export default function ModulesPage() {
   });
 
   return (
-    <div style={{ padding: 24, fontFamily: "Arial, sans-serif" }}>
-      {/* Header */}
-      <h1 style={{ textAlign: "center", marginBottom: 24 }}>
+    <div className="p-8 font-sans">
+      {/* 标题 */}
+      <h1 className="text-4xl text-center mb-8">
         UOA YOUR WAY: Module Management
       </h1>
 
-      {/* Controls */}
-      <div
-        style={{
-          display: "flex",
-          gap: 12,
-          marginBottom: 24,
-          alignItems: "center",
-        }}
-      >
-        <input
-          type="text"
-          placeholder="Search modules..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ flex: 1, padding: 8, borderRadius: 4, border: "1px solid #ccc" }}
+      {/* 搜索、排序、创建 */}
+      <div className="bg-gray-100 rounded-lg p-8 shadow-md mb-6 flex justify-between items-center">
+        <div className="flex items-center space-x-4">
+          <input
+            type="text"
+            placeholder="Search modules..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="p-2 border border-gray-300 rounded flex-grow"
+          />
+          <select
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value as any)}
+            className="p-2 border border-gray-300 rounded"
+          >
+            <option value="title">Title</option>
+            <option value="lastModified">Last Modified</option>
+          </select>
+        </div>
+        <ModuleButton
+          label="Create Module"
+          onClick={() => setShowCreateModule(true)}
+          color="#28a745"
         />
-        <select
-          value={sortOption}
-          onChange={(e) => setSortOption(e.target.value as any)}
-          style={{ padding: 8, borderRadius: 4 }}
-        >
-          <option value="title">Title</option>
-          <option value="lastModified">Last Modified</option>
-        </select>
-        <ModuleButton label="Create Module" onClick={() => setShowCreateModule(true)} color="#28a745" />
       </div>
 
-      {/* Module List */}
-      <div style={{ display: "grid", gap: 12 }}>
-        {sorted.map((m) => (
+      {/* 模块列表 */}
+      <div className="grid gap-4">
+        {sortedModules.map((module) => (
           <div
-            key={m.id}
-            style={{
-              padding: 16,
-              backgroundColor: "#fff",
-              borderRadius: 8,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-            }}
+            key={module.id}
+            className="bg-white rounded-lg p-4 shadow-sm flex justify-between items-center"
           >
             <div>
-              <h3 style={{ margin: 0 }}>{m.title}</h3>
-              <small style={{ color: "#666" }}>
-                Last modified: {new Date(m.updatedAt).toLocaleString()}
-              </small>
+              <h3 className="m-0">{module.title}</h3>
+              {module.updatedAt && (
+                <p className="text-sm text-gray-600">
+                  Last modified: {new Date(module.updatedAt).toLocaleString()}
+                </p>
+              )}
             </div>
-            <div style={{ display: "flex", gap: 8 }}>
-              <ModuleButton label="Edit" onClick={() => setEditModule(m)} color="#007bff" />
-              <ModuleButton label="Delete" onClick={() => setDeleteConfirmModule(m)} color="#dc3545" />
+            <div className="flex space-x-2">
+              <ModuleButton
+                label="Edit"
+                onClick={() => setEditModule(module)}
+                color="#007bff"
+              />
+              <ModuleButton
+                label="Delete"
+                onClick={() => setDeleteConfirmModule(module)}
+                color="#dc3545"
+              />
             </div>
           </div>
         ))}
@@ -141,21 +146,21 @@ export default function ModulesPage() {
       {/* Delete Confirmation Modal */}
       {deleteConfirmModule && (
         <Modal onClose={() => setDeleteConfirmModule(null)}>
-          <h2>Confirm Deletion</h2>
+          <h2 className="text-xl font-semibold mb-4">Confirm Deletion</h2>
           <p>
             Are you sure you want to delete “{deleteConfirmModule.title}”?
-            This will remove all its subsections as well.
+            This action cannot be undone.
           </p>
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+          <div className="flex justify-end space-x-2 mt-6">
             <button
               onClick={() => handleDeleteModule(deleteConfirmModule.id)}
-              style={{ background: "#dc3545", color: "#fff", padding: "8px 16px", border: "none", borderRadius: 4 }}
+              className="bg-red-600 text-white py-2 px-4 rounded"
             >
               Yes, Delete
             </button>
             <button
               onClick={() => setDeleteConfirmModule(null)}
-              style={{ background: "#6c757d", color: "#fff", padding: "8px 16px", border: "none", borderRadius: 4 }}
+              className="bg-gray-500 text-white py-2 px-4 rounded"
             >
               Cancel
             </button>
