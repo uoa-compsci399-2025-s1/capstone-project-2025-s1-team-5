@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios, { AxiosError } from 'axios';
 import { Module, Subsection, Question, Quiz } from '../types/interfaces';
 import TextEditor from './TextEditor';
@@ -26,42 +26,45 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
   const [moduleSubsectionIds, setModuleSubsectionIds] = useState<string[]>(module.subsectionIds || []);
   const [moduleQuizIds, setModuleQuizIds] = useState<string[]>(module.quizIds || []);
   const [deleteConfirmSubsection, setDeleteConfirmSubsection] = useState<Subsection | null>(null);
-  const [deleteConfirmQuiz, setDeleteConfirmQuiz] = useState<Quiz | null>(null);
+  const [deleteConfirmQuiz, setDeleteConfirmQuiz] = useState<{ index: number, title: string } | null>(null);
   const [activeTab, setActiveTab] = useState<'subsections' | 'quizzes'>('subsections');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [editingSubsectionIds, setEditingSubsectionIds] = useState<Set<string>>(new Set());
+  const generateTempId = () => `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+const quizzesFetchedRef = useRef(false);
 
   
   const getModuleId = () => {
     return module._id || '';
   };
 
- useEffect(() => {
+useEffect(() => {
   const fetchData = async () => {
+    if (quizzesFetchedRef.current) return;
+    quizzesFetchedRef.current = true;
+
     try {
       const token = localStorage.getItem("authToken");
       const headers = { Authorization: `Bearer ${token}` };
 
-      if (moduleSubsectionIds.length > 0) {
-        const subsectionPromises = moduleSubsectionIds.map(id =>
-          axios.get<Subsection>(`${process.env.REACT_APP_API_URL}/api/modules/subsection/${id}`, { headers })
-        );
-        const subsectionResponses = await Promise.all(subsectionPromises);
-        const fetchedSubsections = subsectionResponses.map(res => res.data);
-        setSubsections(fetchedSubsections);
-      }
+      // Fetch quizzes and subsections
+      const [subResponses, quizResponses] = await Promise.all([
+        Promise.all(
+          moduleSubsectionIds.map(id =>
+            axios.get<Subsection>(`${process.env.REACT_APP_API_URL}/api/modules/subsection/${id}`, { headers })
+          )
+        ),
+        Promise.all(
+          moduleQuizIds.map(id =>
+            axios.get<Quiz>(`${process.env.REACT_APP_API_URL}/api/modules/quiz/${id}`, { headers })
+          )
+        )
+      ]);
 
-      if (moduleQuizIds.length > 0) {
-        const quizPromises = moduleQuizIds.map(id =>
-          axios.get<Quiz>(`${process.env.REACT_APP_API_URL}/api/modules/quiz/${id}`, { headers })
-        );
-        const quizResponses = await Promise.all(quizPromises);
-        const fetchedQuizzes = quizResponses.map(res => res.data);
-        setQuizzes(fetchedQuizzes);
-      }
-
+      setSubsections(subResponses.map(res => res.data));
+      setQuizzes(quizResponses.map(res => ({ ...res.data, questions: res.data.questions || [] })));
       setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -72,6 +75,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
 
   fetchData();
 }, [moduleSubsectionIds, moduleQuizIds]);
+
 
 
   const handleSubsectionChange = (_id: string, field: keyof Subsection, value: string) => {
@@ -176,7 +180,7 @@ const handleDragEnd = (result: DropResult) => {
   setModuleSubsectionIds(reordered.map((s) => s._id)); // update order for submission
 };
 
-  const handleAddQuiz = async () => {
+ const handleAddQuiz = async () => {
     try {
       const moduleId = getModuleId();
       if (!moduleId) {
@@ -219,7 +223,7 @@ const handleDragEnd = (result: DropResult) => {
       
       // Fix the deletion endpoint
       await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}`,
+        `${process.env.REACT_APP_API_URL}/api/modules/quiz/${moduleId}/${quizId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
@@ -276,36 +280,35 @@ const handleDragEnd = (result: DropResult) => {
   };
 
   const handleAddQuestion = async (quizId: string) => {
-    try {
-      const token = localStorage.getItem("authToken");
-      const response = await axios.post<Question>(
-        `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}/question`, // Fixed endpoint
-        {
-          question: "Enter your question here",
-          options: ["Option 1", "Option 2", "Option 3", "Option 4"],
-          correctAnswer: "Option 1"
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      const newQuestion = response.data;
-      setQuizzes(prev => 
-        prev.map(quiz => 
-          quiz._id === quizId 
-            ? { ...quiz, questions: [...quiz.questions, newQuestion] } 
-            : quiz
-        )
-      );
-      setSuccess("Question added successfully");
-      setError(null);
-    } catch (error) {
-      console.error("Failed to add question:", error);
-      setError(`Failed to add question: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      setSuccess(null);
-    }
-  };
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.post<Question>(
+      `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}`, // ✅ corrected path
+      {
+        question: "Enter your question here",
+        options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+        correctAnswer: "Option 1"
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
-  
+    const newQuestion = response.data;
+    setQuizzes(prev => 
+      prev.map(quiz => 
+        quiz._id === quizId 
+          ? { ...quiz, questions: [...quiz.questions, newQuestion] } 
+          : quiz
+      )
+    );
+    setSuccess("Question added successfully");
+    setError(null);
+  } catch (error) {
+    console.error("Failed to add question:", error);
+    setError(`Failed to add question: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    setSuccess(null);
+  }
+};
+
   const handleRemoveQuestion = async (quizId: string, questionId: string) => {
     try {
       const token = localStorage.getItem("authToken");
@@ -543,7 +546,8 @@ const handleDragEnd = (result: DropResult) => {
                     />
                     <button
                       type="button"
-                      onClick={() => setDeleteConfirmQuiz(quiz)}
+                      onClick={() => setDeleteConfirmQuiz({ index: quizzes.findIndex(q => q._id === quiz._id), title: quiz.title })}
+
                       className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                     >
                       Delete
@@ -675,7 +679,8 @@ const handleDragEnd = (result: DropResult) => {
                 Cancel
               </button>
               <button
-                onClick={() => handleDeleteQuiz(deleteConfirmQuiz._id)}
+                onClick={() => handleDeleteQuiz(quizzes[deleteConfirmQuiz.index]._id)}
+
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
               >
                 Delete
