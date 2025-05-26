@@ -172,13 +172,26 @@ export default function EditModuleForm({
   
     // quizzes
     if (moduleQuizIds.length) {
-      Promise.all(
-        moduleQuizIds.map((id) => api.get(`/modules/quiz/${id}`))
-      )
-        .then((res) => setQuizzes(res.map((r) => r.data as Quiz)))
-        .catch(console.error);
+      Promise.all(moduleQuizIds.map(id => api.get(`/modules/quiz/${id}`)))
+      .then(resList => {
+        console.log("原始 quiz 全部字段：\n", JSON.stringify(resList.map(r => r.data), null, 2));
+        const fixed = resList.map(r => {
+          const qz = r.data as Quiz;
+          return {
+            ...qz,
+            // // 如果后端没有 questions，就补空数组
+            // questions: Array.isArray(qz.questions) ? qz.questions : [],
+            // 如果每个 question.options 也可能缺失，也一起补齐：
+            questions: (Array.isArray(qz.questions) ? qz.questions : []).map(q => ({
+              ...q,
+              options: Array.isArray(q.options) ? q.options : [],
+            }))
+          };
+        });
+      setQuizzes(fixed);
+    })
+    .catch(console.error);
     }
-    console.log('Fetched quizzes:', moduleQuizIds);
   }, [order, moduleQuizIds]);
 
   // --- Subsection handlers (unchanged) ---
@@ -343,6 +356,7 @@ export default function EditModuleForm({
     // update quizzes & questions
     await Promise.all(
       quizzes.map(async (quiz) => {
+        console.log(quiz.title,quiz.description);
         await api.put(`/modules/quiz/${quiz._id}`, {
           title: quiz.title,
           description: quiz.description,
@@ -350,7 +364,7 @@ export default function EditModuleForm({
         if (quiz.questions.length) {
           await Promise.all(
             quiz.questions.map((q) =>
-              api.put(`/modules/question/${q._id}`, {
+              api.patch(`/modules/question/${q._id}`, {
                 question: q.question,
                 options: q.options,
                 correctAnswer: q.correctAnswer,

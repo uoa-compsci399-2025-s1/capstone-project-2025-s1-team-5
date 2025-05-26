@@ -35,17 +35,10 @@ export interface IProgramme {
 }
 
 export interface IQuestion {
-    id: string;
+    _id: string;
     question: string;
     options: string[];
     correctAnswer: string;
-    createdAt: Date;
-}
-
-export interface IQuiz extends Document {
-    title: string;
-    description: string;
-    questions: Types.ObjectId[];
     createdAt: Date;
 }
 
@@ -93,9 +86,10 @@ export interface ChangePasswordRequest {
 }
 
 export interface IQuiz {
+    _id: string;
     title: string;
     description: string;
-    questions: Types.ObjectId[];
+    questions: IQuestion[];
     createdAt: Date;
     updatedAt: Date;
 

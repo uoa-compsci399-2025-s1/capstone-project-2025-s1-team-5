@@ -14,7 +14,7 @@ import {
 } from "tsoa";
 import { ModuleService } from "../../data-layer/services/ModuleService";
 import { ModuleGetResponse, ModulesGetResponse, LayoutSectionsDTO , QuizDto} from "../response-models/ModuleResponse";
-import { IModule, IQuestion, ISubsection, LayoutConfig } from "../../data-layer/models/models";
+import { IModule, IQuestion, IQuiz, ISubsection, LayoutConfig } from "../../data-layer/models/models";
 import { moduleToResponse } from "../../data-layer/adapter/ModuleAdapter";
 
 @Route("modules")
@@ -153,7 +153,7 @@ export class ModuleController extends Controller {
 
     //Get Quiz
     @Get("quiz/{quizId}")
-    public async getQuizById(@Path() quizId: string): Promise<QuizDto> {
+    public async getQuizById(@Path() quizId: string): Promise<IQuiz> {
       const newQuiz = await this.moduleService.getQuizById(quizId);
       if (!newQuiz) {
         this.setStatus?.(404);
@@ -163,7 +163,13 @@ export class ModuleController extends Controller {
     _id: newQuiz._id.toString(),
     title: newQuiz.title,
     description: newQuiz.description,
-    questions: newQuiz.questions.map(q => q.toString()),
+    questions: newQuiz.questions.map(q => ({
+      _id: q._id.toString(),
+      question: q.question,
+      options: q.options,
+      correctAnswer: q.correctAnswer,
+      createdAt: q.createdAt,
+    })),
     createdAt: newQuiz.createdAt,
     updatedAt: newQuiz.updatedAt,
   };

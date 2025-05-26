@@ -268,11 +268,24 @@ const models: TsoaRoute.Models = {
     "IQuestion": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"string","required":true},
+            "_id": {"dataType":"string","required":true},
             "question": {"dataType":"string","required":true},
             "options": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "correctAnswer": {"dataType":"string","required":true},
             "createdAt": {"dataType":"datetime","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IQuiz": {
+        "dataType": "refObject",
+        "properties": {
+            "_id": {"dataType":"string","required":true},
+            "title": {"dataType":"string","required":true},
+            "description": {"dataType":"string","required":true},
+            "questions": {"dataType":"array","array":{"dataType":"refObject","ref":"IQuestion"},"required":true},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
         },
         "additionalProperties": false,
     },
@@ -795,7 +808,7 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_addSubsection: Record<string, TsoaRoute.ParameterSchema> = {
                 moduleId: {"in":"path","name":"moduleId","required":true,"dataType":"string"},
-                subsectionData: {"in":"body","name":"subsectionData","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"authorID":{"dataType":"string","required":true},"body":{"dataType":"string","required":true},"title":{"dataType":"string","required":true}}},
+                subsectionData: {"in":"body","name":"subsectionData","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"authorID":{"dataType":"string","required":true},"title":{"dataType":"string","required":true}}},
         };
         app.post('/api/modules/:moduleId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),

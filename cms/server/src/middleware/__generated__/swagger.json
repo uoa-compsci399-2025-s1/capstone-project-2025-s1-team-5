@@ -636,7 +636,7 @@
 			},
 			"IQuestion": {
 				"properties": {
-					"id": {
+					"_id": {
 						"type": "string"
 					},
 					"question": {
@@ -657,11 +657,48 @@
 					}
 				},
 				"required": [
-					"id",
+					"_id",
 					"question",
 					"options",
 					"correctAnswer",
 					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IQuiz": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"questions": {
+						"items": {
+							"$ref": "#/components/schemas/IQuestion"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"_id",
+					"title",
+					"description",
+					"questions",
+					"createdAt",
+					"updatedAt"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1366,16 +1403,12 @@
 									"authorID": {
 										"type": "string"
 									},
-									"body": {
-										"type": "string"
-									},
 									"title": {
 										"type": "string"
 									}
 								},
 								"required": [
 									"authorID",
-									"body",
 									"title"
 								],
 								"type": "object"
@@ -1623,7 +1656,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/QuizDto"
+									"$ref": "#/components/schemas/IQuiz"
 								}
 							}
 						}

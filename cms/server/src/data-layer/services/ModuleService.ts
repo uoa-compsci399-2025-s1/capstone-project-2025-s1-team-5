@@ -247,9 +247,16 @@ export class ModuleService {
     
         const newQuiz = new Quiz(quizData);
         await newQuiz.save();
-        module.quizIds.push(newQuiz._id as Types.ObjectId);        
+        module.quizIds.push(new Types.ObjectId(newQuiz._id.toString()));        
         await module.save();
-        return newQuiz;
+        return {
+          _id: newQuiz._id.toString(),
+          title: newQuiz.title,
+          description: newQuiz.description,
+          questions: [],      // 注意：这里可能先留空，后续再 populate 看业务
+          createdAt: newQuiz.createdAt,
+          updatedAt: newQuiz.updatedAt,
+        };
       } catch (error: any) {
         throw error;
     }
@@ -257,7 +264,7 @@ export class ModuleService {
 
   public async getQuizById(quizId: string): Promise<IQuiz | null> {
     try {
-      const quiz = await Quiz.findById(quizId).populate("questions").exec();
+      const quiz = await Quiz.findById(quizId).populate("questions").lean().exec();
       if (!quiz) {
         return null;
       }
