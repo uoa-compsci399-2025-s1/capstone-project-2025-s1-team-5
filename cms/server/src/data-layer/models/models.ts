@@ -42,28 +42,25 @@ export interface IQuestion {
     createdAt: Date;
 }
 
-export interface LayoutBlock {
-  blockId: string;
-  side: "left" | "right";
-  order: number;
-}
-
 export interface LayoutConfig {
   sections: SectionConfig[];          
 }
 
 export interface SectionConfig {
+  _id?: string;
   id: string;
   layout: "full" | "split";
   splitRatio?: number[];
-  columns: { blocks: BlockConfig[] }[];
+  columns: ColumnConfig[];
 }
 
 export interface ColumnConfig {
+  _id?: string;
   blocks: BlockConfig[];
 }
 
 export interface BlockConfig {
+  _id?: string;
   id: string;
   type: "text" | "image" | "video";
   html?: string;   // text 用

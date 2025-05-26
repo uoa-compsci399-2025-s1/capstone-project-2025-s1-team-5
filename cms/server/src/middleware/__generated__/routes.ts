@@ -131,6 +131,7 @@ const models: TsoaRoute.Models = {
     "BlockConfig": {
         "dataType": "refObject",
         "properties": {
+            "_id": {"dataType":"string"},
             "id": {"dataType":"string","required":true},
             "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["text"]},{"dataType":"enum","enums":["image"]},{"dataType":"enum","enums":["video"]}],"required":true},
             "html": {"dataType":"string"},
@@ -139,13 +140,23 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ColumnConfig": {
+        "dataType": "refObject",
+        "properties": {
+            "_id": {"dataType":"string"},
+            "blocks": {"dataType":"array","array":{"dataType":"refObject","ref":"BlockConfig"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SectionConfig": {
         "dataType": "refObject",
         "properties": {
+            "_id": {"dataType":"string"},
             "id": {"dataType":"string","required":true},
             "layout": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["full"]},{"dataType":"enum","enums":["split"]}],"required":true},
             "splitRatio": {"dataType":"array","array":{"dataType":"double"}},
-            "columns": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"blocks":{"dataType":"array","array":{"dataType":"refObject","ref":"BlockConfig"},"required":true}}},"required":true},
+            "columns": {"dataType":"array","array":{"dataType":"refObject","ref":"ColumnConfig"},"required":true},
         },
         "additionalProperties": false,
     },
@@ -207,47 +218,6 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
             "layout": {"ref":"LayoutConfig","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "BlockConfigDTO": {
-        "dataType": "refObject",
-        "properties": {
-            "id": {"dataType":"string","required":true},
-            "_id": {"dataType":"string"},
-            "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["text"]},{"dataType":"enum","enums":["image"]},{"dataType":"enum","enums":["video"]}],"required":true},
-            "html": {"dataType":"string","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ColumnConfigDTO": {
-        "dataType": "refObject",
-        "properties": {
-            "blocks": {"dataType":"array","array":{"dataType":"refObject","ref":"BlockConfigDTO"},"required":true},
-            "_id": {"dataType":"string"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SectionConfigDTO": {
-        "dataType": "refObject",
-        "properties": {
-            "id": {"dataType":"string","required":true},
-            "layout": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["full"]},{"dataType":"enum","enums":["split"]}],"required":true},
-            "splitRatio": {"dataType":"array","array":{"dataType":"double"}},
-            "columns": {"dataType":"array","array":{"dataType":"refObject","ref":"ColumnConfigDTO"},"required":true},
-            "_id": {"dataType":"string"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "LayoutSectionsDTO": {
-        "dataType": "refObject",
-        "properties": {
-            "sections": {"dataType":"array","array":{"dataType":"refObject","ref":"SectionConfigDTO"},"required":true},
-            "_id": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -931,7 +901,7 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_updateSubsectionLayout: Record<string, TsoaRoute.ParameterSchema> = {
                 subsectionId: {"in":"path","name":"subsectionId","required":true,"dataType":"string"},
-                dto: {"in":"body","name":"dto","required":true,"ref":"LayoutSectionsDTO"},
+                dto: {"in":"body","name":"dto","required":true,"ref":"LayoutConfig"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.put('/api/modules/subsection/:subsectionId/layout',

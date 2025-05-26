@@ -34,12 +34,13 @@ export default function BlockEditorModal({
   // 2) 拉布局
   useEffect(() => {
     setLayout(initialLayout);
+    console.log(initialLayout);
+    setLoading(false);
   }, [initialLayout]);
 
   // 3) 点击保存：先更新 title，再更新 layout
   const handleSaveAll = async () => {
     try {
-      // 更新标题
       await api.put(`/modules/subsection/${subsectionId}`, {
         title,
       });
@@ -130,6 +131,7 @@ export default function BlockEditorModal({
         {/* 底部操作按钮 */}
         <div style={{ marginTop: 24, textAlign: "right" }}>
           <button
+            type="button" 
             onClick={handleSaveAll}
             style={{
               padding: "8px 16px",

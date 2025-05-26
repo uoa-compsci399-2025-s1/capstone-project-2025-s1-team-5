@@ -13,7 +13,7 @@ import {
     Request,
 } from "tsoa";
 import { ModuleService } from "../../data-layer/services/ModuleService";
-import { ModuleGetResponse, ModulesGetResponse, LayoutSectionsDTO , QuizDto} from "../response-models/ModuleResponse";
+import { ModuleGetResponse, ModulesGetResponse, QuizDto} from "../response-models/ModuleResponse";
 import { IModule, IQuestion, IQuiz, ISubsection, LayoutConfig } from "../../data-layer/models/models";
 import { moduleToResponse } from "../../data-layer/adapter/ModuleAdapter";
 
@@ -89,8 +89,9 @@ export class ModuleController extends Controller {
     @SuccessResponse(202, "Subsection updated")
     public async editSubsection(
     @Path() subsectionId: string,
-    @Body() subsectionChanges: { title?: string; layout?: LayoutConfig[] }
+    @Body() subsectionChanges: { title?: string;}
     ): Promise<{ success: boolean }> {
+      console.log("received", subsectionChanges);
     const result = await this.moduleService.editSubsection(subsectionId, subsectionChanges);
     return { success: result };
     }
@@ -119,7 +120,7 @@ export class ModuleController extends Controller {
     @SuccessResponse(200, 'Layout updated')
     public async updateSubsectionLayout(
       @Path() subsectionId: string,
-      @Body() dto: LayoutSectionsDTO,
+      @Body() dto: LayoutConfig,
       @Request() req: any
     ): Promise<{ success: boolean }> {
       console.log("Incoming payload:", JSON.stringify(req.body, null, 2));
