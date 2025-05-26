@@ -202,7 +202,6 @@ const models: TsoaRoute.Models = {
         "properties": {
             "id": {"dataType":"string","required":true},
             "title": {"dataType":"string","required":true},
-            "body": {"dataType":"string","required":true},
             "authorID": {"dataType":"string","required":true},
             "published": {"dataType":"boolean","required":true},
             "createdAt": {"dataType":"datetime","required":true},
@@ -827,7 +826,7 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsModuleController_editSubsection: Record<string, TsoaRoute.ParameterSchema> = {
                 subsectionId: {"in":"path","name":"subsectionId","required":true,"dataType":"string"},
-                subsectionChanges: {"in":"body","name":"subsectionChanges","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"body":{"dataType":"string"},"title":{"dataType":"string"}}},
+                subsectionChanges: {"in":"body","name":"subsectionChanges","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"layout":{"dataType":"array","array":{"dataType":"refObject","ref":"LayoutConfig"}},"title":{"dataType":"string"}}},
         };
         app.put('/api/modules/subsection/:subsectionId',
             ...(fetchMiddlewares<RequestHandler>(ModuleController)),

@@ -80,7 +80,6 @@ export interface BlockConfig {
 export interface ISubsection {
     id: string;
     title: string;
-    body: string;
     authorID: string;
     published: boolean;
     createdAt: Date;

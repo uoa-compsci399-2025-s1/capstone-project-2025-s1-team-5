@@ -97,6 +97,7 @@ export class ModuleService {
           }
           module.title = moduleChanges.title;
           module.subsectionIds = moduleChanges.subsectionIds?.map(id => new mongoose.Types.ObjectId(id));
+          module.quizIds = moduleChanges.quizIds?.map(id => new mongoose.Types.ObjectId(id));
     
           await module.save();
           return true;
@@ -113,7 +114,7 @@ export class ModuleService {
      */
     public async addSubsection(
       moduleId: string,
-      subsectionData: { title: string; body: string; authorID: string }
+      subsectionData: { title: string; authorID: string }
     ): Promise<ISubsection | null> {
       try {
         const module = await newModule.findById(moduleId);
@@ -123,7 +124,6 @@ export class ModuleService {
     
         const newSubsection = new Subsection({
           title: subsectionData.title,
-          body: subsectionData.body,
           authorID: subsectionData.authorID,
         });
     
@@ -185,7 +185,7 @@ export class ModuleService {
        */
       public async editSubsection(
         subsectionId: string,
-        changes: { title?: string; body?: string }
+        changes: { title?: string; }
       ): Promise<boolean> {
         try {
       
@@ -195,7 +195,6 @@ export class ModuleService {
           }
       
           if (changes.title !== undefined) subsection.title = changes.title;
-          if (changes.body !== undefined) subsection.body = changes.body;
       
           await subsection.save();
           return true;
@@ -262,6 +261,7 @@ export class ModuleService {
       if (!quiz) {
         return null;
       }
+      console.log(quiz);
       return quiz;
     } catch (error) {
       console.error("Error fetching quiz by ID:", error);

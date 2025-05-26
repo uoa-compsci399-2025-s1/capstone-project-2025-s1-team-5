@@ -1,5 +1,4 @@
-// src/pages/EditModuleForm.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FormEvent } from "react";
 import {
   DndContext,
   closestCenter,
@@ -17,6 +16,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import api from "../lib/api";
 import BlockEditorModal from "./BlockEditorModal";
+import { LayoutConfig } from "../components/LayoutEditor";
 
 export interface ModuleType {
   id: string;
@@ -29,7 +29,7 @@ export interface ModuleType {
 interface Subsection {
   _id: string;
   title: string;
-  body: string;
+  layout: LayoutConfig;
 }
 
 interface Question {
@@ -52,7 +52,7 @@ interface EditModuleFormProps {
   setEditModule: React.Dispatch<React.SetStateAction<ModuleType | null>>;
 }
 
-// —— 拖拽 + 内联编辑标题 + 打开内容编辑的行组件
+// SubItem component unchanged...
 function SubItem({
   sub,
   isEditing,
@@ -93,15 +93,15 @@ function SubItem({
         transition,
       }}
       onClick={(e) => {
-        // 避免点击 Edit Content 或输入框时触发选中
-        if ((e.target as HTMLElement).tagName !== "BUTTON" &&
-            (e.target as HTMLElement).tagName !== "INPUT" &&
-            (e.target as HTMLElement).tagName !== "TEXTAREA") {
+        if (
+          (e.target as HTMLElement).tagName !== "BUTTON" &&
+          (e.target as HTMLElement).tagName !== "INPUT" &&
+          (e.target as HTMLElement).tagName !== "TEXTAREA"
+        ) {
           onToggleSelect();
         }
       }}
     >
-      {/* 拖拽把手 */}
       <div
         {...attributes}
         {...listeners}
@@ -109,7 +109,6 @@ function SubItem({
       >
         ☰
       </div>
-      {/* 双击编辑标题 */}
       <div className="flex-1 px-2">
         {isEditing ? (
           <input
@@ -121,15 +120,11 @@ function SubItem({
             className="w-full border-b border-blue-500 focus:outline-none"
           />
         ) : (
-          <span
-            onDoubleClick={onStartEdit}
-            className="cursor-pointer"
-          >
+          <span onDoubleClick={onStartEdit} className="cursor-pointer">
             {sub.title}
           </span>
         )}
       </div>
-      {/* 打开内容编辑弹窗 */}
       <button
         type="button"
         onClick={onEditContent}
@@ -146,12 +141,12 @@ export default function EditModuleForm({
   onModuleUpdated,
   setEditModule,
 }: EditModuleFormProps) {
-  // --- Tab 状态 ---
+  // Tabs
   const [activeTab, setActiveTab] = useState<"subsections" | "quizzes">(
     "subsections"
   );
 
-  // --- Subsection 相关状态 ---
+  // Subsections state
   const [subsections, setSubsections] = useState<Subsection[]>([]);
   const [order, setOrder] = useState<string[]>(module.subsectionIds);
   const [editingTitleId, setEditingTitleId] = useState<string | null>(null);
@@ -161,37 +156,32 @@ export default function EditModuleForm({
   const [selectedSubId, setSelectedSubId] = useState<string | null>(null);
   const [moduleTitle, setModuleTitle] = useState<string>(module.title);
 
-  // --- Quiz 相关状态 ---
+  // Quizzes state (from file2)
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [moduleQuizIds, setModuleQuizIds] = useState<string[]>(module.quizIds);
   const [deleteConfirmQuiz, setDeleteConfirmQuiz] = useState<string | null>(null);
 
-  // dnd-kit sensors
   const sensors = useSensors(useSensor(PointerSensor));
 
-  // 拉取所有 Subsections & Quizzes
+  // Fetch subsections & quizzes
   useEffect(() => {
-    // Subsections
+    // subsections
     Promise.all(order.map((id) => api.get(`/modules/subsection/${id}`)))
-      .then((res) =>
-        setSubsections(res.map((r) => r.data as Subsection))
-      )
+      .then((res) => setSubsections(res.map((r) => r.data as Subsection)))
       .catch(console.error);
-
-    // Quizzes
-    if (module.quizIds?.length) {
+  
+    // quizzes
+    if (moduleQuizIds.length) {
       Promise.all(
-        module.quizIds.map((id) =>
-          api.get(`/modules/quiz/${id}`)
-        )
+        moduleQuizIds.map((id) => api.get(`/modules/quiz/${id}`))
       )
-        .then((res) =>
-          setQuizzes(res.map((r) => r.data as Quiz))
-        )
+        .then((res) => setQuizzes(res.map((r) => r.data as Quiz)))
         .catch(console.error);
     }
-  }, [order, module.quizIds]);
+    console.log('Fetched quizzes:', moduleQuizIds);
+  }, [order, moduleQuizIds]);
 
-  // 保存 Drag 排序
+  // --- Subsection handlers (unchanged) ---
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (!over || active.id === over.id) return;
     setSubsections((list) => {
@@ -203,258 +193,338 @@ export default function EditModuleForm({
     });
   };
 
-  // 新增 Subsection
   const handleAddSubsection = async () => {
-    console.log(module.id);
     const res = await api.post(`/modules/${module.id}`, {
       title: "New Subsection",
-      body: "<p>Enter content…</p>",
       authorID: "system",
     });
-    const newId = res.data._id;
+    const newId = (res.data as any)._id;
     setOrder((o) => [...o, newId]);
   };
 
-  // 删除 Subsection
   const handleDeleteSubsection = async (id: string) => {
-     await api.delete(`/modules/${module.id}/${id}`);
+    await api.delete(`/modules/${module.id}/${id}`);
     setOrder((o) => o.filter((x) => x !== id));
     setDeleteConfirmSub(null);
   };
 
-  // 保存某行标题编辑
   const saveSubsectionTitle = async (id: string) => {
-    await api.put(`/modules/subsection/${id}`, {
-      title: editingTitleValue,
-    });
+    await api.put(`/modules/subsection/${id}`, { title: editingTitleValue });
     setSubsections((s) =>
-      s.map((x) =>
-        x._id === id ? { ...x, title: editingTitleValue } : x
-      )
+      s.map((x) => (x._id === id ? { ...x, title: editingTitleValue } : x))
     );
     setEditingTitleId(null);
   };
 
-  // 新增 Quiz
+  // --- Quiz handlers (from file2, using api) ---
   const handleAddQuiz = async () => {
     const res = await api.post(`/modules/${module.id}/quiz`, {
       title: "New Quiz",
       description: "",
     });
-    console.log(res.data)
-    setQuizzes((q) => [...q, { ...(res.data as Quiz), questions: [] }]);
+    const newQuiz = res.data as Quiz;
+    newQuiz.questions = newQuiz.questions || [];
+    setQuizzes((prev) => [...prev, newQuiz]);
+    setModuleQuizIds((prev) => [...prev, newQuiz._id]);
   };
 
-  // 删除 Quiz
-  const handleDeleteQuiz = async (id: string) => {
-    await api.delete(`/modules/quiz/${module.id}/${id}`);
-    setQuizzes((q) => q.filter((x) => x._id !== id));
+  const handleDeleteQuiz = async (quizId: string) => {
+    // delete all questions first
+    const quizToDelete = quizzes.find((q) => q._id === quizId);
+    if (quizToDelete?.questions?.length) {
+      for (const question of quizToDelete.questions) {
+        await api.delete(
+          `/modules/question/${question._id}`
+        );
+      }
+    }
+    await api.delete(`/modules/quiz/${module.id}/${quizId}`);
+    setQuizzes((prev) => prev.filter((q) => q._id !== quizId));
+    setModuleQuizIds((prev) => prev.filter((id) => id !== quizId));
     setDeleteConfirmQuiz(null);
   };
 
-  // ---------------------- 提交模块顺序 & quizIds ----------------------
-  const handleSaveModule = async () => {
-    await api.put(`/modules/${module.id}`, {
-      title: moduleTitle, // 标题目前无法修改
-      subsectionIds: order,
-      quizIds: quizzes.map((q) => q._id),
+  const handleQuizChange = (
+    quizId: string,
+    field: keyof Omit<Quiz, '_id' | 'questions'>,
+    value: string
+  ) => {
+    setQuizzes((prev) =>
+      prev.map((quiz) =>
+        quiz._id === quizId ? { ...quiz, [field]: value } : quiz
+      )
+    );
+  };
+
+  const handleQuestionChange = (
+    quizId: string,
+    questionId: string,
+    field: keyof Omit<Question, '_id'>,
+    value: string | string[]
+  ) => {
+    setQuizzes((prev) =>
+      prev.map((quiz) => {
+        if (quiz._id !== quizId) return quiz;
+        const updated = quiz.questions.map((q) =>
+          q._id === questionId ? { ...q, [field]: value } : q
+        );
+        return { ...quiz, questions: updated };
+      })
+    );
+  };
+
+  const handleOptionChange = (
+    quizId: string,
+    questionId: string,
+    idx: number,
+    value: string
+  ) => {
+    setQuizzes((prev) =>
+      prev.map((quiz) => {
+        if (quiz._id !== quizId) return quiz;
+        const updatedQs = quiz.questions.map((q) => {
+          if (q._id !== questionId) return q;
+          const newOpts = [...q.options];
+          newOpts[idx] = value;
+          let newCorrect = q.correctAnswer;
+          if (newCorrect === q.options[idx]) newCorrect = value;
+          return { ...q, options: newOpts, correctAnswer: newCorrect };
+        });
+        return { ...quiz, questions: updatedQs };
+      })
+    );
+  };
+
+  const handleAddQuestion = async (quizId: string) => {
+    const res = await api.post(`/modules/quiz/${quizId}`, {
+      question: "Enter your question here",
+      options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+      correctAnswer: "Option 1",
     });
+    const newQ = res.data as Question;
+    setQuizzes((prev) =>
+      prev.map((quiz) =>
+        quiz._id === quizId
+          ? { ...quiz, questions: [...quiz.questions, newQ] }
+          : quiz
+      )
+    );
+  };
+
+  const handleRemoveQuestion = async (quizId: string, questionId: string) => {
+    await api.delete(`/modules/quiz/${quizId}/question/${questionId}`);
+    setQuizzes((prev) =>
+      prev.map((quiz) =>
+        quiz._id === quizId
+          ? { ...quiz, questions: quiz.questions.filter((q) => q._id !== questionId) }
+          : quiz
+      )
+    );
+  };
+
+  // --- Save module (combines updating module & nested resources) ---
+  const handleSaveModule = async (e: FormEvent) => {
+    e.preventDefault();
+    // update module metadata
+    await api.put(`/modules/${module.id}`, {
+      title: moduleTitle,
+      subsectionIds: order,
+      quizIds: moduleQuizIds,
+    });
+    // update subsections bodies & titles
+    await Promise.all(
+      subsections.map((sub) =>
+        api.put(`/modules/subsection/${sub._id}`, {
+          title: sub.title,
+          layout: sub.layout,
+        })
+      )
+    );
+    // update quizzes & questions
+    await Promise.all(
+      quizzes.map(async (quiz) => {
+        await api.put(`/modules/quiz/${quiz._id}`, {
+          title: quiz.title,
+          description: quiz.description,
+        });
+        if (quiz.questions.length) {
+          await Promise.all(
+            quiz.questions.map((q) =>
+              api.put(`/modules/question/${q._id}`, {
+                question: q.question,
+                options: q.options,
+                correctAnswer: q.correctAnswer,
+              })
+            )
+          );
+        }
+      })
+    );
     onModuleUpdated();
     setEditModule(null);
   };
 
   return (
-    <div className="p-6 w-full max-w-6xl mx-auto">
+    <form onSubmit={handleSaveModule} className="p-6 w-full max-w-6xl mx-auto">
+      {/* Module Title */}
       <div className="mb-4">
         <label className="block text-lg font-medium text-gray-600 mb-1">
-        Module Title
-      </label>
-      <input
-      className="text-2xl font-bold mb-4 w-full border-b focus:outline-none"
-      value={moduleTitle}
-      onChange={e => setModuleTitle(e.target.value)}
-      placeholder="Enter module title"
-      />
+          Module Title
+        </label>
+        <input
+          className="text-2xl font-bold mb-4 w-full border-b focus:outline-none"
+          value={moduleTitle}
+          onChange={(e) => setModuleTitle(e.target.value)}
+          placeholder="Enter module title"
+          required
+        />
       </div>
-    
-      {/* Tab 切换 */}
+
+      {/* Tabs */}
       <div className="flex border-b mb-6">
-        {["subsections", "quizzes"].map((tab) => (
+        {['subsections','quizzes'].map(tab => (
           <div
             key={tab}
             onClick={() => setActiveTab(tab as any)}
             className={`px-4 py-2 cursor-pointer ${
-              activeTab === tab
-                ? "font-semibold border-b-2 border-blue-600"
-                : "text-gray-600"
+              activeTab===tab ? 'font-semibold border-b-2 border-blue-600' : 'text-gray-600'
             }`}
-          >
-            {tab === "subsections" ? "Subsections" : "Quizzes"}
-          </div>
+          >{tab==='subsections'?'Subsections':'Quizzes'}</div>
         ))}
       </div>
 
       {/* Subsections Tab */}
-      {activeTab === "subsections" && (
+      {activeTab==='subsections' && (
         <div className="mb-6">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={subsections.map((s) => s._id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {subsections.map((sub) => (
-                <SubItem
-                  key={sub._id}
-                  sub={{ id: sub._id, title: sub.title }}
-                  isEditing={editingTitleId === sub._id}
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={subsections.map(s=>s._id)} strategy={verticalListSortingStrategy}>
+              {subsections.map(sub=> (
+                <SubItem key={sub._id}
+                  sub={{id:sub._id,title:sub.title}}
+                  isEditing={editingTitleId===sub._id}
                   editingValue={editingTitleValue}
-                  onStartEdit={() => {
-                    setEditingTitleId(sub._id);
-                    setEditingTitleValue(sub.title);
-                  }}
+                  onStartEdit={()=>{setEditingTitleId(sub._id);setEditingTitleValue(sub.title)}}
                   onChangeEdit={setEditingTitleValue}
-                  onSaveEdit={() => saveSubsectionTitle(sub._id)}
-                  onEditContent={() => setEditingSubId(sub._id)}
-                  selected={selectedSubId === sub._id}
-                  onToggleSelect={() =>
-                    setSelectedSubId((prev) => (prev === sub._id ? null : sub._id))
-                  }
+                  onSaveEdit={()=>saveSubsectionTitle(sub._id)}
+                  onEditContent={()=>setEditingSubId(sub._id)}
+                  selected={selectedSubId===sub._id}
+                  onToggleSelect={()=>setSelectedSubId(prev=>prev===sub._id?null:sub._id)}
                 />
               ))}
             </SortableContext>
           </DndContext>
-
           <div className="flex gap-2 mt-4">
-            <button
-              onClick={handleAddSubsection}
-              className="bg-green-500 text-white px-4 py-2 rounded"
-            >
+            <button type="button" onClick={handleAddSubsection} className="bg-green-500 text-white px-4 py-2 rounded">
               + Add Subsection
             </button>
-            {editingTitleId === null && (
-              <button
-                onClick={() => selectedSubId && setDeleteConfirmSub(selectedSubId)}
+            {editingTitleId===null && (
+              <button type="button" disabled={!selectedSubId}
+                onClick={()=>selectedSubId && setDeleteConfirmSub(selectedSubId)}
                 className="bg-red-500 text-white px-4 py-2 rounded"
-              >
-                Delete Selected
-              </button>
+              >Delete Selected</button>
             )}
-            <button
-              onClick={handleSaveModule}
-              className="ml-auto bg-blue-600 text-white px-4 py-2 rounded"
-            >
-              Save Module
-            </button>
           </div>
         </div>
       )}
 
-      {/* Quizzes Tab */}
-      {activeTab === "quizzes" && (
+      {/* Quizzes Tab (file2 UI) */}
+      {activeTab==='quizzes' && (
         <div className="mb-6">
-          {quizzes.length === 0 && (
-            <p className="text-gray-500 mb-4">
-              No quizzes yet. Click button below to add a quiz
-            </p>
-          )}
-          {quizzes.map((quiz) => (
-            <div key={quiz._id} className="border p-4 rounded mb-4">
-              <div className="flex justify-between items-center mb-2">
+          {quizzes.map(quiz=> (
+            <div key={quiz._id} className="mb-6 p-4 border rounded-lg bg-gray-50">
+              <div className="flex justify-between items-center mb-4">
                 <input
                   type="text"
                   value={quiz.title}
-                  onChange={(e) =>
-                    setQuizzes((qs) =>
-                      qs.map((q) =>
-                        q._id === quiz._id ? { ...q, title: e.target.value } : q
-                      )
-                    )
-                  }
-                  className="text-lg font-semibold flex-1 border-b"
+                  onChange={e=>handleQuizChange(quiz._id,'title',e.target.value)}
+                  className="w-full p-2 border rounded mr-4"
+                  placeholder="Quiz Title"
+                  required
                 />
-                <button
-                  onClick={() => setDeleteConfirmQuiz(quiz._id)}
-                  className="ml-4 text-red-600 hover:underline"
-                >
-                  Delete
-                </button>
+                <button type="button" onClick={()=>setDeleteConfirmQuiz(quiz._id)}
+                  className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                >Delete</button>
               </div>
               <textarea
                 value={quiz.description}
-                onChange={(e) =>
-                  setQuizzes((qs) =>
-                    qs.map((q) =>
-                      q._id === quiz._id
-                        ? { ...q, description: e.target.value }
-                        : q
-                    )
-                  )
-                }
-                className="w-full border rounded p-2 mb-2"
-                placeholder="Quiz description"
+                onChange={e=>handleQuizChange(quiz._id,'description',e.target.value)}
+                className="w-full p-2 border rounded mb-4"
+                placeholder="Quiz Description"
               />
-              {/* Questions 列表略…(同主干逻辑) */}
-              <button
-                onClick={handleAddQuiz}
-                className="mt-2 bg-green-500 text-white px-3 py-1 rounded"
-              >
-                + Add Quiz
-              </button>
+              {quiz.questions.map(question=> (
+                <div key={question._id} className="mb-4 p-3 border rounded bg-white">
+                  <div className="flex justify-between items-center mb-2">
+                    <input
+                      type="text"
+                      value={question.question}
+                      onChange={e=>handleQuestionChange(quiz._id,question._id,'question',e.target.value)}
+                      className="w-full p-2 border rounded mr-2"
+                      placeholder="Question"
+                    />
+                    <button type="button" onClick={()=>handleRemoveQuestion(quiz._id,question._id)}
+                      className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    >Remove</button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {question.options.map((opt,idx)=>(
+                      <input key={idx} type="text" value={opt}
+                        onChange={e=>handleOptionChange(quiz._id,question._id,idx,e.target.value)}
+                        className="p-2 border rounded" placeholder={`Option ${idx+1}`}
+                      />
+                    ))}
+                  </div>
+                  <select
+                    value={question.correctAnswer}
+                    onChange={e=>handleQuestionChange(quiz._id,question._id,'correctAnswer',e.target.value)}
+                    className="mt-2 p-2 border rounded w-full"
+                  >
+                    {question.options.map((_,i)=>(
+                      <option key={i} value={question.options[i]}>Option {i+1}</option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+              <button type="button" onClick={()=>handleAddQuestion(quiz._id)}
+                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >Add Question</button>
             </div>
           ))}
-
-          <div className="mt-2">
-           <button
-             onClick={handleAddQuiz}
-             className="bg-green-500 text-white px-4 py-2 rounded"
-          >
-             + Add Quiz
-           </button>
-         </div>
+          <button type="button" onClick={handleAddQuiz}
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          >Add Quiz</button>
         </div>
       )}
 
-      {/* Subsection 内容编辑弹窗 */}
+      {/* BlockEditorModal for subsections */}
       {editingSubId && (
         <BlockEditorModal
           subsectionId={editingSubId}
-          initialTitle={
-            subsections.find((s) => s._id === editingSubId)!.title
-          }
+          initialTitle={subsections.find((s) => s._id === editingSubId)!.title}
+          initialLayout={subsections.find((s) => s._id === editingSubId)!.layout}
           onTitleChange={(newT) =>
             setSubsections((s) =>
+              s.map((x) => (x._id === editingSubId ? { ...x, title: newT } : x))
+            )
+          }
+          onLayoutChange={(newLayout) =>
+            setSubsections((s) =>
               s.map((x) =>
-                x._id === editingSubId ? { ...x, title: newT } : x
+                x._id === editingSubId ? { ...x, layout: newLayout } : x
               )
             )
           }
-          onLayoutChange={() => setOrder([...order]) /* 重新拉取 */}
           onClose={() => setEditingSubId(null)}
         />
       )}
 
-      {/* 删除确认模态框 */}
+      {/* Delete confirmations */}
       {deleteConfirmSub && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow">
             <p>Delete this subsection?</p>
             <div className="mt-4 flex justify-end gap-2">
-              <button
-                onClick={() => handleDeleteSubsection(deleteConfirmSub)}
-                className="bg-red-600 text-white px-4 py-2 rounded"
-              >
-                Yes
-              </button>
-              <button
-                onClick={() => setDeleteConfirmSub(null)}
-                className="px-4 py-2 rounded border"
-              >
-                Cancel
-              </button>
+              <button onClick={() => handleDeleteSubsection(deleteConfirmSub)} className="bg-red-600 text-white px-4 py-2 rounded">Yes</button>
+              <button onClick={() => setDeleteConfirmSub(null)} className="px-4 py-2 rounded border">Cancel</button>
             </div>
           </div>
         </div>
@@ -464,22 +534,18 @@ export default function EditModuleForm({
           <div className="bg-white p-6 rounded shadow">
             <p>Delete this quiz and its questions?</p>
             <div className="mt-4 flex justify-end gap-2">
-              <button
-                onClick={() => handleDeleteQuiz(deleteConfirmQuiz)}
-                className="bg-red-600 text-white px-4 py-2 rounded"
-              >
-                Yes
-              </button>
-              <button
-                onClick={() => setDeleteConfirmQuiz(null)}
-                className="px-4 py-2 rounded border"
-              >
-                Cancel
-              </button>
+              <button onClick={() => handleDeleteQuiz(deleteConfirmQuiz)} className="bg-red-600 text-white px-4 py-2 rounded">Yes</button>
+              <button onClick={() => setDeleteConfirmQuiz(null)} className="px-4 py-2 rounded border">Cancel</button>
             </div>
           </div>
         </div>
       )}
-    </div>
+
+      {/* Save & Cancel Buttons */}
+      <div className="flex justify-end gap-2 mt-4">
+        <button type="button" onClick={() => setEditModule(null)} className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">Cancel</button>
+        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save Module</button>
+      </div>
+    </form>
   );
 }

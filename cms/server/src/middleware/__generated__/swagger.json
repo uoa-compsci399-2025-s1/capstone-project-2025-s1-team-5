@@ -466,9 +466,6 @@
 					"title": {
 						"type": "string"
 					},
-					"body": {
-						"type": "string"
-					},
 					"authorID": {
 						"type": "string"
 					},
@@ -490,7 +487,6 @@
 				"required": [
 					"id",
 					"title",
-					"body",
 					"authorID",
 					"published",
 					"createdAt",
@@ -1429,8 +1425,11 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"body": {
-										"type": "string"
+									"layout": {
+										"items": {
+											"$ref": "#/components/schemas/LayoutConfig"
+										},
+										"type": "array"
 									},
 									"title": {
 										"type": "string"

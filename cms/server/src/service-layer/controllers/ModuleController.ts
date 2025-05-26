@@ -14,7 +14,7 @@ import {
 } from "tsoa";
 import { ModuleService } from "../../data-layer/services/ModuleService";
 import { ModuleGetResponse, ModulesGetResponse, LayoutSectionsDTO , QuizDto} from "../response-models/ModuleResponse";
-import { IModule, IQuestion, ISubsection } from "../../data-layer/models/models";
+import { IModule, IQuestion, ISubsection, LayoutConfig } from "../../data-layer/models/models";
 import { moduleToResponse } from "../../data-layer/adapter/ModuleAdapter";
 
 @Route("modules")
@@ -80,7 +80,7 @@ export class ModuleController extends Controller {
     @SuccessResponse(201, "Subsection added")
     public async addSubsection(
         @Path() moduleId: string,
-        @Body() subsectionData: { title: string; body: string; authorID: string }
+        @Body() subsectionData: { title: string; authorID: string }
     ): Promise<ISubsection> {
         return this.moduleService.addSubsection(moduleId, subsectionData);
     }
@@ -89,7 +89,7 @@ export class ModuleController extends Controller {
     @SuccessResponse(202, "Subsection updated")
     public async editSubsection(
     @Path() subsectionId: string,
-    @Body() subsectionChanges: { title?: string; body?: string }
+    @Body() subsectionChanges: { title?: string; layout?: LayoutConfig[] }
     ): Promise<{ success: boolean }> {
     const result = await this.moduleService.editSubsection(subsectionId, subsectionChanges);
     return { success: result };

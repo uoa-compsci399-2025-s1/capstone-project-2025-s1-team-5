@@ -6,14 +6,16 @@ import api from "../lib/api";
 export interface BlockEditorModalProps {
   subsectionId: string;
   initialTitle: string;
+  initialLayout: LayoutConfig;
   onTitleChange: (newTitle: string) => void;
   onClose: () => void;
-  onLayoutChange: (layout: LayoutConfig) => void;
+  onLayoutChange: (newLayout: LayoutConfig) => void;
 }
 
 export default function BlockEditorModal({
   subsectionId,
   initialTitle,
+  initialLayout,
   onTitleChange,
   onClose,
   onLayoutChange, 
@@ -31,17 +33,8 @@ export default function BlockEditorModal({
 
   // 2) 拉布局
   useEffect(() => {
-    setLoading(true);
-    api
-      .get<{ layout: LayoutConfig }>(
-        `/modules/subsection/${subsectionId}`
-      )
-      .then((res) => {
-        setLayout(res.data.layout);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [subsectionId]);
+    setLayout(initialLayout);
+  }, [initialLayout]);
 
   // 3) 点击保存：先更新 title，再更新 layout
   const handleSaveAll = async () => {
