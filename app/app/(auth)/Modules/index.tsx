@@ -4,6 +4,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import SubModuleButton from '@/components/SubModuleButton';
+import { useIsFocused } from '@react-navigation/native';
 
 import api from '@/app/lib/api';
 
@@ -15,10 +16,12 @@ interface ModuleItem {
 
 export default function ModuleScreen(){
   const router = useRouter();
+  const isFocused = useIsFocused();
   const { theme } = useContext(ThemeContext);  
   const [modules, setModules] = useState<ModuleItem[]>([]);
 
   useEffect(() => {
+    if (!isFocused) return;
     api
       .get<{ modules: ModuleItem[]; total: number }>('/modules')
       .then(res => {
@@ -27,7 +30,7 @@ export default function ModuleScreen(){
       .catch(err => {
         console.error('拉取模块列表失败：', err);
       });
-  }, []);
+  }, [isFocused]);
 
   return (
     <ScrollView
