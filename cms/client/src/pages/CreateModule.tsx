@@ -288,6 +288,8 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
                   </div>
                   <div className="border rounded-lg overflow-hidden">
                     <TextEditor
+                      key={index}
+                      subsectionId={index.toString()}
                       content={subsection.body}
                       onChange={(content) => handleSubsectionChange(index, 'body', content)}
                     />

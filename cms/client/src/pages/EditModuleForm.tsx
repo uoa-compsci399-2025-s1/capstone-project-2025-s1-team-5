@@ -4,6 +4,7 @@ import { Module, Subsection, Question, Quiz } from '../types/interfaces';
 import TextEditor from './TextEditor';
 
 
+
 interface EditModuleFormProps {
   module: Module;
   onModuleUpdated: () => void;
@@ -24,41 +25,46 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  
   const getModuleId = () => {
     return module._id || '';
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (moduleSubsectionIds.length > 0) {
-          const subsectionPromises = moduleSubsectionIds.map(id =>
-            axios.get<Subsection>(`${process.env.REACT_APP_API_URL}/api/modules/subsection/${id}`)
-          );
-          const subsectionResponses = await Promise.all(subsectionPromises);
-          const fetchedSubsections = subsectionResponses.map(res => res.data);
-          setSubsections(fetchedSubsections);
-        }
+ useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const headers = { Authorization: `Bearer ${token}` };
 
-        if (moduleQuizIds && moduleQuizIds.length > 0) {
-          const quizPromises = moduleQuizIds.map(id =>
-            axios.get<Quiz>(`${process.env.REACT_APP_API_URL}/api/modules/quiz/${id}`)
-          );
-          const quizResponses = await Promise.all(quizPromises);
-          const fetchedQuizzes = quizResponses.map(res => res.data);
-          setQuizzes(fetchedQuizzes);
-        }
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-        setError("Failed to load module data. Please try again.");
+      if (moduleSubsectionIds.length > 0) {
+        const subsectionPromises = moduleSubsectionIds.map(id =>
+          axios.get<Subsection>(`${process.env.REACT_APP_API_URL}/api/modules/subsection/${id}`, { headers })
+        );
+        const subsectionResponses = await Promise.all(subsectionPromises);
+        const fetchedSubsections = subsectionResponses.map(res => res.data);
+        setSubsections(fetchedSubsections);
       }
-    };
 
-    fetchData();
-  }, [moduleSubsectionIds, moduleQuizIds]);
+      if (moduleQuizIds.length > 0) {
+        const quizPromises = moduleQuizIds.map(id =>
+          axios.get<Quiz>(`${process.env.REACT_APP_API_URL}/api/modules/quiz/${id}`, { headers })
+        );
+        const quizResponses = await Promise.all(quizPromises);
+        const fetchedQuizzes = quizResponses.map(res => res.data);
+        setQuizzes(fetchedQuizzes);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+      setError("Failed to load module data. Please try again.");
+    }
+  };
+
+  fetchData();
+}, [moduleSubsectionIds, moduleQuizIds]);
+
 
   const handleSubsectionChange = (_id: string, field: keyof Subsection, value: string) => {
     setSubsections((prev) =>
@@ -77,9 +83,10 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
       };
       
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/modules/${module._id}/subsection`,
+        `${process.env.REACT_APP_API_URL}/api/modules/${module._id}`,
         newSubsectionData
       );
+
    
       const newSubsection = response.data;
       setSubsections(prev => [...prev, newSubsection]);
@@ -138,7 +145,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
 
       const token = localStorage.getItem("authToken");
       const response = await axios.post<Quiz>(
-        `${process.env.REACT_APP_API_URL}/api/${moduleId}/quiz`,
+        `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}/quiz`,
         {
           title: "New Quiz",
           description: "Quiz description..."
@@ -257,6 +264,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
     }
   };
 
+  
   const handleRemoveQuestion = async (quizId: string, questionId: string) => {
     try {
       const token = localStorage.getItem("authToken");
@@ -340,8 +348,12 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
     }
   };
 
-  if (loading) return <div className="text-center py-8">Loading module data...</div>;
 
+
+
+  if (loading) return <div className="text-center py-8">Loading module data...</div>;
+  console.log("Module Subsection IDs:", module.subsectionIds);
+  console.log("Module Quiz IDs:", module.quizIds);
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Edit Module</h1>
@@ -410,9 +422,12 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
                   </div>
                   <div className="border rounded-lg overflow-hidden">
                     <TextEditor
+                      key={subsection._id} // force remount
+                      subsectionId={subsection._id}
                       content={subsection.body}
                       onChange={(content) => handleSubsectionChange(subsection._id, 'body', content)}
                     />
+
                   </div>
                 </div>
               ))}
