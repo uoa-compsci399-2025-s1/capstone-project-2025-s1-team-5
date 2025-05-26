@@ -268,7 +268,6 @@ export class ModuleService {
       if (!quiz) {
         return null;
       }
-      console.log(quiz);
       return quiz;
     } catch (error) {
       console.error("Error fetching quiz by ID:", error);
@@ -312,8 +311,6 @@ export class ModuleService {
 
       const quiz = await Quiz.findById(quizId);
       if (quiz && quiz.questions && quiz.questions.length > 0) {
-        console.log(`Deleting ${quiz.questions.length} questions from quiz ${quizId}`);
-        
         for (const questionId of quiz.questions) {
           await Question.findByIdAndDelete(questionId);
         }
