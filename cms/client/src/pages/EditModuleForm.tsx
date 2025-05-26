@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import { Module, Subsection, Question, Quiz } from '../types/interfaces';
 import TextEditor from './TextEditor';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from '@hello-pangea/dnd';
+
 
 
 
@@ -24,6 +31,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [editingSubsectionIds, setEditingSubsectionIds] = useState<Set<string>>(new Set());
 
   
   const getModuleId = () => {
@@ -134,6 +142,39 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
       setSuccess(null);
     }
   };
+  const toggleEditSubsection = (id: string) => {
+  setEditingSubsectionIds(prev => {
+    const newSet = new Set(prev);
+    if (newSet.has(id)) {
+      newSet.delete(id);
+    } else {
+      newSet.add(id);
+    }
+    return newSet;
+  });
+};
+
+const handleDragEnd = (result: DropResult) => {
+  if (!result.destination) return;
+
+  const items = Array.from(subsections);
+  const [moved] = items.splice(result.source.index, 1);
+  items.splice(result.destination.index, 0, moved);
+
+  setSubsections(items);
+  setModuleSubsectionIds(items.map(item => item._id)); // update order
+};
+
+  const handleSubsectionReorder = (result: DropResult) => {
+  if (!result.destination) return;
+
+  const reordered = Array.from(subsections);
+  const [moved] = reordered.splice(result.source.index, 1);
+  reordered.splice(result.destination.index, 0, moved);
+
+  setSubsections(reordered);
+  setModuleSubsectionIds(reordered.map((s) => s._id)); // update order for submission
+};
 
   const handleAddQuiz = async () => {
     try {
@@ -402,16 +443,48 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
 
           {activeTab === 'subsections' && (
             <div>
-              {subsections.map((subsection) => (
-                <div key={subsection._id} className="mb-6 p-4 border rounded-lg bg-gray-50">
-                  <div className="flex justify-between items-center mb-4">
+              <DragDropContext onDragEnd={handleDragEnd}>
+  <Droppable droppableId="subsections">
+    {(provided) => (
+      <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
+        {subsections.map((subsection, index) => (
+          <Draggable key={subsection._id} draggableId={subsection._id} index={index}>
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                className={`p-4 border rounded-lg bg-gray-50 ${
+                  snapshot.isDragging ? 'bg-blue-50 shadow-lg' : ''
+                }`}
+              >
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex items-center w-full gap-2">
+                    <div
+                      {...provided.dragHandleProps}
+                      className="cursor-grab text-gray-500 hover:text-gray-800 pr-2"
+                    >
+                      ☰
+                    </div>
                     <input
                       type="text"
                       value={subsection.title}
-                      onChange={(e) => handleSubsectionChange(subsection._id, 'title', e.target.value)}
-                      className="w-full p-2 border rounded mr-4"
+                      onChange={(e) =>
+                        handleSubsectionChange(subsection._id, 'title', e.target.value)
+                      }
+                      className="w-full p-2 border rounded"
                       placeholder="Subsection Title"
                     />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => toggleEditSubsection(subsection._id)}
+
+                      className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                    >
+                      {editingSubsectionIds.has(subsection._id) ? 'Hide' : 'Edit'}
+
+                    </button>
                     <button
                       type="button"
                       onClick={() => setDeleteConfirmSubsection(subsection)}
@@ -420,17 +493,32 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
                       Delete
                     </button>
                   </div>
-                  <div className="border rounded-lg overflow-hidden">
-                    <TextEditor
-                      key={subsection._id} // force remount
-                      subsectionId={subsection._id}
-                      content={subsection.body}
-                      onChange={(content) => handleSubsectionChange(subsection._id, 'body', content)}
-                    />
-
-                  </div>
                 </div>
-              ))}
+
+                {editingSubsectionIds.has(subsection._id) && (
+
+                  <TextEditor
+                    key={subsection._id}
+                    subsectionId={subsection._id}
+                    content={subsection.body}
+                    onChange={(content) =>
+                      handleSubsectionChange(subsection._id, 'body', content)
+                    }
+                  />
+                )}
+              </div>
+            )}
+          </Draggable>
+        ))}
+        {provided.placeholder}
+      </div>
+    )}
+  </Droppable>
+</DragDropContext>
+
+
+
+
               <button
                 type="button"
                 onClick={handleAddSubsection}
