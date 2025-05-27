@@ -8,7 +8,8 @@ export function moduleAdaptor(doc: any): IModule {
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
       subsectionIds: doc.subsectionIds?.map((id: any) => id.toString()) || [],
-      quizIds: doc.quizIds?.map((id: any) => id.toString()) || []
+      quizIds: doc.quizIds?.map((id: any) => id.toString()) || [],
+      linkIds: doc.linkIds?.map((id: any) => id.toString()) || []
 
     };
   }

@@ -1,8 +1,7 @@
 import { moduleAdaptor } from "../adapter/ModuleAdapter";
-import type { IModule, IQuestion, IQuiz, ISubsection, SectionConfig } from "../models/models";
-import { newModule, Question, Quiz, Subsection } from "../../data-layer/models/schema";
+import type { IModule, IQuestion, IQuiz, ISubsection, SectionConfig, ILink } from "../models/models";
+import { Link, newModule, Question, Quiz, Subsection } from "../../data-layer/models/schema";
 import mongoose, {Types} from "mongoose";
-
 
 export class ModuleService {
     /**
@@ -59,6 +58,14 @@ export class ModuleService {
             await Promise.all(
               module.quizIds.map(async (quizId) => {
                 await this.deleteQuiz(quizId.toString(), moduleId);
+              })
+            );
+          }
+
+            if (module.linkIds && module.linkIds.length > 0) {
+            await Promise.all(
+              module.linkIds.map(async (linkId) => {
+                await this.deleteLink(linkId.toString(), moduleId);
               })
             );
           }
@@ -429,4 +436,66 @@ export class ModuleService {
   }
 
 
+//CRUD Methods for LINK support
+ public async createLink(moduleId: string,title: string, link: string): Promise<boolean> {
+      try {
+      const module = await newModule.findById(moduleId);
+      if (!module) {
+        throw new Error("Module not found");
+      }
+      const newLink = new Link({title, link});
+      
+      await newLink.save();
+      module.linkIds.push(newLink._id);  
+
+      await module.save()
+      return true;
+    } catch (error) {
+      console.error("Error creating link:", error);
+      return false;
+    }
+  }
+
+  public async getLinkById(id: string): Promise<ILink> {
+    try {
+      return await Link.findById(id);
+    } catch (error) {
+      console.error("Error reading link:", error);
+      return null;
+    }
+  }
+
+  public async updateLink(id: string, title: string, link: string): Promise<boolean> {
+    try {
+      const result = await Link.findByIdAndUpdate(id, { title, link }, { new: true });
+      return !!result;
+    } catch (error) {
+      console.error("Error updating link:", error);
+      return false;
+    }
+  }
+
+  public async deleteLink(moduleId: string, linkId: string): Promise<boolean> {
+    const module = await newModule.findById(moduleId);
+    if (!module) {
+      console.error(`Module ${moduleId} not found`);
+      return false;
+    }
+
+    try {
+      const deleted = await Link.findByIdAndDelete(linkId);
+      if (!deleted) {
+        console.error(`Link ${linkId} not found`);
+        return false;
+      }
+
+      module.linkIds = module.linkIds.filter(id => id.toString() !== linkId);
+      await module.save();
+
+      return true;
+    } catch (error) {
+      console.error("Error deleting link:", error);
+      return false;
+    }
+  }
 }

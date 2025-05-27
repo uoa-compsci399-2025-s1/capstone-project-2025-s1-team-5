@@ -395,6 +395,12 @@
 							"$ref": "#/components/schemas/mongoose.Types.ObjectId"
 						},
 						"type": "array"
+					},
+					"linkIds": {
+						"items": {
+							"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -402,7 +408,8 @@
 					"title",
 					"createdAt",
 					"subsectionIds",
-					"quizIds"
+					"quizIds",
+					"linkIds"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -609,6 +616,32 @@
 					"title",
 					"description",
 					"questions",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ILink": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"link": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"title",
+					"link",
 					"createdAt",
 					"updatedAt"
 				],
@@ -1861,6 +1894,147 @@
 					{
 						"in": "path",
 						"name": "questionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/modules/link/{moduleId}": {
+			"post": {
+				"operationId": "AddLink",
+				"responses": {
+					"201": {
+						"description": "Created Link"
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "moduleId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"link": {
+										"type": "string"
+									},
+									"title": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"link",
+									"title"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/modules/link/{linkId}": {
+			"put": {
+				"operationId": "EditLink",
+				"responses": {
+					"200": {
+						"description": "Link updated"
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "linkId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"link": {
+										"type": "string"
+									},
+									"title": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"link",
+									"title"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetLink",
+				"responses": {
+					"200": {
+						"description": "Link retrieved",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ILink"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "linkId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/modules/link/{moduleId}/{linkId}": {
+			"delete": {
+				"operationId": "DeleteLinkById",
+				"responses": {
+					"200": {
+						"description": "Deleted successfully"
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "moduleId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "linkId",
 						"required": true,
 						"schema": {
 							"type": "string"

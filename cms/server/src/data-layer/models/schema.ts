@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IModule, IProgramme, IQuestion, IQuiz, ISubsection, IUser, RoleType, IPage } from "./models";
+import { ILink, IModule, IProgramme, IQuestion, IQuiz, ISubsection, IUser, RoleType, IPage } from "./models";
 
 const userSchema: Schema<IUser> = new Schema(
     {
@@ -52,7 +52,9 @@ const moduleSchema: Schema<IModule> = new Schema(
     {
       title: { type: String, required: true },
       subsectionIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Subsection" }],
-      quizIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Quiz" }]
+      quizIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Quiz" }],
+      linkIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Link" }]
+
     },
     { timestamps: true }
   );
@@ -167,6 +169,24 @@ const PageSchema = new Schema<IPage>(
   { timestamps: true }
 );
 
+const linkSchema: Schema<ILink> = new Schema({
+        title: {
+            type: String,
+            required: true
+        },
+        link: {
+            type: String,
+            required: true
+        },
+        createdAt: {
+        type: Date,
+        default: Date.now
+    }
+}, 
+    {timestamps: true}
+)
+
+
 
 const Question = mongoose.model<IQuestion>('Question', questionSchema);
 const newModule = mongoose.model<IModule>('newModule', moduleSchema);
@@ -175,5 +195,6 @@ const User = mongoose.model<IUser>('User', userSchema);
 const Subsection = mongoose.model<ISubsection>('Subsection', subsectionSchema);
 const Quiz = mongoose.model<IQuiz>('Quiz', quizSchema);
 const PageModel = mongoose.model<IPage>("Page", PageSchema);
+const Link = mongoose.model<ILink>('Link', linkSchema)
 
-export { Programme, User, Subsection, newModule, Question, Quiz, PageModel}
+export { Programme, User, Subsection, newModule, Question, Quiz, Link, PageModel}

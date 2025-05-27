@@ -26,6 +26,7 @@ export interface IModule {
     updatedAt?: Date;
     subsectionIds: Types.ObjectId[];
     quizIds: Types.ObjectId[]
+    linkIds: Types.ObjectId[]
 }
 
 export interface IProgramme {
@@ -90,6 +91,13 @@ export interface IQuiz {
     createdAt: Date;
     updatedAt: Date;
 
+}
+
+export interface ILink {
+    title: string;
+    link: string
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface UpdateAvatarRequest {

@@ -14,7 +14,7 @@ import {
 } from "tsoa";
 import { ModuleService } from "../../data-layer/services/ModuleService";
 import { ModuleGetResponse, ModulesGetResponse, QuizDto} from "../response-models/ModuleResponse";
-import { IModule, IQuestion, IQuiz, ISubsection, LayoutConfig } from "../../data-layer/models/models";
+import { IModule, IQuestion, IQuiz, ISubsection, LayoutConfig, ILink } from "../../data-layer/models/models";
 import { moduleToResponse } from "../../data-layer/adapter/ModuleAdapter";
 
 @Route("modules")
@@ -45,7 +45,7 @@ export class ModuleController extends Controller {
         return moduleToResponse(moduleData);
     }
 
-    @Security("jwt", ["admin"])
+    @Security("jwt", ["admin"]) 
     @Post()
     @SuccessResponse(201, "Module Created")
     public async addModule(
@@ -265,6 +265,61 @@ export class ModuleController extends Controller {
     
       return { success: true, message: "Question successfully deleted" };
     }
+
+    //Add Link
+  @Post("/link/{moduleId}")
+  @SuccessResponse("201", "Created Link")
+  public async addLink(
+    @Path() moduleId: string,
+    @Body() linkData: {title:string, link: string}
+  ): Promise<void> {
+    const success = await this.moduleService.createLink(moduleId, linkData.title, linkData.link);
+    if (!success) {
+      this.setStatus(400); 
+      return;
+    }
+    this.setStatus(201); 
+  }
+
+  @Put("/link/{linkId}")
+  @SuccessResponse("200", "Link updated")
+  public async editLink(
+    @Path() linkId: string,
+    @Body() linkData: {title: string, link: string}
+  ): Promise<void> {
+    const success = await this.moduleService.updateLink(linkId, linkData.title, linkData.link);
+    if (!success) {
+      this.setStatus(404);
+    } else {
+      this.setStatus(200);
+    }
+  }
+
+  @Get("link/{linkId}")
+  @SuccessResponse("200", "Link retrieved")
+  public async getLink(@Path() linkId: string): Promise<ILink> {
+    const link = await this.moduleService.getLinkById(linkId);
+    if (!link) {
+      this.setStatus(404);
+      return null;
+    }
+    return link;
+  }
+
+  @Delete("link/{moduleId}/{linkId}")
+  @SuccessResponse("200", "Deleted successfully")
+  public async deleteLinkById(
+    @Path() moduleId: string,
+    @Path() linkId: string
+  ): Promise<void> {
+    const success = await this.moduleService.deleteLink(moduleId, linkId);
+
+    if (!success) {
+      this.setStatus(404);
+    } else {
+      this.setStatus(200);
+    }
+  }
 }
 
 
