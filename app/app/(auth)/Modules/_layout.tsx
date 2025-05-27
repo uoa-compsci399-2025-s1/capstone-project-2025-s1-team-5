@@ -1,61 +1,55 @@
+// app/Modules/_layout.tsx
 import React, { useContext } from 'react';
-import { Stack } from 'expo-router';
+import { Stack, useLocalSearchParams, useSegments } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
-import { moduleTitles, moduleSubmodules } from './modulescreen';
-
-type ModuleRouteParams = {
-  moduleNumber: string;
-};
-
-type SubmoduleRouteParams = {
-  moduleNumber: string;
-  submoduleNumber: string;
-};
 
 export default function ModulesLayout() {
   const { theme } = useContext(ThemeContext);
+  const segments = useSegments(); // ['Modules', moduleId?, subsectionId?]
+
+  // 取路由参数
+  const { moduleId, subsectionId } = useLocalSearchParams<{
+    moduleId?: string;
+    subsectionId?: string;
+  }>();
+
+  // 根据当前是哪一级页面，设置 headerTitle
+  let headerTitle = 'Modules';
+  if (segments.length === 2 && moduleId) {
+    // /Modules/[moduleId]
+    headerTitle = moduleId; 
+  } else if (segments.length === 3 && subsectionId) {
+    // /Modules/[moduleId]/[subsectionId]
+    headerTitle = subsectionId;
+  }
 
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: '#0c0c48' },
+        headerStyle: { backgroundColor: theme.primary },
         headerTintColor: '#fff',
-
+        headerTitleAlign: 'center',
       }}
     >
-      <Stack.Screen 
-        name="index" 
-        options={{ 
-          headerTitle: 'Modules',
-          headerStyle: { backgroundColor: theme.primary },
-        }} 
+      {/* index.tsx */}
+      <Stack.Screen
+        name="index"
+        options={{ headerTitle: 'Modules' }}
       />
-      <Stack.Screen 
-        name="[moduleNumber]" 
-        options={({ route }) => {
-          const { moduleNumber } = route.params as ModuleRouteParams;
-          return {
-            headerTitle: moduleTitles[Number(moduleNumber)] || `Module ${moduleNumber}`,
-            headerTitleContainerStyle: {
-              left: 0,
-              right: 0,
-            },
-          };
+
+      {/* Modules/[moduleId]/index.tsx */}
+      <Stack.Screen
+        name="[moduleId]/index"
+        options={{
+          headerTitle,
         }}
       />
+
+      {/* Modules/[moduleId]/[subsectionId].tsx */}
       <Stack.Screen
-        name="submodulescreen"
-        options={({ route }) => {
-          const { moduleNumber, submoduleNumber } = route.params as SubmoduleRouteParams;
-          const submoduleTitle =
-            moduleSubmodules[Number(moduleNumber)]?.[Number(submoduleNumber)]?.title;
-          return {
-            headerTitle: submoduleTitle || 'Submodule',
-            headerTitleContainerStyle: {
-              left: 0,
-              right: 0,
-            },
-          };
+        name="[moduleId]/[subsectionId]"
+        options={{
+          headerTitle,
         }}
       />
     </Stack>
