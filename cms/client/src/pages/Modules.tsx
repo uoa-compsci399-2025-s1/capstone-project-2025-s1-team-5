@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import CreateModule from "./CreateModule";
+import CreateModule from "./CreateModule"
 import EditModuleForm from "./EditModuleForm";
 import ModuleButton from "../components/ModuleButton";
 import { Module, ModulesResponse } from "../types/interfaces";
 
 const ModulesPage = () => {
   const [modules, setModules] = useState<Module[]>([]);
-  const [searchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("title");
   const [showCreateModule, setCreateModule] = useState(false);
   const [editModule, setEditModule] = useState<Module | null>(null);
   const [deleteConfirmModule, setDeleteConfirmModule] = useState<Module | null>(null);
   const [error, setError] = useState<string | null>(null);
+  
 
   const fetchModules = async () => {
     try {
@@ -73,9 +74,17 @@ const ModulesPage = () => {
 
   return (
     <div className="p-8 font-sans">
-      <h1 className="text-4xl text-center mb-8">
-        UOA YOUR WAY: Module Management
-      </h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-6 ml-4">Manage Modules</h1>
+
+        <input
+          type="text"
+          placeholder="Search modules by name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="mb-6 p-2 border border-gray-300 rounded w-full max-w-md shadow-sm ml-4"
+        />
+
+
 
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -113,10 +122,14 @@ const ModulesPage = () => {
             </div>
           ) : (
             sortedModules
-              .filter((module) =>
-                module.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                module.description.toLowerCase().includes(searchTerm.toLowerCase())
-              )
+              .filter((module) => {
+                const title = module.title || '';
+                const description = module.description || '';
+                return (
+                  title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  description.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+              })
               .map((module) => (
                 <div
                   key={module._id}
