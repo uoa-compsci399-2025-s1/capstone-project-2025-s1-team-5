@@ -122,10 +122,14 @@ const ModulesPage = () => {
             </div>
           ) : (
             sortedModules
-              .filter((module) =>
-                module.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                module.description.toLowerCase().includes(searchTerm.toLowerCase())
-              )
+              .filter((module) => {
+                const title = module.title || '';
+                const description = module.description || '';
+                return (
+                  title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  description.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+              })
               .map((module) => (
                 <div
                   key={module._id}
