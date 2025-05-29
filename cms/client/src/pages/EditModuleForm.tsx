@@ -351,11 +351,6 @@ const handleDragEnd = (result: DropResult) => {
   const handleAddLink = async () => {
     try {
       const moduleId = getModuleId();
-      if (!moduleId) {
-        setError("Cannot add link: Module ID is missing");
-        return;
-      }
-
       const token = localStorage.getItem("authToken");
       const linkData = {
         title: "New Link",
@@ -368,14 +363,12 @@ const handleDragEnd = (result: DropResult) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Refresh links after adding
       const response = await axios.get<Module>(
         `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      if (response.data.linkIds) {
-        // Get the newly added link ID (should be the last one)
+      if (response.data.linkIds && response.data.linkIds.length > 0) {
         const newLinkId = response.data.linkIds[response.data.linkIds.length - 1];
         const linkResponse = await axios.get<Link>(
           `${process.env.REACT_APP_API_URL}/api/modules/link/${newLinkId}`,
@@ -433,8 +426,6 @@ const handleDragEnd = (result: DropResult) => {
       title,
       description,
       subsectionIds: moduleSubsectionIds,
-      quizIds: moduleQuizIds,
-      linkIds: moduleLinkIds
     };
 
     try {

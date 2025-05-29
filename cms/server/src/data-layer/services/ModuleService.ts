@@ -99,16 +99,26 @@ export class ModuleService {
       ): Promise<boolean> {
         try {
           const module = await newModule.findById(moduleId);
-    
+
           if (!module) {
-            throw new Error("Module not found");
+            return false;
           }
-          module.title = moduleChanges.title;
-          module.description = moduleChanges.description;
-          module.subsectionIds = moduleChanges.subsectionIds.map(id => new mongoose.Types.ObjectId(id));
-          module.quizIds = moduleChanges.quizIds.map(id => new mongoose.Types.ObjectId(id));
-          module.linkIds = moduleChanges.linkIds.map(id => new mongoose.Types.ObjectId(id));
-    
+          
+          if (moduleChanges.title !== undefined) module.title = moduleChanges.title;
+          if (moduleChanges.description !== undefined) module.description = moduleChanges.description;
+          
+          if (moduleChanges.subsectionIds !== undefined) {
+            module.subsectionIds = moduleChanges.subsectionIds.map(id => new mongoose.Types.ObjectId(id));
+          }
+          
+          if (moduleChanges.quizIds !== undefined) {
+            module.quizIds = moduleChanges.quizIds.map(id => new mongoose.Types.ObjectId(id));
+          }
+          
+          if (moduleChanges.linkIds !== undefined) {
+            module.linkIds = moduleChanges.linkIds.map(id => new mongoose.Types.ObjectId(id));
+          }
+
           await module.save();
           return true;
         } catch (error) {
