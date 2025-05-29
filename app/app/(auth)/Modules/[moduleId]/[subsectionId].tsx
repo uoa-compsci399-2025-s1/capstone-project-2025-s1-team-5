@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { ScrollView, ActivityIndicator, Text, useWindowDimensions } from 'react-native';
-import axios from 'axios';
+import api from '@/app/lib/api';
 import RenderHtml from 'react-native-render-html';
 import YoutubePlayer from 'react-native-youtube-iframe';
+import IframeRenderer, { iframeModel } from '@native-html/iframe-plugin';
 import WebView from 'react-native-webview';
 import { Subsection } from '@/types/types';
 import { useLocalSearchParams } from 'expo-router';
@@ -20,8 +21,8 @@ export default function SubsectionScreen() {
 
   useEffect(() => {
     console.log(subsectionId);
-    axios
-      .get<Subsection>(`http://localhost:3000/api/modules/subsection/${subsectionId}`)
+    api
+      .get<Subsection>(`/modules/subsection/${subsectionId}`)
       .then(res => setData(res.data))
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
@@ -58,7 +59,9 @@ export default function SubsectionScreen() {
       <RenderHtml
         contentWidth={width - 32}
         source={{ html: data.body }}
-        renderers={renderers}
+        WebView={WebView}
+        renderers={{ iframe: IframeRenderer }}
+        customHTMLElementModels={{ iframe: iframeModel }}
         tagsStyles={{
           h1: { fontSize: 26, marginVertical: 8 },
           h2: { fontSize: 22, marginVertical: 6 },
