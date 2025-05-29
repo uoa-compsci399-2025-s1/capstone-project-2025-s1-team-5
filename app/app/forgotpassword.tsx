@@ -95,7 +95,7 @@ export default function ContactFormScreen() {
         iconName="phone"
       />
 
-      <SubmitButton text="Submit Details" onPress={handleSubmit} style={styles.button} />
+      <SubmitButton text="Submit Details" onPress={handleSubmit} />
     </ScrollView>
   );
 }
@@ -113,9 +113,6 @@ const styles = StyleSheet.create({
   introText: {
     marginBottom: 20,
     lineHeight: 24,
-  },
-  button: {
-    marginTop: 20,
   },
   appLogo: {
     width: 200,
