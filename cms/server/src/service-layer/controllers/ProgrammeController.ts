@@ -33,16 +33,16 @@ export class ProgrammeController extends Controller {
     @Post("/")
     @SuccessResponse(201, "Programme Created")
     public async addProgramme(
-    @Body() body: { title: string; description: string; link: string }
+    @Body() body: { name: string; description: string; link: string }
     ): Promise<IProgramme> {
-        return this.programmeService.createProgramme(body.title, body.description, body.link);
+        return this.programmeService.createProgramme(body.name, body.description, body.link);
     }
 
     @Put("{programmeId}")
     @SuccessResponse(200, "Programme Updated")
     public async updateProgramme(
     @Path() programmeId: string,
-    @Body() changes: { title?: string; description?: string; link?: string }
+    @Body() changes: { name?: string; description?: string; link?: string }
     ): Promise<boolean> {
         const updated = await this.programmeService.updateProgrammeById(programmeId, changes);
         return updated !== null;

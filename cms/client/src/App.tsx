@@ -7,6 +7,7 @@ import Layout from './components/Layout';
 import Analytics from './pages/Analytics';
 import Login from './pages/Login';
 import { AuthProvider } from './auth/AuthProvider';
+import ProgrammesPage from './pages/Programmes';
 
 export default function App() {
   return (    
@@ -19,6 +20,7 @@ export default function App() {
             <Route path="/modules/modules" element={<ModulesPage />} />
             <Route path="/modules/users" element={<UsersPage />} />
             <Route path="/modules/analytics" element={<Analytics />} />
+            <Route path="/modules/programmes" element={<ProgrammesPage />} />
             <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>
       </Layout>

@@ -35,3 +35,10 @@ export interface ModulesResponse {
   modules: Module[];
   total: number;
 }
+
+export interface Programme {
+  _id: string;
+  name: string;
+  description: string;
+  link: string;
+}
