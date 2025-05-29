@@ -9,9 +9,7 @@ import {
 } from 'react-native'
 import { WebView } from 'react-native-webview'
 import { Video, ResizeMode } from 'expo-av'
-import RenderHTML, {
-  defaultSystemFonts,
-} from 'react-native-render-html'
+import RenderHTML, { defaultSystemFonts } from 'react-native-render-html'
 import { useLocalSearchParams } from 'expo-router'
 import api from '@/app/lib/api'
 import { ThemeContext } from '@/contexts/ThemeContext'
@@ -58,26 +56,14 @@ export default function SubmoduleScreen() {
   
   if (!subsection) return null
 
-  // Custom HTML element models for iframe and video
-  const customHTMLElementModels = {
-    iframe: HTMLElementModel.fromCustomModel({
-      tagName: 'iframe',
-      contentModel: HTMLContentModel.block,
-    }),
-    video: HTMLElementModel.fromCustomModel({
-      tagName: 'video',
-      contentModel: HTMLContentModel.block,
-    }),
-  }
-
   // Custom renderers for iframe and video elements
-  const renderers: Record<string, CustomRenderer> = {
-    iframe: ({ tnode }: any) => {
-      const src = tnode.attributes.src as string
+  const renderers = {
+    iframe: (htmlAttribs: any, children: any, convertedCSSStyles: any, passProps: any) => {
+      const src = htmlAttribs?.src
       if (!src) return null
 
       return (
-        <View style={styles.mediaContainer}>
+        <View key={passProps?.key || Math.random()} style={styles.mediaContainer}>
           <WebView
             source={{ uri: src }}
             style={[styles.webview, { height: ((width - 32) * 9) / 16 }]}
@@ -96,12 +82,12 @@ export default function SubmoduleScreen() {
       )
     },
     
-    video: ({ tnode }: any) => {
-      const src = tnode.attributes.src as string
+    video: (htmlAttribs: any, children: any, convertedCSSStyles: any, passProps: any) => {
+      const src = htmlAttribs?.src
       if (!src) return null
 
       return (
-        <View style={styles.mediaContainer}>
+        <View key={passProps?.key || Math.random()} style={styles.mediaContainer}>
           <Video
             source={{ uri: src }}
             style={[styles.video, { width: width - 32 }]}
@@ -128,8 +114,6 @@ export default function SubmoduleScreen() {
       <RenderHTML
         contentWidth={width - 32}
         source={{ html: subsection.body }}
-        enableCSSInlineProcessing={true}
-        systemFonts={[...defaultSystemFonts, 'Arial', 'Helvetica']}
         renderers={renderers}
         tagsStyles={{
           body: {

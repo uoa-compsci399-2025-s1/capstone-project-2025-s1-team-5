@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { Module, Subsection, Question, Quiz } from '../types/interfaces';
 import TextEditor from './TextEditor';
 import {
@@ -32,7 +32,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [editingSubsectionIds, setEditingSubsectionIds] = useState<Set<string>>(new Set());
-  const generateTempId = () => `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+  // const generateTempId = () => `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 const quizzesFetchedRef = useRef(false);
 
   
@@ -169,16 +169,16 @@ const handleDragEnd = (result: DropResult) => {
   setModuleSubsectionIds(items.map(item => item._id)); // update order
 };
 
-  const handleSubsectionReorder = (result: DropResult) => {
-  if (!result.destination) return;
+//   const handleSubsectionReorder = (result: DropResult) => {
+//   if (!result.destination) return;
 
-  const reordered = Array.from(subsections);
-  const [moved] = reordered.splice(result.source.index, 1);
-  reordered.splice(result.destination.index, 0, moved);
+//   const reordered = Array.from(subsections);
+//   const [moved] = reordered.splice(result.source.index, 1);
+//   reordered.splice(result.destination.index, 0, moved);
 
-  setSubsections(reordered);
-  setModuleSubsectionIds(reordered.map((s) => s._id)); // update order for submission
-};
+//   setSubsections(reordered);
+//   setModuleSubsectionIds(reordered.map((s) => s._id)); // update order for submission
+// };
 
  const handleAddQuiz = async () => {
     try {
