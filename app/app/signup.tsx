@@ -20,7 +20,7 @@ export default function SignUpScreen() {
 
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/; 
 
-  const handleSignUp = async() => {
+  const handleSignUp = async () => {
     setDisplayedError('');
     if (!emailRegex.test(email)) {
       setDisplayedError('Please enter a valid email address');
@@ -46,9 +46,9 @@ export default function SignUpScreen() {
 
     if (password.length < 6) {
       setDisplayedError('Password must be at least 6 characters long.');
-      return
+      return;
     }
-    setDisplayedError('');
+
     console.log('Signing up with:', { email, password });
 
     router.replace({
@@ -59,23 +59,28 @@ export default function SignUpScreen() {
   const logoSource = isDarkMode
             ? require('@/assets/logos/VerticalWhiteLogo.png')
             : require('@/assets/logos/VerticalColourLogo.png');
-//Here isDarkMode ? require('@/assets/logos/VerticalWhiteLogo.png') : require('@/assets/logos/VerticalColourLogo.png')
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <View style={styles.appLogo}>
-      <Image source={logoSource} style={styles.logoImage} />
+        <View style={styles.appLogo}>
+          <Image
+            source={
+              isDarkMode
+                ? require('@/assets/logos/VerticalWhiteLogo.png')
+                : require('@/assets/logos/VerticalColourLogo.png')
+            }
+            style={styles.logoImage}
+          />
+        </View>
+        <TextInputBox placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" iconName="email" />
+        <TextInputBox placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry iconName="lock" />
+        <TextInputBox placeholder="Confirm password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry iconName="lock" />
+
+        {displayedError !== '' && <StyledText type="error">{displayedError}</StyledText>}
+
+        <SubmitButton text="Sign Up" onPress={handleSignUp} />
       </View>
-
-      <TextInputBox placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" iconName="email"/>
-      <TextInputBox placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry iconName="lock"/>
-      <TextInputBox placeholder="Confirm password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry iconName="lock"/>
-
-      {displayedError !== '' && <StyledText type="error">{displayedError}</StyledText>}
-
-      <SubmitButton text="Sign Up" onPress={handleSignUp} />
-    </View>
-    </TouchableWithoutFeedback> 
+    </TouchableWithoutFeedback>
   );
 }
 

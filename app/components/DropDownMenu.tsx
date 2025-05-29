@@ -54,7 +54,7 @@ export default function DropDownMenu({
 
       <Modal visible={visible} transparent animationType="fade" onRequestClose={close}>
         <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={close} />
-        <View style={[styles.modal, { backgroundColor: theme.background }]} >
+        <View style={[styles.modal, { backgroundColor: theme.background }]}>
           <FlatList
             data={items}
             keyExtractor={(item) => item}
@@ -71,7 +71,7 @@ export default function DropDownMenu({
             )}
             ListFooterComponent={
               <TouchableOpacity style={styles.cancel} onPress={close}>
-                <Text style={[styles.cancelText, { color: theme.primary }]}>Cancel</Text>
+                <Text style={[styles.cancelText, { color: theme.text }]}>Cancel</Text>
               </TouchableOpacity>
             }
           />
@@ -86,9 +86,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: 50,
-    borderRadius: 8,
-    marginVertical: 8,
-    paddingHorizontal: 12,
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    marginVertical: 5,
+    width: '100%',
   },
   icon: {
     marginRight: 8,
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     maxHeight: Platform.OS === 'ios' ? '50%' : '60%',
     marginHorizontal: 20,
     marginVertical: 'auto',
-    borderRadius: 8,
+    borderRadius: 10,
     overflow: 'hidden',
   },
   item: {

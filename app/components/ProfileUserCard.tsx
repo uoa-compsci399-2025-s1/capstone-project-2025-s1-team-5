@@ -1,12 +1,11 @@
 import React, { useContext } from 'react';
-import { View, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import StyledText from '@/components/StyledText';
 import profileAvatars from '@/constants/profileAvatars';
 import countries from 'world-countries';
 
-import { Dimensions } from 'react-native';
 const { width } = Dimensions.get('window');
 
 interface ProfileUserCardProps {
@@ -25,17 +24,7 @@ const CountryTag: React.FC<{ country: string }> = ({ country }) => {
   return (
     <View style={styles.countryContainer}>
       <Image source={{ uri }} style={styles.countryFlag} />
-      <StyledText
-        type="label"
-        style={{
-          color: '#ffffff',
-          flexShrink: 1,
-          flexWrap: 'wrap',
-          flex: 1,
-        }}
-      >
-        {country}
-      </StyledText>
+      <StyledText type="label" style={styles.countryText}>{country}</StyledText>
     </View>
   );
 };
@@ -43,18 +32,22 @@ const CountryTag: React.FC<{ country: string }> = ({ country }) => {
 const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email, country }) => {
   const router = useRouter();
   const { theme } = useContext(ThemeContext);
+
   return (
     <View style={styles.header}>
       <TouchableOpacity onPress={() => router.push('./Profile/pfpselection')}>
-        <Image source={profileAvatars[avatar] || profileAvatars.default} style={[styles.profileImage,{ borderColor: theme.primary }]}/>
+        <Image
+          source={profileAvatars[avatar] || profileAvatars.default}
+          style={[styles.profileImage, { borderColor: theme.primary }]}
+        />
       </TouchableOpacity>
       <View style={styles.profileInfo}>
-       <StyledText type="title" style={[styles.name, { color: '#ffffff' }]}>{name}</StyledText>
-       <StyledText type="subtitle" style={[styles.email, { color: '#ffffff' }]}>{email}</StyledText>
-       <View style={styles.countryWrapper}>
-         <CountryTag country={country} />
-       </View>
-     </View>
+        <StyledText type="title" style={styles.name}>{name}</StyledText>
+        <StyledText type="subtitle" style={styles.email}>{email}</StyledText>
+        <View style={styles.countryWrapper}>
+          <CountryTag country={country} />
+        </View>
+      </View>
     </View>
   );
 };
@@ -65,12 +58,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   profileImage: {
-      width: width * 0.3,
-      height: width * 0.3,
-      borderRadius: (width * 0.3) / 2,
-    },
+    width: width * 0.3,
+    height: width * 0.3,
+    borderRadius: (width * 0.3) / 2,
+    borderWidth: 2,
+  },
   profileInfo: {
-    marginLeft: "6%",
+    marginLeft: width * 0.06,
+    flex: 1,
   },
   countryContainer: {
     flexDirection: 'row',
@@ -79,18 +74,31 @@ const styles = StyleSheet.create({
     maxWidth: width * 0.6,
   },
   countryFlag: {
-    width: "23%",
-    height: "30",
-    marginRight: "8%",
+    width: width * 0.10,
+    height: width * 0.06,
+    marginRight: width * 0.03,
+    borderRadius: 2,
+  },
+  countryText: {
+    color: '#ffffff',
+    flexShrink: 1,
+    flexWrap: 'wrap',
+    flex: 1,
   },
   name: {
-    marginBottom: "2%",
+    marginBottom: width * 0.01,
+    color: '#ffffff',
+    flexShrink: 1,
+    flexWrap: 'wrap',
   },
   email: {
-    marginBottom: "2%",
-  },
+    marginBottom: width * 0.01,
+    color: '#ffffff',
+    flexShrink: 1,
+    flexWrap: 'wrap',
+},
   countryWrapper: {
-    marginTop: "2%",
+    marginTop: width * 0.01,
   },
 });
 
