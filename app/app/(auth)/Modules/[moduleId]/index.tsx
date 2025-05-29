@@ -4,32 +4,22 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import api from "@/app/lib/api";
 import SubModuleButton from "@/components/SubModuleButton";
 import { ThemeContext } from "@/contexts/ThemeContext";
-
-interface SubsectionItem { id: string; title: string; }
-
-interface LinkItem {
-  id: string;
-  title: string;
-  link: string;
-}
-
+import { SubsectionItem, LinkItem, ModuleDetail } from "@/types/types";
 
 export default function ModuleDetailScreen() {
   const { moduleId } = useLocalSearchParams<{ moduleId: string }>();
   const { theme } = useContext(ThemeContext);
   const router = useRouter();
   const [subs, setSubs] = useState<SubsectionItem[]>([]);
-
-  const [links, setLinks] = useState<LinkItem[]>([
-  { id: 'link-1', title: 'Expo Docs', link: 'https://docs.expo.dev' },
-  { id: 'link-2', title: 'React Native', link: 'https://reactnative.dev' }
-]);
-
+  const [links,setLinks]  = useState<LinkItem[]>([]);
 
   useEffect(() => {
     if (!moduleId) return;
-    api.get<{ subsections: { id: string; title: string }[] }>(`/modules/${moduleId}`)
-       .then(res => setSubs(res.data.subsections))
+    api.get<ModuleDetail>(`/modules/${moduleId}`)
+       .then(res => {
+          setSubs(res.data.subsections);
+          setLinks(res.data.links);
+        })
        .catch(console.error);
   }, [moduleId]);
 
@@ -52,7 +42,7 @@ export default function ModuleDetailScreen() {
           title={l.title}
           onPress={() => router.push({
             pathname: `/Modules/[moduleId]/LinkViewer`,
-            params: { url: l.link, title: l.title, moduleId }
+            params: { url: l.url, title: l.title, moduleId }
             })
           }
         />
