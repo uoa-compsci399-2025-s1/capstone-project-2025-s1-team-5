@@ -7,11 +7,24 @@ import { ThemeContext } from "@/contexts/ThemeContext";
 
 interface SubsectionItem { id: string; title: string; }
 
+interface LinkItem {
+  id: string;
+  title: string;
+  link: string;
+}
+
+
 export default function ModuleDetailScreen() {
   const { moduleId } = useLocalSearchParams<{ moduleId: string }>();
   const { theme } = useContext(ThemeContext);
   const router = useRouter();
   const [subs, setSubs] = useState<SubsectionItem[]>([]);
+
+  const [links, setLinks] = useState<LinkItem[]>([
+  { id: 'link-1', title: 'Expo Docs', link: 'https://docs.expo.dev' },
+  { id: 'link-2', title: 'React Native', link: 'https://reactnative.dev' }
+]);
+
 
   useEffect(() => {
     if (!moduleId) return;
@@ -28,6 +41,19 @@ export default function ModuleDetailScreen() {
           title={s.title}
           onPress={() =>
             router.push(`/Modules/${moduleId}/${s.id}`)
+          }
+        />
+      ))}
+
+      {/* Links button */}
+      {links.map(l => (
+        <SubModuleButton                 
+          key={l.id}
+          title={l.title}
+          onPress={() => router.push({
+            pathname: `/Modules/[moduleId]/LinkViewer`,
+            params: { url: l.link, title: l.title, moduleId }
+            })
           }
         />
       ))}

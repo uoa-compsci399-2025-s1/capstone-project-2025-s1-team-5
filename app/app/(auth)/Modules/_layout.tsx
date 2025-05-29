@@ -52,6 +52,12 @@ export default function ModulesLayout() {
           headerTitle,
         }}
       />
+    
+      <Stack.Screen
+        name="[moduleId]/LinkViewer"
+        options={{ headerTitle: 'Resource' }}   // 或 title param
+      />
+
     </Stack>
   );
 }
