@@ -33,6 +33,8 @@ export interface IModule {
 export interface IProgramme {
     id: string;
     name: string;
+    description: string;
+    link: string;
     createdAt: Date;
 }
 
