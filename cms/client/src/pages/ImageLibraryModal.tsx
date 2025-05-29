@@ -26,53 +26,83 @@ const ImageLibraryModal: React.FC<Props> = ({ open, onClose, onSelect }) => {
     }
   }, [open]);
 
-  const handleUpload = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedFile) return;
-    setUploading(true);
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-    try {
-      const res = await axios.post(`${API_URL}/api/upload`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setFiles(prev => [...prev, { key: res.data.url.split('/').pop(), url: res.data.url }]);
-      setSelectedFile(null);
-    } finally {
-      setUploading(false);
-    }
-  };
+
+const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (file) {
+    handleUpload(file);
+  }
+};
+
+
+const handleUpload = async (file: File) => {
+  setUploading(true);
+  const formData = new FormData();
+  formData.append("file", file);
+  
+  try {
+    const res = await axios.post(`${API_URL}/api/upload`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    setFiles(prev => [...prev, { key: res.data.url.split('/').pop(), url: res.data.url }]);
+  } catch (error) {
+    console.error("Upload failed:", error);
+  } finally {
+    setUploading(false);
+  }
+};
 
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-lg max-w-xl w-full p-6 relative">
-        <button className="absolute right-4 top-4 text-gray-400" onClick={onClose}>✕</button>
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50"
+      onClick={onClose} // This will close when clicking outside
+    >
+      <div 
+        className="bg-white rounded-xl shadow-lg max-w-xl w-full p-6 relative"
+        onClick={e => e.stopPropagation()} // Prevent click from bubbling to parent
+      >
+        <button 
+          className="absolute right-4 top-4 text-gray-400" 
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+        >
+          ✕
+        </button>
         <h2 className="text-lg font-bold mb-4">Image Library</h2>
         {/* Upload form */}
-        <form className="flex gap-2 mb-4" onSubmit={handleUpload}>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={e => setSelectedFile(e.target.files?.[0] ?? null)}
-            disabled={uploading}
-          />
-          <button
-            type="submit"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded"
-            disabled={uploading || !selectedFile}
-          >
-            {uploading ? "Uploading..." : "Upload"}
-          </button>
-        </form>
+        <div className="flex gap-2 mb-4">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              disabled={uploading}
+              id="file-upload"
+              className="hidden"
+            />
+            <label 
+              htmlFor="file-upload"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded cursor-pointer"
+            >
+              {uploading ? "Uploading..." : "Select & Upload"}
+            </label>
+          </div>
         {/* Image grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div 
+          className="grid grid-cols-2 md:grid-cols-4 gap-3"
+          onClick={e => e.stopPropagation()} // Add this to prevent bubbling
+        >
           {files.map(file => (
             <button
               key={file.key}
               type="button"
-              onClick={() => onSelect(file.url)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect(file.url);
+              }}
               className="rounded border hover:border-blue-500 focus:border-blue-600 overflow-hidden"
               title={file.key}
             >
