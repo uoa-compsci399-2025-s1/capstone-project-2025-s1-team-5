@@ -1,8 +1,9 @@
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CustomIframe } from './CustomIframe'
+import ImageLibraryModal from './ImageLibraryModal'
 import axios from 'axios'
 import Image from '@tiptap/extension-image'
 
@@ -14,6 +15,7 @@ interface TextEditorProps {
 
 const TextEditor = ({ content, onChange, subsectionId }: TextEditorProps) => {
   const initialLoad = useRef(true)
+  const [libraryOpen, setLibraryOpen] = useState(false)
 
   const editor = useEditor({
     extensions: [
@@ -44,6 +46,7 @@ const TextEditor = ({ content, onChange, subsectionId }: TextEditorProps) => {
     }
   }, [editor, content])
 
+  // This function is still needed if you want to handle direct uploads (keep for possible use in ImageLibraryModal)
   const handleImageUpload = async (file: File) => {
     const formData = new FormData()
     formData.append('file', file)
@@ -76,24 +79,26 @@ const TextEditor = ({ content, onChange, subsectionId }: TextEditorProps) => {
     setTimeout(() => editor?.commands.focus(), 0)
   }
 
+  // Insert image at cursor without clearing existing content
+  const handleLibrarySelect = (url: string) => {
+    setLibraryOpen(false)
+    editor?.chain().focus().setImage({ src: url }).run()
+  }
+
   if (!editor) return <div className="p-4 text-gray-500">Loading editor...</div>
 
   return (
     <div className="border border-gray-300 rounded-md">
+      {/* Toolbar */}
       <div className="flex flex-wrap gap-2 p-2 border-b border-gray-300 bg-gray-50">
-        {/* Basic formatting buttons */}
         <button onClick={(e) => handleButtonClick(e, () => editor.chain().focus().toggleBold().run())} className={`p-2 rounded ${editor.isActive('bold') ? 'bg-gray-200' : 'bg-white'}`}>
           <span className="font-bold">B</span>
         </button>
         <button onClick={(e) => handleButtonClick(e, () => editor.chain().focus().toggleItalic().run())} className={`p-2 rounded ${editor.isActive('italic') ? 'bg-gray-200' : 'bg-white'}`}>
           <span className="italic">I</span>
         </button>
-
-        {/* Alignment + Headings */}
         <button onClick={(e) => handleButtonClick(e, () => editor.chain().focus().toggleHeading({ level: 2 }).run())} className={`p-2 rounded ${editor.isActive('heading', { level: 2 }) ? 'bg-gray-200' : 'bg-white'}`}>H2</button>
         <button onClick={(e) => handleButtonClick(e, () => editor.chain().focus().toggleHeading({ level: 3 }).run())} className={`p-2 rounded ${editor.isActive('heading', { level: 3 }) ? 'bg-gray-200' : 'bg-white'}`}>H3</button>
-
-        {/* Lists */}
         <button onClick={(e) => handleButtonClick(e, () => editor.chain().focus().toggleBulletList().run())} className={`p-2 rounded ${editor.isActive('bulletList') ? 'bg-gray-200' : 'bg-white'}`}>• List</button>
         <button onClick={(e) => handleButtonClick(e, () => editor.chain().focus().toggleOrderedList().run())} className={`p-2 rounded ${editor.isActive('orderedList') ? 'bg-gray-200' : 'bg-white'}`}>1. List</button>
         <button
@@ -101,7 +106,7 @@ const TextEditor = ({ content, onChange, subsectionId }: TextEditorProps) => {
           className={`p-2 rounded ${editor.isActive({ textAlign: 'left' }) ? 'bg-gray-200' : 'bg-white'}`}
           title="Align left"
         >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="12" x2="15" y2="12"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -112,7 +117,7 @@ const TextEditor = ({ content, onChange, subsectionId }: TextEditorProps) => {
           className={`p-2 rounded ${editor.isActive({ textAlign: 'center' }) ? 'bg-gray-200' : 'bg-white'}`}
           title="Align center"
         >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="7" y1="12" x2="17" y2="12"></line>
             <line x1="5" y1="18" x2="19" y2="18"></line>
@@ -123,7 +128,7 @@ const TextEditor = ({ content, onChange, subsectionId }: TextEditorProps) => {
           className={`p-2 rounded ${editor.isActive({ textAlign: 'right' }) ? 'bg-gray-200' : 'bg-white'}`}
           title="Align right"
         >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="9" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -134,7 +139,7 @@ const TextEditor = ({ content, onChange, subsectionId }: TextEditorProps) => {
           className={`p-2 rounded ${editor.isActive({ textAlign: 'justify' }) ? 'bg-gray-200' : 'bg-white'}`}
           title="Justify"
         >
-         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -156,24 +161,26 @@ const TextEditor = ({ content, onChange, subsectionId }: TextEditorProps) => {
         >
           🎥 Add Video
         </button>
-
-        {/* Image upload */}
-        <input
-          type="file"
-          accept="image/*"
-          hidden
-          id={`upload-image-${subsectionId}`}
-          onChange={(e) => {
-            const file = e.target.files?.[0]
-            if (file) handleImageUpload(file)
+        {/* Image upload / library */}
+        <button
+          className="p-2 rounded bg-white hover:bg-gray-100 border border-gray-300"
+          onClick={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            setLibraryOpen(true);
           }}
-        />
-        <label htmlFor={`upload-image-${subsectionId}`} className="p-2 rounded bg-white hover:bg-gray-100 border border-gray-300 cursor-pointer">
-          🖼️ Upload Image
-        </label>
+        >
+          🖼️ Add Image
+        </button>
       </div>
-
+      {/* Editor content */}
       <EditorContent editor={editor} />
+      {/* Image library modal (keep outside of toolbar/content divs!) */}
+      <ImageLibraryModal
+        open={libraryOpen}
+        onClose={() => setLibraryOpen(false)}
+        onSelect={handleLibrarySelect}
+      />
     </div>
   )
 }
