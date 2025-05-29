@@ -12,6 +12,7 @@ import {
     SuccessResponse,
     Security,
     Request,
+    Tags,
 } from "tsoa";
 
 import { UserService, UserCreationParams, UserUpdateParams } from "../../data-layer/services/UserService";
@@ -23,6 +24,7 @@ import { User } from "../../data-layer/models/schema";
 import { UpdateAvatarRequest, UpdateThemeRequest } from '../../data-layer/models/models';
 
 @Route("users")
+@Tags("Users")
 export class UsersController extends Controller {     
     @Get() //Admin Method need Authorisation
     @SuccessResponse(200, "Page Users fetched") 
