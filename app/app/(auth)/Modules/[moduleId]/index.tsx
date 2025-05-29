@@ -15,7 +15,6 @@ export default function ModuleDetailScreen() {
 
   useEffect(() => {
     if (!moduleId) return;
-    console.log(moduleId);
     api.get<{ subsections: { id: string; title: string }[] }>(`/modules/${moduleId}`)
        .then(res => setSubs(res.data.subsections))
        .catch(console.error);
