@@ -10,6 +10,7 @@ import {
     Route,
     Security,
     SuccessResponse,
+    Tags,
 } from "tsoa";
 import { ModuleService } from "../../data-layer/services/ModuleService";
 import { ModuleGetResponse, ModulesGetResponse } from "../response-models/ModuleResponse";
@@ -17,6 +18,7 @@ import { IModule, IQuestion, IQuiz, ISubsection, ILink } from "../../data-layer/
 import { moduleToResponse } from "../../data-layer/adapter/ModuleAdapter";
 
 @Route("modules")
+@Tags("Modules")
 export class ModuleController extends Controller {
     private moduleService: ModuleService;
 

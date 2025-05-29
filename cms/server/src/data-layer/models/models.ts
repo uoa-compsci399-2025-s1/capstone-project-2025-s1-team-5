@@ -33,6 +33,8 @@ export interface IModule {
 export interface IProgramme {
     id: string;
     name: string;
+    description: string;
+    link: string;
     createdAt: Date;
 }
 
@@ -51,7 +53,7 @@ export interface IQuiz {
     createdAt: Date;
 }
 
-export interface    ISubsection {
+export interface ISubsection {
     id: string;
     title: string;
     body: string;
