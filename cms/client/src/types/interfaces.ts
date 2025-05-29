@@ -37,6 +37,12 @@ export interface ModulesResponse {
   total: number;
 }
 
+export interface Programme {
+  _id: string;
+  name: string;
+  description: string;
+  link: string;
+}
 export interface Link {
   _id: string;
   title: string;
