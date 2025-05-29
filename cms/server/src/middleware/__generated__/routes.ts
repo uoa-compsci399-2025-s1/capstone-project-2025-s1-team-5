@@ -155,15 +155,24 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ModuleGetResponse": {
+    "SubsectionItem": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string","required":true},
+            "title": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ModuleResponse": {
         "dataType": "refObject",
         "properties": {
             "id": {"dataType":"string","required":true},
             "title": {"dataType":"string","required":true},
             "description": {"dataType":"string","required":true},
             "createdAt": {"dataType":"datetime","required":true},
-            "updatedAt": {"dataType":"datetime"},
-            "subsectionIds": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
+            "subsections": {"dataType":"array","array":{"dataType":"refObject","ref":"SubsectionItem"},"required":true},
         },
         "additionalProperties": false,
     },

@@ -12,9 +12,8 @@ import {
     SuccessResponse,
 } from "tsoa";
 import { ModuleService } from "../../data-layer/services/ModuleService";
-import { ModuleGetResponse, ModulesGetResponse } from "../response-models/ModuleResponse";
+import { ModulesGetResponse, ModuleResponse} from "../response-models/ModuleResponse";
 import { IModule, IQuestion, IQuiz, ISubsection, ILink } from "../../data-layer/models/models";
-import { moduleToResponse } from "../../data-layer/adapter/ModuleAdapter";
 
 @Route("modules")
 export class ModuleController extends Controller {
@@ -35,13 +34,13 @@ export class ModuleController extends Controller {
 
     @Get("{moduleId}")
     @SuccessResponse(200, "Module fetched")
-    public async getModule(@Path() moduleId: string): Promise<ModuleGetResponse> {
+    public async getModule(@Path() moduleId: string): Promise<ModuleResponse | null> {
         const moduleData = await this.moduleService.getModule(moduleId);
         if (!moduleData) {
             this.setStatus(404);
             throw new Error("Module not found");
         }
-        return moduleToResponse(moduleData);
+        return moduleData;
     }
 
     @Security("jwt", ["admin"]) 

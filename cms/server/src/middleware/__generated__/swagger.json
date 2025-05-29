@@ -338,7 +338,23 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"ModuleGetResponse": {
+			"SubsectionItem": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"title"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ModuleResponse": {
 				"properties": {
 					"id": {
 						"type": "string"
@@ -357,9 +373,9 @@
 						"type": "string",
 						"format": "date-time"
 					},
-					"subsectionIds": {
+					"subsections": {
 						"items": {
-							"type": "string"
+							"$ref": "#/components/schemas/SubsectionItem"
 						},
 						"type": "array"
 					}
@@ -369,7 +385,8 @@
 					"title",
 					"description",
 					"createdAt",
-					"subsectionIds"
+					"updatedAt",
+					"subsections"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -952,7 +969,12 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ModuleGetResponse"
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/ModuleResponse"
+										}
+									],
+									"nullable": true
 								}
 							}
 						}
