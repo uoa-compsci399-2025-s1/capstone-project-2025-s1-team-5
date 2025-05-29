@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { Module, Subsection, Question, Quiz, Link } from '../types/interfaces';
 import TextEditor from './TextEditor';
 import {
@@ -8,9 +8,6 @@ import {
   Draggable,
   DropResult,
 } from '@hello-pangea/dnd';
-
-
-
 
 interface EditModuleFormProps {
   module: Module;

@@ -40,9 +40,9 @@ const UsersPage = () => {
     }
   };
 
-  useEffect(() => {
-  fetchUsers();
-}, [page,fetchUsers]);
+    useEffect(() => {
+    fetchUsers();
+  }, [page,fetchUsers]);
 
 
   const sortUsers = (data: User[]) => {
