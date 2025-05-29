@@ -13,9 +13,8 @@ import {
     Tags,
 } from "tsoa";
 import { ModuleService } from "../../data-layer/services/ModuleService";
-import { ModuleGetResponse, ModulesGetResponse } from "../response-models/ModuleResponse";
+import { ModulesGetResponse, ModuleResponse} from "../response-models/ModuleResponse";
 import { IModule, IQuestion, IQuiz, ISubsection, ILink } from "../../data-layer/models/models";
-import { moduleToResponse } from "../../data-layer/adapter/ModuleAdapter";
 
 @Route("modules")
 @Tags("Modules")
@@ -37,13 +36,13 @@ export class ModuleController extends Controller {
 
     @Get("{moduleId}")
     @SuccessResponse(200, "Module fetched")
-    public async getModule(@Path() moduleId: string): Promise<ModuleGetResponse> {
+    public async getModule(@Path() moduleId: string): Promise<ModuleResponse | null> {
         const moduleData = await this.moduleService.getModule(moduleId);
         if (!moduleData) {
             this.setStatus(404);
             throw new Error("Module not found");
         }
-        return moduleToResponse(moduleData);
+        return moduleData;
     }
 
     @Security("jwt", ["admin"]) 
@@ -59,7 +58,7 @@ export class ModuleController extends Controller {
     @SuccessResponse(200, "Module Updated")
     public async updateModule(
       @Path() moduleId: string,
-      @Body() moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[] }
+      @Body() moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[]; linkIds?: string[] }
     ): Promise<{ success: boolean }> {
       const result = await this.moduleService.updateModule(moduleId, moduleChanges);
       return { success: result };

@@ -5,6 +5,7 @@ export interface Module {
   description: string;
   subsectionIds: string[];
   quizIds?: string[];
+  linkIds?: string[];
   updatedAt?: string;
   createdAt?: string;
 }
@@ -34,4 +35,16 @@ export interface Quiz {
 export interface ModulesResponse {
   modules: Module[];
   total: number;
+}
+
+export interface Programme {
+  _id: string;
+  name: string;
+  description: string;
+  link: string;
+}
+export interface Link {
+  _id: string;
+  title: string;
+  link: string;
 }

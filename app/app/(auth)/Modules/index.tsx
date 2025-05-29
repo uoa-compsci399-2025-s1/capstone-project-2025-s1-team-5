@@ -1,43 +1,48 @@
-import React, { useContext } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import React, { useContext, useState, useEffect } from 'react';
+import { StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
-import { moduleTitles } from './modulescreen';
-import ModuleButton from '@/components/ModuleButton';
+import SubModuleButton from '@/components/SubModuleButton';
+import { useIsFocused } from '@react-navigation/native';
 
-type ModuleIconName = 'star' | 'school' | 'people' | 'flight';
+import api from '@/app/lib/api';
 
-const modules = [
-  { moduleNumber: 1, title: moduleTitles[1], iconName: 'star' as ModuleIconName },
-  { moduleNumber: 2, title: moduleTitles[2], iconName: 'school' as ModuleIconName },
-  { moduleNumber: 3, title: moduleTitles[3], iconName: 'people' as ModuleIconName },
-  { moduleNumber: 4, title: moduleTitles[4], iconName: 'flight' as ModuleIconName },
-];
+interface ModuleItem {
+  id: string;
+  title: string;
+}
 
-const DisplayModulesScreen = () => {
-  const { theme } = useContext(ThemeContext);
+export default function ModuleScreen(){
   const router = useRouter();
+  const isFocused = useIsFocused();
+  const { theme } = useContext(ThemeContext);  
+  const [modules, setModules] = useState<ModuleItem[]>([]);
 
-  const handleModulePress = (moduleNumber: number) => {
-    router.push(`/Modules/${moduleNumber}`);
-  };
+  useEffect(() => {
+    if (!isFocused) return;
+    api
+      .get<{ modules: ModuleItem[]; total: number }>('/modules')
+      .then(res => {
+        setModules(res.data.modules);
+      })
+      .catch(err => {
+        console.error('Fetching Modules List Error', err);
+      });
+  }, [isFocused]);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme?.background || '#fff' }]}>
-      <ScrollView
-        contentContainerStyle={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-      >
-        {modules.map((module) => (
-          <ModuleButton
-            key={module.moduleNumber}
-            title={module.title}
-            onPress={() => handleModulePress(module.moduleNumber)}
-            iconName={module.iconName}
-          />
-        ))}
-      </ScrollView>
-    </View>
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      showsVerticalScrollIndicator={false}
+    >
+      {modules.map(m => (
+        <SubModuleButton
+          key={m.id}
+          title={m.title}
+          onPress={() => router.push(`/Modules/${m.id}`)}
+        />
+      ))}
+    </ScrollView>
   );
 };
 
@@ -50,5 +55,3 @@ const styles = StyleSheet.create({
     padding: 5,
   },
 });
-
-export default DisplayModulesScreen;

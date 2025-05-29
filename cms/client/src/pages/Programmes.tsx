@@ -1,51 +1,33 @@
 import React, { useEffect, useState } from "react";
-import CreateUser from "../pages/CreateUser";
 import axios from "axios";
-import EditUserForm from "./EditUser";
+import EditProgrammeForm from "./EditProgramme";
+import CreateProgrammeForm from "./CreateProgramme";
+import { Programme } from "../types/interfaces"
 
-interface User {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  password: string;
-  country: string;
-  programme?: string;
-  role: string;
-  createdAt: string;
-}
-
-const UsersPage = () => {
-  const [users, setUsers] = useState<User[]>([]);
+const ProgrammesPage = () => {
+  const [programmes, setProgrammes] = useState<Programme[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortKey, setSortKey] = useState<keyof User | null>(null);
+  const [sortKey, setSortKey] = useState<keyof Programme | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [editUser, setEditUser] = useState<User | null>(null);
+  const [editProgramme, setEditProgramme] = useState<Programme | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false); //transition
-  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false); //transition
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [limit] = useState(10);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
-  const fetchUsers = async () => {
+  const fetchProgrammes = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/users`, {
-      params: { limit, page },
-    });
-      setUsers(res.data.users);
-      setTotalPages(Math.ceil(res.data.total / limit)); // 👈 Here’s the important part
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/programmes`);
+      setProgrammes(res.data || []);
     } catch (error) {
-      console.error("Failed to fetch users:", error);
+      console.error("Failed to fetch programmes:", error);
     }
   };
 
-    useEffect(() => {
-    fetchUsers();
-  }, [page,fetchUsers]);
+  useEffect(() => {
+    fetchProgrammes();
+  }, []);
 
-
-  const sortUsers = (data: User[]) => {
+  const sortProgrammes = (data: Programme[]) => {
     if (!sortKey) return data;
     return [...data].sort((a, b) => {
       const aVal = a[sortKey];
@@ -59,7 +41,7 @@ const UsersPage = () => {
     });
   };
 
-  const handleSort = (key: keyof User) => {
+  const handleSort = (key: keyof Programme) => {
     if (sortKey === key) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
@@ -68,52 +50,45 @@ const UsersPage = () => {
     }
   };
 
-  const handleEdit = (user: User) => {
-    setEditUser(user);
+  const handleEdit = (programme: Programme) => {
+    setEditProgramme(programme);
     setIsEditModalVisible(true);
   };
 
-  const handleDelete = async (userId: string) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
+  const handleDelete = async (programmeId: string) => {
+    if (window.confirm("Are you sure you want to delete this programme?")) {
       try {
-        await axios.delete(`${process.env.REACT_APP_API_URL}/api/users/${userId}`);
-        fetchUsers();
+        await axios.delete(`${process.env.REACT_APP_API_URL}/api/programmes/${programmeId}`);
+        fetchProgrammes();
       } catch (error) {
-        console.error("Failed to delete user:", error);
+        console.error("Failed to delete programme:", error);
+        console.log(programmeId)
       }
     }
   };
 
   return (
-    
-    <div className="p-6 border-neutral-950 bg-white shadow-orange-600 bg-clip-padding" style={{ paddingLeft: '60px' }}>
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Manage Users</h1>
+    <div className="p-6 bg-white shadow-md" style={{ paddingLeft: '60px' }}>
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Manage Programmes</h1>
 
       <input
         type="text"
-        placeholder="Search users by name..."
+        placeholder="Search programmes..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="mb-6 p-2 border border-gray-300 rounded w-full max-w-md shadow-sm"
       />
 
-      <h2 className="text-2xl font-semibold text-gray-700 mb-4">All Users</h2>
+      <h2 className="text-2xl font-semibold text-gray-700 mb-4">All Programmes</h2>
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white shadow-md rounded border border-gray-200">
           <thead className="bg-gray-100">
             <tr>
-              {[
-                ["first_name", "Name"],
-                ["email", "Email"],
-                ["country", "Country"],
-                ["programme", "Programme"],
-                ["role", "Role"],
-                ["createdAt", "Date Created"],
-              ].map(([key, label]) => (
+              {[["name", "Name"], ["description", "Description"], ["link", "Link"]].map(([key, label]) => (
                 <th
                   key={key}
-                  onClick={() => handleSort(key as keyof User)}
+                  onClick={() => handleSort(key as keyof Programme)}
                   className="py-3 px-4 text-left font-semibold text-gray-700 cursor-pointer select-none"
                 >
                   {label}{" "}
@@ -124,29 +99,24 @@ const UsersPage = () => {
             </tr>
           </thead>
           <tbody>
-            {sortUsers(
-              users.filter((user) =>
-                `${user.first_name} ${user.last_name} ${user.email} ${user.country}`
-                  .toLowerCase()
-                  .includes(searchTerm.toLowerCase())
+            {sortProgrammes(
+              programmes.filter((p) =>
+                `${p.name} ${p.description}`.toLowerCase().includes(searchTerm.toLowerCase())
               )
-            ).map((user) => (
-              <tr key={user.id} className="border-t hover:bg-gray-50">
-                <td className="py-2 px-4">{user.first_name} {user.last_name}</td>
-                <td className="py-2 px-4">{user.email}</td>
-                <td className="py-2 px-4">{user.country}</td>
-                <td className="py-2 px-4">{user.programme || "N/A"}</td>
-                <td className="py-2 px-4">{user.role}</td>
-                <td className="py-2 px-4">{new Date(user.createdAt).toLocaleDateString()}</td>
+            ).map((programme) => (
+              <tr key={programme._id} className="border-t hover:bg-gray-50">
+                <td className="py-2 px-4">{programme.name}</td>
+                <td className="py-2 px-4">{programme.description}</td>
+                <td className="py-2 px-4">{programme.link}</td>
                 <td className="py-2 px-4 space-x-2">
                   <button
-                    onClick={() => handleEdit(user)}
+                    onClick={() => handleEdit(programme)}
                     className="bg-yellow-400 hover:bg-yellow-500 text-white py-1 px-3 rounded text-sm"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(user.id)}
+                    onClick={() => handleDelete(programme._id)}
                     className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded text-sm"
                   >
                     Delete
@@ -158,7 +128,7 @@ const UsersPage = () => {
         </table>
       </div>
 
-      {editUser && (
+      {editProgramme && (
         <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50 transition-opacity duration-300">
           <div
             className={`bg-white rounded-lg p-6 shadow-lg w-full max-w-lg relative transform transition-all duration-300 ${
@@ -168,42 +138,26 @@ const UsersPage = () => {
             <button
               onClick={() => {
                 setIsEditModalVisible(false);
-                setTimeout(() => setEditUser(null), 300);
+                setTimeout(() => setEditProgramme(null), 300);
               }}
               className="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-3xl leading-none font-bold"
               aria-label="Close"
             >
               &times;
             </button>
-            <EditUserForm
-              user={editUser}
-              onUserUpdated={() => {
-                fetchUsers();
+            <EditProgrammeForm
+              programme={editProgramme}
+              setEditProgramme={setEditProgramme}
+              onProgrammeUpdated={() => {
+                fetchProgrammes();
                 setIsEditModalVisible(false);
-                setTimeout(() => setEditUser(null), 300);
+                setTimeout(() => setEditProgramme(null), 300);
               }}
-              setEditUser={setEditUser}
             />
           </div>
         </div>
       )}
-      <div className="mt-6 flex justify-center gap-4">
-        <button
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          disabled={page === 1}
-          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50"
-        >
-          Previous
-        </button>
-        <span className="text-gray-700 self-center">Page {page} of {totalPages}</span>
-        <button
-          onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={page === totalPages}
-          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+
       <div className="mt-12">
         {!showCreateForm && (
           <button
@@ -213,7 +167,7 @@ const UsersPage = () => {
             }}
             className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
           >
-            Create New User
+            Create New Programme
           </button>
         )}
 
@@ -234,10 +188,9 @@ const UsersPage = () => {
               >
                 &times;
               </button>
-
-              <CreateUser
-                onUserCreated={() => {
-                  fetchUsers();
+              <CreateProgrammeForm
+                onProgrammeCreated={() => {
+                  fetchProgrammes();
                   setIsCreateModalVisible(false);
                   setTimeout(() => setShowCreateForm(false), 300);
                 }}
@@ -246,9 +199,8 @@ const UsersPage = () => {
           </div>
         )}
       </div>
-        
     </div>
   );
 };
 
-export default UsersPage;
+export default ProgrammesPage;

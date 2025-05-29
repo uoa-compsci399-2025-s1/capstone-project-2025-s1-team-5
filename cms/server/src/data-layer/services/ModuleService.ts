@@ -2,6 +2,7 @@ import { moduleAdaptor } from "../adapter/ModuleAdapter";
 import type { IModule, IQuestion, IQuiz, ISubsection, ILink } from "../models/models";
 import { Link, newModule, Question, Quiz, Subsection } from "../../data-layer/models/schema";
 import mongoose from "mongoose";
+import { ModuleResponse } from '../../service-layer/response-models/ModuleResponse';
 
 export class ModuleService {
     /**
@@ -13,19 +14,29 @@ export class ModuleService {
         return fetchedModules.map(moduleAdaptor);
       }
 
-      public async getModule(moduleId: string): Promise<IModule | null> {
-        try {
-            const module = await newModule.findById(moduleId)
-                .populate("subsectionIds")
-                .exec();
-            if (!module) {
-                return null;
-            }
-            return module;
-        } catch (error) {
-            console.error("Error fetching module with subsections", error);
-            return null;
-        }
+    public async getModule(moduleId: string): Promise<ModuleResponse | null> {
+      try {
+          const module = await newModule.findById(moduleId)
+              .populate("subsectionIds","title")
+              .lean();
+          if (!module) {
+              return null;
+          }
+          return {
+            id: module._id.toString(),
+            title: module.title,
+            description: module.description,
+            createdAt: module.createdAt,
+            updatedAt: module.updatedAt,
+            subsections: (module.subsectionIds as any[]).map(sub => ({
+              id:    (sub._id as any).toString(),
+              title: sub.title,
+            })),
+          };
+      } catch (error) {
+          console.error("Error fetching module with subsections", error);
+          return null;
+      }
     }
     /**
      * Creates new module
@@ -95,18 +106,30 @@ export class ModuleService {
      */
     public async updateModule(
         moduleId: string,
-        moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[] }
+        moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[]; linkIds?: string[] }
       ): Promise<boolean> {
         try {
           const module = await newModule.findById(moduleId);
-    
+
           if (!module) {
-            throw new Error("Module not found");
+            return false;
           }
-          module.title = moduleChanges.title;
-          module.description = moduleChanges.description;
-          module.subsectionIds = moduleChanges.subsectionIds?.map(id => new mongoose.Types.ObjectId(id));
-    
+          
+          if (moduleChanges.title !== undefined) module.title = moduleChanges.title;
+          if (moduleChanges.description !== undefined) module.description = moduleChanges.description;
+          
+          if (moduleChanges.subsectionIds !== undefined) {
+            module.subsectionIds = moduleChanges.subsectionIds.map(id => new mongoose.Types.ObjectId(id));
+          }
+          
+          if (moduleChanges.quizIds !== undefined) {
+            module.quizIds = moduleChanges.quizIds.map(id => new mongoose.Types.ObjectId(id));
+          }
+          
+          if (moduleChanges.linkIds !== undefined) {
+            module.linkIds = moduleChanges.linkIds.map(id => new mongoose.Types.ObjectId(id));
+          }
+
           await module.save();
           return true;
         } catch (error) {

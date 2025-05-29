@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { ILink, IModule, IProgramme, IQuestion, IQuiz, ISubsection, IUser, RoleType } from "./models";
+import sanitizeHtml from 'sanitize-html';
 
 const userSchema: Schema<IUser> = new Schema(
     {
@@ -147,7 +148,32 @@ const linkSchema: Schema<ILink> = new Schema({
     {timestamps: true}
 )
 
+//CLEAN HTML code
+function clean(raw: string): string {
+  return sanitizeHtml(raw, {
+    allowedTags: ['p','h1','h2','h3','h4','h5','h6','strong','em','img','iframe'],
+    allowedAttributes: {
+      img: ['src','alt','width','height'],
+      iframe: ['src','frameborder','allow','allowfullscreen'],
+    },
+  });
+}
 
+subsectionSchema.pre('save', function (next) {
+  if (this.isModified('body')) {
+    this.body = clean(this.body);
+  }
+  next();
+});
+
+subsectionSchema.pre('findOneAndUpdate', function (next) {
+  const update = this.getUpdate() as any;
+  if (update.body) {
+    update.body = clean(update.body);
+    this.setUpdate(update);
+  }
+  next();
+});
 
 const Question = mongoose.model<IQuestion>('Question', questionSchema);
 const newModule = mongoose.model<IModule>('newModule', moduleSchema);

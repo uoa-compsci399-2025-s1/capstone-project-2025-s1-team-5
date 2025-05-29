@@ -104,6 +104,11 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 </Link>
               </li>
               <li style={styles.navItem}>
+                <Link to="/modules/programmes" className={buttonClass}>
+                  Programme Management
+                </Link>
+              </li>
+              <li style={styles.navItem}>
                 <Link to="/modules/users" className={buttonClass}>
                   User Management
                 </Link>
