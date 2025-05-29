@@ -36,7 +36,7 @@ export class ModuleController extends Controller {
 
     @Get("{moduleId}")
     @SuccessResponse(200, "Module fetched")
-    public async getModule(@Path() moduleId: string): Promise<ModuleResponse | null> {
+    public async getModule(@Path() moduleId: string): Promise<ModuleResponse> {
         const moduleData = await this.moduleService.getModule(moduleId);
         if (!moduleData) {
             this.setStatus(404);

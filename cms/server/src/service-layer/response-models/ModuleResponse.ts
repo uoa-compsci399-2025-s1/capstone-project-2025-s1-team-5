@@ -19,11 +19,12 @@ export interface SubsectionItem {
   title: string;
 }
 
+
+interface LinkItem { id: string; title: string; url: string }
 export interface ModuleResponse {
   id:          string;
   title:       string;
   description: string;
-  createdAt:   Date;
-  updatedAt:   Date;
   subsections: SubsectionItem[];
+  links: LinkItem[];
 }

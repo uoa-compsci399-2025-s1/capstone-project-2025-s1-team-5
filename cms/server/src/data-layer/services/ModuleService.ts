@@ -18,6 +18,7 @@ export class ModuleService {
       try {
           const module = await newModule.findById(moduleId)
               .populate("subsectionIds","title")
+              .populate('linkIds','title link')
               .lean();
           if (!module) {
               return null;
@@ -26,12 +27,15 @@ export class ModuleService {
             id: module._id.toString(),
             title: module.title,
             description: module.description,
-            createdAt: module.createdAt,
-            updatedAt: module.updatedAt,
             subsections: (module.subsectionIds as any[]).map(sub => ({
               id:    (sub._id as any).toString(),
               title: sub.title,
             })),
+            links:       (module.linkIds as any[]).map(l => ({
+              id:    l._id.toString(),
+              title: l.title,
+              url:   l.link
+            }))
           };
       } catch (error) {
           console.error("Error fetching module with subsections", error);
