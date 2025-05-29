@@ -88,11 +88,15 @@ const styles = StyleSheet.create({
   name: {
     marginBottom: width * 0.01,
     color: '#ffffff',
+    flexShrink: 1,
+    flexWrap: 'wrap',
   },
   email: {
     marginBottom: width * 0.01,
     color: '#ffffff',
-  },
+    flexShrink: 1,
+    flexWrap: 'wrap',
+},
   countryWrapper: {
     marginTop: width * 0.01,
   },
