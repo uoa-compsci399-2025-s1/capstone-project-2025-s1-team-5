@@ -95,7 +95,7 @@ export class ModuleService {
      */
     public async updateModule(
         moduleId: string,
-        moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[] }
+        moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[]; linkIds?: string[] }
       ): Promise<boolean> {
         try {
           const module = await newModule.findById(moduleId);
@@ -105,7 +105,9 @@ export class ModuleService {
           }
           module.title = moduleChanges.title;
           module.description = moduleChanges.description;
-          module.subsectionIds = moduleChanges.subsectionIds?.map(id => new mongoose.Types.ObjectId(id));
+          module.subsectionIds = moduleChanges.subsectionIds.map(id => new mongoose.Types.ObjectId(id));
+          module.quizIds = moduleChanges.quizIds.map(id => new mongoose.Types.ObjectId(id));
+          module.linkIds = moduleChanges.linkIds.map(id => new mongoose.Types.ObjectId(id));
     
           await module.save();
           return true;
