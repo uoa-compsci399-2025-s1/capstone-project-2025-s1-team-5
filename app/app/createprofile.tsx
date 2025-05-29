@@ -22,7 +22,7 @@ import DropDownMenu from '@/components/DropDownMenu'
 import { UserContext } from '@/contexts/UserContext'
 
 export default function CreateProfileScreen() {
-  const { theme } = useContext(ThemeContext)
+  const { theme, isDarkMode } = useContext(ThemeContext);
   const router = useRouter()
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -30,6 +30,8 @@ export default function CreateProfileScreen() {
   const [selectedProgramme, setSelectedProgramme] = useState('')
   const [displayedError, setDisplayedError] = useState('')
   const { email, password } = useLocalSearchParams()
+  const systemScheme = useColorScheme()
+  const userContext = useContext(UserContext)
 
   const filteredCountries = countries.filter((c) => c.cca3 !== 'TWN')
   const countryList = filteredCountries.map((c) => c.name.common).sort()
@@ -38,9 +40,6 @@ export default function CreateProfileScreen() {
     'Master of Engineering Project Management',
     'Master of Civil Engineering',
   ]
-  
-  const systemScheme = useColorScheme();
-  const userContext = useContext(UserContext);
 
   const handleCreateProfile = async () => {
     if (!firstName || !lastName || !selectedCountry || !selectedProgramme) {
@@ -64,9 +63,9 @@ export default function CreateProfileScreen() {
       })
       await SecureStore.setItemAsync('USER_TOKEN', loginRes.data.token)
 
-      const meRes = await api.get('/auth/me');
-      userContext.setUser(meRes.data);
-    
+      const meRes = await api.get('/auth/me')
+      userContext.setUser(meRes.data)
+
       router.replace('/Modules')
     } catch (error) {
       console.error(error)
@@ -85,7 +84,11 @@ export default function CreateProfileScreen() {
       >
         <View style={styles.appLogo}>
           <Image
-            source={require('@/assets/logos/VerticalColourLogo.png')}
+            source={
+              isDarkMode
+                ? require('@/assets/logos/VerticalWhiteLogo.png')
+                : require('@/assets/logos/VerticalColourLogo.png')
+            }
             style={styles.logoImage}
           />
         </View>
