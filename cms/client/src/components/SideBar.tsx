@@ -118,6 +118,11 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   Analytics
                 </Link>
               </li>
+              <li style={styles.navItem}>
+                <Link to="/modules/library" className={buttonClass}>
+                  Upload Library
+                </Link>
+              </li>
             </ul>
           </nav>
 

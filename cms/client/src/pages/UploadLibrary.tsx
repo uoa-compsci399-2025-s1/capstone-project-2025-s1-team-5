@@ -1,0 +1,346 @@
+import React, { useEffect, useState, ChangeEvent, FormEvent, useRef } from "react";
+import axios from "axios";
+
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3000";
+
+interface S3File {
+  key: string;
+  url: string;
+  lastModified?: string; // S3 returns ISO string
+}
+
+interface Point {
+  x: number;
+  y: number;
+}
+
+type SortBy = "title-asc" | "title-desc" | "date-asc" | "date-desc";
+
+const UploadLibrary: React.FC = () => {
+  const [files, setFiles] = useState<S3File[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
+  const [dragStart, setDragStart] = useState<Point | null>(null);
+  const [dragRect, setDragRect] = useState<null | { left: number; top: number; width: number; height: number }>(null);
+  const [sortBy, setSortBy] = useState<SortBy>("date-desc"); // default newest first
+
+  
+  const gridRef = useRef<HTMLDivElement>(null);
+  const boxRefs = useRef<Array<HTMLDivElement | null>>([]);
+
+
+   const sortedFiles = [...files].sort((a, b) => {
+    if (sortBy === "title-asc") {
+      return (a.key || "").localeCompare(b.key || "");
+    }
+    if (sortBy === "title-desc") {
+      return (b.key || "").localeCompare(a.key || "");
+    }
+    if (sortBy === "date-asc") {
+      return new Date(a.lastModified || 0).getTime() - new Date(b.lastModified || 0).getTime();
+    }
+    // date-desc
+    return new Date(b.lastModified || 0).getTime() - new Date(a.lastModified || 0).getTime();
+  });
+
+  // Fetch files from API
+  const fetchFiles = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get<S3File[]>(`${API_URL}/api/library`);
+      console.log("API files response:", res.data); // <--- Do this inside your React code
+
+      setFiles(res.data);
+      setSelectedKeys(new Set());
+      setError(null);
+    } catch (err) {
+      setError("Failed to load images.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFiles();
+    // eslint-disable-next-line
+  }, []);
+
+  // Handle file selection
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSelectedFile(e.target.files ? e.target.files[0] : null);
+    setError(null);
+  };
+
+  // Handle upload
+  const handleUpload = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!selectedFile) return setError("Please select a file to upload.");
+    setUploading(true);
+    setError(null);
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    try {
+      await axios.post(`${API_URL}/api/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      setSelectedFile(null);
+      await fetchFiles(); // Refresh images
+    } catch {
+      setError("Failed to upload image.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Handle select/deselect on click (image or checkbox)
+  const handleSelect = (key: string) => {
+    setSelectedKeys(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(key)) {
+        newSet.delete(key);
+      } else {
+        newSet.add(key);
+      }
+      return newSet;
+    });
+  };
+
+  // Handle delete
+  const handleDelete = async () => {
+    if (selectedKeys.size === 0) return;
+    setError(null);
+    try {
+      await Promise.all(
+        Array.from(selectedKeys).map(key =>
+          axios.delete(`${API_URL}/api/library/${encodeURIComponent(key)}`)
+        )
+      );
+      setSelectedKeys(new Set());
+      await fetchFiles();
+    } catch {
+      setError("Failed to delete selected images.");
+    }
+  };
+
+  // Select all logic
+  const allSelected = files.length > 0 && selectedKeys.size === files.length;
+  const toggleSelectAll = () => {
+    if (allSelected) {
+      setSelectedKeys(new Set());
+    } else {
+      setSelectedKeys(new Set(files.map(file => file.key)));
+    }
+  };
+
+  // ---- Drag-to-select logic ----
+  // On mousedown, start the drag
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0) return; // only left mouse
+    if (e.target !== gridRef.current) return; // only drag on empty grid area
+    setDragStart({ x: e.clientX, y: e.clientY });
+    setDragRect(null);
+  };
+
+  // On mousemove, update rectangle
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!dragStart) return;
+    const x = Math.min(e.clientX, dragStart.x);
+    const y = Math.min(e.clientY, dragStart.y);
+    const width = Math.abs(e.clientX - dragStart.x);
+    const height = Math.abs(e.clientY - dragStart.y);
+    setDragRect({ left: x, top: y, width, height });
+  };
+
+  // On mouseup, select all images inside rectangle
+  const handleMouseUp = (e: MouseEvent) => {
+    if (!dragStart || !dragRect) {
+      setDragStart(null);
+      setDragRect(null);
+      return;
+    }
+    const rect = dragRect;
+    // Calculate grid offset for accurate bounding boxes
+    const gridOffset = gridRef.current?.getBoundingClientRect();
+    if (!gridOffset) return;
+
+    const selected = new Set(selectedKeys);
+    files.forEach((file, idx) => {
+      const box = boxRefs.current[idx];
+      if (!box) return;
+      const boxRect = box.getBoundingClientRect();
+      // Check intersection
+      if (
+        boxRect.left < rect.left + rect.width &&
+        boxRect.left + boxRect.width > rect.left &&
+        boxRect.top < rect.top + rect.height &&
+        boxRect.top + boxRect.height > rect.top
+      ) {
+        selected.add(file.key);
+      }
+    });
+    setSelectedKeys(selected);
+    setDragStart(null);
+    setDragRect(null);
+  };
+
+  // Set up drag event listeners
+  useEffect(() => {
+    if (dragStart) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+      document.body.style.userSelect = "none";
+      return () => {
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("mouseup", handleMouseUp);
+        document.body.style.userSelect = "";
+      };
+    }
+    // eslint-disable-next-line
+  }, [dragStart, dragRect]);
+
+  // For correct refs on files re-render
+    boxRefs.current = sortedFiles.map((_, i) => boxRefs.current[i] || null);
+
+  return (
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-r from-white to-blue-100 p-8">
+      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-4xl">
+        <h1 className="text-2xl font-bold mb-6 text-center text-blue-700">Upload Library</h1>
+        {/* Sorting controls */}
+        <div className="flex justify-end mb-2">
+          <label className="text-sm mr-2 font-medium text-gray-600">Sort by:</label>
+          <select
+            value={sortBy}
+            onChange={e => setSortBy(e.target.value as SortBy)}
+            className="border rounded p-1 text-sm"
+          >
+            <option value="date-desc">Newest</option>
+            <option value="date-asc">Oldest</option>
+            <option value="title-asc">Title A-Z</option>
+            <option value="title-desc">Title Z-A</option>
+          </select>
+        </div>
+        
+        
+        {/* Upload Form */}
+        <form
+          className="flex flex-col md:flex-row items-center justify-center gap-4 mb-8"
+          onSubmit={handleUpload}
+        >
+          <input
+            type="file"
+            accept="image/*"
+            className="border rounded p-2"
+            onChange={handleFileChange}
+            disabled={uploading}
+          />
+          <button
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 text-white rounded px-6 py-2 font-medium transition disabled:bg-blue-200"
+            disabled={uploading || !selectedFile}
+          >
+            {uploading ? "Uploading..." : "Upload"}
+          </button>
+        </form>
+        {/* Delete Button & Select All */}
+        <div className="flex justify-between items-center mb-4">
+          <button
+            className={`bg-red-600 hover:bg-red-700 text-white rounded px-4 py-2 font-medium transition disabled:bg-red-200 ${
+              selectedKeys.size === 0 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={selectedKeys.size === 0}
+            onClick={handleDelete}
+          >
+            Delete Selected
+          </button>
+          <div>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={allSelected}
+                onChange={toggleSelectAll}
+              />
+              <span className="text-sm">Select All</span>
+            </label>
+          </div>
+        </div>
+        {error && (
+          <div className="text-red-500 text-center mb-4">{error}</div>
+        )}
+        {/* Image Grid */}
+        <div
+          ref={gridRef}
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 relative"
+          style={{ minHeight: "200px", userSelect: dragStart ? "none" : "auto" }}
+          onMouseDown={handleMouseDown}
+        >
+          {loading ? (
+            <div className="col-span-full text-center py-8">Loading images...</div>
+            ) : sortedFiles.length === 0 ? (
+            <div className="col-span-full text-center py-8 text-gray-400">No images found.</div>
+            ) : (
+            sortedFiles.map((file, idx) => (
+                <div
+                key={file.key}
+                ref={el => { boxRefs.current[idx] = el; }}
+                className={`relative rounded-lg overflow-hidden border bg-gray-50 hover:shadow-lg flex flex-col cursor-pointer ring-2 ${
+                    selectedKeys.has(file.key)
+                    ? "ring-blue-500 border-blue-500"
+                    : "ring-transparent"
+                }`}
+                tabIndex={0}
+                onClick={e => {
+                    if ((e.target as HTMLElement).tagName === "INPUT") return;
+                    handleSelect(file.key);
+                }}
+                >
+                <input
+                    type="checkbox"
+                    className="absolute top-2 left-2 z-10 w-4 h-4 cursor-pointer"
+                    checked={selectedKeys.has(file.key)}
+                    onChange={() => handleSelect(file.key)}
+                    tabIndex={-1}
+                    aria-label="Select"
+                />
+                <img
+                    src={file.url}
+                    alt={file.key}
+                    className="object-cover w-full h-36"
+                    draggable={false}
+                    style={{ pointerEvents: "none", userSelect: "none" }}
+                />
+                <div className="truncate text-xs p-2 text-center text-gray-700">
+                    {file.key}
+                    {file.lastModified && (
+                    <div className="text-[10px] text-gray-400">{new Date(file.lastModified).toLocaleString()}</div>
+                    )}
+                </div>
+                </div>
+            ))
+        )}  
+          {/* Selection rectangle overlay */}
+          {dragRect && (
+            <div
+              className="absolute bg-blue-400 bg-opacity-20 border-2 border-blue-400 pointer-events-none"
+              style={{
+                left: dragRect.left - (gridRef.current?.getBoundingClientRect().left || 0),
+                top: dragRect.top - (gridRef.current?.getBoundingClientRect().top || 0),
+                width: dragRect.width,
+                height: dragRect.height,
+                zIndex: 30,
+              }}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default UploadLibrary;

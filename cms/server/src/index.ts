@@ -5,7 +5,8 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import multer from "multer";
 import multerS3 from "multer-s3";
-import { S3Client } from "@aws-sdk/client-s3";
+import { S3Client, ListObjectsV2Command, DeleteObjectCommand } from "@aws-sdk/client-s3";
+
 import * as swaggerJson from "./middleware/__generated__/swagger.json";
 import * as swaggerUI from "swagger-ui-express";
 import { Request, Response } from "express";
@@ -43,6 +44,47 @@ const upload = multer({
     },
   }),
 });
+
+
+// Delete file route
+app.delete("/api/library/:key", async (req, res) => {
+  try {
+    const key = decodeURIComponent(req.params.key); // Important: S3 keys may contain special characters
+    const command = new DeleteObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME!,
+      Key: key,
+    });
+    await s3.send(command);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("S3 Delete Error:", err);
+    res.status(500).json({ error: "Could not delete file" });
+  }
+});
+
+
+
+app.get("/api/library", async (req, res) => {
+  try {
+    const command = new ListObjectsV2Command({
+      Bucket: process.env.S3_BUCKET_NAME!,
+    });
+    const data = await s3.send(command);
+    const files =
+      data.Contents?.map((item) => ({
+        key: item.Key,
+        url: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${item.Key}`,
+        lastModified: item.LastModified
+          ? new Date(item.LastModified).toISOString()
+          : null, // <-- ADD THIS LINE!
+      })) || [];
+    res.json(files);
+  } catch (err) {
+    console.error("S3 List Error:", err);
+    res.status(500).json({ error: "Could not list files" });
+  }
+});
+
 
 // ✅ Upload endpoint
 app.post("/api/upload", upload.single("file"), (req: Request, res: Response): void => {
