@@ -5,7 +5,8 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import multer from "multer";
 import multerS3 from "multer-s3";
-import { S3Client } from "@aws-sdk/client-s3";
+import { S3Client, ListObjectsV2Command } from "@aws-sdk/client-s3";
+
 import * as swaggerJson from "./middleware/__generated__/swagger.json";
 import * as swaggerUI from "swagger-ui-express";
 import { Request, Response } from "express";
@@ -43,6 +44,29 @@ const upload = multer({
     },
   }),
 });
+
+app.get("/api/library", async (req: Request, res: Response) => {
+  try {
+    const command = new ListObjectsV2Command({
+      Bucket: process.env.S3_BUCKET_NAME!,
+    });
+
+    const data = await s3.send(command);
+
+    // Format the files list as an array of { key, url }
+    const files =
+      data.Contents?.map((item) => ({
+        key: item.Key,
+        url: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${item.Key}`,
+      })) || [];
+
+    res.json(files);
+  } catch (err) {
+    console.error("S3 List Error:", err);
+    res.status(500).json({ error: "Could not list files" });
+  }
+});
+
 
 // ✅ Upload endpoint
 app.post("/api/upload", upload.single("file"), (req: Request, res: Response): void => {
