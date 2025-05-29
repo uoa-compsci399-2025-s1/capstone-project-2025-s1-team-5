@@ -1,27 +1,26 @@
 // app/Modules/_layout.tsx
 import React, { useContext } from 'react';
-import { Stack, useLocalSearchParams, useSegments } from 'expo-router';
+import { Stack, useLocalSearchParams} from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 
 export default function ModulesLayout() {
   const { theme } = useContext(ThemeContext);
-  const segments = useSegments(); // ['Modules', moduleId?, subsectionId?]
 
-  // 取路由参数
-  const { moduleId, subsectionId } = useLocalSearchParams<{
-    moduleId?: string;
-    subsectionId?: string;
-  }>();
+  const {
+      moduleId,
+      subsectionId,
+      title: linkTitle  
+    } = useLocalSearchParams<{
+      moduleId?: string;
+      subsectionId?: string;
+      url?: string;
+      title?: string;
+    }>();
 
-  // 根据当前是哪一级页面，设置 headerTitle
-  let headerTitle = 'Modules';
-  if (segments.length === 2 && moduleId) {
-    // /Modules/[moduleId]
-    headerTitle = moduleId; 
-  } else if (segments.length === 3 && subsectionId) {
-    // /Modules/[moduleId]/[subsectionId]
-    headerTitle = subsectionId;
-  }
+  const titleModules = 'Modules';
+  const titleModule = moduleId ?? titleModules;
+  const titleSubsection = subsectionId ?? titleModule;
+  const titleLinkViewer = linkTitle ?? 'Resource';
 
   return (
     <Stack
@@ -34,14 +33,14 @@ export default function ModulesLayout() {
       {/* index.tsx */}
       <Stack.Screen
         name="index"
-        options={{ headerTitle: 'Modules' }}
+        options={{ headerTitle: titleModules }}
       />
 
       {/* Modules/[moduleId]/index.tsx */}
       <Stack.Screen
         name="[moduleId]/index"
         options={{
-          headerTitle,
+          headerTitle: titleModule
         }}
       />
 
@@ -49,9 +48,17 @@ export default function ModulesLayout() {
       <Stack.Screen
         name="[moduleId]/[subsectionId]"
         options={{
-          headerTitle,
+          headerTitle: titleSubsection
         }}
       />
+    
+      <Stack.Screen
+          name="[moduleId]/LinkViewer"
+          options={{
+          headerTitle: titleLinkViewer
+        }}
+      />
+
     </Stack>
   );
 }
