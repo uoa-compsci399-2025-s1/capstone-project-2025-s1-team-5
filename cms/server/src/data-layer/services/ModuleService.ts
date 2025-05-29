@@ -95,18 +95,30 @@ export class ModuleService {
      */
     public async updateModule(
         moduleId: string,
-        moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[] }
+        moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[]; linkIds?: string[] }
       ): Promise<boolean> {
         try {
           const module = await newModule.findById(moduleId);
-    
+
           if (!module) {
-            throw new Error("Module not found");
+            return false;
           }
-          module.title = moduleChanges.title;
-          module.description = moduleChanges.description;
-          module.subsectionIds = moduleChanges.subsectionIds?.map(id => new mongoose.Types.ObjectId(id));
-    
+          
+          if (moduleChanges.title !== undefined) module.title = moduleChanges.title;
+          if (moduleChanges.description !== undefined) module.description = moduleChanges.description;
+          
+          if (moduleChanges.subsectionIds !== undefined) {
+            module.subsectionIds = moduleChanges.subsectionIds.map(id => new mongoose.Types.ObjectId(id));
+          }
+          
+          if (moduleChanges.quizIds !== undefined) {
+            module.quizIds = moduleChanges.quizIds.map(id => new mongoose.Types.ObjectId(id));
+          }
+          
+          if (moduleChanges.linkIds !== undefined) {
+            module.linkIds = moduleChanges.linkIds.map(id => new mongoose.Types.ObjectId(id));
+          }
+
           await module.save();
           return true;
         } catch (error) {
