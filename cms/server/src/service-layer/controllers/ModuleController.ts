@@ -58,7 +58,7 @@ export class ModuleController extends Controller {
     @SuccessResponse(200, "Module Updated")
     public async updateModule(
       @Path() moduleId: string,
-      @Body() moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[] }
+      @Body() moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[]; linkIds?: string[] }
     ): Promise<{ success: boolean }> {
       const result = await this.moduleService.updateModule(moduleId, moduleChanges);
       return { success: result };

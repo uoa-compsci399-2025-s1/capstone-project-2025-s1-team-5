@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-import { Module, Subsection, Question, Quiz } from '../types/interfaces';
+import axios, { AxiosError } from 'axios';
+import { Module, Subsection, Question, Quiz, Link } from '../types/interfaces';
 import TextEditor from './TextEditor';
 import {
   DragDropContext,
@@ -23,58 +23,66 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
   const [description, setDescription] = useState(module.description);
   const [subsections, setSubsections] = useState<Subsection[]>([]);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [links, setLinks] = useState<Link[]>([]);
   const [moduleSubsectionIds, setModuleSubsectionIds] = useState<string[]>(module.subsectionIds || []);
   const [moduleQuizIds, setModuleQuizIds] = useState<string[]>(module.quizIds || []);
+  const [moduleLinkIds, setModuleLinkIds] = useState<string[]>(module.linkIds || []);
   const [deleteConfirmSubsection, setDeleteConfirmSubsection] = useState<Subsection | null>(null);
   const [deleteConfirmQuiz, setDeleteConfirmQuiz] = useState<{ index: number, title: string } | null>(null);
-  const [activeTab, setActiveTab] = useState<'subsections' | 'quizzes'>('subsections');
+  const [deleteConfirmLink, setDeleteConfirmLink] = useState<Link | null>(null);
+  const [activeTab, setActiveTab] = useState<'subsections' | 'quizzes' | 'links'>('subsections');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [editingSubsectionIds, setEditingSubsectionIds] = useState<Set<string>>(new Set());
-  // const generateTempId = () => `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-const quizzesFetchedRef = useRef(false);
+  const quizzesFetchedRef = useRef(false);
 
   
   const getModuleId = () => {
     return module._id || '';
   };
 
-useEffect(() => {
-  const fetchData = async () => {
-    if (quizzesFetchedRef.current) return;
-    quizzesFetchedRef.current = true;
+  useEffect(() => {
+    const fetchData = async () => {
+      if (quizzesFetchedRef.current) return;
+      quizzesFetchedRef.current = true;
 
-    try {
-      const token = localStorage.getItem("authToken");
-      const headers = { Authorization: `Bearer ${token}` };
+      try {
+        const token = localStorage.getItem("authToken");
+        const headers = { Authorization: `Bearer ${token}` };
 
-      // Fetch quizzes and subsections
-      const [subResponses, quizResponses] = await Promise.all([
-        Promise.all(
-          moduleSubsectionIds.map(id =>
-            axios.get<Subsection>(`${process.env.REACT_APP_API_URL}/api/modules/subsection/${id}`, { headers })
+        // Fetch quizzes and subsections
+        const [subResponses, quizResponses, linkResponses] = await Promise.all([
+          Promise.all(
+            moduleSubsectionIds.map(id =>
+              axios.get<Subsection>(`${process.env.REACT_APP_API_URL}/api/modules/subsection/${id}`, { headers })
+            )
+          ),
+          Promise.all(
+            moduleQuizIds.map(id =>
+              axios.get<Quiz>(`${process.env.REACT_APP_API_URL}/api/modules/quiz/${id}`, { headers })
+            )
+          ),
+          Promise.all(
+            moduleLinkIds.map(id =>
+              axios.get<Link>(`${process.env.REACT_APP_API_URL}/api/modules/link/${id}`, { headers })
+            )
           )
-        ),
-        Promise.all(
-          moduleQuizIds.map(id =>
-            axios.get<Quiz>(`${process.env.REACT_APP_API_URL}/api/modules/quiz/${id}`, { headers })
-          )
-        )
-      ]);
+        ]);
 
-      setSubsections(subResponses.map(res => res.data));
-      setQuizzes(quizResponses.map(res => ({ ...res.data, questions: res.data.questions || [] })));
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setLoading(false);
-      setError("Failed to load module data. Please try again.");
-    }
-  };
+        setSubsections(subResponses.map(res => res.data));
+        setQuizzes(quizResponses.map(res => ({ ...res.data, questions: res.data.questions || [] })));
+        setLinks(linkResponses.map(res => res.data));
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+        setError("Failed to load module data. Please try again.");
+      }
+    };
 
-  fetchData();
-}, [moduleSubsectionIds, moduleQuizIds]);
+    fetchData();
+  }, [moduleSubsectionIds, moduleQuizIds, moduleLinkIds]);
 
 
 
@@ -279,6 +287,14 @@ const handleDragEnd = (result: DropResult) => {
     );
   };
 
+  const handleLinkChange = (_id: string, field: keyof Link, value: string) => {
+    setLinks((prev) =>
+      prev.map((link) =>
+        link._id === _id ? { ...link, [field]: value } : link
+      )
+    );
+  };
+
   const handleAddQuestion = async (quizId: string) => {
   try {
     const token = localStorage.getItem("authToken");
@@ -332,6 +348,72 @@ const handleDragEnd = (result: DropResult) => {
     }
   };
 
+  const handleAddLink = async () => {
+    try {
+      const moduleId = getModuleId();
+      const token = localStorage.getItem("authToken");
+      const linkData = {
+        title: "New Link",
+        link: "https://example.com"
+      };
+
+      await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/modules/link/${moduleId}`,
+        linkData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const response = await axios.get<Module>(
+        `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (response.data.linkIds && response.data.linkIds.length > 0) {
+        const newLinkId = response.data.linkIds[response.data.linkIds.length - 1];
+        const linkResponse = await axios.get<Link>(
+          `${process.env.REACT_APP_API_URL}/api/modules/link/${newLinkId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        
+        setLinks([...links, linkResponse.data]);
+        setModuleLinkIds([...moduleLinkIds, newLinkId]);
+      }
+      
+      setSuccess("Link added successfully");
+      setError(null);
+    } catch (error) {
+      console.error("Failed to add link:", error);
+      setError(`Failed to add link: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setSuccess(null);
+    }
+  };
+
+  const handleDeleteLink = async (linkId: string) => {
+    try {
+      const moduleId = getModuleId();
+      if (!moduleId) {
+        setError("Cannot delete link: Module ID is missing");
+        return;
+      }
+
+      const token = localStorage.getItem("authToken");
+      await axios.delete(
+        `${process.env.REACT_APP_API_URL}/api/modules/link/${moduleId}/${linkId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      setLinks(links.filter(link => link._id !== linkId));
+      setModuleLinkIds(moduleLinkIds.filter(id => id !== linkId));
+      setDeleteConfirmLink(null);
+      setSuccess("Link deleted successfully");
+      setError(null);
+    } catch (error) {
+      console.error("Failed to delete link:", error);
+      setError(`Failed to delete link: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setSuccess(null);
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const moduleId = getModuleId();
@@ -344,7 +426,6 @@ const handleDragEnd = (result: DropResult) => {
       title,
       description,
       subsectionIds: moduleSubsectionIds,
-      quizIds: moduleQuizIds
     };
 
     try {
@@ -380,7 +461,14 @@ const handleDragEnd = (result: DropResult) => {
               )
             );
           }
-        })
+        }),
+        ...links.map(link =>
+          axios.put(
+            `${process.env.REACT_APP_API_URL}/api/modules/link/${link._id}`,
+            { title: link.title, link: link.link },
+            { headers: { Authorization: `Bearer ${token}` } }
+          )
+        )
       ]);
       
       setSuccess("Module updated successfully!");
@@ -398,6 +486,7 @@ const handleDragEnd = (result: DropResult) => {
   if (loading) return <div className="text-center py-8">Loading module data...</div>;
   console.log("Module Subsection IDs:", module.subsectionIds);
   console.log("Module Quiz IDs:", module.quizIds);
+  console.log("Module Link IDs:", module.linkIds);
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Edit Module</h1>
@@ -441,6 +530,15 @@ const handleDragEnd = (result: DropResult) => {
               }`}
             >
               Quizzes
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('links')}
+              className={`px-4 py-2 rounded-t-lg ${
+                activeTab === 'links' ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'
+              }`}
+            >
+              Link
             </button>
           </div>
 
@@ -620,6 +718,46 @@ const handleDragEnd = (result: DropResult) => {
               </button>
             </div>
           )}
+
+          {activeTab === 'links' && (
+            <div>
+              {links.map((link) => (
+                <div key={link._id} className="mb-4 p-4 border rounded-lg bg-gray-50">
+                  <div className="flex justify-between items-center mb-2">
+                    <input
+                      type="text"
+                      value={link.title}
+                      onChange={(e) => handleLinkChange(link._id, 'title', e.target.value)}
+                      className="w-full p-2 border rounded mr-2"
+                      placeholder="Link Title"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setDeleteConfirmLink(link)}
+                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  <input
+                    type="url"
+                    value={link.link}
+                    onChange={(e) => handleLinkChange(link._id, 'link', e.target.value)}
+                    className="w-full p-2 border rounded"
+                    placeholder="Link URL"
+                  />
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={handleAddLink}
+                className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                Add Link
+              </button>
+            </div>
+          )}
+
         </div>
 
         <div className="flex justify-end gap-4 mt-8">
@@ -689,6 +827,29 @@ const handleDragEnd = (result: DropResult) => {
           </div>
         </div>
       )}
+      
+    {deleteConfirmLink && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="bg-white p-6 rounded-lg max-w-md w-full">
+          <h2 className="text-xl font-bold mb-4">Confirm Delete</h2>
+          <p className="mb-6">Delete link "{deleteConfirmLink.title}"?</p>
+          <div className="flex justify-end gap-4">
+            <button
+              onClick={() => setDeleteConfirmLink(null)}
+              className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => handleDeleteLink(deleteConfirmLink._id)}
+              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
     </div>
   );
 };
