@@ -40,9 +40,9 @@ const UsersPage = () => {
     }
   };
 
-  useEffect(() => {
-  fetchUsers();
-}, [page]);
+    useEffect(() => {
+    fetchUsers();
+  }, [page,fetchUsers]);
 
 
   const sortUsers = (data: User[]) => {
@@ -165,7 +165,6 @@ const UsersPage = () => {
               isEditModalVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
             }`}
           >
-            <h2 className="text-xl font-semibold mb-4"></h2>
             <button
               onClick={() => {
                 setIsEditModalVisible(false);
@@ -225,7 +224,6 @@ const UsersPage = () => {
                 isCreateModalVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
               }`}
             >
-              <h2 className="text-xl font-semibold mb-4"></h2>
               <button
                 onClick={() => {
                   setIsCreateModalVisible(false);

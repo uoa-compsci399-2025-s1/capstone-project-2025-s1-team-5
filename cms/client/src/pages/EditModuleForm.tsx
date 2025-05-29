@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { Module, Subsection, Question, Quiz, Link } from '../types/interfaces';
 import TextEditor from './TextEditor';
 import {
@@ -8,9 +8,6 @@ import {
   Draggable,
   DropResult,
 } from '@hello-pangea/dnd';
-
-
-
 
 interface EditModuleFormProps {
   module: Module;
@@ -177,16 +174,16 @@ const handleDragEnd = (result: DropResult) => {
   setModuleSubsectionIds(items.map(item => item._id)); // update order
 };
 
-  const handleSubsectionReorder = (result: DropResult) => {
-  if (!result.destination) return;
+//   const handleSubsectionReorder = (result: DropResult) => {
+//   if (!result.destination) return;
 
-  const reordered = Array.from(subsections);
-  const [moved] = reordered.splice(result.source.index, 1);
-  reordered.splice(result.destination.index, 0, moved);
+//   const reordered = Array.from(subsections);
+//   const [moved] = reordered.splice(result.source.index, 1);
+//   reordered.splice(result.destination.index, 0, moved);
 
-  setSubsections(reordered);
-  setModuleSubsectionIds(reordered.map((s) => s._id)); // update order for submission
-};
+//   setSubsections(reordered);
+//   setModuleSubsectionIds(reordered.map((s) => s._id)); // update order for submission
+// };
 
  const handleAddQuiz = async () => {
     try {

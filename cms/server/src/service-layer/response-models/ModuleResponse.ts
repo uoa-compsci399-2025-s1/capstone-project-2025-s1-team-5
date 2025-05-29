@@ -14,9 +14,16 @@ export interface ModuleGetResponse {
     subsectionIds: string[];
 }
 
-export interface SubsectionResponse {
-    title: string;
-    body: string;
-    authorID: string;
-    published: boolean;
+export interface SubsectionItem {
+  id: string;
+  title: string;
+}
+
+export interface ModuleResponse {
+  id:          string;
+  title:       string;
+  description: string;
+  createdAt:   Date;
+  updatedAt:   Date;
+  subsections: SubsectionItem[];
 }
