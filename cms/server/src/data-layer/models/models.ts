@@ -51,7 +51,7 @@ export interface IQuiz {
     createdAt: Date;
 }
 
-export interface    ISubsection {
+export interface ISubsection {
     id: string;
     title: string;
     body: string;
