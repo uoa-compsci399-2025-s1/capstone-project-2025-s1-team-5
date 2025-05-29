@@ -61,7 +61,7 @@ export default function SignInScreen() {
   };
 
   const handleForgotPassword = async () => {
-    router.push('/forgotpassword')
+    router.push('/Support/contactform')
     console.log("Forgot password clicked");
   };
 
