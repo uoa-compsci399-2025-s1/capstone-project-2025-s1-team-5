@@ -21,6 +21,8 @@ export default function ModulesLayout() {
   const titleModule = moduleId ?? titleModules;
   const titleSubsection = subsectionId ?? titleModule;
   const titleLinkViewer = linkTitle ?? 'Resource';
+  const { quizId, title: quizTitle } = useLocalSearchParams<{ quizId?: string; title?: string }>();
+
 
   return (
     <Stack
@@ -57,6 +59,11 @@ export default function ModulesLayout() {
           options={{
           headerTitle: titleLinkViewer
         }}
+      />
+
+      <Stack.Screen
+        name="[moduleId]/QuizViewer"
+        options={{ headerTitle: quizTitle ?? 'Quiz' }}
       />
 
     </Stack>

@@ -19,6 +19,19 @@ export interface SubsectionItem {
   title: string;
 }
 
+export interface QuestionDTO {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: string;
+}
+
+export interface QuizDTO {
+  id: string;
+  title: string;
+  description: string;
+  questions: QuestionDTO[];
+}
 
 interface LinkItem { id: string; title: string; url: string }
 export interface ModuleResponse {
@@ -27,4 +40,5 @@ export interface ModuleResponse {
   description: string;
   subsections: SubsectionItem[];
   links: LinkItem[];
+  quizzes: QuizDTO[];
 }

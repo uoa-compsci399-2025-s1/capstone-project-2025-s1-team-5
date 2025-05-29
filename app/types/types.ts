@@ -22,4 +22,24 @@ export interface LinkItem {
 export interface ModuleDetail {
   subsections: SubsectionItem[];
   links:       LinkItem[];
+  quizzes: QuizItem[];
 }
+
+export interface QuestionItem {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: string;
+}
+export interface QuizItem {
+  id: string;
+  title: string;
+  description: string;
+  questions: QuestionItem[];
+}
+
+export type UserAnswer = {
+  selectedOption: string | null;
+  showResult:     boolean;
+  isCorrect:      boolean | null;
+};

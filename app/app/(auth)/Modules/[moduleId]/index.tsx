@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import api from "@/app/lib/api";
 import SubModuleButton from "@/components/SubModuleButton";
 import { ThemeContext } from "@/contexts/ThemeContext";
-import { SubsectionItem, LinkItem, ModuleDetail } from "@/types/types";
+import { SubsectionItem, LinkItem, ModuleDetail, QuizItem } from "@/types/types";
 
 export default function ModuleDetailScreen() {
   const { moduleId } = useLocalSearchParams<{ moduleId: string }>();
@@ -12,6 +12,7 @@ export default function ModuleDetailScreen() {
   const router = useRouter();
   const [subs, setSubs] = useState<SubsectionItem[]>([]);
   const [links,setLinks]  = useState<LinkItem[]>([]);
+  const [quizzes, setQuizzes] = useState<QuizItem[]>([]);
 
   useEffect(() => {
     if (!moduleId) return;
@@ -19,6 +20,7 @@ export default function ModuleDetailScreen() {
        .then(res => {
           setSubs(res.data.subsections);
           setLinks(res.data.links);
+          setQuizzes(res.data.quizzes);
         })
        .catch(console.error);
   }, [moduleId]);
@@ -43,6 +45,19 @@ export default function ModuleDetailScreen() {
           onPress={() => router.push({
             pathname: `/Modules/[moduleId]/LinkViewer`,
             params: { url: l.url, title: l.title, moduleId }
+            })
+          }
+        />
+      ))}
+
+      {quizzes.map(q => (
+        <SubModuleButton
+          key={q.id}
+          title={`Quiz: ${q.title}`}
+          onPress={() =>
+            router.push({
+              pathname: '/Modules/[moduleId]/QuizViewer',
+              params: { moduleId, quizId: q.id, title: q.title }
             })
           }
         />

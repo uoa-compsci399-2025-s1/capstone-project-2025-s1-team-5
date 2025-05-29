@@ -1,0 +1,182 @@
+// app/Modules/[moduleId]/QuizViewer.tsx
+import React, { useEffect, useState, useContext } from 'react';
+import {
+  ScrollView,
+  ActivityIndicator,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet
+} from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { ProgressBar } from 'react-native-paper';
+import api from '@/app/lib/api';
+import { ThemeContext } from '@/contexts/ThemeContext';
+import QuestionCard from '@/components/QuestionCard';
+import StyledText from '@/components/StyledText';
+
+type UserAnswer = {
+  selectedOption: string | null;
+  showResult:     boolean;
+  isCorrect:      boolean | null;
+};
+
+export default function QuizViewer() {
+  const { moduleId, quizId } = useLocalSearchParams<{ moduleId: string; quizId: string }>();
+  const { theme } = useContext(ThemeContext);
+
+  // 顶层 state
+  const [quiz,         setQuiz]        = useState<any>(null);
+  const [loading,      setLoading]     = useState(true);
+  const [currentIndex, setCurrentIndex]= useState(0);
+  const [userAnswers,  setUserAnswers] = useState<UserAnswer[]>([]);
+  const [score,        setScore]       = useState(0);
+  const [finished,     setFinished]    = useState(false);
+
+  // 合并初始化：抓到数据的同时，一口气把所有 state 都打好
+  useEffect(() => {
+    if (!moduleId) return;
+
+    setLoading(true);
+    api.get<{ quizzes: any[] }>(`/modules/${moduleId}`)
+      .then(res => {
+        const found = res.data.quizzes.find(q => q.id === quizId) ?? null;
+        setQuiz(found);
+
+        if (found) {
+          // 这里同时初始化所有和 quiz 相关的 state
+          setCurrentIndex(0);
+          setScore(0);
+          setFinished(false);
+
+          setUserAnswers(
+            found.questions.map(() => ({
+              selectedOption: null,
+              showResult:     false,
+              isCorrect:      null
+            }))
+          );
+        } else {
+          setUserAnswers([]); // 保底
+        }
+      })
+      .catch(console.error)
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [moduleId, quizId]);
+
+  // 渲染 guard：先把 loading、quiz、userAnswers 都过一遍
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color={theme.primary} />
+      </View>
+    );
+  }
+  if (!quiz) {
+    return (
+      <View style={styles.center}>
+        <Text>Quiz not found.</Text>
+      </View>
+    );
+  }
+
+  // 题都准备好了，才渲染答题流程
+  if (finished) {
+    return (
+      <ScrollView contentContainerStyle={styles.center}>
+        <StyledText type="title" style={{ color: theme.primary }}>
+          Quiz Completed!
+        </StyledText>
+        <StyledText type="default">
+          You scored {score} of {quiz.questions.length}.
+        </StyledText>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: theme.primary }]}
+          onPress={() => setFinished(false)}
+        >
+          <StyledText type="boldLabel">Retake Quiz</StyledText>
+        </TouchableOpacity>
+      </ScrollView>
+    );
+  }
+
+  // 正常答题渲染
+  const progress = (currentIndex + 1) / quiz.questions.length;
+
+  const handleSelect = (opt: string) =>
+    setUserAnswers(prev => {
+      const copy = [...prev];
+      copy[currentIndex].selectedOption = opt;
+      return copy;
+    });
+
+  const handleCheck = () => {
+    const isCorrect =
+      userAnswers[currentIndex].selectedOption ===
+      quiz.questions[currentIndex].correctAnswer;
+    setUserAnswers(prev => {
+      const copy = [...prev];
+      copy[currentIndex].showResult = true;
+      copy[currentIndex].isCorrect   = isCorrect;
+      return copy;
+    });
+    if (isCorrect) setScore(s => s + 1);
+  };
+
+  const next = () => {
+    if (currentIndex < quiz.questions.length - 1) {
+      setCurrentIndex(i => i + 1);
+    } else {
+      setFinished(true);
+    }
+  };
+  const back = () => currentIndex > 0 && setCurrentIndex(i => i - 1);
+
+  return (
+    <ScrollView contentContainerStyle={{ padding: 16 }}>
+      <ProgressBar
+        progress={progress}
+        color={theme.primary}
+        style={{ marginBottom: 16 }}
+      />
+
+      <QuestionCard
+        questionData={quiz.questions[currentIndex]}
+        selectedOption={userAnswers[currentIndex].selectedOption}
+        showResult={userAnswers[currentIndex].showResult}
+        onOptionSelect={handleSelect}
+        onAnswerChecked={handleCheck}
+      />
+
+      <View style={styles.nav}>
+        <TouchableOpacity
+          disabled={currentIndex === 0}
+          onPress={back}
+          style={[
+            styles.navBtn,
+            { backgroundColor: theme.primary, opacity: currentIndex === 0 ? 0.5 : 1 }
+          ]}
+        >
+          <StyledText type="boldLabel">Back</StyledText>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={next}
+          style={[styles.navBtn, { backgroundColor: theme.primary}]}
+        >
+          <StyledText type="boldLabel">
+            {currentIndex === quiz.questions.length - 1 ? 'Finish' : 'Next'}
+          </StyledText>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16 },
+  nav:    { flexDirection: 'row', justifyContent: 'space-between', marginTop: 24 },
+  navBtn: { flex: 1, padding: 12, borderRadius: 8, alignItems: 'center', marginHorizontal: 4 , color:'#ccc'},
+  button: { padding: 12, borderRadius: 8, marginTop: 24 }
+});
