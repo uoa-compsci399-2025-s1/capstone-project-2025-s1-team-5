@@ -2,6 +2,8 @@ import React, { useContext, useState } from 'react';
 import { View, StyleSheet, Image, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
+import { UserContext } from '@/contexts/UserContext';
+
 import api from './lib/api'; 
 
 import SubmitButton from '@/components/SubmitButton';
@@ -54,7 +56,9 @@ export default function SignUpScreen() {
       params: { email, password },
     });
   };
-
+  const logoSource = isDarkMode
+            ? require('@/assets/logos/VerticalWhiteLogo.png')
+            : require('@/assets/logos/VerticalColourLogo.png');
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -68,7 +72,6 @@ export default function SignUpScreen() {
             style={styles.logoImage}
           />
         </View>
-
         <TextInputBox placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" iconName="email" />
         <TextInputBox placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry iconName="lock" />
         <TextInputBox placeholder="Confirm password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry iconName="lock" />

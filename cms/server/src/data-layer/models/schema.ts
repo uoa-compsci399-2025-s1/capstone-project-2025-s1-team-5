@@ -65,7 +65,9 @@ const programmeSchema: Schema<IProgramme> = new Schema(
         name: {
             type: String,
             required: true
-        }
+        }, 
+        description: { type: String, required: false},
+        link: {type: String, required: true}
     },
     {timestamps: true}
 )
