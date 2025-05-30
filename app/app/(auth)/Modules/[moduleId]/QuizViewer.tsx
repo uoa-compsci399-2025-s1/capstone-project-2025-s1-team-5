@@ -33,6 +33,20 @@ export default function QuizViewer() {
   const [score,        setScore]       = useState(0);
   const [finished,     setFinished]    = useState(false);
 
+  const resetQuiz = () => {
+  if (!quiz) return;
+  setCurrentIndex(0);
+  setScore(0);
+  setUserAnswers(
+    quiz.questions.map(() => ({
+      selectedOption: null,
+      showResult:     false,
+      isCorrect:      null
+    }))
+  );
+  setFinished(false);
+};
+
   // 合并初始化：抓到数据的同时，一口气把所有 state 都打好
   useEffect(() => {
     if (!moduleId) return;
@@ -94,9 +108,9 @@ export default function QuizViewer() {
         </StyledText>
         <TouchableOpacity
           style={[styles.button, { backgroundColor: theme.primary }]}
-          onPress={() => setFinished(false)}
+          onPress={resetQuiz}
         >
-          <StyledText type="boldLabel">Retake Quiz</StyledText>
+          <StyledText type="boldLabel" style={styles.retakeButtonText}>Retake Quiz</StyledText>
         </TouchableOpacity>
       </ScrollView>
     );
@@ -159,13 +173,13 @@ export default function QuizViewer() {
             { backgroundColor: theme.primary, opacity: currentIndex === 0 ? 0.5 : 1 }
           ]}
         >
-          <StyledText type="boldLabel">Back</StyledText>
+          <StyledText type="boldLabel" style={styles.navButtonText}>Back</StyledText>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={next}
           style={[styles.navBtn, { backgroundColor: theme.primary}]}
         >
-          <StyledText type="boldLabel">
+          <StyledText type="boldLabel" style={styles.navButtonText}>
             {currentIndex === quiz.questions.length - 1 ? 'Finish' : 'Next'}
           </StyledText>
         </TouchableOpacity>
@@ -177,6 +191,13 @@ export default function QuizViewer() {
 const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16 },
   nav:    { flexDirection: 'row', justifyContent: 'space-between', marginTop: 24 },
-  navBtn: { flex: 1, padding: 12, borderRadius: 8, alignItems: 'center', marginHorizontal: 4 , color:'#ccc'},
-  button: { padding: 12, borderRadius: 8, marginTop: 24 }
+  navBtn: { flex: 1, padding: 12, borderRadius: 8, alignItems: 'center', marginHorizontal: 4},
+  button: { padding: 12, borderRadius: 8, marginTop: 24 },
+  navButtonText: {
+    color: '#fff',
+  },
+  retakeButtonText: {
+    textAlign: 'center',
+    color: '#ffffff',
+  },
 });
