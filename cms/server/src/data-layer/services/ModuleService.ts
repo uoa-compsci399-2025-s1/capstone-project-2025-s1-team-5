@@ -2,7 +2,7 @@ import { moduleAdaptor } from "../adapter/ModuleAdapter";
 import type { IModule, IQuestion, IQuiz, ISubsection, ILink } from "../models/models";
 import { Link, newModule, Question, Quiz, Subsection } from "../../data-layer/models/schema";
 import mongoose from "mongoose";
-import { ModuleResponse } from '../../service-layer/response-models/ModuleResponse';
+import { ModuleResponse, QuizDTO, QuestionDTO } from '../../service-layer/response-models/ModuleResponse';
 
 export class ModuleService {
     /**
@@ -19,6 +19,10 @@ export class ModuleService {
           const module = await newModule.findById(moduleId)
               .populate("subsectionIds","title")
               .populate('linkIds','title link')
+              .populate({
+                path: 'quizIds',
+                populate: { path: 'questions' }
+              })
               .lean();
           if (!module) {
               return null;
@@ -27,6 +31,17 @@ export class ModuleService {
             id: module._id.toString(),
             title: module.title,
             description: module.description,
+            quizzes: (module.quizIds as any[]).map((q): QuizDTO => ({
+              id:   q._id.toString(),
+              title:q.title,
+              description:q.description,
+              questions: (q.questions as any[]).map((qa): QuestionDTO => ({
+                id: qa._id.toString(),
+                question: qa.question,
+                options: qa.options,
+                correctAnswer: qa.correctAnswer
+              }))
+            })),
             subsections: (module.subsectionIds as any[]).map(sub => ({
               id:    (sub._id as any).toString(),
               title: sub.title,
