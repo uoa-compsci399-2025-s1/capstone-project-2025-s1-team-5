@@ -110,10 +110,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   introText: {
-    marginBottom: 20,
+    marginBottom: 8,
     lineHeight: 24,
   },
   button: {
-    marginTop: 20,
+    marginTop: 6,
   },
 });
