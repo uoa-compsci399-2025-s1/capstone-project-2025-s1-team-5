@@ -1,5 +1,12 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, StyleSheet, TouchableOpacity, StyleProp, TextStyle } from 'react-native';
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  StyleProp,
+  TextStyle,
+} from 'react-native';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
@@ -9,9 +16,11 @@ type TextInputBoxProps = {
   onChangeText: React.Dispatch<React.SetStateAction<string>>;
   keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'url';
   secureTextEntry?: boolean;
-  iconName?: 'email' | 'lock' | 'person' | 'edit' | 'group' | 'phone';
+  iconName?: 'email' | 'lock' | 'person' | 'edit' | 'group' | 'phone' | 'message';
   iconSize?: number;
   style?: StyleProp<TextStyle>;
+  multiline?: boolean;
+  numberOfLines?: number;
 };
 
 export default function TextInputBox({
@@ -22,7 +31,9 @@ export default function TextInputBox({
   secureTextEntry = false,
   iconName,
   iconSize = 20,
-  style
+  style,
+  multiline = false,
+  numberOfLines,
 }: TextInputBoxProps) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const { theme } = useContext(ThemeContext);
@@ -36,20 +47,33 @@ export default function TextInputBox({
         keyboardType={keyboardType}
         secureTextEntry={secureTextEntry && !isPasswordVisible}
         placeholderTextColor={theme.subtextOne}
+        multiline={multiline}
+        numberOfLines={multiline ? numberOfLines : undefined}
         style={[
           styles.input,
           {
             backgroundColor: theme.backgroundSecondary,
             color: theme.text,
+            height: multiline ? (numberOfLines ? numberOfLines * 24 : 120) : 50,
+            textAlignVertical: multiline ? 'top' : 'center',
           },
           iconName && { paddingLeft: 40 },
-          style
+          style,
         ]}
       />
-      <MaterialIcons name={iconName} size={iconSize} color={theme.text} style={styles.icon}/>
+      {iconName && (
+        <MaterialIcons name={iconName} size={iconSize} color={theme.text} style={styles.icon} />
+      )}
       {secureTextEntry && (
-        <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} style={styles.eyeIcon}>
-          <MaterialIcons name={isPasswordVisible ? 'visibility' : 'visibility-off'} size={iconSize} color={theme.text}/>
+        <TouchableOpacity
+          onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+          style={styles.eyeIcon}
+        >
+          <MaterialIcons
+            name={isPasswordVisible ? 'visibility' : 'visibility-off'}
+            size={iconSize}
+            color={theme.text}
+          />
         </TouchableOpacity>
       )}
     </View>
@@ -70,7 +94,6 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
-    height: 50,
     paddingHorizontal: 20,
     borderRadius: 10,
     fontSize: 16,
