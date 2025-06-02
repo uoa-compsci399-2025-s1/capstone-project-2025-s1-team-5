@@ -236,7 +236,6 @@ export class ModuleService {
         changes: { title?: string; body?: string }
       ): Promise<boolean> {
         try {
-      
           const subsection = await Subsection.findById(subsectionId);
           if (!subsection) {
             throw new Error("Subsection not found");

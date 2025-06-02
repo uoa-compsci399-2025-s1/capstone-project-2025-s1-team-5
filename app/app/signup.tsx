@@ -49,8 +49,6 @@ export default function SignUpScreen() {
       return;
     }
 
-    console.log('Signing up with:', { email, password });
-
     router.replace({
       pathname: '/createprofile',
       params: { email, password },

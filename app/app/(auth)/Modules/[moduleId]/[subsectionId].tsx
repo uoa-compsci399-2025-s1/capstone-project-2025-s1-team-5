@@ -20,7 +20,6 @@ export default function SubsectionScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log(subsectionId);
     api
       .get<Subsection>(`/modules/subsection/${subsectionId}`)
       .then(res => setData(res.data))
@@ -31,7 +30,6 @@ export default function SubsectionScreen() {
   if (loading) return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} />;
   if (!data)  return <Text>Loading failed, please try again</Text>;
 
-  // 自定义 iframe 渲染：优先用 YoutubePlayer，否则用 WebView
   const renderers = {
   iframe: (props: any) => {
     const src = (props.tnode.attributes.src ?? '').toString();
@@ -50,22 +48,61 @@ export default function SubsectionScreen() {
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16 }}>
-      {/* 标题 */}
+      {/* Title */}
       <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 12 }}>
         {data.title}
       </Text>
 
-      {/* 渲染 body 中的 HTML */}
+      {/* Render Body */}
       <RenderHtml
         contentWidth={width - 32}
         source={{ html: data.body }}
         WebView={WebView}
+        enableCSSInlineProcessing={true}
         renderers={{ iframe: IframeRenderer }}
         customHTMLElementModels={{ iframe: iframeModel }}
         tagsStyles={{
-          h1: { fontSize: 26, marginVertical: 8 },
-          h2: { fontSize: 22, marginVertical: 6 },
-          p:  { fontSize: 16, lineHeight: 24, marginBottom: 8 },
+          p: {
+            fontSize: 16,
+            lineHeight: 24,
+            marginBottom: 8,
+          },
+          strong: {
+            fontWeight: 'bold',
+          },
+          b: {
+            fontWeight: 'bold',
+          },
+          em: {
+            fontStyle: 'italic',
+          },
+          i: {
+            fontStyle: 'italic',
+          },
+          h2: {
+            fontSize: 22,
+            marginVertical: 6,
+            fontWeight: '600', 
+          },
+          h3: {
+            fontSize: 18,
+            marginVertical: 4,
+            fontWeight: '600',
+          },
+          ul: {
+            marginVertical: 8,
+            paddingLeft: 16, 
+          },
+          ol: {
+            marginVertical: 8,
+            paddingLeft: 24,
+          },
+          li: {
+            fontSize: 16,
+            lineHeight: 24,
+            marginBottom: 4, 
+            marginLeft: 4,
+          },
         }}
       />
     </ScrollView>

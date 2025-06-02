@@ -18,7 +18,6 @@ const ModulesPage = () => {
   const fetchModules = async () => {
     try {
       const res = await axios.get<ModulesResponse>(`${process.env.REACT_APP_API_URL}/api/modules`);
-      console.log("Fetched modules:", res.data);
       
       const mappedModules = res.data.modules.map(module => ({
         ...module,
@@ -44,9 +43,7 @@ const ModulesPage = () => {
         setError('Cannot delete module: ID is missing');
         return;
       }
-      
-      console.log("Deleting module with ID:", moduleId);
-      
+          
       const token = localStorage.getItem("authToken");
       await axios.delete(`${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`, {
         headers: {

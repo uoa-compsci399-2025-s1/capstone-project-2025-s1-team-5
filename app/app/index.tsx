@@ -35,7 +35,6 @@ export default function SignInScreen() {
         await SecureStore.setItemAsync('USER_TOKEN', token);
 
         const meRes = await api.get('/auth/me');
-        console.log(meRes.data);
         userContext.setUser(meRes.data);
 
         router.replace('/Modules');
@@ -62,7 +61,6 @@ export default function SignInScreen() {
 
   const handleForgotPassword = async () => {
     router.push('/forgotpassword')
-    console.log("Forgot password clicked");
   };
 
   return (
