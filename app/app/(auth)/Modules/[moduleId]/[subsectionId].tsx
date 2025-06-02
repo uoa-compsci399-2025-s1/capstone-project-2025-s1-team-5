@@ -60,6 +60,7 @@ export default function SubsectionScreen() {
         contentWidth={width - 32}
         source={{ html: data.body }}
         WebView={WebView}
+        enableCSSInlineProcessing={true}
         renderers={{ iframe: IframeRenderer }}
         customHTMLElementModels={{ iframe: iframeModel }}
         tagsStyles={{
@@ -67,8 +68,6 @@ export default function SubsectionScreen() {
             fontSize: 16,
             lineHeight: 24,
             marginBottom: 8,
-            /* 默认左对齐，如果你的后端 HTML 里带了 style="text-align:xxx"，那么需要在 ignoredStyles 里去掉 textAlign 才能生效 */
-            textAlign: 'left',
           },
           strong: {
             fontWeight: 'bold',
@@ -98,12 +97,13 @@ export default function SubsectionScreen() {
           },
           ol: {
             marginVertical: 8,
-            paddingLeft: 16,
+            paddingLeft: 24,
           },
           li: {
             fontSize: 16,
             lineHeight: 24,
             marginBottom: 4, 
+            marginLeft: 4,
           },
         }}
       />
