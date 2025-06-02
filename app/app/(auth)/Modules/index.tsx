@@ -39,7 +39,13 @@ export default function ModuleScreen(){
         <SubModuleButton
           key={m.id}
           title={m.title}
-          onPress={() => router.push(`/Modules/${m.id}`)}
+          onPress={() => router.push({
+              pathname: `/Modules/${m.id}`,
+              params: {
+                  moduleId: m.id,
+                  title: m.title,
+                  }})
+              }
         />
       ))}
     </ScrollView>
