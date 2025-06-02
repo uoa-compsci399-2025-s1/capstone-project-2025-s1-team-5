@@ -15,7 +15,6 @@ const ThemeScreen: React.FC = () => {
       const res = await api.patch<{ message: string }>('/users/me/theme', {
         colorPref: pref,
       });
-      console.log(res.data.message);
     } catch (e) {
       console.error('Theme update failed', e);
       Alert.alert('Error', 'Could not save your theme preference.');

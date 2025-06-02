@@ -481,9 +481,6 @@ const handleDragEnd = (result: DropResult) => {
 
 
   if (loading) return <div className="text-center py-8">Loading module data...</div>;
-  console.log("Module Subsection IDs:", module.subsectionIds);
-  console.log("Module Quiz IDs:", module.quizIds);
-  console.log("Module Link IDs:", module.linkIds);
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Edit Module</h1>

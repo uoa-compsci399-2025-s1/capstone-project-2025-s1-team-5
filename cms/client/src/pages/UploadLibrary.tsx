@@ -51,7 +51,6 @@ const UploadLibrary: React.FC = () => {
     setLoading(true);
     try {
       const res = await axios.get<S3File[]>(`${API_URL}/api/library`);
-      console.log("API files response:", res.data); // <--- Do this inside your React code
 
       setFiles(res.data);
       setSelectedKeys(new Set());

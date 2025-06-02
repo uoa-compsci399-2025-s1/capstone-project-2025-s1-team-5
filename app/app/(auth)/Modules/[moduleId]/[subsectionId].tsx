@@ -20,7 +20,6 @@ export default function SubsectionScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log(subsectionId);
     api
       .get<Subsection>(`/modules/subsection/${subsectionId}`)
       .then(res => setData(res.data))

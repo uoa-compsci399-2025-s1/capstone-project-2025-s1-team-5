@@ -62,7 +62,6 @@ const ProgrammesPage = () => {
         fetchProgrammes();
       } catch (error) {
         console.error("Failed to delete programme:", error);
-        console.log(programmeId)
       }
     }
   };
