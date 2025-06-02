@@ -63,9 +63,48 @@ export default function SubsectionScreen() {
         renderers={{ iframe: IframeRenderer }}
         customHTMLElementModels={{ iframe: iframeModel }}
         tagsStyles={{
-          h1: { fontSize: 26, marginVertical: 8 },
-          h2: { fontSize: 22, marginVertical: 6 },
-          p:  { fontSize: 16, lineHeight: 24, marginBottom: 8 },
+          p: {
+            fontSize: 16,
+            lineHeight: 24,
+            marginBottom: 8,
+            /* 默认左对齐，如果你的后端 HTML 里带了 style="text-align:xxx"，那么需要在 ignoredStyles 里去掉 textAlign 才能生效 */
+            textAlign: 'left',
+          },
+          strong: {
+            fontWeight: 'bold',
+          },
+          b: {
+            fontWeight: 'bold',
+          },
+          em: {
+            fontStyle: 'italic',
+          },
+          i: {
+            fontStyle: 'italic',
+          },
+          h2: {
+            fontSize: 22,
+            marginVertical: 6,
+            fontWeight: '600', 
+          },
+          h3: {
+            fontSize: 18,
+            marginVertical: 4,
+            fontWeight: '600',
+          },
+          ul: {
+            marginVertical: 8,
+            paddingLeft: 16, 
+          },
+          ol: {
+            marginVertical: 8,
+            paddingLeft: 16,
+          },
+          li: {
+            fontSize: 16,
+            lineHeight: 24,
+            marginBottom: 4, 
+          },
         }}
       />
     </ScrollView>
