@@ -31,7 +31,6 @@ export default function SubsectionScreen() {
   if (loading) return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} />;
   if (!data)  return <Text>Loading failed, please try again</Text>;
 
-  // 自定义 iframe 渲染：优先用 YoutubePlayer，否则用 WebView
   const renderers = {
   iframe: (props: any) => {
     const src = (props.tnode.attributes.src ?? '').toString();
@@ -50,12 +49,12 @@ export default function SubsectionScreen() {
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16 }}>
-      {/* 标题 */}
+      {/* Title */}
       <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 12 }}>
         {data.title}
       </Text>
 
-      {/* 渲染 body 中的 HTML */}
+      {/* Render Body */}
       <RenderHtml
         contentWidth={width - 32}
         source={{ html: data.body }}
