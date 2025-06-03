@@ -34,18 +34,18 @@ export default function QuizViewer() {
   const [finished,     setFinished]    = useState(false);
 
   const resetQuiz = () => {
-  if (!quiz) return;
-  setCurrentIndex(0);
-  setScore(0);
-  setUserAnswers(
-    quiz.questions.map(() => ({
-      selectedOption: null,
-      showResult:     false,
-      isCorrect:      null
-    }))
-  );
-  setFinished(false);
-};
+    if (!quiz) return;
+    setCurrentIndex(0);
+    setScore(0);
+    setUserAnswers(
+      quiz.questions.map(() => ({
+        selectedOption: null,
+        showResult:     false,
+        isCorrect:      null
+      }))
+    );
+    setFinished(false);
+  };
 
   // 合并初始化：抓到数据的同时，一口气把所有 state 都打好
   useEffect(() => {
@@ -83,15 +83,15 @@ export default function QuizViewer() {
   // 渲染 guard：先把 loading、quiz、userAnswers 都过一遍
   if (loading) {
     return (
-      <View style={styles.center}>
+      <View style={[styles.center, { backgroundColor: theme.background }]}>
         <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
   }
   if (!quiz) {
     return (
-      <View style={styles.center}>
-        <Text>Quiz not found.</Text>
+      <View style={[styles.center, { backgroundColor: theme.background }]}>
+        <Text style={{ color: theme.text }}>Quiz not found.</Text>
       </View>
     );
   }
@@ -99,11 +99,11 @@ export default function QuizViewer() {
   // 题都准备好了，才渲染答题流程
   if (finished) {
     return (
-      <ScrollView contentContainerStyle={styles.center}>
+      <ScrollView contentContainerStyle={[styles.center, { backgroundColor: theme.background }]}>
         <StyledText type="title" style={{ color: theme.primary }}>
           Quiz Completed!
         </StyledText>
-        <StyledText type="default">
+        <StyledText type="default" style={{ color: theme.text }}>
           You scored {score} of {quiz.questions.length}.
         </StyledText>
         <TouchableOpacity
@@ -149,7 +149,7 @@ export default function QuizViewer() {
   const back = () => currentIndex > 0 && setCurrentIndex(i => i - 1);
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16 }}>
+    <ScrollView contentContainerStyle={{ padding: 16, backgroundColor: theme.background }}>
       <ProgressBar
         progress={progress}
         color={theme.primary}

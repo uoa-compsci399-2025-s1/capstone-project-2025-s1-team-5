@@ -10,7 +10,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { lightTheme, darkTheme } from '@/theme/theme';
 import { UserContext } from './UserContext';
 
-// Define allowable theme preferences
 type ColorPreference = 'light' | 'dark' | 'system';
 
 interface ThemeContextProps {
@@ -31,11 +30,9 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
-// Type guard to validate stored string as ColorPreference
 const isColorPreference = (val: string | null): val is ColorPreference =>
   val === 'light' || val === 'dark' || val === 'system';
 
-// Determine dark mode based on preference and system setting
 const resolveIsDarkMode = (
   pref: ColorPreference,
   system: ColorSchemeName
