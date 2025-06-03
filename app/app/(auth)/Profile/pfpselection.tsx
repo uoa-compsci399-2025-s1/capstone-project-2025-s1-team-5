@@ -7,7 +7,8 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation} from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { UserContext } from '@/contexts/UserContext';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import profileAvatars from '@/constants/profileAvatars';
@@ -26,6 +27,7 @@ const ProfilePicSelectionScreen: React.FC = () => {
   const { theme } = useContext(ThemeContext);
   const [selectedAvatar, setSelectedAvatar] = useState<string>(user.avatar);
   const navigation = useNavigation();
+  const router = useRouter();
 
   const handleSelection = (avatarKey: string) => {
     setSelectedAvatar(avatarKey);
@@ -37,7 +39,8 @@ const ProfilePicSelectionScreen: React.FC = () => {
         avatar: selectedAvatar,
       });
       setUser({ ...user, avatar: selectedAvatar });
-      navigation.goBack();
+//       navigation.goBack();
+      router.replace('/Profile');
     } catch (e) {
       console.error('Avatar update failed', e);
     }
