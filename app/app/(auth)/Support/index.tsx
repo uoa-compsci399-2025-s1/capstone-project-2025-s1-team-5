@@ -10,7 +10,7 @@ export default function SupportScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <ScrollView contentContainerStyle={styles.scrollView}>
+      <ScrollView>
         <ModuleButton
           title="Contact Form"
           iconName="mail-outline"
@@ -30,8 +30,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-  },
-  scrollView: {
-    padding: 5,
   },
 });

@@ -14,15 +14,15 @@ import ProfileUserCard from '@/components/ProfileUserCard';
 const { width, height } = Dimensions.get('window');
 const isSmallDevice = width < 375;
 
-const scale = (size: number) => (width / 375) * size;
-const verticalScale = (size: number) => (height / 812) * size;
-const moderateScale = (size: number, factor = 0.5) => size + (scale(size) - size) * factor;
-
 const FEATURES = ['Programme', 'Campus Map'] as const;
 const ICONS = ['insights', 'location-on'] as const;
 
-type ExtractRouteParams<T> = T extends `${infer Start}?${infer Rest}` ? Start : T;
-type ValidRoutes = ExtractRouteParams<Parameters<ReturnType<typeof useRouter>['push']>[0]>;
+type ExtractRouteParams<T> = T extends `${infer Start}?${infer Rest}`
+  ? Start
+  : T;
+type ValidRoutes = ExtractRouteParams<
+  Parameters<ReturnType<typeof useRouter>['push']>[0]
+>;
 
 const ProfileScreen: React.FC = () => {
   const { theme } = useContext(ThemeContext);
@@ -115,36 +115,34 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: moderateScale(24),
-    paddingTop: verticalScale(28),
-    paddingBottom: verticalScale(8),
+    padding: 20,
   },
   bodyContent: {
     flex: 1,
     width: '100%',
-    marginTop: verticalScale(16),
-    marginBottom: verticalScale(16),
+    marginTop: 0,
+    marginBottom: 16,
   },
   buttonGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: verticalScale(5),
+    marginBottom: 5,
   },
   topButton: {
-    borderTopLeftRadius: moderateScale(10),
-    borderTopRightRadius: moderateScale(10),
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
   bottomButton: {
-    borderBottomLeftRadius: moderateScale(10),
-    borderBottomRightRadius: moderateScale(10),
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
   },
   profileCardOuter: {
-    padding: moderateScale(4),
-    borderRadius: moderateScale(12),
+    padding: 4,
+    borderRadius: 12,
     backgroundColor: '#0c0c48',
     alignItems: 'center',
-    marginBottom: verticalScale(5),
+    marginBottom: 8,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -159,20 +157,20 @@ const styles = StyleSheet.create({
   },
   profileCardInner: {
     backgroundColor: '#0c0c48',
-    borderRadius: moderateScale(14),
+    borderRadius: 14,
     width: '100%',
-    padding: moderateScale(16),
-    borderWidth: moderateScale(2),
+    padding: 16,
+    borderWidth: 2,
     borderColor: '#0c0c48',
   },
   buttonOuter: {
     width: '48%',
     aspectRatio: 1.0,
-    marginBottom: verticalScale(21),
-    marginTop: verticalScale(7),
-    borderRadius: moderateScale(12),
+    marginBottom: 9,
+    marginTop: 7,
+    borderRadius: 12,
     backgroundColor: '#0c0c48',
-    padding: moderateScale(4),
+    padding: 4,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -189,13 +187,13 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     backgroundColor: '#0c0c48',
-    borderRadius: moderateScale(10),
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
     flexDirection: 'column',
-    paddingVertical: verticalScale(25),
-    gap: verticalScale(6),
+    paddingVertical: 25,
+    gap: 6,
   },
 });
 
