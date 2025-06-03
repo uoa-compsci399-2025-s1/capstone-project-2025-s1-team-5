@@ -49,11 +49,6 @@ export default function SubsectionScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Title */}
-        <Text style={[styles.title, { color: theme.text }]}>
-          {data.title}
-        </Text>
-        {/* Render Body */}
         <RenderHtml
           contentWidth={width - 32}
           source={{ html: data.body }}
@@ -126,10 +121,5 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 12,
   },
 });
