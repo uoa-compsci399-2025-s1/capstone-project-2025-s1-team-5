@@ -140,7 +140,7 @@ export class UserService {
         return true;
       }
       public async getUserInfo(userId: string): Promise<UserInfo> {
-        const userDoc = await User.findById(userId).select('first_name last_name email colorPref avatar country');
+        const userDoc = await User.findById(userId).select('first_name last_name email colorPref avatar country programme');
         if (!userDoc) return null;
         const userInfo = userDoc.toObject() as UserInfo;
         return userInfo;

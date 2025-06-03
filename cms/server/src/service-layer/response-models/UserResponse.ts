@@ -30,4 +30,5 @@ export interface UserInfo {
     avatar: string
     colorPref: string
     country: string
+    programme: string
 }

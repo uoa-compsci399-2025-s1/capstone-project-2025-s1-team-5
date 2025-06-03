@@ -1,5 +1,5 @@
 import * as SecureStore from 'expo-secure-store'
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import {
   View,
   StyleSheet,
@@ -36,10 +36,8 @@ export default function CreateProfileScreen() {
   const filteredCountries = countries.filter((c) => c.cca3 !== 'TWN')
   const countryList = filteredCountries.map((c) => c.name.common).sort()
 
-  const Programme = [
-    'Master of Engineering Project Management',
-    'Master of Civil Engineering',
-  ]
+  const [programmeList, setProgrammeList] = useState<string[]>([]);    
+  const [programmeFetchError, setProgrammeFetchError] = useState<string>('');
 
   const handleCreateProfile = async () => {
     if (!firstName || !lastName || !selectedCountry || !selectedProgramme) {
@@ -72,6 +70,22 @@ export default function CreateProfileScreen() {
       setDisplayedError('Failed to create user profile')
     }
   }
+
+  useEffect(() => {
+  const fetchProgrammes = async () => {
+    setProgrammeFetchError('');
+    try {
+      const response = await api.get<{ _id: string; name: string; description?: string; link?: string }[]>('/programmes/');
+      const names = response.data.map(item => item.name);
+      setProgrammeList(names);
+    } catch (err) {
+      console.error('Failed to fetch programme list', err);
+      setProgrammeFetchError('Failed to fetch programme list, please try again');
+    }
+  };
+
+  fetchProgrammes();
+}, []);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -116,11 +130,15 @@ export default function CreateProfileScreen() {
         <DropDownMenu
           selectedValue={selectedProgramme}
           onValueChange={setSelectedProgramme}
-          items={Programme}
+          items={programmeList}
           placeholder="Select your programme"
           iconName="library-books"
         />
 
+        {/* Show error message if failed to fetch programme */}
+        {programmeFetchError !== '' && (
+          <StyledText type="error">{programmeFetchError}</StyledText>
+        )}
         {displayedError !== '' && (
           <StyledText type="error">{displayedError}</StyledText>
         )}
