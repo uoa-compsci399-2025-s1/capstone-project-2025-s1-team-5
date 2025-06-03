@@ -1,7 +1,7 @@
 import React from 'react';   
 import { useLocalSearchParams } from 'expo-router';
-import WebView from 'react-native-webview';
 import { View, ActivityIndicator } from 'react-native';
+import WebView from 'react-native-webview';
 
 export default function LinkViewer() {
   const { url , title } = useLocalSearchParams<{
@@ -16,7 +16,7 @@ export default function LinkViewer() {
       source={{ uri: url }}
       startInLoadingState
       renderLoading={() => (
-        <View style={{ flex:1, justifyContent:'center' }}>
+        <View style={{ flex: 1, justifyContent: 'center' }}>
           <ActivityIndicator size="large" />
         </View>
       )}

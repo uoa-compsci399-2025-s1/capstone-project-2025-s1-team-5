@@ -1,4 +1,3 @@
-// app/Modules/_layout.tsx
 import React, { useContext } from 'react';
 import { Stack } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';

@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, ActivityIndicator} from 'react-native';
 import { ThemeContext } from '@/contexts/ThemeContext'; 
-import StyledText from '@/components/StyledText';
-import { WebView } from 'react-native-webview';
-import api from '@/app/lib/api';
 import { UserContext } from '@/contexts/UserContext';
+import { WebView } from 'react-native-webview';
+import StyledText from '@/components/StyledText';
 
-//programme name, header, information etc needs to be dynamic and implemented so it is able to be changed by the CMS
+import api from '@/app/lib/api';
+
 export default function ProgrammeScreen() {
   const { theme } = useContext(ThemeContext); 
   const { user } = useContext(UserContext);
