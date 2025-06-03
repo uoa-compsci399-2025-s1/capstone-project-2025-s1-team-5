@@ -24,7 +24,14 @@ const CountryTag: React.FC<{ country: string }> = ({ country }) => {
   return (
     <View style={styles.countryContainer}>
       <Image source={{ uri }} style={styles.countryFlag} />
-      <StyledText type="label" style={styles.countryText}>{country}</StyledText>
+      <StyledText
+        type="label"
+        style={styles.countryText}
+        numberOfLines={2}
+        ellipsizeMode="tail"
+      >
+        {country}
+      </StyledText>
     </View>
   );
 };
@@ -34,7 +41,7 @@ const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email, 
   const { theme } = useContext(ThemeContext);
 
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, { minHeight: width * 0.35 }]}>
       <TouchableOpacity onPress={() => router.push('./Profile/pfpselection')}>
         <Image
           source={profileAvatars[avatar] || profileAvatars.default}
@@ -42,8 +49,22 @@ const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email, 
         />
       </TouchableOpacity>
       <View style={styles.profileInfo}>
-        <StyledText type="title" style={styles.name}>{name}</StyledText>
-        <StyledText type="subtitle" style={styles.email}>{email}</StyledText>
+        <StyledText
+          type="title"
+          style={styles.name}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {name}
+        </StyledText>
+        <StyledText
+          type="subtitle"
+          style={styles.email}
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
+          {email}
+        </StyledText>
         <View style={styles.countryWrapper}>
           <CountryTag country={country} />
         </View>
@@ -56,6 +77,8 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    minHeight: 120,
+    paddingVertical: 10,
   },
   profileImage: {
     width: width * 0.3,
@@ -82,21 +105,23 @@ const styles = StyleSheet.create({
   countryText: {
     color: '#ffffff',
     flexShrink: 1,
-    flexWrap: 'wrap',
     flex: 1,
   },
   name: {
     marginBottom: width * 0.01,
     color: '#ffffff',
     flexShrink: 1,
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
+    maxWidth: width * 0.5,
   },
   email: {
     marginBottom: width * 0.01,
     color: '#ffffff',
     flexShrink: 1,
     flexWrap: 'wrap',
-},
+    lineHeight: 20,
+    maxWidth: width * 0.5,
+  },
   countryWrapper: {
     marginTop: width * 0.01,
   },

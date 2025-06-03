@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import api from "@/app/lib/api";
-import SubModuleButton from "@/components/SubModuleButton";
 import { ThemeContext } from "@/contexts/ThemeContext";
 import { SubsectionItem, LinkItem, ModuleDetail, QuizItem } from "@/types/types";
+import SubModuleButton from "@/components/SubModuleButton";
+
+import api from "@/app/lib/api";
 
 export default function ModuleDetailScreen() {
   const { moduleId } = useLocalSearchParams<{ moduleId: string }>();
@@ -26,7 +27,7 @@ export default function ModuleDetailScreen() {
   }, [moduleId]);
 
   return (
-    <ScrollView style={[styles.ctn, { backgroundColor: theme.background }]}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
       {subs.map(s => (
         <SubModuleButton
           key={s.id}
@@ -43,8 +44,6 @@ export default function ModuleDetailScreen() {
           }
         />
       ))}
-
-      {/* Links button */}
       {links.map(l => (
         <SubModuleButton                 
           key={l.id}
@@ -56,7 +55,6 @@ export default function ModuleDetailScreen() {
           }
         />
       ))}
-
       {quizzes.map(q => (
         <SubModuleButton
           key={q.id}
@@ -74,5 +72,8 @@ export default function ModuleDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  ctn: { flex: 1, padding: 24 }
+    container: {
+    flex: 1,
+    padding: 20,
+  },
 });
