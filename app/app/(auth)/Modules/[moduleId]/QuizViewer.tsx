@@ -1,4 +1,3 @@
-// app/Modules/[moduleId]/QuizViewer.tsx
 import React, { useEffect, useState, useContext } from 'react';
 import {
   ScrollView,
@@ -162,7 +161,7 @@ export default function QuizViewer() {
         <ProgressBar
           progress={progress}
           color={theme.primary}
-          style={{ marginBottom: 16 }}
+          style={{ marginTop: 12, marginBottom: 16, height: 12 }}
         />
 
         <QuestionCard
@@ -199,7 +198,7 @@ export default function QuizViewer() {
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16 },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
   nav:    { flexDirection: 'row', justifyContent: 'space-between', marginTop: 24 },
   navBtn: { flex: 1, padding: 12, borderRadius: 8, alignItems: 'center', marginHorizontal: 4},
   button: { padding: 12, borderRadius: 8, marginTop: 24 },
@@ -211,25 +210,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 24,
     borderRadius: 16,
-    elevation: 4,
     marginTop: 50,
   },
   resultTitle: {
     marginBottom: 12,
     fontWeight: 'bold',
+    fontSize: 28, 
   },
   resultText: {
-    fontSize: 16,
+    fontSize: 20, 
     marginBottom: 24,
   },
   retakeButton: {
-    padding: 12,
-    borderRadius: 8,
-    width: 160,
+    padding: 16, 
+    borderRadius: 8, 
     alignItems: 'center',
   },
   retakeButtonText: {
     color: '#ffffff',
     textAlign: 'center',
+    fontSize: 18, 
   },
 });
