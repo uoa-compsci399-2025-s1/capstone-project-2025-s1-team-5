@@ -32,7 +32,14 @@ export default function ModuleDetailScreen() {
           key={s.id}
           title={s.title}
           onPress={() =>
-            router.push(`/Modules/${moduleId}/${s.id}`)
+            router.push({
+              pathname: `/Modules/[moduleId]/[subsectionId]`,
+              params: {
+                moduleId,
+                subsectionId: s.id,
+                title: s.title,
+              }
+            })
           }
         />
       ))}
