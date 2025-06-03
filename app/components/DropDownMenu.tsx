@@ -43,12 +43,21 @@ export default function DropDownMenu({
   return (
     <>
       <View style={styles.container}>
+        {iconName && (
+          <MaterialIcons
+            name={iconName}
+            size={iconSize}
+            color={theme.text}
+            style={styles.icon}
+          />
+        )}
         <TouchableOpacity
           style={[
             styles.input,
             { 
               backgroundColor: theme.backgroundSecondary,
               height: 50,
+              paddingLeft: iconName ? 40 : 20, 
             }
           ]}
           activeOpacity={0.7}
@@ -59,7 +68,7 @@ export default function DropDownMenu({
               styles.label,
               {
                 color: displayColor,
-                paddingLeft: iconName ? 30 : 0, 
+                lineHeight: 20, 
               },
             ]}
           >
@@ -72,14 +81,6 @@ export default function DropDownMenu({
             style={styles.dropdownIcon}
           />
         </TouchableOpacity>
-        {iconName && (
-          <MaterialIcons
-            name={iconName}
-            size={iconSize}
-            color={theme.text}
-            style={styles.icon}
-          />
-        )}
       </View>
 
       <Modal visible={visible} transparent animationType="fade" onRequestClose={close}>
@@ -114,29 +115,31 @@ export default function DropDownMenu({
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
-    flexDirection: 'row',
-    alignItems: 'center',
     width: '100%',
     marginVertical: 5,
   },
   input: {
     width: '100%',
-    paddingHorizontal: 20,
     borderRadius: 10,
     justifyContent: 'center',
+    paddingRight: 20, 
   },
   icon: {
     position: 'absolute',
     left: 10,
+    top: 15,
+    zIndex: 1,
   },
   label: {
     fontSize: 16,
     includeFontPadding: false,
     textAlignVertical: 'center',
+    paddingVertical: 15, 
   },
   dropdownIcon: {
     position: 'absolute',
     right: 10,
+    top: 13,
   },
   backdrop: {
     flex: 1,
