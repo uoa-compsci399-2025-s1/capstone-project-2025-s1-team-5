@@ -48,7 +48,7 @@ export default function SubsectionScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <RenderHtml
           contentWidth={width - 32}
           source={{ html: data.body }}
