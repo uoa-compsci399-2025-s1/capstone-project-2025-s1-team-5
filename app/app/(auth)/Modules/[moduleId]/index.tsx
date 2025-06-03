@@ -26,7 +26,7 @@ export default function ModuleDetailScreen() {
   }, [moduleId]);
 
   return (
-    <ScrollView style={[styles.ctn, { backgroundColor: theme.background }]}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
       {subs.map(s => (
         <SubModuleButton
           key={s.id}
@@ -44,7 +44,6 @@ export default function ModuleDetailScreen() {
         />
       ))}
 
-      {/* Links button */}
       {links.map(l => (
         <SubModuleButton                 
           key={l.id}
@@ -74,5 +73,8 @@ export default function ModuleDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  ctn: { flex: 1, padding: 24 }
+    container: {
+    flex: 1,
+    padding: 20,
+  },
 });
