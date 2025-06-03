@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { ScrollView, ActivityIndicator, Text, useWindowDimensions, View, StyleSheet } from 'react-native';
-import api from '@/app/lib/api';
+import { Subsection } from '@/types/types';
+import { useLocalSearchParams } from 'expo-router';
+import { ThemeContext } from '@/contexts/ThemeContext';
+
 import RenderHtml from 'react-native-render-html';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import IframeRenderer, { iframeModel } from '@native-html/iframe-plugin';
 import WebView from 'react-native-webview';
-import { Subsection } from '@/types/types';
-import { useLocalSearchParams } from 'expo-router';
-import { ThemeContext } from '@/contexts/ThemeContext';
+
+import api from '@/app/lib/api';
 
 export default function SubsectionScreen() {
   const { width } = useWindowDimensions();
@@ -48,7 +50,7 @@ export default function SubsectionScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <RenderHtml
           contentWidth={width - 32}
           source={{ html: data.body }}
@@ -118,8 +120,6 @@ export default function SubsectionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1, 
-  },
-  scrollContent: {
-    padding: 16,
+    padding: 20,
   },
 });
