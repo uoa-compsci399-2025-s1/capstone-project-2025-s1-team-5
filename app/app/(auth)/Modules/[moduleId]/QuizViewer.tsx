@@ -97,26 +97,30 @@ export default function QuizViewer() {
   }
 
   // 题都准备好了，才渲染答题流程
+
   if (finished) {
     return (
-      <View style={[styles.resultContainer, { backgroundColor: theme.background }]}>
-        <StyledText type="title" style={[styles.resultTitle, { color: theme.primary }]}>
-          Quiz Completed!
-        </StyledText>
-        <StyledText type="default" style={[styles.resultText, { color: theme.text }]}>
-          You scored {score} out of {quiz.questions.length}.
-        </StyledText>
-        <TouchableOpacity
-          style={[styles.retakeButton, { backgroundColor: theme.primary }]}
-          onPress={resetQuiz}
-        >
-          <StyledText type="boldLabel" style={styles.retakeButtonText}>
-            Retake Quiz
+      <View style={{ flex: 1, backgroundColor: theme.background}}>
+        <View style={styles.resultContainer}>
+          <StyledText type="title" style={[styles.resultTitle, { color: theme.text }]}>
+            Quiz Completed!
           </StyledText>
-        </TouchableOpacity>
+          <StyledText type="title" style={[styles.resultText, { color: theme.text }]}>
+            You scored {score} out of {quiz.questions.length}.
+          </StyledText>
+          <TouchableOpacity
+            style={[styles.retakeButton, { backgroundColor: theme.primary }]}
+            onPress={resetQuiz}
+          >
+            <StyledText type="boldLabel" style={styles.retakeButtonText}>
+              Retake Quiz
+            </StyledText>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
+
   // 正常答题渲染
   const progress = (currentIndex + 1) / quiz.questions.length;
 
