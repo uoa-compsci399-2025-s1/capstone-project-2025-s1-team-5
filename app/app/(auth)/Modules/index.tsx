@@ -2,8 +2,8 @@ import React, { useContext, useState, useEffect } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
-import SubModuleButton from '@/components/SubModuleButton';
 import { useIsFocused } from '@react-navigation/native';
+import SubModuleButton from '@/components/SubModuleButton';
 
 import api from '@/app/lib/api';
 
@@ -12,7 +12,7 @@ interface ModuleItem {
   title: string;
 }
 
-export default function ModuleScreen(){
+export default function ModuleScreen() {
   const router = useRouter();
   const isFocused = useIsFocused();
   const { theme } = useContext(ThemeContext);  
@@ -30,6 +30,16 @@ export default function ModuleScreen(){
       });
   }, [isFocused]);
 
+  const handleModulePress = (module: ModuleItem) => {
+    router.push({
+      pathname: '/Modules/[moduleId]',
+      params: {
+        moduleId: module.id,
+        title: module.title,
+      }
+    });
+  };
+
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: theme.background }]}
@@ -39,13 +49,7 @@ export default function ModuleScreen(){
         <SubModuleButton
           key={m.id}
           title={m.title}
-          onPress={() => router.push({
-              pathname: `/Modules/${m.id}`,
-              params: {
-                  moduleId: m.id,
-                  title: m.title,
-                  }})
-              }
+          onPress={() => handleModulePress(m)}
         />
       ))}
     </ScrollView>
