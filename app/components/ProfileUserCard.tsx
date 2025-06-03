@@ -42,7 +42,14 @@ const ProfileUserCard: React.FC<ProfileUserCardProps> = ({ avatar, name, email, 
         />
       </TouchableOpacity>
       <View style={styles.profileInfo}>
-        <StyledText type="title" style={styles.name}>{name}</StyledText>
+        <StyledText
+          type="title"
+          style={styles.name}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {name}
+        </StyledText>
         <StyledText
           type="subtitle"
           style={styles.email}
@@ -63,7 +70,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    minHeight: 120, 
+    minHeight: 120,
     paddingVertical: 10,
   },
   profileImage: {
@@ -98,7 +105,8 @@ const styles = StyleSheet.create({
     marginBottom: width * 0.01,
     color: '#ffffff',
     flexShrink: 1,
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
+    maxWidth: width * 0.5,
   },
   email: {
     marginBottom: width * 0.01,
