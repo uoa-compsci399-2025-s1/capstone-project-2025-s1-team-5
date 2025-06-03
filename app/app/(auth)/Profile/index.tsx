@@ -120,7 +120,6 @@ const styles = StyleSheet.create({
   bodyContent: {
     flex: 1,
     width: '100%',
-    marginTop: 0,
     marginBottom: 16,
   },
   buttonGrid: {
@@ -143,6 +142,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#0c0c48',
     alignItems: 'center',
     marginBottom: 8,
+    marginTop: '1.5%',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
