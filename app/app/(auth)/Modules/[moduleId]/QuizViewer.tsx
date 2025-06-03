@@ -13,6 +13,7 @@ import api from '@/app/lib/api';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import QuestionCard from '@/components/QuestionCard';
 import StyledText from '@/components/StyledText';
+import SubmitButton from '@/components/SubmitButton';
 
 type UserAnswer = {
   selectedOption: string | null;
@@ -96,10 +97,9 @@ export default function QuizViewer() {
   }
 
   // 题都准备好了，才渲染答题流程
-
   if (finished) {
     return (
-      <View style={{ flex: 1, backgroundColor: theme.background}}>
+      <View style={{ flex: 1, backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }}>
         <View style={styles.resultContainer}>
           <StyledText type="title" style={[styles.resultTitle, { color: theme.text }]}>
             Quiz Completed!
@@ -107,14 +107,7 @@ export default function QuizViewer() {
           <StyledText type="title" style={[styles.resultText, { color: theme.text }]}>
             You scored {score} out of {quiz.questions.length}.
           </StyledText>
-          <TouchableOpacity
-            style={[styles.retakeButton, { backgroundColor: theme.primary }]}
-            onPress={resetQuiz}
-          >
-            <StyledText type="boldLabel" style={styles.retakeButtonText}>
-              Retake Quiz
-            </StyledText>
-          </TouchableOpacity>
+          <SubmitButton text="Retake Quiz" onPress={resetQuiz}/>
         </View>
       </View>
     );
@@ -208,9 +201,9 @@ const styles = StyleSheet.create({
   resultContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 24,
+    padding: 20,
     borderRadius: 16,
-    marginTop: 50,
+    width: '100%',
   },
   resultTitle: {
     marginBottom: 12,
@@ -220,15 +213,5 @@ const styles = StyleSheet.create({
   resultText: {
     fontSize: 20, 
     marginBottom: 24,
-  },
-  retakeButton: {
-    padding: 16, 
-    borderRadius: 8, 
-    alignItems: 'center',
-  },
-  retakeButtonText: {
-    color: '#ffffff',
-    textAlign: 'center',
-    fontSize: 18, 
   },
 });
