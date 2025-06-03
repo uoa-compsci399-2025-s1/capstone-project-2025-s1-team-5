@@ -24,7 +24,14 @@ const CountryTag: React.FC<{ country: string }> = ({ country }) => {
   return (
     <View style={styles.countryContainer}>
       <Image source={{ uri }} style={styles.countryFlag} />
-      <StyledText type="label" style={styles.countryText}>{country}</StyledText>
+      <StyledText
+        type="label"
+        style={styles.countryText}
+        numberOfLines={2}
+        ellipsizeMode="tail"
+      >
+        {country}
+      </StyledText>
     </View>
   );
 };
@@ -98,7 +105,6 @@ const styles = StyleSheet.create({
   countryText: {
     color: '#ffffff',
     flexShrink: 1,
-    flexWrap: 'wrap',
     flex: 1,
   },
   name: {
