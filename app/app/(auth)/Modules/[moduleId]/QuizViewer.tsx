@@ -99,23 +99,24 @@ export default function QuizViewer() {
   // 题都准备好了，才渲染答题流程
   if (finished) {
     return (
-      <ScrollView contentContainerStyle={[styles.center, { backgroundColor: theme.background }]}>
-        <StyledText type="title" style={{ color: theme.primary }}>
+      <View style={[styles.resultContainer, { backgroundColor: theme.background }]}>
+        <StyledText type="title" style={[styles.resultTitle, { color: theme.primary }]}>
           Quiz Completed!
         </StyledText>
-        <StyledText type="default" style={{ color: theme.text }}>
-          You scored {score} of {quiz.questions.length}.
+        <StyledText type="default" style={[styles.resultText, { color: theme.text }]}>
+          You scored {score} out of {quiz.questions.length}.
         </StyledText>
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: theme.primary }]}
+          style={[styles.retakeButton, { backgroundColor: theme.primary }]}
           onPress={resetQuiz}
         >
-          <StyledText type="boldLabel" style={styles.retakeButtonText}>Retake Quiz</StyledText>
+          <StyledText type="boldLabel" style={styles.retakeButtonText}>
+            Retake Quiz
+          </StyledText>
         </TouchableOpacity>
-      </ScrollView>
+      </View>
     );
   }
-
   // 正常答题渲染
   const progress = (currentIndex + 1) / quiz.questions.length;
 
@@ -201,8 +202,30 @@ const styles = StyleSheet.create({
   navButtonText: {
     color: '#fff',
   },
+  resultContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+    borderRadius: 16,
+    elevation: 4,
+    marginTop: 50,
+  },
+  resultTitle: {
+    marginBottom: 12,
+    fontWeight: 'bold',
+  },
+  resultText: {
+    fontSize: 16,
+    marginBottom: 24,
+  },
+  retakeButton: {
+    padding: 12,
+    borderRadius: 8,
+    width: 160,
+    alignItems: 'center',
+  },
   retakeButtonText: {
-    textAlign: 'center',
     color: '#ffffff',
+    textAlign: 'center',
   },
 });
