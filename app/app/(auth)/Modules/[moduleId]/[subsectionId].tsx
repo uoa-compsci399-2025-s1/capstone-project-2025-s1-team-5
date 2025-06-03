@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { ScrollView, ActivityIndicator, Text, useWindowDimensions } from 'react-native';
+import { ScrollView, ActivityIndicator, Text, useWindowDimensions, View, StyleSheet } from 'react-native';
 import api from '@/app/lib/api';
 import RenderHtml from 'react-native-render-html';
 import YoutubePlayer from 'react-native-youtube-iframe';
@@ -28,7 +28,7 @@ export default function SubsectionScreen() {
   }, [subsectionId]);
 
   if (loading) return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} />;
-  if (!data)  return <Text style={{ color: theme.text }}>Loading failed, please try again</Text>;
+  if (!data) return <Text style={{ color: theme.text }}>Loading failed, please try again</Text>;
 
   const renderers = {
     iframe: (props: any) => {
@@ -47,73 +47,89 @@ export default function SubsectionScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16, backgroundColor: theme.background }}>
-      {/* Title */}
-      <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 12, color: theme.text }}>
-        {data.title}
-      </Text>
-      {/* Render Body */}
-      <RenderHtml
-        contentWidth={width - 32}
-        source={{ html: data.body }}
-        WebView={WebView}
-        enableCSSInlineProcessing={true}
-        renderers={{ iframe: IframeRenderer }}
-        customHTMLElementModels={{ iframe: iframeModel }}
-        tagsStyles={{
-          p: {
-            fontSize: 16,
-            lineHeight: 24,
-            marginBottom: 8,
-            color: theme.text,
-          },
-          strong: {
-            fontWeight: 'bold',
-            color: theme.text,
-          },
-          b: {
-            fontWeight: 'bold',
-            color: theme.text,
-          },
-          em: {
-            fontStyle: 'italic',
-            color: theme.text,
-          },
-          i: {
-            fontStyle: 'italic',
-            color: theme.text,
-          },
-          h2: {
-            fontSize: 22,
-            marginVertical: 6,
-            fontWeight: '600',
-            color: theme.text,
-          },
-          h3: {
-            fontSize: 18,
-            marginVertical: 4,
-            fontWeight: '600',
-            color: theme.text,
-          },
-          ul: {
-            marginVertical: 8,
-            paddingLeft: 16,
-            color: theme.text,
-          },
-          ol: {
-            marginVertical: 8,
-            paddingLeft: 24,
-            color: theme.text,
-          },
-          li: {
-            fontSize: 16,
-            lineHeight: 24,
-            marginBottom: 4,
-            marginLeft: 4,
-            color: theme.text,
-          },
-        }}
-      />
-    </ScrollView>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* Title */}
+        <Text style={[styles.title, { color: theme.text }]}>
+          {data.title}
+        </Text>
+        {/* Render Body */}
+        <RenderHtml
+          contentWidth={width - 32}
+          source={{ html: data.body }}
+          WebView={WebView}
+          enableCSSInlineProcessing={true}
+          renderers={{ iframe: IframeRenderer }}
+          customHTMLElementModels={{ iframe: iframeModel }}
+          tagsStyles={{
+            p: {
+              fontSize: 16,
+              lineHeight: 24,
+              marginBottom: 8,
+              color: theme.text,
+            },
+            strong: {
+              fontWeight: 'bold',
+              color: theme.text,
+            },
+            b: {
+              fontWeight: 'bold',
+              color: theme.text,
+            },
+            em: {
+              fontStyle: 'italic',
+              color: theme.text,
+            },
+            i: {
+              fontStyle: 'italic',
+              color: theme.text,
+            },
+            h2: {
+              fontSize: 22,
+              marginVertical: 6,
+              fontWeight: '600',
+              color: theme.text,
+            },
+            h3: {
+              fontSize: 18,
+              marginVertical: 4,
+              fontWeight: '600',
+              color: theme.text,
+            },
+            ul: {
+              marginVertical: 8,
+              paddingLeft: 16,
+              color: theme.text,
+            },
+            ol: {
+              marginVertical: 8,
+              paddingLeft: 24,
+              color: theme.text,
+            },
+            li: {
+              fontSize: 16,
+              lineHeight: 24,
+              marginBottom: 4,
+              marginLeft: 4,
+              color: theme.text,
+            },
+          }}
+        />
+      </ScrollView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1, 
+  },
+  scrollContent: {
+    padding: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+});

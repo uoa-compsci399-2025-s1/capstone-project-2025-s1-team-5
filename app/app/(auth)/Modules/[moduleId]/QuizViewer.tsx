@@ -149,42 +149,47 @@ export default function QuizViewer() {
   const back = () => currentIndex > 0 && setCurrentIndex(i => i - 1);
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16, backgroundColor: theme.background }}>
-      <ProgressBar
-        progress={progress}
-        color={theme.primary}
-        style={{ marginBottom: 16 }}
-      />
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <ScrollView
+        contentContainerStyle={{ padding: 16 }}
+        style={{ flex: 1 }}
+      >
+        <ProgressBar
+          progress={progress}
+          color={theme.primary}
+          style={{ marginBottom: 16 }}
+        />
 
-      <QuestionCard
-        questionData={quiz.questions[currentIndex]}
-        selectedOption={userAnswers[currentIndex].selectedOption}
-        showResult={userAnswers[currentIndex].showResult}
-        onOptionSelect={handleSelect}
-        onAnswerChecked={handleCheck}
-      />
+        <QuestionCard
+          questionData={quiz.questions[currentIndex]}
+          selectedOption={userAnswers[currentIndex].selectedOption}
+          showResult={userAnswers[currentIndex].showResult}
+          onOptionSelect={handleSelect}
+          onAnswerChecked={handleCheck}
+        />
 
-      <View style={styles.nav}>
-        <TouchableOpacity
-          disabled={currentIndex === 0}
-          onPress={back}
-          style={[
-            styles.navBtn,
-            { backgroundColor: theme.primary, opacity: currentIndex === 0 ? 0.5 : 1 }
-          ]}
-        >
-          <StyledText type="boldLabel" style={styles.navButtonText}>Back</StyledText>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={next}
-          style={[styles.navBtn, { backgroundColor: theme.primary}]}
-        >
-          <StyledText type="boldLabel" style={styles.navButtonText}>
-            {currentIndex === quiz.questions.length - 1 ? 'Finish' : 'Next'}
-          </StyledText>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        <View style={styles.nav}>
+          <TouchableOpacity
+            disabled={currentIndex === 0}
+            onPress={back}
+            style={[
+              styles.navBtn,
+              { backgroundColor: theme.primary, opacity: currentIndex === 0 ? 0.5 : 1 }
+            ]}
+          >
+            <StyledText type="boldLabel" style={styles.navButtonText}>Back</StyledText>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={next}
+            style={[styles.navBtn, { backgroundColor: theme.primary}]}
+          >
+            <StyledText type="boldLabel" style={styles.navButtonText}>
+              {currentIndex === quiz.questions.length - 1 ? 'Finish' : 'Next'}
+            </StyledText>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
