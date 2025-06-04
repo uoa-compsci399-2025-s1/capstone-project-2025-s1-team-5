@@ -32,7 +32,7 @@ export default function ChangePasswordScreen() {
       }
 
       if (currentPassword === newPassword) {
-        setErrorMessage('Cannot set password to old password.');
+        setErrorMessage('New password cannot be the same as the old password.');
         setSuccessMessage('');
         return;
       }
