@@ -64,9 +64,7 @@ export default function CreateProfileScreen() {
       const meRes = await api.get('/auth/me')
       userContext.setUser(meRes.data)
 
-//Here
-//       router.replace('/Modules')
-      router.push('/Profile/pfpselection')
+      router.replace('/Profile/pfpselection')
     } catch (error) {
       console.error(error)
       setDisplayedError('Failed to create user profile')
