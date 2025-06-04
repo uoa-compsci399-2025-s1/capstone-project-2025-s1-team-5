@@ -66,7 +66,7 @@ export default function ContactFormScreen() {
 
     <View style={styles.appLogo}><Image source={logoSource} style={styles.logoImage}/></View>
     <StyledText type="label" style={styles.customTitle}>Forgot Password?</StyledText>
-    <StyledText type="label" style={[{ color: theme.text }, styles.customMessage]}>Enter your account information below. Our team will follow up shortly to help you reset your password.</StyledText>
+    <StyledText type="label" style={[{ color: theme.text }, styles.customMessage]}>Enter your contact information below. Our team will follow up shortly to help you reset your password.</StyledText>
 
       <TextInputBox
         placeholder="First Name"
@@ -102,7 +102,7 @@ export default function ContactFormScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 24,
+    padding: 20,
     paddingBottom: 40,
     flexGrow: 1,
   },
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   customTitle: {
     fontSize: 20,
     fontFamily: 'National',
-    marginBottom: '5%',
+    marginBottom: 8,
     alignSelf: 'center',
   },
   customMessage: {

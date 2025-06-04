@@ -66,7 +66,7 @@ export default function SupportScreen() {
       </StyledText>
 
       <StyledText type="default" style={[styles.introText, { color: theme.text }]}>
-        Submit your contact details along with your enquiry, and a Programme Consultant will get back to you as soon as possible.
+        Submit your contact details along with your question or issue, and a Programme Consultant will get back to you as soon as possible.
       </StyledText>
 
       <TextInputBox
@@ -96,7 +96,7 @@ export default function SupportScreen() {
         iconName="phone"
       />
       <TextInputBox
-        placeholder="Type your inquiry here..."
+        placeholder="Enter your question or issue here..."
         value={enquiry}
         onChangeText={setEnquiry}
         multiline
