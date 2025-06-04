@@ -23,9 +23,7 @@ export default function ModuleButton({ title, onPress, iconName }: ModuleButtonP
           <MaterialIcons name={iconName} size={60} color="#FFF" />
         </View>
         <View style={styles.textContainer}>
-          <StyledText type="subtitle" style={styles.textWhite}>
-            {title}
-          </StyledText>
+          <StyledText type="subtitle" style={styles.textWhite}>{title}</StyledText>
         </View>
       </View>
     </TouchableOpacity>
@@ -40,7 +38,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 12,
     justifyContent: 'center',
-    marginVertical: 6,
+    marginBottom: 10,
   },
   content: {
     flexDirection: 'row',
