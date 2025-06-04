@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   customTitle: {
     fontSize: 20,
     fontFamily: 'National',
-    marginBottom: '5%',
+    marginBottom: 8,
     alignSelf: 'center',
   },
   customMessage: {

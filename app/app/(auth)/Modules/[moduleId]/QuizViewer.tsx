@@ -101,8 +101,8 @@ export default function QuizViewer() {
   // 题都准备好了，才渲染答题流程
   if (finished) {
     return (
-      <View style={{ flex: 1, backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }}>
-        <View style={styles.resultContainer}>
+      <View style={{ flex: 1, backgroundColor: theme.background, justifyContent: 'flex-start', alignItems: 'center'}}>
+        <View style={[styles.resultContainer, { marginTop: 100 }]}>
           <StyledText type="title" style={[styles.resultTitle, { color: theme.text }]}>
             Quiz Completed!
           </StyledText>
@@ -193,10 +193,29 @@ export default function QuizViewer() {
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
-  nav:    { flexDirection: 'row', justifyContent: 'space-between', marginTop: 24 },
-  navBtn: { flex: 1, padding: 12, borderRadius: 8, alignItems: 'center', marginHorizontal: 4},
-  button: { padding: 12, borderRadius: 8, marginTop: 24 },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  nav: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 24,
+  },
+  navBtn: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginHorizontal: 4,
+  },
+  button: {
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 24,
+  },
   navButtonText: {
     color: '#fff',
   },
@@ -210,10 +229,10 @@ const styles = StyleSheet.create({
   resultTitle: {
     marginBottom: 12,
     fontWeight: 'bold',
-    fontSize: 28, 
+    fontSize: 28,
   },
   resultText: {
-    fontSize: 20, 
+    fontSize: 20,
     marginBottom: 24,
   },
 });

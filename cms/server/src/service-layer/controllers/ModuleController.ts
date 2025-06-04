@@ -45,13 +45,32 @@ export class ModuleController extends Controller {
         return moduleData;
     }
 
-    @Security("jwt", ["admin"]) 
+    @Security("jwt", ["admin"])
     @Post()
     @SuccessResponse(201, "Module Created")
     public async addModule(
-        @Body() body: { title: string; description: string }
+      @Body() body: { title: string; description: string }
     ): Promise<IModule> {
-        return this.moduleService.createModule(body);
+      // This line must invoke the service we edited
+      return this.moduleService.createModule(body);
+    }
+
+    @Put("reorder")
+    @SuccessResponse(200, "Modules Reordered")
+    public async reorderModules(
+      @Body() body: { orderedModuleIds: string[] }
+    ): Promise<{ success: boolean }> {
+      const { orderedModuleIds } = body;
+      if (!Array.isArray(orderedModuleIds)) {
+        this.setStatus(400);
+        return { success: false };
+      }
+      const wasReordered = await this.moduleService.reorderModules(orderedModuleIds);
+      if (!wasReordered) {
+        this.setStatus(500);
+        return { success: false };
+      }
+      return { success: true };
     }
 
     @Put("{moduleId}")
@@ -74,6 +93,8 @@ export class ModuleController extends Controller {
         }
         return { message: "Module successfully deleted" };
     }
+
+
 
     //Add Subsection
     @Post("{moduleId}")

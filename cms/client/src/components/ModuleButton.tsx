@@ -4,6 +4,7 @@ interface ModuleButtonProps {
   label: string;
   onClick: () => void;
   color?: string;
+  disabled?: boolean;
 }
 
 const ModuleButton: React.FC<ModuleButtonProps> = ({ label, onClick, color = "#007bff" }) => {

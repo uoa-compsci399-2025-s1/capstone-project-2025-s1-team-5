@@ -53,13 +53,19 @@ const moduleSchema: Schema<IModule> = new Schema(
     {
       title: { type: String, required: true },
       description: { type: String, required: true },
+
+      sortOrder: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+
       subsectionIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Subsection" }],
       quizIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Quiz" }],
       linkIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Link" }]
-
     },
     { timestamps: true }
-  );
+);
 
 const programmeSchema: Schema<IProgramme> = new Schema(
     {
