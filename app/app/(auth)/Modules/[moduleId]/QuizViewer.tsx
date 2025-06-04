@@ -101,8 +101,8 @@ export default function QuizViewer() {
   // 题都准备好了，才渲染答题流程
   if (finished) {
     return (
-      <View style={{ flex: 1, backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }}>
-        <View style={styles.resultContainer}>
+      <View style={{ flex: 1, backgroundColor: theme.background, justifyContent: 'flex-start', alignItems: 'center'}}>
+        <View style={[styles.resultContainer, { marginTop: 100 }]}>
           <StyledText type="title" style={[styles.resultTitle, { color: theme.text }]}>
             Quiz Completed!
           </StyledText>
