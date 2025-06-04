@@ -31,6 +31,12 @@ export default function ChangePasswordScreen() {
         return;
       }
 
+      if (currentPassword === newPassword) {
+        setErrorMessage('New password cannot be the same as the old password.');
+        setSuccessMessage('');
+        return;
+      }
+
       try {
          const res = await api.post<{ message: string }>('/auth/changePassword', {
           oldPassword: currentPassword,
