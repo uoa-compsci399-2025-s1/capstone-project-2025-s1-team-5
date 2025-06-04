@@ -45,9 +45,8 @@ export default function ChangePasswordScreen() {
         setTimeout(() => router.back(), 2000)
 
       } catch (e) {
-        setErrorMessage('An error occurred while changing the password.');
+        setErrorMessage('The current password is incorrect.');
         setSuccessMessage('');
-        console.error('Error:', e);
       }
     } else {
       setErrorMessage('Please fill out all fields.');
