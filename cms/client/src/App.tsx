@@ -4,7 +4,6 @@ import Home from './pages/Home';
 import ModulesPage from './pages/Modules';
 import UsersPage from './pages/Users';
 import Layout from './components/Layout';
-import Analytics from './pages/Analytics';
 import Login from './pages/Login';
 import { AuthProvider } from './auth/AuthProvider';
 import UploadLibrary from './pages/UploadLibrary';
@@ -20,7 +19,6 @@ export default function App() {
             <Route path="/modules/home" element={<Home />} />
             <Route path="/modules/modules" element={<ModulesPage />} />
             <Route path="/modules/users" element={<UsersPage />} />
-            <Route path="/modules/analytics" element={<Analytics />} />
             <Route path="/modules/library" element={<UploadLibrary />} />
             <Route path="/modules/programmes" element={<ProgrammesPage />} />
             <Route path="*" element={<div>Page Not Found</div>} />

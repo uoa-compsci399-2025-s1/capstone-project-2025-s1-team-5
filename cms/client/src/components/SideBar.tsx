@@ -113,11 +113,11 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   User Management
                 </Link>
               </li>
-              <li style={styles.navItem}>
+              {/* <li style={styles.navItem}>
                 <Link to="/modules/analytics" className={buttonClass}>
                   Analytics
                 </Link>
-              </li>
+              </li> */}
               <li style={styles.navItem}>
                 <Link to="/modules/library" className={buttonClass}>
                   Upload Library
