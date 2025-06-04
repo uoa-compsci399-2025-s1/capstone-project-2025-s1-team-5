@@ -17,7 +17,6 @@ export class SupportController extends Controller {
   public async sendSupportEmail(
     @Body() requestBody: SupportRequest
   ): Promise<void> {
-    console.log("收到的 SupportRequest:", requestBody);
     const host = process.env.SMTP_HOST!;
     const port = Number(process.env.SMTP_PORT);
     const user = process.env.SMTP_USER!;
@@ -44,17 +43,14 @@ export class SupportController extends Controller {
     const mailOptions = {
       from: `"Support Bot" <${user}>`,
       to: toEmail,
-      subject: `[Support] ${first_name} ${last_name} Submitted new query`,
+      subject: `[Support] ${first_name} ${last_name} Submitted new enquiry`,
       replyTo: preferred_email,
-      text: `
-        Form submitter:${first_name} ${last_name}
-        Email:${preferred_email}
-        Contact number:${contact_number || "Did not provide"}
-
-        Enquiry message:
-        ${enquiry_message}
-            `.trim(),
-            };
+      text: `Name: ${first_name} ${last_name}
+Email: ${preferred_email}
+Contact number: ${contact_number || "Did not provide"}
+Enquiry message:
+${enquiry_message}`.trim(),
+      };
 
     try {
       await transporter.sendMail(mailOptions);

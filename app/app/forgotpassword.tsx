@@ -27,6 +27,7 @@ export default function ContactFormScreen() {
       last_name: lastName,
       preferred_email: email,
       contact_number: contact,
+      enquiry_message: 'forgot password',
     };
 
     try {
@@ -36,23 +37,24 @@ export default function ContactFormScreen() {
         },
       });
 
-      if (response.data.ok) {
-        Alert.alert('Success', 'Your enquiry has been sent.');
-
+      if (response.status === 204) {
+        Alert.alert('Success', 'Your request has been sent.');
         setFirstName('');
         setLastName('');
         setEmail('');
         setContact('');
       } else {
-        const errText = await response.data.text();
-        console.error('Form submission failed:', errText);
-        Alert.alert('Error', 'Failed to send enquiry.');
+          console.warn('Unexpected status code:', response.status);
+          Alert.alert('Error', 'Failed to send request.');
+        }
+    } catch (error: any) {
+        console.error('Submit error:', error.response?.data || error.message);
+        const msg =
+          error.response?.data?.message ||
+          'Network error while sending request.';
+        Alert.alert('Error', msg);
       }
-    } catch (error) {
-      console.error('Fetch error:', error);
-      Alert.alert('Error', 'Network error while sending enquiry.');
-    }
-  };
+    };
 
   const logoSource = isDarkMode
     ? require('@/assets/logos/VerticalWhiteLogo.png')

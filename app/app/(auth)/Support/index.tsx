@@ -41,7 +41,7 @@ export default function SupportScreen() {
       }
       );
 
-      if (response.data.ok) {
+      if (response.status === 204) {
         Alert.alert('Success', 'Your enquiry has been sent.');
         setFirstName('');
         setLastName('');
@@ -49,13 +49,15 @@ export default function SupportScreen() {
         setContact('');
         setEnquiry('');
       } else {
-        const errText = await response.data.text();
-        console.error('Form submission failed:', errText);
-        Alert.alert('Error', 'Failed to send enquiry.');
-      }
-    } catch (error) {
-      console.error('Fetch error:', error);
-      Alert.alert('Error', 'Network error while sending enquiry.');
+          console.warn('Unexpected status code:', response.status);
+          Alert.alert('Error', 'Failed to send enquiry.');
+        }
+    } catch (error: any) {
+      console.error('Submit error:', error.response?.data || error.message);
+      const msg =
+        error.response?.data?.message ||
+        'Network error while sending enquiry.';
+      Alert.alert('Error', msg);
     }
   };
 
