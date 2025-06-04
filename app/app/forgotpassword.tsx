@@ -14,7 +14,7 @@ export default function ContactFormScreen() {
   const [contact, setContact] = useState('');
   const { theme, isDarkMode } = useContext(ThemeContext);
 
-  const GETFORM_ENDPOINT = 'https://getform.io/f/bpjpjpvb';
+  const API_URL = 'http://localhost:3000/api';
 
   const handleSubmit = async () => {
     if (!firstName || !lastName || !email || !contact) {
@@ -31,7 +31,7 @@ export default function ContactFormScreen() {
     const formBody = new URLSearchParams(data).toString();
 
     try {
-      const response = await fetch(GETFORM_ENDPOINT, {
+      const response = await fetch(`${API_URL}/support/forgot-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
