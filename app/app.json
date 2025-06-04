@@ -4,7 +4,7 @@
     "slug": "uoayourway",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "assets/logos/VerticalColourLogo.png",
+    "icon": "assets/logos/AppIcon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,

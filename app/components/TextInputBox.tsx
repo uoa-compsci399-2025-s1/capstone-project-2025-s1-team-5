@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    margin: 5,
+    marginBottom: 10,
   },
   icon: {
     position: 'absolute',

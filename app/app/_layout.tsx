@@ -56,6 +56,7 @@ export default function RootLayout() {
               headerStyle: { backgroundColor: '#0c0c48' },
               headerTitle: () => <StyledText type="title" style={{ color: '#ffffff' }}>UoA Your Way</StyledText>,
               headerTintColor: '#ffffff',
+              headerBackVisible: false,
             }} 
           />
           <Stack.Screen 

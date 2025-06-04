@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     width: '100%',
-    marginVertical: 5,
+    marginBottom: 10,
   },
   input: {
     width: '100%',
