@@ -28,7 +28,8 @@ export default function ContactFormScreen() {
       last_name: lastName,
       preferred_email: email,
       contact_number: contact,
-      enquiry_message: 'Forgot Password',
+      enquiry_message: ' ',
+      title: 'UoA Your Way Password Reset Request'
     };
 
     try {

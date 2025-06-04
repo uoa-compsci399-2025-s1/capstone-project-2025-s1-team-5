@@ -27,7 +27,8 @@ export default function SupportScreen() {
       last_name: lastName,
       preferred_email: email,
       contact_number: contact,
-      enquiry_message: enquiry,
+      enquiry_message: `Enquiry message: ${enquiry}`,
+      title: 'UoA Your Way Support Request'
     };
 
     try {

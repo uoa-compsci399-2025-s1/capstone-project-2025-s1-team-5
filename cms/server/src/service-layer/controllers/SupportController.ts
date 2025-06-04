@@ -23,7 +23,7 @@ export class SupportController extends Controller {
     const pass = process.env.SMTP_PASS!;
     const toEmail = process.env.TO_EMAIL!;
 
-    const { first_name, last_name, preferred_email, contact_number, enquiry_message } = requestBody;
+    const { first_name, last_name, preferred_email, contact_number, enquiry_message, title} = requestBody;
     if (!first_name || !last_name || !preferred_email || !enquiry_message) {
       this.setStatus(400);
       throw new Error("Missing required fields");
@@ -43,12 +43,11 @@ export class SupportController extends Controller {
     const mailOptions = {
       from: `"Support Bot" <${user}>`,
       to: toEmail,
-      subject: `[Support] ${first_name} ${last_name} Submitted new enquiry`,
+      subject: `${title}`,
       replyTo: preferred_email,
       text: `Name: ${first_name} ${last_name}
 Email: ${preferred_email}
 Contact number: ${contact_number || "Did not provide"}
-Enquiry message:
 ${enquiry_message}`.trim(),
       };
 

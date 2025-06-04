@@ -4,4 +4,5 @@ export interface SupportRequest {
   preferred_email: string;
   contact_number: string;
   enquiry_message: string;
+  title: string;
 }
