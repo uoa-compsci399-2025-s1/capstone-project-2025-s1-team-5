@@ -82,7 +82,7 @@ export default function ContactFormScreen() {
         iconName="person"
       />
       <TextInputBox
-        placeholder="Email"
+        placeholder="Preferred Email"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
