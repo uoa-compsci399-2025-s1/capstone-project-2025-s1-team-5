@@ -98,7 +98,7 @@ export default function SupportScreen() {
         iconName="phone"
       />
       <TextInputBox
-        placeholder="Type your inquiry here..."
+        placeholder="Type your enquiry here..."
         value={enquiry}
         onChangeText={setEnquiry}
         multiline
