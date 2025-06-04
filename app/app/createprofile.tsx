@@ -1,5 +1,5 @@
-import * as SecureStore from 'expo-secure-store'
-import React, { useState, useContext, useEffect } from 'react'
+import * as SecureStore from 'expo-secure-store';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -8,41 +8,40 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   useColorScheme,
-} from 'react-native'
-import { useRouter } from 'expo-router'
-import { ThemeContext } from '@/contexts/ThemeContext'
-import countries from 'world-countries'
-import { useLocalSearchParams } from 'expo-router'
-import api from './lib/api'
+} from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { ThemeContext } from '@/contexts/ThemeContext';
+import { UserContext } from '@/contexts/UserContext';
+import countries from 'world-countries';
+import api from './lib/api';
 
-import SubmitButton from '@/components/SubmitButton'
-import TextInputBox from '@/components/TextInputBox'
-import StyledText from '@/components/StyledText'
-import DropDownMenu from '@/components/DropDownMenu'
-import { UserContext } from '@/contexts/UserContext'
+import SubmitButton from '@/components/SubmitButton';
+import TextInputBox from '@/components/TextInputBox';
+import StyledText from '@/components/StyledText';
+import DropDownMenu from '@/components/DropDownMenu';
 
 export default function CreateProfileScreen() {
   const { theme, isDarkMode } = useContext(ThemeContext);
-  const router = useRouter()
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [selectedCountry, setSelectedCountry] = useState('')
-  const [selectedProgramme, setSelectedProgramme] = useState('')
-  const [displayedError, setDisplayedError] = useState('')
-  const { email, password } = useLocalSearchParams()
-  const systemScheme = useColorScheme()
-  const userContext = useContext(UserContext)
+  const router = useRouter();
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedProgramme, setSelectedProgramme] = useState('');
+  const [displayedError, setDisplayedError] = useState('');
+  const { email, password } = useLocalSearchParams();
+  const systemScheme = useColorScheme();
+  const userContext = useContext(UserContext);
 
-  const filteredCountries = countries.filter((c) => c.cca3 !== 'TWN')
-  const countryList = filteredCountries.map((c) => c.name.common).sort()
+  const filteredCountries = countries.filter((c) => c.cca3 !== 'TWN');
+  const countryList = filteredCountries.map((c) => c.name.common).sort();
 
   const [programmeList, setProgrammeList] = useState<string[]>([]);    
   const [programmeFetchError, setProgrammeFetchError] = useState<string>('');
 
   const handleCreateProfile = async () => {
     if (!firstName || !lastName || !selectedCountry || !selectedProgramme) {
-      setDisplayedError('Please fill in all fields')
-      return
+      setDisplayedError('Please fill in all fields');
+      return;
     }
     try {
       await api.post('/users', {
@@ -53,39 +52,42 @@ export default function CreateProfileScreen() {
         country: selectedCountry,
         programme: selectedProgramme,
         colorPref: systemScheme === 'dark' ? 'dark' : 'light',
-      })
+      });
 
       const loginRes = await api.post<{ token: string }>('/auth/login', {
         email,
         password,
-      })
-      await SecureStore.setItemAsync('USER_TOKEN', loginRes.data.token)
+      });
+      await SecureStore.setItemAsync('USER_TOKEN', loginRes.data.token);
 
-      const meRes = await api.get('/auth/me')
-      userContext.setUser(meRes.data)
+      const meRes = await api.get('/auth/me');
+      userContext.setUser(meRes.data);
 
-      router.replace('/Profile/pfpselection')
+      router.replace({
+        pathname: '/Profile/pfpselection',
+        params: { isFirstTime: 'true' }
+      });
     } catch (error) {
-      console.error(error)
-      setDisplayedError('Failed to create user profile')
-    }
-  }
-
-  useEffect(() => {
-  const fetchProgrammes = async () => {
-    setProgrammeFetchError('');
-    try {
-      const response = await api.get<{ _id: string; name: string; description?: string; link?: string }[]>('/programmes/');
-      const names = response.data.map(item => item.name);
-      setProgrammeList(names);
-    } catch (err) {
-      console.error('Failed to fetch programme list', err);
-      setProgrammeFetchError('Failed to fetch programme list, please try again');
+      console.error(error);
+      setDisplayedError('Failed to create user profile');
     }
   };
 
-  fetchProgrammes();
-}, []);
+  useEffect(() => {
+    const fetchProgrammes = async () => {
+      setProgrammeFetchError('');
+      try {
+        const response = await api.get<{ _id: string; name: string; description?: string; link?: string }[]>('/programmes/');
+        const names = response.data.map(item => item.name);
+        setProgrammeList(names);
+      } catch (err) {
+        console.error('Failed to fetch programme list', err);
+        setProgrammeFetchError('Failed to fetch programme list, please try again');
+      }
+    };
+
+    fetchProgrammes();
+  }, []);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -135,7 +137,6 @@ export default function CreateProfileScreen() {
           iconName="library-books"
         />
 
-        {/* Show error message if failed to fetch programme */}
         {programmeFetchError !== '' && (
           <StyledText type="error">{programmeFetchError}</StyledText>
         )}
@@ -146,7 +147,7 @@ export default function CreateProfileScreen() {
         <SubmitButton text="Create Profile" onPress={handleCreateProfile} />
       </ScrollView>
     </TouchableWithoutFeedback>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -169,4 +170,4 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 10,
   },
-})
+});
