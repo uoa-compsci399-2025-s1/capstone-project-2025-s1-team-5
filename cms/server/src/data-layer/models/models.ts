@@ -28,6 +28,7 @@ export interface IModule {
     subsectionIds: Types.ObjectId[];
     quizIds: Types.ObjectId[]
     linkIds: Types.ObjectId[]
+    sortOrder: number;
 }
 
 export interface IProgramme {

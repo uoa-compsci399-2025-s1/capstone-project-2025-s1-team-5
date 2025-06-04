@@ -9,8 +9,11 @@ export class ModuleService {
      * Method to fetch all modules
      * @returns List of all modules
      */
-    public async getAllModules(): Promise<IModule[]> {
-        const fetchedModules = await newModule.find();
+      public async getAllModules(): Promise<IModule[]> {
+        const fetchedModules = await newModule
+          .find()
+          .sort({ sortOrder: 1 })  // make sure we sort by sortOrder
+          .exec();
         return fetchedModules.map(moduleAdaptor);
       }
 
@@ -63,15 +66,17 @@ export class ModuleService {
      * @returns yes
      */
     public async createModule(data: Partial<IModule>): Promise<IModule> {
-        const module = new newModule({
-            title: data.title,
-            description: data.description,
-            subsectionIds: []
-          });
-      
-          const saved = await module.save();
-          return saved.toObject();
-        }
+    // ✏️ Count existing modules, then give new one sortOrder = count
+      const existingCount = await newModule.countDocuments().exec();
+      const moduleDoc = new newModule({
+        title: data.title,
+        description: data.description,
+        subsectionIds: [],
+        sortOrder: existingCount, // append to end
+      });
+      const saved = await moduleDoc.save();
+      return saved.toObject();
+    }
     /**
      * 
      * @param moduleId 
@@ -117,6 +122,24 @@ export class ModuleService {
           return false;
       }
     }
+
+    public async reorderModules(orderedIds: string[]): Promise<boolean> {
+    if (!Array.isArray(orderedIds)) return false;
+    try {
+      for (let i = 0; i < orderedIds.length; i++) {
+        const moduleId = orderedIds[i];
+        if (!mongoose.Types.ObjectId.isValid(moduleId)) continue;
+        await newModule.updateOne(
+          { _id: moduleId },
+          { $set: { sortOrder: i } }
+        ).exec();
+      }
+      return true;
+    } catch (error) {
+      console.error("Error reordering modules:", error);
+      return false;
+    }
+  }
     /**
      * Updates Module title and 
      * @param moduleId 
