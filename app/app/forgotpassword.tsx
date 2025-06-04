@@ -6,6 +6,7 @@ import { View, StyleSheet, Image } from 'react-native';
 import StyledText from '@/components/StyledText';
 import TextInputBox from '@/components/TextInputBox';
 import SubmitButton from '@/components/SubmitButton';
+import api from './lib/api';
 
 export default function ContactFormScreen() {
   const [firstName, setFirstName] = useState('');
@@ -14,7 +15,6 @@ export default function ContactFormScreen() {
   const [contact, setContact] = useState('');
   const { theme, isDarkMode } = useContext(ThemeContext);
 
-  const GETFORM_ENDPOINT = 'https://getform.io/f/bpjpjpvb';
 
   const handleSubmit = async () => {
     if (!firstName || !lastName || !email || !contact) {
@@ -28,18 +28,15 @@ export default function ContactFormScreen() {
       preferred_email: email,
       contact_number: contact,
     };
-    const formBody = new URLSearchParams(data).toString();
 
     try {
-      const response = await fetch(GETFORM_ENDPOINT, {
-        method: 'POST',
+      const response = await api.post('/support', data, {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
         },
-        body: formBody,
       });
 
-      if (response.ok) {
+      if (response.data.ok) {
         Alert.alert('Success', 'Your enquiry has been sent.');
 
         setFirstName('');
@@ -47,7 +44,7 @@ export default function ContactFormScreen() {
         setEmail('');
         setContact('');
       } else {
-        const errText = await response.text();
+        const errText = await response.data.text();
         console.error('Form submission failed:', errText);
         Alert.alert('Error', 'Failed to send enquiry.');
       }

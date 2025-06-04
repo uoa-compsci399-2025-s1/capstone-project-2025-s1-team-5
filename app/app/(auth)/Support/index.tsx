@@ -5,6 +5,7 @@ import { ThemeContext } from '@/contexts/ThemeContext';
 import StyledText from '@/components/StyledText';
 import TextInputBox from '@/components/TextInputBox';
 import SubmitButton from '@/components/SubmitButton';
+import api from '@/app/lib/api';
 
 export default function SupportScreen() {
   const [firstName, setFirstName] = useState('');
@@ -14,7 +15,6 @@ export default function SupportScreen() {
   const [enquiry, setEnquiry] = useState('');
 
   const { theme } = useContext(ThemeContext);
-  const GETFORM_ENDPOINT = 'https://getform.io/f/bpjpjpvb'; 
 
   const handleSubmit = async () => {
     if (!firstName || !lastName || !email || !contact || !enquiry) {
@@ -30,18 +30,18 @@ export default function SupportScreen() {
       enquiry_message: enquiry,
     };
 
-    const formBody = new URLSearchParams(data).toString();
-
     try {
-      const response = await fetch(GETFORM_ENDPOINT, {
-        method: 'POST',
+      const response = await api.post(
+      '/support',
+      data,                         
+      {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formBody,
-      });
+          'Content-Type': 'application/json'
+        }
+      }
+      );
 
-      if (response.ok) {
+      if (response.data.ok) {
         Alert.alert('Success', 'Your enquiry has been sent.');
         setFirstName('');
         setLastName('');
@@ -49,7 +49,7 @@ export default function SupportScreen() {
         setContact('');
         setEnquiry('');
       } else {
-        const errText = await response.text();
+        const errText = await response.data.text();
         console.error('Form submission failed:', errText);
         Alert.alert('Error', 'Failed to send enquiry.');
       }
