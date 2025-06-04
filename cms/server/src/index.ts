@@ -1,5 +1,6 @@
 import "dotenv/config";
-import express, { urlencoded } from "express";
+import dotenv from "dotenv"
+import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -16,7 +17,7 @@ import connectToDatabase from "./data-layer/adapter/mongodb";
 
 export const app = express();
 
-app.use(urlencoded({ extended: true }));
+dotenv.config();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(helmet());
