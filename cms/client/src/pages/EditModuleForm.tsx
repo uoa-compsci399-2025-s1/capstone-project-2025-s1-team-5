@@ -15,6 +15,8 @@ interface EditModuleFormProps {
   setEditModule: React.Dispatch<React.SetStateAction<Module | null>>;
 }
 
+
+
 const EditModuleForm: React.FC<EditModuleFormProps> = ({
   module,
   onModuleUpdated,
@@ -347,152 +349,192 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
     );
   };
 
-  const handleAddLink = async () => {
+  const handleAddLink = () => {
+    // 1) Generate a unique temp ID
+    const tempId = `temp-${Date.now()}`;
+
+    // 2) Insert a blank “new link” object into links[]
+    setLinks(prev => [
+      ...prev,
+      {
+        _id: tempId,
+        title: '',             // Start with an empty title
+        link: '',              // Start with an empty URL
+      },
+    ]);
+
+    // 3) Also insert the tempId into moduleLinkIds so Save knows about it
+    setModuleLinkIds(prev => [...prev, tempId]);
+
+    // 4) Show success message (optional)
+    setSuccess('New link row added – edit its title/URL, then Save Changes.');
+    setError(null);
+  };
+
+
+  const handleDeleteLink = async (linkId: string) => {
+  // If this is a “temp-…” link, just drop it locally—never call the server
+  if (linkId.startsWith('temp-')) {
+    setLinks(prev => prev.filter((link) => link._id !== linkId));
+    setModuleLinkIds(prev => prev.filter((id) => id !== linkId));
+    setDeleteConfirmLink(null);
+    setSuccess('Temporary link removed');
+    setError(null);
+    return;
+  }
+
+  // Otherwise, it’s a real link, so call DELETE on the server
   try {
     const moduleId = getModuleId();
     if (!moduleId) {
-      setError('Cannot add link: Module ID is missing');
+      setError('Cannot delete link: Module ID is missing');
       return;
     }
 
-    // 1) Push a “temporary” link into state so the UI shows a new row instantly.
-    //    We give it a made‐up _id (just for React’s key) and default title/URL.
-    const tempId = `new-${Date.now()}`;
-    setLinks(prev => [
-      ...prev,
-      { _id: tempId, title: 'New Link', link: 'https://example.com' },
-    ]);
-
-    // (We do NOT add tempId into moduleLinkIds—fetchLinks will pull the real IDs later.)
-    setSuccess('Adding link…');
-    setError(null);
-
-    // 2) Now POST to create the real Link in the backend.
     const token = localStorage.getItem('authToken');
-    const postResponse = await axios.post<Link>(
-      `${process.env.REACT_APP_API_URL}/api/modules/link/${moduleId}`,
-      { title: 'New Link', link: 'https://example.com' },
+    await axios.delete(
+      `${process.env.REACT_APP_API_URL}/api/modules/link/${moduleId}/${linkId}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    // 3) Once the POST succeeds, re‐fetch *all* links from the server.
-    //    This overwrites our temporary stub with the real saved link(s).
-    await fetchLinks();
-
-    // 4) Update moduleLinkIds by asking the server for the new list of IDs.
-    //    (We assume fetchLinks already pulled them into `links[]`.)
-    const moduleResponse = await axios.get<Module>(
-      `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    setModuleLinkIds(moduleResponse.data.linkIds || []);
-
-    setSuccess('Link added successfully');
+    setLinks(prev => prev.filter((link) => link._id !== linkId));
+    setModuleLinkIds(prev => prev.filter((id) => id !== linkId));
+    setDeleteConfirmLink(null);
+    setSuccess('Link deleted successfully');
     setError(null);
   } catch (error) {
-    console.error('Failed to add link:', error);
-
-    // If the POST fails, remove our temporary stub from state
-    setLinks(prev => prev.filter(l => !l._id?.startsWith('new-')));
-
-    setError(`Failed to add link: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    console.error('Failed to delete link:', error);
+    setError(`Failed to delete link: ${error instanceof Error ? error.message : 'Unknown error'}`);
     setSuccess(null);
   }
 };
 
 
-  const handleDeleteLink = async (linkId: string) => {
-    try {
-      const moduleId = getModuleId();
-      if (!moduleId) {
-        setError('Cannot delete link: Module ID is missing');
-        return;
-      }
-
-      const token = localStorage.getItem('authToken');
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/modules/link/${moduleId}/${linkId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      setLinks(prev => prev.filter(link => link._id !== linkId));
-      setModuleLinkIds(prev => prev.filter(id => id !== linkId));
-      setDeleteConfirmLink(null);
-      setSuccess('Link deleted successfully');
-      setError(null);
-    } catch (error) {
-      console.error('Failed to delete link:', error);
-      setError(`Failed to delete link: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      setSuccess(null);
-    }
-  };
-
   // ─────────── Save “Save Changes” ───────────
   const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    const moduleId = getModuleId();
-    if (!moduleId) {
-      setError('Cannot update module: Module ID is missing');
+  event.preventDefault();
+  const moduleId = getModuleId();
+  if (!moduleId) {
+    setError('Cannot update module: Module ID is missing');
+    return;
+  }
+
+  // ─────────── VALIDATION: No empty link rows allowed ───────────
+  for (const linkItem of links) {
+    // trim() so “   ” (only spaces) also counts as empty
+    const titleOnly = linkItem.title.trim();
+    const urlOnly   = linkItem.link.trim();
+
+    if (titleOnly === '' || urlOnly === '') {
+      setError('Each link must have a non-empty title and URL.');
       return;
     }
+  }
+  // ──────────────────────────────────────────────────────────────
 
-    const updatedModule = {
-      title,
-      description,
-      subsectionIds: moduleSubsectionIds,
-    };
+  // Now continue with the existing “partition temp vs. real, POST temp, PUT all” logic:
+  const tempLinks = links.filter(link => link._id.startsWith('temp-'));
+  const realLinks = links.filter(link => !link._id.startsWith('temp-'));
 
-    try {
-      const token = localStorage.getItem('authToken');
-      await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`,
-        updatedModule,
-        { headers: { Authorization: `Bearer ${token}` } }
+  try {
+    const token = localStorage.getItem('authToken');
+    const headers = { Authorization: `Bearer ${token}` };
+
+    // 1) Create any tempLinks on the server
+    const tempIdToRealId: Record<string, string> = {};
+    for (const tempLink of tempLinks) {
+      const { title, link } = tempLink;
+      const postResponse = await axios.post<Link>(
+        `${process.env.REACT_APP_API_URL}/api/modules/link/${moduleId}`,
+        { title, link },
+        { headers }
       );
-
-      await Promise.all([
-        // Update subsections, quizzes, questions, links (exactly as before)
-        ...subsections.map(subsection =>
-          axios.put(
-            `${process.env.REACT_APP_API_URL}/api/modules/subsection/${subsection._id}`,
-            { title: subsection.title, body: subsection.body },
-            { headers: { Authorization: `Bearer ${token}` } }
-          )
-        ),
-        ...quizzes.map(async quiz => {
-          await axios.put(
-            `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quiz._id}`,
-            { title: quiz.title, description: quiz.description },
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          if (quiz.questions?.length) {
-            await Promise.all(
-              quiz.questions.map(question =>
-                axios.patch(
-                  `${process.env.REACT_APP_API_URL}/api/modules/question/${question._id}`,
-                  { question: question.question, options: question.options, correctAnswer: question.correctAnswer },
-                  { headers: { Authorization: `Bearer ${token}` } }
-                )
-              )
-            );
-          }
-        }),
-        ...links.map(link =>
-          axios.put(
-            `${process.env.REACT_APP_API_URL}/api/modules/link/${link._id}`,
-            { title: link.title, link: link.link },
-            { headers: { Authorization: `Bearer ${token}` } }
-          )
-        ),
-      ]);
-
-      setSuccess('Module updated successfully!');
-      onModuleUpdated();
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      setError('Error updating module: ' + errorMessage);
-      console.error(error);
+      const created = postResponse.data;
+      if (created._id) {
+        tempIdToRealId[tempLink._id] = created._id;
+      } else {
+        console.warn('Server did not return new link ID for temp link', tempLink._id);
+      }
     }
-  };
+
+    // 2) Replace temp IDs with real IDs in moduleLinkIds
+    const newModuleLinkIds = moduleLinkIds.map((id) =>
+      id.startsWith('temp-') && tempIdToRealId[id] ? tempIdToRealId[id] : id
+    );
+    setModuleLinkIds(newModuleLinkIds);
+
+    // 3) Build the array of links we’ll actually save (all real IDs now)
+    const createdLinks: Link[] = tempLinks
+      .filter((t) => Boolean(tempIdToRealId[t._id]))
+      .map((t) => ({
+        _id: tempIdToRealId[t._id]!,
+        title: t.title,
+        link: t.link,
+      }));
+    const linksToSave: Link[] = [...realLinks, ...createdLinks];
+    setLinks(linksToSave);
+
+    // 4) PUT each link object (now all have real IDs)
+    await Promise.all(
+      linksToSave.map((linkObj) =>
+        axios.put(
+          `${process.env.REACT_APP_API_URL}/api/modules/link/${linkObj._id}`,
+          { title: linkObj.title, link: linkObj.link },
+          { headers }
+        )
+      )
+    );
+
+    // 5) Update module’s title/description/subsectionIds exactly as before
+    await axios.put(
+      `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`,
+      { title, description, subsectionIds: moduleSubsectionIds },
+      { headers }
+    );
+
+    // 6) Update subsections, quizzes, questions, etc. (unchanged)
+    await Promise.all([
+      ...subsections.map((sub) =>
+        axios.put(
+          `${process.env.REACT_APP_API_URL}/api/modules/subsection/${sub._id}`,
+          { title: sub.title, body: sub.body },
+          { headers }
+        )
+      ),
+      ...quizzes.map(async (q) => {
+        await axios.put(
+          `${process.env.REACT_APP_API_URL}/api/modules/quiz/${q._id}`,
+          { title: q.title, description: q.description },
+          { headers }
+        );
+        if (q.questions?.length) {
+          await Promise.all(
+            q.questions.map((question) =>
+              axios.patch(
+                `${process.env.REACT_APP_API_URL}/api/modules/question/${question._id}`,
+                {
+                  question: question.question,
+                  options: question.options,
+                  correctAnswer: question.correctAnswer,
+                },
+                { headers }
+              )
+            )
+          );
+        }
+      }),
+    ]);
+
+    setSuccess('Module (and all links) updated successfully!');
+    setError(null);
+    onModuleUpdated();
+  } catch (err) {
+    console.error('Error saving changes:', err);
+    setError(err instanceof Error ? err.message : 'Unknown error saving module');
+    setSuccess(null);
+  }
+};
+
 
   if (loading) return <div className="text-center py-8">Loading module data...</div>;
 
