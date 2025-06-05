@@ -8,21 +8,13 @@ import {
   DropResult,
 } from "@hello-pangea/dnd";
 import axios from "axios";
-import ModuleButton from "../components/ModuleButton";
+// ↓ Remove ModuleButton import
+// import ModuleButton from "../components/ModuleButton";
 import { Module } from "../types/interfaces";
 
 interface ModulesOrderProps {
-  /**
-   * The list of modules to display (in their current order).
-   */
   modules: Module[];
-  /**
-   * Called to close the overlay (e.g. when user clicks “Cancel” or after saving).
-   */
   onClose: () => void;
-  /**
-   * Called after successfully saving the new order, so the parent can re-fetch.
-   */
   onOrderChanged: () => void;
 }
 
@@ -31,14 +23,10 @@ const ModulesOrder: React.FC<ModulesOrderProps> = ({
   onClose,
   onOrderChanged,
 }) => {
-  // Make a local copy of the modules array so we can reorder it in state.
   const [localModules, setLocalModules] = useState<Module[]>([...modules]);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  /**
-   * Utility: reorder an array by moving the item at `startIndex` to `endIndex`.
-   */
   const reorderArray = <T,>(list: T[], startIndex: number, endIndex: number): T[] => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
@@ -46,37 +34,19 @@ const ModulesOrder: React.FC<ModulesOrderProps> = ({
     return result;
   };
 
-  /**
-   * Called by DragDropContext after a drag ends.
-   */
   const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) {
-      // Dropped outside any droppable area
-      return;
-    }
-
-    // If the item was dropped in the same position, do nothing
-    if (result.destination.index === result.source.index) {
-      return;
-    }
-
-    // Create a new array with the item moved to its destination
+    if (!result.destination) return;
+    if (result.destination.index === result.source.index) return;
     const reordered = reorderArray(localModules, result.source.index, result.destination.index);
     setLocalModules(reordered);
   };
 
-  /**
-   * Send the updated order of module IDs to the backend.
-   * Adjust the endpoint and payload to match your API.
-   */
   const handleSave = async () => {
     setIsSaving(true);
     setError(null);
 
     try {
       const orderedIds = localModules.map((m) => m._id || m.id || "");
-
-      // Example API call: PUT /api/modules/reorder
       await axios.put(
         `${process.env.REACT_APP_API_URL}/api/modules/reorder`,
         { orderedModuleIds: orderedIds },
@@ -86,8 +56,6 @@ const ModulesOrder: React.FC<ModulesOrderProps> = ({
           },
         }
       );
-
-      // Once saved, inform parent to re-fetch modules, then close
       onOrderChanged();
       onClose();
     } catch (err) {
@@ -98,12 +66,12 @@ const ModulesOrder: React.FC<ModulesOrderProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg p-6 w-11/12 max-w-3xl max-h-[90vh] overflow-y-auto shadow-lg">
-        <h2 className="text-2xl font-bold mb-4">Reorder Modules</h2>
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-40 flex justify-center items-center z-50">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-lg p-6 w-11/12 max-w-3xl max-h-[90vh] overflow-y-auto">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800">Reorder Modules</h2>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded mb-4">
             {error}
           </div>
         )}
@@ -127,40 +95,57 @@ const ModulesOrder: React.FC<ModulesOrderProps> = ({
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className={`flex items-center justify-between bg-gray-50 rounded p-3 shadow-sm ${
-                          snapshot.isDragging ? "bg-blue-100" : ""
-                        }`}
+                        className={`
+                          flex items-center bg-white border border-gray-200 
+                          rounded-md p-3 
+                          transition-shadow transition-bg duration-150
+                          ${snapshot.isDragging ? "bg-blue-50 shadow-lg" : "hover:shadow-md"}
+                        `}
                       >
-                        <span className="flex-1">
-                          {module.title}
-                        </span>
-                        {/* 
-                          You could add a drag handle icon here if you like, for example: 
-                          <span {...provided.dragHandleProps} className="cursor-grab mr-2">☰</span>
-                        */}
+                        <span className="cursor-grab mr-3 text-gray-400">☰</span>
+                        <span className="flex-1 text-gray-700">{module.title}</span>
                       </li>
                     )}
                   </Draggable>
                 ))}
-
                 {provided.placeholder}
               </ul>
             )}
           </Droppable>
         </DragDropContext>
 
-        <div className="flex justify-end space-x-4">
-          <ModuleButton
-            label="Cancel"
+        <div className="flex justify-end space-x-3">
+          {/* Plain Tailwind <button> for Cancel */}
+          <button
             onClick={onClose}
-            color="#6c757d" // gray
-          />
-          <ModuleButton
-            label={isSaving ? "Saving..." : "Save Order"}
-            onClick={handleSave}
-            color="#28a745" // green
             disabled={isSaving}
-          />
+            className={`
+              px-4 py-2 rounded-md text-sm font-medium
+              ${isSaving
+                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                : "bg-gray-300 hover:bg-gray-400 text-gray-800"}
+              transition-colors duration-150
+            `}
+          >
+            Cancel
+          </button>
+
+          {/* Plain Tailwind <button> for Save Order */}
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className={`
+              px-4 py-2 rounded-md text-sm font-medium
+              ${
+                isSaving
+                  ? "bg-green-200 text-green-700 cursor-not-allowed"
+                  : "bg-green-500 hover:bg-green-600 text-white"
+              }
+              transition-colors duration-150
+            `}
+          >
+            {isSaving ? "Saving..." : "Save Order"}
+          </button>
         </div>
       </div>
     </div>
@@ -168,4 +153,3 @@ const ModulesOrder: React.FC<ModulesOrderProps> = ({
 };
 
 export default ModulesOrder;
-export {};
