@@ -39,7 +39,6 @@ export class UsersController extends Controller {
             this.setStatus(404);
             throw new Error("Could not fetch users");
         }
-    
         return fetchedUsers;
     }
     
@@ -107,13 +106,13 @@ export class UsersController extends Controller {
 
     }
 
-    
-    @Post("/login")
-    public async login(@Body() credentials: { email: string, password: string }): Promise<{ token: string }> {
+    @Security("jwt", ["admin"])    
+    @Post("/login/admin")
+    public async adminlogin(@Body() credentials: { email: string, password: string }): Promise<{ token: string }> {
     const user = await User.findOne({ email: credentials.email });
     if (!user) throw new Error("Invalid credentials");
 
-    const isMatch = await bcrypt.compare(credentials.password, user.password);
+    const isMatch = await bcrypt.compare(credentials.password, user.password);  
     if (!isMatch) throw new Error("Invalid credentials");
 
     const token = jwt.sign(
@@ -121,7 +120,6 @@ export class UsersController extends Controller {
         process.env.JWT_SECRET as string,
         { expiresIn: "1d" }
     );
-
     return { token };
     }
 
