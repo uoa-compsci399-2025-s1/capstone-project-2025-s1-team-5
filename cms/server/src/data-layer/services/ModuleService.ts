@@ -96,7 +96,7 @@ export class ModuleService {
             if (module.linkIds && module.linkIds.length > 0) {
             await Promise.all(
               module.linkIds.map(async (linkId) => {
-                await this.deleteLink(linkId.toString(), moduleId);
+                await this.deleteLink(moduleId, linkId.toString());
               })
             );
           }
@@ -244,7 +244,13 @@ export class ModuleService {
           if (changes.title !== undefined) subsection.title = changes.title;
           if (changes.body !== undefined) subsection.body = changes.body;
       
+          const parentModule = await newModule.findOne({ subsectionIds: subsectionId });
+          if (parentModule) {
+            await this.updateModuleTimestamp(parentModule._id.toString());
+          }
+
           await subsection.save();
+          
           return true;
         } catch (error) {
           console.error("Error editing subsection:", error);
@@ -514,4 +520,17 @@ public async deleteQuestion(questionId: string, quizId: string): Promise<boolean
       return false;
     }
   }
+
+  private async updateModuleTimestamp(moduleId: string): Promise<void> {
+    try {
+      await newModule.findByIdAndUpdate(
+        moduleId, 
+        { $set: { updatedAt: new Date() } },
+        { new: true }
+      );
+    } catch (error) {
+      console.error("Error updating module timestamp:", error);
+    }
+  }
+
 }
