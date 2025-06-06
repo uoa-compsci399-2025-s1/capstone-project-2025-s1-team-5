@@ -16,11 +16,11 @@ export default function App() {
       <Layout>
           <Routes>
             <Route path="/" element={<Login />} />
-            <Route path="/modules/home" element={<Home />} />
-            <Route path="/modules/modules" element={<ModulesPage />} />
-            <Route path="/modules/users" element={<UsersPage />} />
-            <Route path="/modules/library" element={<UploadLibrary />} />
-            <Route path="/modules/programmes" element={<ProgrammesPage />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/modules" element={<ModulesPage />} />
+            <Route path="/users" element={<UsersPage />} />
+            <Route path="/library" element={<UploadLibrary />} />
+            <Route path="/programmes" element={<ProgrammesPage />} />
             <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>
       </Layout>
