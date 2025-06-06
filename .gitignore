@@ -27,3 +27,4 @@ yarn-debug.log*
 yarn-error.log*
 
 cms/server/src/middleware/__generated__/
+cms\package-lock.json
