@@ -1,5 +1,3 @@
-// src/pages/modulesorder.tsx
-
 import React, { useState } from "react";
 import {
   DragDropContext,
@@ -8,8 +6,6 @@ import {
   DropResult,
 } from "@hello-pangea/dnd";
 import axios from "axios";
-// ↓ Remove ModuleButton import
-// import ModuleButton from "../components/ModuleButton";
 import { Module } from "../types/interfaces";
 
 interface ModulesOrderProps {
@@ -115,7 +111,6 @@ const ModulesOrder: React.FC<ModulesOrderProps> = ({
         </DragDropContext>
 
         <div className="flex justify-end space-x-3">
-          {/* Plain Tailwind <button> for Cancel */}
           <button
             onClick={onClose}
             disabled={isSaving}
@@ -130,7 +125,6 @@ const ModulesOrder: React.FC<ModulesOrderProps> = ({
             Cancel
           </button>
 
-          {/* Plain Tailwind <button> for Save Order */}
           <button
             onClick={handleSave}
             disabled={isSaving}
