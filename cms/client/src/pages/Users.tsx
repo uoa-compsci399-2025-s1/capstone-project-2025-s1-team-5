@@ -1,6 +1,8 @@
+// src/components/UsersPage.tsx
+
 import React, { useEffect, useState } from "react";
-import CreateUser from "../pages/CreateUser";
 import axios from "axios";
+import CreateUser from "../pages/CreateUser";
 import EditUserForm from "./EditUser";
 
 interface User {
@@ -8,41 +10,45 @@ interface User {
   first_name: string;
   last_name: string;
   email: string;
-  password: string;
+  password: string; 
   country: string;
   programme?: string;
   role: string;
   createdAt: string;
 }
 
-const UsersPage = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+const UsersPage: React.FC = () => {
+  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [perPage] = useState<number>(10);
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortKey, setSortKey] = useState<keyof User | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [editUser, setEditUser] = useState<User | null>(null);
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false); //transition
-  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false); //transition
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [limit] = useState(10);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
-  const fetchUsers = async () => {
+
+  const fetchAllUsers = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/users`, {
-      params: { limit, page },
-    });
-      setUsers(res.data.users);
-      setTotalPages(Math.ceil(res.data.total / limit)); // 👈 Here’s the important part
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/users`,
+        {
+
+          params: { limit: 99999, page: 1 },
+          headers: { Accept: "application/json" },
+        }
+      );
+
+      const data = response.data;
+      setAllUsers(data.users);
     } catch (error) {
-      console.error("Failed to fetch users:", error);
+      console.error("Failed to fetch all users:", error);
     }
   };
 
-    useEffect(() => {
-    fetchUsers();
-  }, [page,fetchUsers]);
+
+  useEffect(() => {
+    fetchAllUsers();
+  }, []);
 
 
   const sortUsers = (data: User[]) => {
@@ -61,12 +67,33 @@ const UsersPage = () => {
 
   const handleSort = (key: keyof User) => {
     if (sortKey === key) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
       setSortKey(key);
       setSortOrder("asc");
     }
   };
+
+
+  useEffect(() => {
+    const filtered = allUsers.filter((user) => {
+      const combinedFields =
+        `${user.first_name} ${user.last_name} ${user.email} ${user.country}`.toLowerCase();
+      return combinedFields.includes(searchTerm.toLowerCase());
+    });
+
+    const newTotalPages = Math.ceil(filtered.length / perPage) || 1;
+    setTotalPages(newTotalPages);
+
+    if (page > newTotalPages) {
+      setPage(1);
+    }
+  }, [allUsers, searchTerm, perPage, page]);
+
+  const [editUser, setEditUser] = useState<User | null>(null);
+  const [showCreateForm, setShowCreateForm] = useState<boolean>(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
+  const [isCreateModalVisible, setIsCreateModalVisible] = useState<boolean>(false);
 
   const handleEdit = (user: User) => {
     setEditUser(user);
@@ -76,24 +103,41 @@ const UsersPage = () => {
   const handleDelete = async (userId: string) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
-        await axios.delete(`${process.env.REACT_APP_API_URL}/api/users/${userId}`);
-        fetchUsers();
+        await axios.delete(
+          `${process.env.REACT_APP_API_URL}/api/users/${userId}`
+        );
+        fetchAllUsers();
       } catch (error) {
         console.error("Failed to delete user:", error);
       }
     }
   };
 
+
+  const filteredUsers = allUsers.filter((user) => {
+    const combinedFields =
+      `${user.first_name} ${user.last_name} ${user.email} ${user.country}`.toLowerCase();
+    return combinedFields.includes(searchTerm.toLowerCase());
+  });
+  const sortedUsers = sortUsers(filteredUsers);
+  const pagedUsers = sortedUsers.slice(
+    (page - 1) * perPage,
+    page * perPage
+  );
+
+
   return (
-    
-    <div className="p-6 border-neutral-950 bg-white shadow-orange-600 bg-clip-padding" style={{ paddingLeft: '60px' }}>
+    <div className="p-6 bg-white shadow-lg" style={{ paddingLeft: "60px" }}>
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Manage Users</h1>
 
       <input
         type="text"
-        placeholder="Search users by name..."
+        placeholder="Search across all users..."
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={(e) => {
+          setPage(1);          
+          setSearchTerm(e.target.value);
+        }}
         className="mb-6 p-2 border border-gray-300 rounded w-full max-w-md shadow-sm"
       />
 
@@ -117,27 +161,31 @@ const UsersPage = () => {
                   className="py-3 px-4 text-left font-semibold text-gray-700 cursor-pointer select-none"
                 >
                   {label}{" "}
-                  {sortKey === key ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+                  {sortKey === key
+                    ? sortOrder === "asc"
+                      ? "↑"
+                      : "↓"
+                    : ""}
                 </th>
               ))}
-              <th className="py-3 px-4 text-left font-semibold text-gray-700">Actions</th>
+              <th className="py-3 px-4 text-left font-semibold text-gray-700">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
-            {sortUsers(
-              users.filter((user) =>
-                `${user.first_name} ${user.last_name} ${user.email} ${user.country}`
-                  .toLowerCase()
-                  .includes(searchTerm.toLowerCase())
-              )
-            ).map((user) => (
+            {pagedUsers.map((user) => (
               <tr key={user.id} className="border-t hover:bg-gray-50">
-                <td className="py-2 px-4">{user.first_name} {user.last_name}</td>
+                <td className="py-2 px-4">
+                  {user.first_name} {user.last_name}
+                </td>
                 <td className="py-2 px-4">{user.email}</td>
                 <td className="py-2 px-4">{user.country}</td>
                 <td className="py-2 px-4">{user.programme || "N/A"}</td>
                 <td className="py-2 px-4">{user.role}</td>
-                <td className="py-2 px-4">{new Date(user.createdAt).toLocaleDateString()}</td>
+                <td className="py-2 px-4">
+                  {new Date(user.createdAt).toLocaleDateString()}
+                </td>
                 <td className="py-2 px-4 space-x-2">
                   <button
                     onClick={() => handleEdit(user)}
@@ -156,6 +204,74 @@ const UsersPage = () => {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="mt-6 flex justify-center items-center gap-4">
+        <button
+          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+          disabled={page === 1}
+          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <span className="text-gray-700">
+          Page {page} of {totalPages}
+        </span>
+        <button
+          onClick={() =>
+            setPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={page === totalPages}
+          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+
+      <div className="mt-12">
+        {!showCreateForm && (
+          <button
+            onClick={() => {
+              setShowCreateForm(true);
+              setIsCreateModalVisible(true);
+            }}
+            className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
+          >
+            Create New User
+          </button>
+        )}
+
+        {showCreateForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 transition-opacity duration-300">
+            <div
+              className={`bg-white rounded-lg p-6 shadow-lg w-full max-w-lg relative transform transition-all duration-300 ${
+                isCreateModalVisible
+                  ? "opacity-100 scale-100"
+                  : "opacity-0 scale-95"
+              }`}
+            >
+              <button
+                onClick={() => {
+                  setIsCreateModalVisible(false);
+                  setTimeout(() => setShowCreateForm(false), 300);
+                }}
+                className="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-3xl leading-none font-bold"
+                aria-label="Close"
+              >
+                &times;
+              </button>
+
+              <CreateUser
+                onUserCreated={() => {
+                  fetchAllUsers();
+                  setPage(1);
+                  setIsCreateModalVisible(false);
+                  setTimeout(() => setShowCreateForm(false), 300);
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {editUser && (
@@ -178,7 +294,7 @@ const UsersPage = () => {
             <EditUserForm
               user={editUser}
               onUserUpdated={() => {
-                fetchUsers();
+                fetchAllUsers();
                 setIsEditModalVisible(false);
                 setTimeout(() => setEditUser(null), 300);
               }}
@@ -187,66 +303,6 @@ const UsersPage = () => {
           </div>
         </div>
       )}
-      <div className="mt-6 flex justify-center gap-4">
-        <button
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          disabled={page === 1}
-          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50"
-        >
-          Previous
-        </button>
-        <span className="text-gray-700 self-center">Page {page} of {totalPages}</span>
-        <button
-          onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={page === totalPages}
-          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
-      <div className="mt-12">
-        {!showCreateForm && (
-          <button
-            onClick={() => {
-              setShowCreateForm(true);
-              setIsCreateModalVisible(true);
-            }}
-            className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
-          >
-            Create New User
-          </button>
-        )}
-
-        {showCreateForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 transition-opacity duration-300">
-            <div
-              className={`bg-white rounded-lg p-6 shadow-lg w-full max-w-lg relative transform transition-all duration-300 ${
-                isCreateModalVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
-              }`}
-            >
-              <button
-                onClick={() => {
-                  setIsCreateModalVisible(false);
-                  setTimeout(() => setShowCreateForm(false), 300);
-                }}
-                className="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-3xl leading-none font-bold"
-                aria-label="Close"
-              >
-                &times;
-              </button>
-
-              <CreateUser
-                onUserCreated={() => {
-                  fetchUsers();
-                  setIsCreateModalVisible(false);
-                  setTimeout(() => setShowCreateForm(false), 300);
-                }}
-              />
-            </div>
-          </div>
-        )}
-      </div>
-        
     </div>
   );
 };
