@@ -25,7 +25,7 @@ const Login: React.FC = () => {
 
       setError(null);
       setIsAuthenticated(true);
-      navigate("/modules/home");
+      navigate("/home");
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed. Please try again.");
     }

@@ -1,5 +1,3 @@
-// src/components/UsersPage.tsx
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CreateUser from "../pages/CreateUser";
