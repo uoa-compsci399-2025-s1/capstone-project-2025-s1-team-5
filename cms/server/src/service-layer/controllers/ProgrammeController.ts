@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Route,
+  Security,
   SuccessResponse,
   Tags,
 } from "tsoa";
@@ -29,7 +30,7 @@ export class ProgrammeController extends Controller {
     const programmes = await this.programmeService.getAllProgrammes();
     return programmes;
   }
-
+  @Security("jwt", ["admin"])
   @Post("/")
   @SuccessResponse(201, "Programme Created")
   public async addProgramme(
@@ -41,7 +42,7 @@ export class ProgrammeController extends Controller {
       body.link,
     );
   }
-
+    @Security("jwt", ["admin"])
   @Put("{programmeId}")
   @SuccessResponse(200, "Programme Updated")
   public async updateProgramme(
@@ -55,9 +56,10 @@ export class ProgrammeController extends Controller {
     return updated !== null;
   }
 
-  @Delete("{programmeId}")
-  @SuccessResponse(202, "Programme Deleted")
-  public async deleteProgramme(@Path() programmeId: string): Promise<boolean> {
+    @Security("jwt", ["admin"])
+    @Delete("{programmeId}")
+    @SuccessResponse(202, "Programme Deleted")
+    public async deleteProgramme(@Path() programmeId: string): Promise<boolean> {
     const wasDeleted =
       await this.programmeService.deleteProgrammeById(programmeId);
     if (!wasDeleted) {

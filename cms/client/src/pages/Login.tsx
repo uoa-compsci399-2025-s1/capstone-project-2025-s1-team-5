@@ -12,7 +12,7 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/modules/home");
+      navigate("/home");
     }
   }, [isAuthenticated, navigate]);
 
@@ -42,7 +42,7 @@ const handleLogin = async (event: React.FormEvent) => {
     setScopes(decoded.scopes);
     setIsAuthenticated(true);
     setError(null);
-    navigate("/modules/home"); // move navigation here instead
+    navigate("/home"); // move navigation here instead
   } catch (err: any) {
     setError(err.response?.data?.message || "Login failed. Please try again.");
   }
