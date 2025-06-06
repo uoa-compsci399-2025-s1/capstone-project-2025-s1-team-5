@@ -75,6 +75,10 @@ export class UserService {
      */
     public async updateUser(userId: string, userUpdateParams: UserUpdateParams): Promise<IUser> | null {
         try {
+
+            if (userUpdateParams.password) {
+            userUpdateParams.password = await bcrypt.hash(userUpdateParams.password, 10);
+            }
             const updateUser = await User.findByIdAndUpdate(
                 userId,
                 { $set: userUpdateParams },
