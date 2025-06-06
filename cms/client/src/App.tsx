@@ -19,7 +19,7 @@ export default function App() {
             <Route path="/" element={<Login />} />
 
             <Route
-              path="/modules/home"
+              path="/home"
               element={
                 <AdminRoute requiredScope="admin">
                   <Home />
@@ -27,7 +27,7 @@ export default function App() {
               }
             />
             <Route
-              path="/modules/modules"
+              path="/modules"
               element={
                 <AdminRoute requiredScope="admin">
                   <ModulesPage />
@@ -35,7 +35,7 @@ export default function App() {
               }
             />
             <Route
-              path="/modules/users"
+              path="/users"
               element={
                 <AdminRoute requiredScope="admin">
                   <UsersPage />
@@ -43,7 +43,7 @@ export default function App() {
               }
             />
             <Route
-              path="/modules/library"
+              path="/library"
               element={
                 <AdminRoute requiredScope="admin">
                   <UploadLibrary />
@@ -51,7 +51,7 @@ export default function App() {
               }
             />
             <Route
-              path="/modules/programmes"
+              path="/programmes"
               element={
                 <AdminRoute requiredScope="admin">
                   <ProgrammesPage />

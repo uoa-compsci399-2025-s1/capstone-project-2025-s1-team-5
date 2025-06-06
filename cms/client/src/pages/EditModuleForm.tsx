@@ -15,7 +15,13 @@ interface EditModuleFormProps {
   setEditModule: React.Dispatch<React.SetStateAction<Module | null>>;
 }
 
-const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated, setEditModule }) => {
+
+
+const EditModuleForm: React.FC<EditModuleFormProps> = ({
+  module,
+  onModuleUpdated,
+  setEditModule,
+}) => {
   const [title, setTitle] = useState(module.title);
   const [description, setDescription] = useState(module.description);
   const [subsections, setSubsections] = useState<Subsection[]>([]);
@@ -25,7 +31,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
   const [moduleQuizIds, setModuleQuizIds] = useState<string[]>(module.quizIds || []);
   const [moduleLinkIds, setModuleLinkIds] = useState<string[]>(module.linkIds || []);
   const [deleteConfirmSubsection, setDeleteConfirmSubsection] = useState<Subsection | null>(null);
-  const [deleteConfirmQuiz, setDeleteConfirmQuiz] = useState<{ index: number, title: string } | null>(null);
+  const [deleteConfirmQuiz, setDeleteConfirmQuiz] = useState<{ index: number; title: string } | null>(null);
   const [deleteConfirmLink, setDeleteConfirmLink] = useState<Link | null>(null);
   const [activeTab, setActiveTab] = useState<'subsections' | 'quizzes' | 'links'>('subsections');
   const [loading, setLoading] = useState(true);
@@ -34,9 +40,31 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
   const [editingSubsectionIds, setEditingSubsectionIds] = useState<Set<string>>(new Set());
   const quizzesFetchedRef = useRef(false);
 
-  
   const getModuleId = () => {
     return module._id || '';
+  };
+
+  const fetchLinks = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const headers = { Authorization: `Bearer ${token}` };
+
+      if (!moduleLinkIds || moduleLinkIds.length === 0) {
+        setLinks([]);
+        return;
+      }
+
+      const linkResponses = await Promise.all(
+        moduleLinkIds.map(id =>
+          axios.get<Link>(`${process.env.REACT_APP_API_URL}/api/modules/link/${id}`, { headers })
+        )
+      );
+
+      setLinks(linkResponses.map(res => res.data));
+    } catch (err) {
+      console.error('Error fetching links:', err);
+      setError('Failed to reload links.');
+    }
   };
 
   useEffect(() => {
@@ -45,73 +73,64 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
       quizzesFetchedRef.current = true;
 
       try {
-        const token = localStorage.getItem("authToken");
+        const token = localStorage.getItem('authToken');
         const headers = { Authorization: `Bearer ${token}` };
 
-        // Fetch quizzes and subsections
-        const [subResponses, quizResponses, linkResponses] = await Promise.all([
-          Promise.all(
-            moduleSubsectionIds.map(id =>
-              axios.get<Subsection>(`${process.env.REACT_APP_API_URL}/api/modules/subsection/${id}`, { headers })
-            )
-          ),
-          Promise.all(
-            moduleQuizIds.map(id =>
-              axios.get<Quiz>(`${process.env.REACT_APP_API_URL}/api/modules/quiz/${id}`, { headers })
-            )
-          ),
-          Promise.all(
-            moduleLinkIds.map(id =>
-              axios.get<Link>(`${process.env.REACT_APP_API_URL}/api/modules/link/${id}`, { headers })
-            )
+        const subResponses = await Promise.all(
+          moduleSubsectionIds.map(id =>
+            axios.get<Subsection>(`${process.env.REACT_APP_API_URL}/api/modules/subsection/${id}`, {
+              headers,
+            })
           )
-        ]);
-
+        );
         setSubsections(subResponses.map(res => res.data));
+
+        const quizResponses = await Promise.all(
+          moduleQuizIds.map(id =>
+            axios.get<Quiz>(`${process.env.REACT_APP_API_URL}/api/modules/quiz/${id}`, { headers })
+          )
+        );
         setQuizzes(quizResponses.map(res => ({ ...res.data, questions: res.data.questions || [] })));
-        setLinks(linkResponses.map(res => res.data));
+
+        await fetchLinks();
+
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching data:', error);
         setLoading(false);
-        setError("Failed to load module data. Please try again.");
+        setError('Failed to load module data. Please try again.');
       }
     };
 
     fetchData();
   }, [moduleSubsectionIds, moduleQuizIds, moduleLinkIds]);
 
-
-
   const handleSubsectionChange = (_id: string, field: keyof Subsection, value: string) => {
-    setSubsections((prev) =>
-      prev.map((subsection) =>
-        subsection._id === _id ? { ...subsection, [field]: value } : subsection
-      )
+    setSubsections(prev =>
+      prev.map(subsection => (subsection._id === _id ? { ...subsection, [field]: value } : subsection))
     );
   };
 
   const handleAddSubsection = async () => {
     try {
       const newSubsectionData = {
-        title: "New Subsection",
-        body: "<p>Enter content here...</p>",
-        authorID: "system"
+        title: 'New Subsection',
+        body: '<p>Enter content here...</p>',
+        authorID: 'system',
       };
-      
-      const response = await axios.post(
+
+      const response = await axios.post<Subsection>(
         `${process.env.REACT_APP_API_URL}/api/modules/${module._id}`,
         newSubsectionData
       );
 
-   
       const newSubsection = response.data;
       setSubsections(prev => [...prev, newSubsection]);
       setModuleSubsectionIds(prev => [...prev, newSubsection._id]);
-      setSuccess("Subsection added successfully");
+      setSuccess('Subsection added successfully');
       setError(null);
     } catch (error) {
-      console.error("Failed to add subsection:", error);
+      console.error('Failed to add subsection:', error);
       setError(`Failed to add subsection: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setSuccess(null);
     }
@@ -120,103 +139,82 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ module, onModuleUpdated
   const handleDeleteSubsection = async (subsectionId: string) => {
     try {
       if (!subsectionId) {
-        setError("Cannot delete subsection: Subsection ID is missing");
+        setError('Cannot delete subsection: Subsection ID is missing');
         return;
       }
 
       const moduleId = getModuleId();
       if (!moduleId) {
-        setError("Cannot delete subsection: Module ID is missing");
+        setError('Cannot delete subsection: Module ID is missing');
         return;
       }
 
-      const token = localStorage.getItem("authToken");
-      await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}/${subsectionId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-      
-      setSubsections(subsections.filter(s => s._id !== subsectionId));
-      setModuleSubsectionIds(moduleSubsectionIds.filter(id => id !== subsectionId));
+      const token = localStorage.getItem('authToken');
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/modules/${moduleId}/${subsectionId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setSubsections(prev => prev.filter(s => s._id !== subsectionId));
+      setModuleSubsectionIds(prev => prev.filter(id => id !== subsectionId));
       setDeleteConfirmSubsection(null);
-      setSuccess("Subsection deleted successfully");
+      setSuccess('Subsection deleted successfully');
       setError(null);
     } catch (error) {
-      console.error("Failed to delete subsection:", error);
-      setError("Failed to delete subsection");
+      console.error('Failed to delete subsection:', error);
+      setError('Failed to delete subsection');
       setSuccess(null);
     }
   };
+
   const toggleEditSubsection = (id: string) => {
-  setEditingSubsectionIds(prev => {
-    const newSet = new Set(prev);
-    if (newSet.has(id)) {
-      newSet.delete(id);
-    } else {
-      newSet.add(id);
-    }
-    return newSet;
-  });
-};
+    setEditingSubsectionIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) newSet.delete(id);
+      else newSet.add(id);
+      return newSet;
+    });
+  };
 
-const handleDragEnd = (result: DropResult) => {
-  if (!result.destination) return;
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
 
-  const items = Array.from(subsections);
-  const [moved] = items.splice(result.source.index, 1);
-  items.splice(result.destination.index, 0, moved);
+    const items = Array.from(subsections);
+    const [moved] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, moved);
 
-  setSubsections(items);
-  setModuleSubsectionIds(items.map(item => item._id)); // update order
-};
+    setSubsections(items);
+    setModuleSubsectionIds(items.map(item => item._id));
+  };
 
-//   const handleSubsectionReorder = (result: DropResult) => {
-//   if (!result.destination) return;
 
-//   const reordered = Array.from(subsections);
-//   const [moved] = reordered.splice(result.source.index, 1);
-//   reordered.splice(result.destination.index, 0, moved);
-
-//   setSubsections(reordered);
-//   setModuleSubsectionIds(reordered.map((s) => s._id)); // update order for submission
-// };
-
- const handleAddQuiz = async () => {
+  const handleAddQuiz = async () => {
     try {
       const moduleId = getModuleId();
       if (!moduleId) {
-        setError("Cannot add quiz: Module ID is missing");
+        setError('Cannot add quiz: Module ID is missing');
         return;
       }
 
-      const token = localStorage.getItem("authToken");
+      const token = localStorage.getItem('authToken');
       const response = await axios.post<Quiz>(
         `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}/quiz`,
         {
-          title: "New Quiz",
-          description: "Quiz description..."
+          title: 'New Quiz',
+          description: 'Quiz description...',
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      
+
       const newQuiz = response.data;
       newQuiz.questions = newQuiz.questions || [];
-      
-      setQuizzes([...quizzes, newQuiz]);
-      setModuleQuizIds([...moduleQuizIds, newQuiz._id]);
-      setSuccess("Quiz added successfully");
+
+      setQuizzes(prev => [...prev, newQuiz]);
+      setModuleQuizIds(prev => [...prev, newQuiz._id]);
+      setSuccess('Quiz added successfully');
       setError(null);
     } catch (error) {
-      console.error("Failed to add quiz:", error);
-      setError("Failed to add quiz");
+      console.error('Failed to add quiz:', error);
+      setError('Failed to add quiz');
       setSuccess(null);
     }
   };
@@ -224,39 +222,38 @@ const handleDragEnd = (result: DropResult) => {
   const handleDeleteQuiz = async (quizId: string) => {
     try {
       const moduleId = getModuleId();
-      const token = localStorage.getItem("authToken");
-      
-      // Fix the deletion endpoint
-      await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/modules/quiz/${moduleId}/${quizId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
+      const token = localStorage.getItem('authToken');
+
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/modules/quiz/${moduleId}/${quizId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       setQuizzes(prev => prev.filter(q => q._id !== quizId));
       setModuleQuizIds(prev => prev.filter(id => id !== quizId));
       setDeleteConfirmQuiz(null);
-      setSuccess("Quiz deleted successfully");
+      setSuccess('Quiz deleted successfully');
       setError(null);
     } catch (error) {
-      console.error("Failed to delete quiz:", error);
+      console.error('Failed to delete quiz:', error);
       setError(`Failed to delete quiz: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setSuccess(null);
     }
   };
 
   const handleQuizChange = (quizId: string, field: keyof Omit<Quiz, '_id' | 'questions'>, value: string) => {
-    setQuizzes((prev) =>
-      prev.map((quiz) =>
-        quiz._id === quizId ? { ...quiz, [field]: value } : quiz
-      )
-    );
+    setQuizzes(prev => prev.map(quiz => (quiz._id === quizId ? { ...quiz, [field]: value } : quiz)));
   };
 
-  const handleQuestionChange = (quizId: string, questionId: string, field: keyof Omit<Question, '_id'>, value: string | string[]) => {
-    setQuizzes((prevQuizzes) =>
-      prevQuizzes.map((quiz) => {
+  const handleQuestionChange = (
+    quizId: string,
+    questionId: string,
+    field: keyof Omit<Question, '_id'>,
+    value: string | string[]
+  ) => {
+    setQuizzes(prevQuizzes =>
+      prevQuizzes.map(quiz => {
         if (quiz._id !== quizId) return quiz;
-        const updatedQuestions = quiz.questions.map((question) => {
+        const updatedQuestions = quiz.questions.map(question => {
           if (question._id !== questionId) return question;
           return { ...question, [field]: value };
         });
@@ -265,11 +262,16 @@ const handleDragEnd = (result: DropResult) => {
     );
   };
 
-  const handleOptionChange = (quizId: string, questionId: string, optionIndex: number, value: string) => {
-    setQuizzes((prevQuizzes) =>
-      prevQuizzes.map((quiz) => {
+  const handleOptionChange = (
+    quizId: string,
+    questionId: string,
+    optionIndex: number,
+    value: string
+  ) => {
+    setQuizzes(prevQuizzes =>
+      prevQuizzes.map(quiz => {
         if (quiz._id !== quizId) return quiz;
-        const updatedQuestions = quiz.questions.map((question) => {
+        const updatedQuestions = quiz.questions.map(question => {
           if (question._id !== questionId) return question;
           const newOptions = [...question.options];
           newOptions[optionIndex] = value;
@@ -284,203 +286,240 @@ const handleDragEnd = (result: DropResult) => {
     );
   };
 
-  const handleLinkChange = (_id: string, field: keyof Link, value: string) => {
-    setLinks((prev) =>
-      prev.map((link) =>
-        link._id === _id ? { ...link, [field]: value } : link
-      )
-    );
-  };
-
   const handleAddQuestion = async (quizId: string) => {
-  try {
-    const token = localStorage.getItem("authToken");
-    const response = await axios.post<Question>(
-      `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}`, // ✅ corrected path
-      {
-        question: "Enter your question here",
-        options: ["Option 1", "Option 2", "Option 3", "Option 4"],
-        correctAnswer: "Option 1"
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await axios.post<Question>(
+        `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}`,
+        {
+          question: 'Enter your question here',
+          options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+          correctAnswer: 'Option 1',
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-    const newQuestion = response.data;
-    setQuizzes(prev => 
-      prev.map(quiz => 
-        quiz._id === quizId 
-          ? { ...quiz, questions: [...quiz.questions, newQuestion] } 
-          : quiz
-      )
-    );
-    setSuccess("Question added successfully");
-    setError(null);
-  } catch (error) {
-    console.error("Failed to add question:", error);
-    setError(`Failed to add question: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    setSuccess(null);
-  }
-};
+      const newQuestion = response.data;
+      setQuizzes(prev =>
+        prev.map(quiz =>
+          quiz._id === quizId ? { ...quiz, questions: [...quiz.questions, newQuestion] } : quiz
+        )
+      );
+      setSuccess('Question added successfully');
+      setError(null);
+    } catch (error) {
+      console.error('Failed to add question:', error);
+      setError(`Failed to add question: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setSuccess(null);
+    }
+  };
 
   const handleRemoveQuestion = async (quizId: string, questionId: string) => {
     try {
-      const token = localStorage.getItem("authToken");
-      await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}/question/${questionId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      setQuizzes((prevQuizzes) =>
-        prevQuizzes.map((quiz) => {
+      const token = localStorage.getItem('authToken');
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}/question/${questionId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setQuizzes(prevQuizzes =>
+        prevQuizzes.map(quiz => {
           if (quiz._id !== quizId) return quiz;
           return { ...quiz, questions: quiz.questions.filter(q => q._id !== questionId) };
         })
       );
-      setSuccess("Question removed successfully");
+      setSuccess('Question removed successfully');
       setError(null);
     } catch (error) {
-      console.error("Failed to remove question:", error);
+      console.error('Failed to remove question:', error);
       setError(`Failed to remove question: ${error instanceof Error ? error.message : String(error)}`);
       setSuccess(null);
     }
   };
 
-  const handleAddLink = async () => {
-    try {
-      const moduleId = getModuleId();
-      const token = localStorage.getItem("authToken");
-      const linkData = {
-        title: "New Link",
-        link: "https://example.com"
-      };
-
-      await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/modules/link/${moduleId}`,
-        linkData,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      const response = await axios.get<Module>(
-        `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      if (response.data.linkIds && response.data.linkIds.length > 0) {
-        const newLinkId = response.data.linkIds[response.data.linkIds.length - 1];
-        const linkResponse = await axios.get<Link>(
-          `${process.env.REACT_APP_API_URL}/api/modules/link/${newLinkId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        
-        setLinks([...links, linkResponse.data]);
-        setModuleLinkIds([...moduleLinkIds, newLinkId]);
-      }
-      
-      setSuccess("Link added successfully");
-      setError(null);
-    } catch (error) {
-      console.error("Failed to add link:", error);
-      setError(`Failed to add link: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      setSuccess(null);
-    }
+  const handleLinkChange = (_id: string, field: keyof Link, value: string) => {
+    setLinks(prev =>
+      prev.map(link => (link._id === _id ? { ...link, [field]: value } : link))
+    );
   };
+
+  const handleAddLink = () => {
+
+    const tempId = `temp-${Date.now()}`;
+
+    setLinks(prev => [
+      ...prev,
+      {
+        _id: tempId,
+        title: '',            
+        link: '',              
+      },
+    ]);
+
+    setModuleLinkIds(prev => [...prev, tempId]);
+
+    setSuccess('New link row added – edit its title/URL, then Save Changes.');
+    setError(null);
+  };
+
 
   const handleDeleteLink = async (linkId: string) => {
-    try {
-      const moduleId = getModuleId();
-      if (!moduleId) {
-        setError("Cannot delete link: Module ID is missing");
-        return;
-      }
+  if (linkId.startsWith('temp-')) {
+    setLinks(prev => prev.filter((link) => link._id !== linkId));
+    setModuleLinkIds(prev => prev.filter((id) => id !== linkId));
+    setDeleteConfirmLink(null);
+    setSuccess('Temporary link removed');
+    setError(null);
+    return;
+  }
 
-      const token = localStorage.getItem("authToken");
-      await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/modules/link/${moduleId}/${linkId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      setLinks(links.filter(link => link._id !== linkId));
-      setModuleLinkIds(moduleLinkIds.filter(id => id !== linkId));
-      setDeleteConfirmLink(null);
-      setSuccess("Link deleted successfully");
-      setError(null);
-    } catch (error) {
-      console.error("Failed to delete link:", error);
-      setError(`Failed to delete link: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      setSuccess(null);
-    }
-  };
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  try {
     const moduleId = getModuleId();
     if (!moduleId) {
-      setError("Cannot update module: Module ID is missing");
+      setError('Cannot delete link: Module ID is missing');
       return;
     }
 
-    const updatedModule = {
-      title,
-      description,
-      subsectionIds: moduleSubsectionIds,
-    };
+    const token = localStorage.getItem('authToken');
+    await axios.delete(
+      `${process.env.REACT_APP_API_URL}/api/modules/link/${moduleId}/${linkId}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
-    try {
-      const token = localStorage.getItem("authToken");
-      await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`,
-        updatedModule,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      await Promise.all([
-        ...subsections.map(subsection =>
-          axios.put(
-            `${process.env.REACT_APP_API_URL}/api/modules/subsection/${subsection._id}`,
-            { title: subsection.title, body: subsection.body },
-            { headers: { Authorization: `Bearer ${token}` } }
-          )
-        ),
-        ...quizzes.map(async (quiz) => {
-          await axios.put(
-            `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quiz._id}`,
-            { title: quiz.title, description: quiz.description },
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          if (quiz.questions?.length) {
-            await Promise.all(
-              quiz.questions.map(question =>
-                axios.patch(
-                  `${process.env.REACT_APP_API_URL}/api/modules/question/${question._id}`,
-                  { question: question.question, options: question.options, correctAnswer: question.correctAnswer },
-                  { headers: { Authorization: `Bearer ${token}` } }
-                )
-              )
-            );
-          }
-        }),
-        ...links.map(link =>
-          axios.put(
-            `${process.env.REACT_APP_API_URL}/api/modules/link/${link._id}`,
-            { title: link.title, link: link.link },
-            { headers: { Authorization: `Bearer ${token}` } }
-          )
-        )
-      ]);
-      
-      setSuccess("Module updated successfully!");
-      onModuleUpdated();
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      setError("Error updating module: " + errorMessage);
-      console.error(error);
+    setLinks(prev => prev.filter((link) => link._id !== linkId));
+    setModuleLinkIds(prev => prev.filter((id) => id !== linkId));
+    setDeleteConfirmLink(null);
+    setSuccess('Link deleted successfully');
+    setError(null);
+  } catch (error) {
+    console.error('Failed to delete link:', error);
+    setError(`Failed to delete link: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    setSuccess(null);
+  }
+};
+
+
+  const handleSubmit = async (event: React.FormEvent) => {
+  event.preventDefault();
+  const moduleId = getModuleId();
+  if (!moduleId) {
+    setError('Cannot update module: Module ID is missing');
+    return;
+  }
+
+
+  for (const linkItem of links) {
+    const titleOnly = linkItem.title.trim();
+    const urlOnly   = linkItem.link.trim();
+
+    if (titleOnly === '' || urlOnly === '') {
+      setError('Each link must have a non-empty title and URL.');
+      return;
     }
-  };
+  }
+  // ──────────────────────────────────────────────────────────────
+
+  // Now continue with the existing “partition temp vs. real, POST temp, PUT all” logic:
+  const tempLinks = links.filter(link => link._id.startsWith('temp-'));
+  const realLinks = links.filter(link => !link._id.startsWith('temp-'));
+
+  try {
+    const token = localStorage.getItem('authToken');
+    const headers = { Authorization: `Bearer ${token}` };
+
+    // 1) Create any tempLinks on the server
+    const tempIdToRealId: Record<string, string> = {};
+    for (const tempLink of tempLinks) {
+      const { title, link } = tempLink;
+      const postResponse = await axios.post<Link>(
+        `${process.env.REACT_APP_API_URL}/api/modules/link/${moduleId}`,
+        { title, link },
+        { headers }
+      );
+      const created = postResponse.data;
+      if (created._id) {
+        tempIdToRealId[tempLink._id] = created._id;
+      } else {
+        console.warn('Server did not return new link ID for temp link', tempLink._id);
+      }
+    }
+
+    const newModuleLinkIds = moduleLinkIds.map((id) =>
+      id.startsWith('temp-') && tempIdToRealId[id] ? tempIdToRealId[id] : id
+    );
+    setModuleLinkIds(newModuleLinkIds);
+
+    const createdLinks: Link[] = tempLinks
+      .filter((t) => Boolean(tempIdToRealId[t._id]))
+      .map((t) => ({
+        _id: tempIdToRealId[t._id]!,
+        title: t.title,
+        link: t.link,
+      }));
+    const linksToSave: Link[] = [...realLinks, ...createdLinks];
+    setLinks(linksToSave);
 
 
+    await Promise.all(
+      linksToSave.map((linkObj) =>
+        axios.put(
+          `${process.env.REACT_APP_API_URL}/api/modules/link/${linkObj._id}`,
+          { title: linkObj.title, link: linkObj.link },
+          { headers }
+        )
+      )
+    );
+
+    await axios.put(
+      `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`,
+      { title, description, subsectionIds: moduleSubsectionIds },
+      { headers }
+    );
+
+    await Promise.all([
+      ...subsections.map((sub) =>
+        axios.put(
+          `${process.env.REACT_APP_API_URL}/api/modules/subsection/${sub._id}`,
+          { title: sub.title, body: sub.body },
+          { headers }
+        )
+      ),
+      ...quizzes.map(async (q) => {
+        await axios.put(
+          `${process.env.REACT_APP_API_URL}/api/modules/quiz/${q._id}`,
+          { title: q.title, description: q.description },
+          { headers }
+        );
+        if (q.questions?.length) {
+          await Promise.all(
+            q.questions.map((question) =>
+              axios.patch(
+                `${process.env.REACT_APP_API_URL}/api/modules/question/${question._id}`,
+                {
+                  question: question.question,
+                  options: question.options,
+                  correctAnswer: question.correctAnswer,
+                },
+                { headers }
+              )
+            )
+          );
+        }
+      }),
+    ]);
+
+    setSuccess('Module (and all links) updated successfully!');
+    setError(null);
+    onModuleUpdated();
+  } catch (err) {
+    console.error('Error saving changes:', err);
+    setError(err instanceof Error ? err.message : 'Unknown error saving module');
+    setSuccess(null);
+  }
+};
 
 
   if (loading) return <div className="text-center py-8">Loading module data...</div>;
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Edit Module</h1>
@@ -489,7 +528,7 @@ const handleDragEnd = (result: DropResult) => {
           <input
             type="text"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={e => setTitle(e.target.value)}
             className="w-full p-3 border rounded-lg text-lg font-semibold"
             placeholder="Module Title"
             required
@@ -498,7 +537,7 @@ const handleDragEnd = (result: DropResult) => {
         <div className="mb-6">
           <textarea
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={e => setDescription(e.target.value)}
             className="w-full p-3 border rounded-lg h-32"
             placeholder="Module Description"
             required
@@ -532,87 +571,78 @@ const handleDragEnd = (result: DropResult) => {
                 activeTab === 'links' ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'
               }`}
             >
-              Link
+              Links
             </button>
           </div>
 
+          {/* ───── Subsections Tab ───── */}
           {activeTab === 'subsections' && (
             <div>
               <DragDropContext onDragEnd={handleDragEnd}>
-  <Droppable droppableId="subsections">
-    {(provided) => (
-      <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
-        {subsections.map((subsection, index) => (
-          <Draggable key={subsection._id} draggableId={subsection._id} index={index}>
-            {(provided, snapshot) => (
-              <div
-                ref={provided.innerRef}
-                {...provided.draggableProps}
-                className={`p-4 border rounded-lg bg-gray-50 ${
-                  snapshot.isDragging ? 'bg-blue-50 shadow-lg' : ''
-                }`}
-              >
-                <div className="flex justify-between items-center mb-4">
-                  <div className="flex items-center w-full gap-2">
-                    <div
-                      {...provided.dragHandleProps}
-                      className="cursor-grab text-gray-500 hover:text-gray-800 pr-2"
-                    >
-                      ☰
+                <Droppable droppableId="subsections">
+                  {provided => (
+                    <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
+                      {subsections.map((subsection, index) => (
+                        <Draggable key={subsection._id || index} draggableId={subsection._id || String(index)} index={index}>
+                          {(provided, snapshot) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              className={`p-4 border rounded-lg bg-gray-50 ${
+                                snapshot.isDragging ? 'bg-blue-50 shadow-lg' : ''
+                              }`}
+                            >
+                              <div className="flex justify-between items-center mb-4">
+                                <div className="flex items-center w-full gap-2">
+                                  <div
+                                    {...provided.dragHandleProps}
+                                    className="cursor-grab text-gray-500 hover:text-gray-800 pr-2"
+                                  >
+                                    ☰
+                                  </div>
+                                  <input
+                                    type="text"
+                                    value={subsection.title ?? ''}
+                                    onChange={e => handleSubsectionChange(subsection._id, 'title', e.target.value)}
+                                    className="w-full p-2 border rounded"
+                                    placeholder="Subsection Title"
+                                  />
+                                </div>
+                                <div className="flex gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => toggleEditSubsection(subsection._id)}
+                                    className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                                  >
+                                    {editingSubsectionIds.has(subsection._id) ? 'Hide' : 'Edit'}
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setDeleteConfirmSubsection(subsection)}
+                                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </div>
+
+                              {editingSubsectionIds.has(subsection._id) && (
+                                <TextEditor
+                                  key={subsection._id}
+                                  subsectionId={subsection._id}
+                                  content={subsection.body}
+                                  onChange={content => handleSubsectionChange(subsection._id, 'body', content)}
+                                />
+                              )}
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
                     </div>
-                    <input
-                      type="text"
-                      value={subsection.title}
-                      onChange={(e) =>
-                        handleSubsectionChange(subsection._id, 'title', e.target.value)
-                      }
-                      className="w-full p-2 border rounded"
-                      placeholder="Subsection Title"
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => toggleEditSubsection(subsection._id)}
-
-                      className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                    >
-                      {editingSubsectionIds.has(subsection._id) ? 'Hide' : 'Edit'}
-
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setDeleteConfirmSubsection(subsection)}
-                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-
-                {editingSubsectionIds.has(subsection._id) && (
-
-                  <TextEditor
-                    key={subsection._id}
-                    subsectionId={subsection._id}
-                    content={subsection.body}
-                    onChange={(content) =>
-                      handleSubsectionChange(subsection._id, 'body', content)
-                    }
-                  />
-                )}
-              </div>
-            )}
-          </Draggable>
-        ))}
-        {provided.placeholder}
-      </div>
-    )}
-  </Droppable>
-</DragDropContext>
-
-
-
+                  )}
+                </Droppable>
+              </DragDropContext>
 
               <button
                 type="button"
@@ -624,40 +654,47 @@ const handleDragEnd = (result: DropResult) => {
             </div>
           )}
 
+          {/* ───── Quizzes Tab ───── */}
           {activeTab === 'quizzes' && (
             <div>
-              {quizzes.map((quiz) => (
-                <div key={quiz._id} className="mb-6 p-4 border rounded-lg bg-gray-50">
+              {quizzes.map((quiz, qIndex) => (
+                <div key={quiz._id || qIndex} className="mb-6 p-4 border rounded-lg bg-gray-50">
                   <div className="flex justify-between items-center mb-4">
                     <input
                       type="text"
-                      value={quiz.title}
-                      onChange={(e) => handleQuizChange(quiz._id, 'title', e.target.value)}
+                      value={quiz.title ?? ''}
+                      onChange={e => handleQuizChange(quiz._id, 'title', e.target.value)}
                       className="w-full p-2 border rounded mr-4"
                       placeholder="Quiz Title"
                     />
                     <button
                       type="button"
-                      onClick={() => setDeleteConfirmQuiz({ index: quizzes.findIndex(q => q._id === quiz._id), title: quiz.title })}
-
+                      onClick={() =>
+                        setDeleteConfirmQuiz({
+                          index: quizzes.findIndex(q => q._id === quiz._id),
+                          title: quiz.title,
+                        })
+                      }
                       className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                     >
                       Delete
                     </button>
                   </div>
                   <textarea
-                    value={quiz.description}
-                    onChange={(e) => handleQuizChange(quiz._id, 'description', e.target.value)}
+                    value={quiz.description ?? ''}
+                    onChange={e => handleQuizChange(quiz._id, 'description', e.target.value)}
                     className="w-full p-2 border rounded mb-4"
                     placeholder="Quiz Description"
                   />
-                  {quiz.questions.map((question) => (
-                    <div key={question._id} className="mb-4 p-3 border rounded bg-white">
+                  {quiz.questions.map((question, quesIndex) => (
+                    <div key={question._id || quesIndex} className="mb-4 p-3 border rounded bg-white">
                       <div className="flex justify-between items-center mb-2">
                         <input
                           type="text"
-                          value={question.question}
-                          onChange={(e) => handleQuestionChange(quiz._id, question._id, 'question', e.target.value)}
+                          value={question.question ?? ''}
+                          onChange={e =>
+                            handleQuestionChange(quiz._id, question._id, 'question', e.target.value)
+                          }
                           className="w-full p-2 border rounded mr-2"
                           placeholder="Question"
                         />
@@ -670,25 +707,29 @@ const handleDragEnd = (result: DropResult) => {
                         </button>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
-                        {question.options.map((option, index) => (
+                        {question.options.map((option, optIndex) => (
                           <input
-                            key={index}
+                            key={optIndex}
                             type="text"
-                            value={option}
-                            onChange={(e) => handleOptionChange(quiz._id, question._id, index, e.target.value)}
+                            value={option ?? ''}
+                            onChange={e =>
+                              handleOptionChange(quiz._id, question._id, optIndex, e.target.value)
+                            }
                             className="p-2 border rounded"
-                            placeholder={`Option ${index + 1}`}
+                            placeholder={`Option ${optIndex + 1}`}
                           />
                         ))}
                       </div>
                       <select
-                        value={question.correctAnswer}
-                        onChange={(e) => handleQuestionChange(quiz._id, question._id, 'correctAnswer', e.target.value)}
+                        value={question.correctAnswer ?? ''}
+                        onChange={e =>
+                          handleQuestionChange(quiz._id, question._id, 'correctAnswer', e.target.value)
+                        }
                         className="mt-2 p-2 border rounded w-full"
                       >
-                        {question.options.map((option, index) => (
-                          <option key={index} value={option}>
-                            Option {index + 1}
+                        {question.options.map((option, idx) => (
+                          <option key={idx} value={option}>
+                            Option {idx + 1}
                           </option>
                         ))}
                       </select>
@@ -713,21 +754,22 @@ const handleDragEnd = (result: DropResult) => {
             </div>
           )}
 
+          {/* ───── Links Tab ───── */}
           {activeTab === 'links' && (
             <div>
-              {links.map((link) => (
-                <div key={link._id} className="mb-4 p-4 border rounded-lg bg-gray-50">
-                  <div className="flex justify-between items-center mb-2">
+              {links.map((linkItem, linkIndex) => (
+                <div key={linkItem._id || linkIndex} className="mb-4 p-4 border rounded-lg bg-gray-50">
+                  <div className="flex justify-between items-center mb-2">  
                     <input
                       type="text"
-                      value={link.title}
-                      onChange={(e) => handleLinkChange(link._id, 'title', e.target.value)}
+                      value={linkItem.title ?? ''}
+                      onChange={e => handleLinkChange(linkItem._id, 'title', e.target.value)}
                       className="w-full p-2 border rounded mr-2"
                       placeholder="Link Title"
                     />
                     <button
                       type="button"
-                      onClick={() => setDeleteConfirmLink(link)}
+                      onClick={() => setDeleteConfirmLink(linkItem)}
                       className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                     >
                       Delete
@@ -735,8 +777,8 @@ const handleDragEnd = (result: DropResult) => {
                   </div>
                   <input
                     type="url"
-                    value={link.link}
-                    onChange={(e) => handleLinkChange(link._id, 'link', e.target.value)}
+                    value={linkItem.link ?? ''}
+                    onChange={e => handleLinkChange(linkItem._id, 'link', e.target.value)}
                     className="w-full p-2 border rounded"
                     placeholder="Link URL"
                   />
@@ -751,7 +793,6 @@ const handleDragEnd = (result: DropResult) => {
               </button>
             </div>
           )}
-
         </div>
 
         <div className="flex justify-end gap-4 mt-8">
@@ -762,10 +803,7 @@ const handleDragEnd = (result: DropResult) => {
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
+          <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
             Save Changes
           </button>
         </div>
@@ -773,29 +811,6 @@ const handleDragEnd = (result: DropResult) => {
 
       {error && <div className="mt-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>}
       {success && <div className="mt-4 p-3 bg-green-100 text-green-700 rounded">{success}</div>}
-
-      {deleteConfirmSubsection && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg max-w-md w-full">
-            <h2 className="text-xl font-bold mb-4">Confirm Delete</h2>
-            <p className="mb-6">Delete subsection "{deleteConfirmSubsection.title}"?</p>
-            <div className="flex justify-end gap-4">
-              <button
-                onClick={() => setDeleteConfirmSubsection(null)}
-                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleDeleteSubsection(deleteConfirmSubsection._id)}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {deleteConfirmQuiz && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -844,6 +859,7 @@ const handleDragEnd = (result: DropResult) => {
         </div>
       </div>
     )}
+
     </div>
   );
 };
