@@ -336,6 +336,11 @@ export class ModuleService {
         },
         { new: true }
       ).exec();
+
+      const parentModule = await newModule.findOne({ quizIds: quizId });
+      if (parentModule) {
+        await this.updateModuleTimestamp(parentModule._id.toString());
+      }
       
       return quiz;
     } catch (error) {
@@ -490,6 +495,12 @@ public async deleteQuestion(questionId: string, quizId: string): Promise<boolean
   public async updateLink(id: string, title: string, link: string): Promise<boolean> {
     try {
       const result = await Link.findByIdAndUpdate(id, { title, link }, { new: true });
+
+      const parentModule = await newModule.findOne({ linkIds: id });
+      if (parentModule) {
+        await this.updateModuleTimestamp(parentModule._id.toString());
+      }
+
       return !!result;
     } catch (error) {
       console.error("Error updating link:", error);
