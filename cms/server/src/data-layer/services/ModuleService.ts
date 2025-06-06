@@ -85,24 +85,24 @@ export class ModuleService {
 
           const module = await newModule.findById(moduleId);
 
-          if (module.quizIds && module.quizIds.length > 0) {
+          if (module.quizIds?.length) {
             await Promise.all(
               module.quizIds.map(async (quizId) => {
-                await this.deleteQuiz(quizId.toString(), moduleId);
+                return await this.deleteQuiz(quizId.toString(), moduleId);
               })
             );
           }
 
-            if (module.linkIds && module.linkIds.length > 0) {
+            if (module.linkIds?.length) {
             await Promise.all(
               module.linkIds.map(async (linkId) => {
-                await this.deleteLink(moduleId, linkId.toString());
+                return await this.deleteLink(moduleId, linkId.toString());
               })
             );
           }
 
 
-          if (module.subsectionIds.length > 0) {
+          if (module.subsectionIds?.length) {
             await Promise.all(
               module.subsectionIds.map(async (subsectionId) => {
                 return await Subsection.findByIdAndDelete(subsectionId);
