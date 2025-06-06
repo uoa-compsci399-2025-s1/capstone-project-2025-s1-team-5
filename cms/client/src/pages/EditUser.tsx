@@ -1,4 +1,4 @@
-// EditUserForm.tsx
+
 import React, { useState } from "react";
 import axios from "axios";
 
@@ -15,9 +15,9 @@ interface User {
 }
 
 interface EditUserFormProps {
-  user: User;                // The user being edited
-  onUserUpdated: () => void; // Function to call when user is updated
-  setEditUser: React.Dispatch<React.SetStateAction<User | null>>; // Function to reset the editUser state
+  user: User;           
+  onUserUpdated: () => void; 
+  setEditUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 const EditUserForm: React.FC<EditUserFormProps> = ({ user, onUserUpdated, setEditUser }) => {
@@ -47,8 +47,8 @@ const EditUserForm: React.FC<EditUserFormProps> = ({ user, onUserUpdated, setEdi
 
     try {
       await axios.put(`${process.env.REACT_APP_API_URL}/api/users/${user.id}`, updatedUser);
-      onUserUpdated(); // Refresh the list of users
-      setEditUser(null); // Close the edit form
+      onUserUpdated();
+      setEditUser(null);
       setSuccess("User successfully edited")
     } catch (error) {
       console.error("Failed to update user:", error);

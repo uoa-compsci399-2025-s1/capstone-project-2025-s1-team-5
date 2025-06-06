@@ -44,7 +44,6 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
     return module._id || '';
   };
 
-  // ← ADDED: Reusable helper to fetch *all* links by ID and update state
   const fetchLinks = async () => {
     try {
       const token = localStorage.getItem('authToken');
@@ -68,7 +67,6 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
     }
   };
 
-  // Fetch subsections, quizzes, and links by their IDs (only once)
   useEffect(() => {
     const fetchData = async () => {
       if (quizzesFetchedRef.current) return;
@@ -78,7 +76,6 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
         const token = localStorage.getItem('authToken');
         const headers = { Authorization: `Bearer ${token}` };
 
-        // 1) Fetch subsections
         const subResponses = await Promise.all(
           moduleSubsectionIds.map(id =>
             axios.get<Subsection>(`${process.env.REACT_APP_API_URL}/api/modules/subsection/${id}`, {
@@ -88,7 +85,6 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
         );
         setSubsections(subResponses.map(res => res.data));
 
-        // 2) Fetch quizzes
         const quizResponses = await Promise.all(
           moduleQuizIds.map(id =>
             axios.get<Quiz>(`${process.env.REACT_APP_API_URL}/api/modules/quiz/${id}`, { headers })
@@ -96,7 +92,6 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
         );
         setQuizzes(quizResponses.map(res => ({ ...res.data, questions: res.data.questions || [] })));
 
-        // 3) Fetch links via our helper
         await fetchLinks();
 
         setLoading(false);
@@ -110,7 +105,6 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
     fetchData();
   }, [moduleSubsectionIds, moduleQuizIds, moduleLinkIds]);
 
-  // ─────────── Subsections ───────────
   const handleSubsectionChange = (_id: string, field: keyof Subsection, value: string) => {
     setSubsections(prev =>
       prev.map(subsection => (subsection._id === _id ? { ...subsection, [field]: value } : subsection))
@@ -192,7 +186,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
     setModuleSubsectionIds(items.map(item => item._id));
   };
 
-  // ─────────── Quizzes ───────────
+
   const handleAddQuiz = async () => {
     try {
       const moduleId = getModuleId();
@@ -342,7 +336,6 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
     }
   };
 
-  // ─────────── Links ───────────
   const handleLinkChange = (_id: string, field: keyof Link, value: string) => {
     setLinks(prev =>
       prev.map(link => (link._id === _id ? { ...link, [field]: value } : link))
@@ -350,30 +343,26 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
   };
 
   const handleAddLink = () => {
-    // 1) Generate a unique temp ID
+
     const tempId = `temp-${Date.now()}`;
 
-    // 2) Insert a blank “new link” object into links[]
     setLinks(prev => [
       ...prev,
       {
         _id: tempId,
-        title: '',             // Start with an empty title
-        link: '',              // Start with an empty URL
+        title: '',            
+        link: '',              
       },
     ]);
 
-    // 3) Also insert the tempId into moduleLinkIds so Save knows about it
     setModuleLinkIds(prev => [...prev, tempId]);
 
-    // 4) Show success message (optional)
     setSuccess('New link row added – edit its title/URL, then Save Changes.');
     setError(null);
   };
 
 
   const handleDeleteLink = async (linkId: string) => {
-  // If this is a “temp-…” link, just drop it locally—never call the server
   if (linkId.startsWith('temp-')) {
     setLinks(prev => prev.filter((link) => link._id !== linkId));
     setModuleLinkIds(prev => prev.filter((id) => id !== linkId));
@@ -383,7 +372,6 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
     return;
   }
 
-  // Otherwise, it’s a real link, so call DELETE on the server
   try {
     const moduleId = getModuleId();
     if (!moduleId) {
@@ -410,7 +398,6 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
 };
 
 
-  // ─────────── Save “Save Changes” ───────────
   const handleSubmit = async (event: React.FormEvent) => {
   event.preventDefault();
   const moduleId = getModuleId();
@@ -419,9 +406,8 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
     return;
   }
 
-  // ─────────── VALIDATION: No empty link rows allowed ───────────
+
   for (const linkItem of links) {
-    // trim() so “   ” (only spaces) also counts as empty
     const titleOnly = linkItem.title.trim();
     const urlOnly   = linkItem.link.trim();
 
@@ -457,13 +443,11 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
       }
     }
 
-    // 2) Replace temp IDs with real IDs in moduleLinkIds
     const newModuleLinkIds = moduleLinkIds.map((id) =>
       id.startsWith('temp-') && tempIdToRealId[id] ? tempIdToRealId[id] : id
     );
     setModuleLinkIds(newModuleLinkIds);
 
-    // 3) Build the array of links we’ll actually save (all real IDs now)
     const createdLinks: Link[] = tempLinks
       .filter((t) => Boolean(tempIdToRealId[t._id]))
       .map((t) => ({
@@ -474,7 +458,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
     const linksToSave: Link[] = [...realLinks, ...createdLinks];
     setLinks(linksToSave);
 
-    // 4) PUT each link object (now all have real IDs)
+
     await Promise.all(
       linksToSave.map((linkObj) =>
         axios.put(
@@ -485,14 +469,12 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
       )
     );
 
-    // 5) Update module’s title/description/subsectionIds exactly as before
     await axios.put(
       `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`,
       { title, description, subsectionIds: moduleSubsectionIds },
       { headers }
     );
 
-    // 6) Update subsections, quizzes, questions, etc. (unchanged)
     await Promise.all([
       ...subsections.map((sub) =>
         axios.put(

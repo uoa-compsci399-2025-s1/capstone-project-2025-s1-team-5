@@ -57,11 +57,11 @@ const handleUpload = async (file: File) => {
   return (
     <div 
       className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50"
-      onClick={onClose} // This will close when clicking outside
+      onClick={onClose}
     >
       <div 
         className="bg-white rounded-xl shadow-lg max-w-xl w-full p-6 relative"
-        onClick={e => e.stopPropagation()} // Prevent click from bubbling to parent
+        onClick={e => e.stopPropagation()}
       >
         <button 
           className="absolute right-4 top-4 text-gray-400" 
@@ -73,7 +73,6 @@ const handleUpload = async (file: File) => {
           ✕
         </button>
         <h2 className="text-lg font-bold mb-4">Image Library</h2>
-        {/* Upload form */}
         <div className="flex gap-2 mb-4">
             <input
               type="file"
@@ -90,10 +89,9 @@ const handleUpload = async (file: File) => {
               {uploading ? "Uploading..." : "Select & Upload"}
             </label>
           </div>
-        {/* Image grid */}
         <div 
           className="grid grid-cols-2 md:grid-cols-4 gap-3"
-          onClick={e => e.stopPropagation()} // Add this to prevent bubbling
+          onClick={e => e.stopPropagation()}
         >
           {files.map(file => (
             <button

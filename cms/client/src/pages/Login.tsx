@@ -21,12 +21,11 @@ const Login: React.FC = () => {
 
       const token = response.data.token;
 
-      // Store token securely
       localStorage.setItem("authToken", token);
 
       setError(null);
-      setIsAuthenticated(true); // Update global auth state
-      navigate("/modules/home"); // Navigate to a protected route (e.g., Dashboard)
+      setIsAuthenticated(true);
+      navigate("/modules/home");
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed. Please try again.");
     }
