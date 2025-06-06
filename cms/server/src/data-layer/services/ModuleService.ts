@@ -435,6 +435,16 @@ export class ModuleService {
       },
       { new: true }
     )
+    
+    if (updated) {
+      const parentQuiz = await Quiz.findOne({ questions: questionId });
+      if (parentQuiz) {
+        const parentModule = await newModule.findOne({ quizIds: parentQuiz._id });
+        if (parentModule) {
+          await this.updateModuleTimestamp(parentModule._id.toString());
+        }
+      }
+    }
 
     return updated;
   }
