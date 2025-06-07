@@ -23,6 +23,7 @@ export interface IModule {
   id: string;
   title: string;
   description: string;
+  iconKey?: string; 
   createdAt: Date;
   updatedAt?: Date;
   subsectionIds: Types.ObjectId[];
@@ -58,6 +59,7 @@ export interface ISubsection {
   id: string;
   title: string;
   body: string;
+  iconKey?: string; 
   authorID: string;
   published: boolean;
   createdAt: Date;
