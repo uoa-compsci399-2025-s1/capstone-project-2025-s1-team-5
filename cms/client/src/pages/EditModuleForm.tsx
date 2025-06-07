@@ -8,6 +8,7 @@ import {
   Draggable,
   DropResult,
 } from '@hello-pangea/dnd';
+import { IconPicker } from '../components/IconPicker';
 
 interface EditModuleFormProps {
   module: Module;
@@ -38,6 +39,8 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [editingSubsectionIds, setEditingSubsectionIds] = useState<Set<string>>(new Set());
+  const [iconKey, setIconKey] = useState<string>(module.iconKey || "");
+
   const quizzesFetchedRef = useRef(false);
 
   const getModuleId = () => {
@@ -118,10 +121,13 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
         body: '<p>Enter content here...</p>',
         authorID: 'system',
       };
-
+      const token = localStorage.getItem('authToken');
       const response = await axios.post<Subsection>(
         `${process.env.REACT_APP_API_URL}/api/modules/${module._id}`,
-        newSubsectionData
+        newSubsectionData,                      
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
       );
 
       const newSubsection = response.data;
@@ -471,7 +477,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
 
     await axios.put(
       `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`,
-      { title, description, subsectionIds: moduleSubsectionIds },
+      { title, description, subsectionIds: moduleSubsectionIds, iconKey, },
       { headers }
     );
 
@@ -543,7 +549,13 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
             required
           />
         </div>
-
+        <div className="mb-6">
+          <label className="block mb-2 font-medium">Update Module Icon</label>
+          <IconPicker
+            value={iconKey}
+            onChange={key => setIconKey(key)}
+          />
+        </div>
         <div className="mb-6">
           <div className="flex gap-2 mb-4 border-b">
             <button

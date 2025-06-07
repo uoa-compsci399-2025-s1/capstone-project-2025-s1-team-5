@@ -42,6 +42,7 @@ export interface ModuleResponse {
   id: string;
   title: string;
   description: string;
+  iconKey?: string;
   subsections: SubsectionItem[];
   links: LinkItem[];
   quizzes: QuizDTO[];

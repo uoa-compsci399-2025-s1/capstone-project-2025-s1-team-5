@@ -1,19 +1,19 @@
 import React, { useContext } from 'react';
 import { TouchableOpacity, StyleSheet, View } from 'react-native';
 import { ThemeContext } from '@/contexts/ThemeContext';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { Icon } from './Icon';
 import StyledText from '@/components/StyledText';
 
 interface SubmoduleButtonProps {
   title: string;
   onPress: () => void;
-  iconName?: keyof typeof MaterialIcons.glyphMap; 
+  iconKey?: string; 
 }
 
 export default function SubmoduleButton({
   title,
   onPress,
-  iconName,
+  iconKey,
 }: SubmoduleButtonProps) {
   const { theme } = useContext(ThemeContext);
 
@@ -23,16 +23,20 @@ export default function SubmoduleButton({
       onPress={onPress}
     >
       <View style={styles.content}>
-        {iconName && (
+        {iconKey && (
           <View style={styles.iconContainer}>
-            <MaterialIcons name={iconName} size={50} color="#FFF" />
+            <Icon
+              iconKey={iconKey}
+              size={46}
+              color='#fff'
+            />
           </View>
         )}
         <View style={styles.textContainer}>
           <StyledText type="subtitle" style={styles.textWhite}>
             {title}
           </StyledText>
-        </View>
+        </View> 
       </View>
     </TouchableOpacity>
   );
@@ -42,27 +46,26 @@ const styles = StyleSheet.create({
   button: {
     width: '100%',
     height: 100,
-    paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 12,
-    justifyContent: 'center',
     marginBottom: 10,
+    justifyContent: 'center', 
   },
   content: {
     flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
+    alignItems: 'stretch',
   },
   iconContainer: {
-    flex: 1,
+    width: 40,
     alignItems: 'center',
     justifyContent: 'center',
   },
   textContainer: {
-    flex: 2,
+    flex: 1,
     justifyContent: 'center',
   },
   textWhite: {
     color: '#FFF',
+    textAlign: 'center',  
   },
 });

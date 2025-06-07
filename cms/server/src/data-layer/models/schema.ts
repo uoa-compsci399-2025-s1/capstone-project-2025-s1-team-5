@@ -63,6 +63,8 @@ const moduleSchema: Schema<IModule> = new Schema(
     title: { type: String, required: true },
     description: { type: String, required: true },
 
+    iconKey:  { type: String, required: false },
+
     sortOrder: {
       type: Number,
       required: true,
@@ -100,6 +102,7 @@ const subsectionSchema: Schema<ISubsection> = new Schema(
       type: String,
       required: true,
     },
+    iconKey:  { type: String, required: false },
     authorID: {
       type: String,
       required: true,
@@ -137,6 +140,7 @@ const quizSchema: Schema<IQuiz> = new Schema(
       type: String,
       required: true,
     },
+    iconKey:  { type: String, required: false },
     questions: [
       { type: mongoose.Schema.Types.ObjectId, ref: "Question", required: true },
     ],
@@ -158,6 +162,7 @@ const linkSchema: Schema<ILink> = new Schema(
       type: String,
       required: true,
     },
+    iconKey:  { type: String, required: false },
     createdAt: {
       type: Date,
       default: Date.now,

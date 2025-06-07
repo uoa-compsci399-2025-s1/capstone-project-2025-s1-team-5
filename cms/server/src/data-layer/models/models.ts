@@ -23,6 +23,7 @@ export interface IModule {
   id: string;
   title: string;
   description: string;
+  iconKey?: string; 
   createdAt: Date;
   updatedAt?: Date;
   subsectionIds: Types.ObjectId[];
@@ -47,17 +48,12 @@ export interface IQuestion {
   createdAt: Date;
 }
 
-export interface IQuiz {
-  title: string;
-  description: string;
-  questions: Types.ObjectId[];
-  createdAt: Date;
-}
 
 export interface ISubsection {
   id: string;
   title: string;
   body: string;
+  iconKey?: string; 
   authorID: string;
   published: boolean;
   createdAt: Date;
@@ -75,6 +71,7 @@ export interface IQuiz {
   questions: Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
+  iconKey?: string; 
 }
 
 export interface ILink {
@@ -82,6 +79,7 @@ export interface ILink {
   link: string;
   createdAt: Date;
   updatedAt: Date;
+  iconKey?: string; 
 }
 
 export interface UpdateAvatarRequest {

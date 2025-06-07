@@ -3,13 +3,14 @@ import { StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { useIsFocused } from '@react-navigation/native';
-import SubModuleButton from '@/components/SubModuleButton';
+import ModuleButton from '@/components/ModuleButton'; 
 
 import api from '@/app/lib/api';
 
 interface ModuleItem {
   id: string;
   title: string;
+  iconKey?: string;
 }
 
 export default function ModuleScreen() {
@@ -36,6 +37,7 @@ export default function ModuleScreen() {
       params: {
         moduleId: module.id,
         title: module.title,
+        iconKey: module.iconKey,
       }
     });
   };
@@ -46,9 +48,10 @@ export default function ModuleScreen() {
       showsVerticalScrollIndicator={false}
     >
       {modules.map(m => (
-        <SubModuleButton
+        <ModuleButton
           key={m.id}
           title={m.title}
+          iconKey={m.iconKey}  
           onPress={() => handleModulePress(m)}
         />
       ))}

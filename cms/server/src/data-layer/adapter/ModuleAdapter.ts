@@ -10,6 +10,7 @@ export function moduleAdaptor(doc: any): IModule {
     description: doc.description,
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
+    iconKey: doc.iconKey,
 
     // ✏️ CHANGED: Map sortOrder from the document
     sortOrder: typeof doc.sortOrder === "number" ? doc.sortOrder : 0,
