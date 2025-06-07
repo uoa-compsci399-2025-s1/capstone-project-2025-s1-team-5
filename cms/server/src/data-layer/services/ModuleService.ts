@@ -176,6 +176,7 @@ export class ModuleService {
       subsectionIds?: string[];
       quizIds?: string[];
       linkIds?: string[];
+      iconKey?: string;
     },
   ): Promise<boolean> {
     try {
@@ -207,6 +208,9 @@ export class ModuleService {
         );
       }
 
+      if (moduleChanges.iconKey !== undefined) {
+        module.iconKey = moduleChanges.iconKey
+      }
       await module.save();
       return true;
     } catch (error) {

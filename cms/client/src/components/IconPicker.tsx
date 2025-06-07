@@ -62,9 +62,11 @@ export const IconPicker: React.FC<IconPickerProps> = ({ value, onChange }) => {
         const index = rowIndex * columnCount + columnIndex;
         if (index >= filtered.length) return null;
         const { key, Comp } = filtered[index];
-        const name = key
-          .replace(/^Md/, '')
-          .replace(/([A-Z])/g, l => l.toLowerCase());
+        const raw = key.replace(/^Md/, '');                 // "AddCircleOutline"
+        const name = raw
+            .split(/(?=[A-Z])/)                               // ["Add","Circle","Outline"]
+            .map(s => s.toLowerCase())                        // ["add","circle","outline"]
+            .join('-'); 
         const iconKey = `MaterialIcons#${name}`;
 
         return (

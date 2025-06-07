@@ -10,6 +10,7 @@ import api from '@/app/lib/api';
 interface ModuleItem {
   id: string;
   title: string;
+  iconKey?: string;
 }
 
 export default function ModuleScreen() {
@@ -36,6 +37,7 @@ export default function ModuleScreen() {
       params: {
         moduleId: module.id,
         title: module.title,
+        iconKey: module.iconKey,
       }
     });
   };
@@ -49,6 +51,7 @@ export default function ModuleScreen() {
         <SubModuleButton
           key={m.id}
           title={m.title}
+          iconKey={m.iconKey}  
           onPress={() => handleModulePress(m)}
         />
       ))}

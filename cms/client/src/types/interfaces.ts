@@ -8,6 +8,7 @@ export interface Module {
   linkIds?: string[];
   updatedAt?: string;
   createdAt?: string;
+  iconKey?: string;
 }
 
 export interface Subsection {
