@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -8,17 +8,18 @@ import {
   Platform,
   Keyboard,
   Text,
-} from 'react-native'
-import MaterialIcons from '@expo/vector-icons/MaterialIcons'
-import { ThemeContext } from '@/contexts/ThemeContext'
+} from 'react-native';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 type DropDownMenuProps = {
-  selectedValue: string
-  onValueChange: (value: string) => void
-  items: string[]
-  placeholder: string
-  iconName?: 'public' | 'library-books'
-}
+  selectedValue: string;
+  onValueChange: (value: string) => void;
+  items: string[];
+  placeholder: string;
+  iconName?: 'public' | 'library-books';
+  iconSize?: number;
+};
 
 export default function DropDownMenu({
   selectedValue,
@@ -26,31 +27,61 @@ export default function DropDownMenu({
   items,
   placeholder,
   iconName,
+  iconSize = 20,
 }: DropDownMenuProps) {
-  const { theme } = useContext(ThemeContext)
-  const [visible, setVisible] = useState(false)
+  const { theme } = useContext(ThemeContext);
+  const [visible, setVisible] = useState(false);
 
   const close = () => {
-    Keyboard.dismiss()
-    setVisible(false)
-  }
+    Keyboard.dismiss();
+    setVisible(false);
+  };
 
-  const displayText = selectedValue || placeholder
-  const displayColor = selectedValue ? theme.text : theme.subtextOne
+  const displayText = selectedValue || placeholder;
+  const displayColor = selectedValue ? theme.text : theme.subtextOne;
 
   return (
     <>
-      <TouchableOpacity
-        style={[styles.container, { backgroundColor: theme.backgroundSecondary }]}
-        activeOpacity={0.7}
-        onPress={() => setVisible(true)}
-      >
+      <View style={styles.container}>
         {iconName && (
-          <MaterialIcons name={iconName} size={20} color={theme.text} style={styles.icon} />
+          <MaterialIcons
+            name={iconName}
+            size={iconSize}
+            color={theme.text}
+            style={styles.icon}
+          />
         )}
-        <Text style={[styles.label, { color: displayColor }]}>{displayText}</Text>
-        <MaterialIcons name="keyboard-arrow-down" size={24} color={theme.text} />
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.input,
+            { 
+              backgroundColor: theme.backgroundSecondary,
+              height: 50,
+              paddingLeft: iconName ? 40 : 20, 
+            }
+          ]}
+          activeOpacity={0.7}
+          onPress={() => setVisible(true)}
+        >
+          <Text
+            style={[
+              styles.label,
+              {
+                color: displayColor,
+                lineHeight: 20, 
+              },
+            ]}
+          >
+            {displayText}
+          </Text>
+          <MaterialIcons 
+            name="keyboard-arrow-down" 
+            size={24} 
+            color={theme.text} 
+            style={styles.dropdownIcon}
+          />
+        </TouchableOpacity>
+      </View>
 
       <Modal visible={visible} transparent animationType="fade" onRequestClose={close}>
         <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={close} />
@@ -62,8 +93,8 @@ export default function DropDownMenu({
               <TouchableOpacity
                 style={styles.item}
                 onPress={() => {
-                  onValueChange(item)
-                  close()
+                  onValueChange(item);
+                  close();
                 }}
               >
                 <Text style={[styles.itemText, { color: theme.text }]}>{item}</Text>
@@ -78,25 +109,37 @@ export default function DropDownMenu({
         </View>
       </Modal>
     </>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 50,
-    borderRadius: 10,
-    paddingHorizontal: 20,
-    marginVertical: 5,
+    position: 'relative',
     width: '100%',
+    marginBottom: 10,
+  },
+  input: {
+    width: '100%',
+    borderRadius: 10,
+    justifyContent: 'center',
+    paddingRight: 20, 
   },
   icon: {
-    marginRight: 8,
+    position: 'absolute',
+    left: 10,
+    top: 15,
+    zIndex: 1,
   },
   label: {
-    flex: 1,
     fontSize: 16,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+    paddingVertical: 15, 
+  },
+  dropdownIcon: {
+    position: 'absolute',
+    right: 10,
+    top: 13,
   },
   backdrop: {
     flex: 1,
@@ -124,4 +167,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-})
+});

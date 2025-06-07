@@ -34,9 +34,7 @@ const ProfileOptionButton: React.FC<ProfileOptionButtonProps> = ({
   return (
     <TouchableOpacity style={buttonStyle} onPress={onPress}>
       <MaterialIcons name={iconName} size={70} color="#fff" />
-      <StyledText type="boldLabel" style={styles.text}>
-        {title}
-      </StyledText>
+      <StyledText type="boldLabel" style={styles.text}>{title}</StyledText>
     </TouchableOpacity>
   );
 };

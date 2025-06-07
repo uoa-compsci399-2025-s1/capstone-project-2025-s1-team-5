@@ -45,15 +45,36 @@ export class ModuleController extends Controller {
         return moduleData;
     }
 
-    @Security("jwt", ["admin"]) 
+    @Security("jwt", ["admin"])
     @Post()
     @SuccessResponse(201, "Module Created")
     public async addModule(
-        @Body() body: { title: string; description: string }
+      @Body() body: { title: string; description: string }
     ): Promise<IModule> {
-        return this.moduleService.createModule(body);
+      // This line must invoke the service we edited
+      return this.moduleService.createModule(body);
     }
 
+    @Security("jwt", ["admin"])
+    @Put("reorder")
+    @SuccessResponse(200, "Modules Reordered")
+    public async reorderModules(
+      @Body() body: { orderedModuleIds: string[] }
+    ): Promise<{ success: boolean }> {
+      const { orderedModuleIds } = body;
+      if (!Array.isArray(orderedModuleIds)) {
+        this.setStatus(400);
+        return { success: false };
+      }
+      const wasReordered = await this.moduleService.reorderModules(orderedModuleIds);
+      if (!wasReordered) {
+        this.setStatus(500);
+        return { success: false };
+      }
+      return { success: true };
+    }
+
+    @Security("jwt", ["admin"])
     @Put("{moduleId}")
     @SuccessResponse(200, "Module Updated")
     public async updateModule(
@@ -64,6 +85,7 @@ export class ModuleController extends Controller {
       return { success: result };
     }
 
+    @Security("jwt", ["admin"])
     @Delete("{moduleId}")
     @SuccessResponse(202, "Module Deleted")
     public async deleteModule(@Path() moduleId: string): Promise<{ message: string }> {
@@ -75,7 +97,7 @@ export class ModuleController extends Controller {
         return { message: "Module successfully deleted" };
     }
 
-    //Add Subsection
+    @Security("jwt", ["admin"])
     @Post("{moduleId}")
     @SuccessResponse(201, "Subsection added")
     public async addSubsection(
@@ -85,6 +107,7 @@ export class ModuleController extends Controller {
         return this.moduleService.addSubsection(moduleId, subsectionData);
     }
 
+    @Security("jwt", ["admin"])
     @Put("subsection/{subsectionId}")
     @SuccessResponse(202, "Subsection updated")
     public async editSubsection(
@@ -103,7 +126,7 @@ export class ModuleController extends Controller {
         return subsection;
     }
 
-    //Delete Subsection
+    @Security("jwt", ["admin"])
     @Delete("{moduleId}/{subsectionId}")
     public async deleteSubsectionFromModule(
         @Path() moduleId: string,
@@ -114,7 +137,7 @@ export class ModuleController extends Controller {
         return { success: result };
     }
 
-    //Create Quiz
+    @Security("jwt", ["admin"])
     @Post("{moduleId}/quiz")
     public async addQuiz(
         @Path() moduleId: string,
@@ -135,6 +158,7 @@ export class ModuleController extends Controller {
       return quiz;
     }
 
+    @Security("jwt", ["admin"])
     @Put("/quiz/{quizId}")
     public async updateQuiz(
       @Path() quizId: string,
@@ -148,6 +172,7 @@ export class ModuleController extends Controller {
     }
 
     //Delete Quiz        
+    @Security("jwt", ["admin"])
     @Delete("/quiz/{moduleId}/{quizId}")
     @SuccessResponse(200, "Quiz deleted")
     public async deleteQuiz(
@@ -174,6 +199,7 @@ export class ModuleController extends Controller {
     }
 
     //Add Question
+    @Security("jwt", ["admin"])
     @Post("/quiz/{quizId}")
     public async addQuestion(
         @Path() quizId: string,
@@ -187,6 +213,7 @@ export class ModuleController extends Controller {
     }
     
     //EditQuestion
+    @Security("jwt", ["admin"])
     @Patch("/question/{questionId}")
     public async editQuestion(
       @Path() questionId: string,
@@ -202,6 +229,7 @@ export class ModuleController extends Controller {
       return updated;
     }
     // Delete Question
+    @Security("jwt", ["admin"])
     @Delete("/quiz/{quizId}/question/{questionId}")
     @SuccessResponse(200, "Question deleted")
     public async deleteQuestion(
@@ -218,7 +246,7 @@ export class ModuleController extends Controller {
       return { success: true, message: "Question successfully deleted" };
     }
 
-    //Add Link
+  @Security("jwt", ["admin"])
   @Post("/link/{moduleId}")
   @SuccessResponse("201", "Created Link")
   public async addLink(
@@ -233,6 +261,7 @@ export class ModuleController extends Controller {
     this.setStatus(201); 
   }
 
+  @Security("jwt", ["admin"])
   @Put("/link/{linkId}")
   @SuccessResponse("200", "Link updated")
   public async editLink(
@@ -258,6 +287,7 @@ export class ModuleController extends Controller {
     return link;
   }
 
+  @Security("jwt", ["admin"])
   @Delete("link/{moduleId}/{linkId}")
   @SuccessResponse("200", "Deleted successfully")
   public async deleteLinkById(
@@ -273,5 +303,3 @@ export class ModuleController extends Controller {
     }
   }
 }
-
-

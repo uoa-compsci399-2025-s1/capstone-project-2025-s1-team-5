@@ -9,7 +9,7 @@ interface SidebarProps {
 }
 
 function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, scopes } = useAuth();
   const sidebarRef = useOutsideClick(() => {
     if (isOpen) {
       setIsOpen(false);
@@ -74,7 +74,7 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
   return (
     <>
-      {isAuthenticated && !isOpen && (
+      {isAuthenticated && scopes.includes("admin") && !isOpen && (
         <button 
           style={styles.burgerIcon as React.CSSProperties} 
           onClick={toggleSidebar}
@@ -83,7 +83,7 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         </button>
       )}
 
-      {isAuthenticated && (
+      {isAuthenticated && scopes.includes("admin") && (
         <div ref={sidebarRef} style={styles.sidebar as React.CSSProperties}>
           <img 
             src="/assets/images/UoA-Logo-Primary-RGB-Large.png" 
@@ -94,32 +94,32 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           <nav>
             <ul style={styles.nav}>
               <li style={styles.navItem}>
-                <Link to="/modules/home" className={buttonClass}>
+                <Link to="/home" className={buttonClass}>
                   Home
                 </Link>
               </li>
               <li style={styles.navItem}>
-                <Link to="/modules/modules" className={buttonClass}>
+                <Link to="/modules" className={buttonClass}>
                   Module Management
                 </Link>
               </li>
               <li style={styles.navItem}>
-                <Link to="/modules/programmes" className={buttonClass}>
+                <Link to="/programmes" className={buttonClass}>
                   Programme Management
                 </Link>
               </li>
               <li style={styles.navItem}>
-                <Link to="/modules/users" className={buttonClass}>
+                <Link to="/users" className={buttonClass}>
                   User Management
                 </Link>
               </li>
-              <li style={styles.navItem}>
+              {/* <li style={styles.navItem}>
                 <Link to="/modules/analytics" className={buttonClass}>
                   Analytics
                 </Link>
-              </li>
+              </li> */}
               <li style={styles.navItem}>
-                <Link to="/modules/library" className={buttonClass}>
+                <Link to="/library" className={buttonClass}>
                   Upload Library
                 </Link>
               </li>

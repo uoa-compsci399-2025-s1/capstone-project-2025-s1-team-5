@@ -1,11 +1,16 @@
+// src/pages/ModulesPage.tsx
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import CreateModule from "./CreateModule"
+import CreateModule from "./CreateModule";
 import EditModuleForm from "./EditModuleForm";
 import ModuleButton from "../components/ModuleButton";
 import { Module, ModulesResponse } from "../types/interfaces";
 
-const ModulesPage = () => {
+// ← IMPORT THE NEW OVERLAY COMPONENT
+import ModulesOrder from "./ModulesOrder";
+
+const ModulesPage: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("title");
@@ -13,17 +18,21 @@ const ModulesPage = () => {
   const [editModule, setEditModule] = useState<Module | null>(null);
   const [deleteConfirmModule, setDeleteConfirmModule] = useState<Module | null>(null);
   const [error, setError] = useState<string | null>(null);
-  
+
+  // ← NEW: state to toggle the reorder overlay
+  const [showOrderOverlay, setShowOrderOverlay] = useState(false);
 
   const fetchModules = async () => {
     try {
-      const res = await axios.get<ModulesResponse>(`${process.env.REACT_APP_API_URL}/api/modules`);
-      
-      const mappedModules = res.data.modules.map(module => ({
+      const res = await axios.get<ModulesResponse>(
+        `${process.env.REACT_APP_API_URL}/api/modules`
+      );
+
+      const mappedModules = res.data.modules.map((module) => ({
         ...module,
-        _id: module._id || module.id || '',
+        _id: module._id || module.id || "",
       }));
-      
+
       setModules(mappedModules);
       setError(null);
     } catch (error) {
@@ -39,18 +48,18 @@ const ModulesPage = () => {
   const handleDeleteModule = async (moduleId: string) => {
     try {
       if (!moduleId) {
-        console.error('Module ID is undefined or empty');
-        setError('Cannot delete module: ID is missing');
+        console.error("Module ID is undefined or empty");
+        setError("Cannot delete module: ID is missing");
         return;
       }
-          
+
       const token = localStorage.getItem("authToken");
       await axios.delete(`${process.env.REACT_APP_API_URL}/api/modules/${moduleId}`, {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
-      
+
       fetchModules();
       setDeleteConfirmModule(null);
       setError(null);
@@ -64,7 +73,7 @@ const ModulesPage = () => {
     if (sortOption === "title") {
       return a.title.localeCompare(b.title);
     } else if (sortOption === "lastModified" && a.updatedAt && b.updatedAt) {
-      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(); 
+      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
     }
     return 0;
   });
@@ -73,15 +82,13 @@ const ModulesPage = () => {
     <div className="p-8 font-sans">
       <h1 className="text-3xl font-bold text-gray-800 mb-6 ml-4">Manage Modules</h1>
 
-        <input
-          type="text"
-          placeholder="Search modules by name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="mb-6 p-2 border border-gray-300 rounded w-full max-w-md shadow-sm ml-4"
-        />
-
-
+      <input
+        type="text"
+        placeholder="Search modules by name..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="mb-6 p-2 border border-gray-300 rounded w-full max-w-md shadow-sm ml-4"
+      />
 
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -105,11 +112,20 @@ const ModulesPage = () => {
               <option value="lastModified">Last Modified</option>
             </select>
           </div>
-          <ModuleButton
-            label="Create Module"
-            onClick={() => setCreateModule(true)}
-            color="#28a745"
-          />
+
+          {/* ← ADDED “Reorder Modules” BUTTON */}
+          <div className="flex gap-2">
+            <ModuleButton
+              label="Reorder Modules"
+              onClick={() => setShowOrderOverlay(true)}
+              color="#17a2b8" // teal
+            />
+            <ModuleButton
+              label="Create Module"
+              onClick={() => setCreateModule(true)}
+              color="#28a745"
+            />
+          </div>
         </div>
 
         <div>
@@ -120,8 +136,8 @@ const ModulesPage = () => {
           ) : (
             sortedModules
               .filter((module) => {
-                const title = module.title || '';
-                const description = module.description || '';
+                const title = module.title || "";
+                const description = module.description || "";
                 return (
                   title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                   description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -191,13 +207,19 @@ const ModulesPage = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-8 w-11/12 max-w-lg shadow-lg text-center">
             <h2>Confirm Deletion</h2>
-            <p>Are you sure you want to delete the module "{deleteConfirmModule.title}"?</p>
+            <p>
+              Are you sure you want to delete the module "{deleteConfirmModule.title}"?
+            </p>
             <p className="text-red-600 font-bold">
               This action will also delete all subsections of this module and cannot be undone.
             </p>
             <div className="flex justify-center gap-4 mt-8">
               <button
-                onClick={() => handleDeleteModule(deleteConfirmModule._id || deleteConfirmModule.id || '')}
+                onClick={() =>
+                  handleDeleteModule(
+                    deleteConfirmModule._id || deleteConfirmModule.id || ""
+                  )
+                }
                 className="bg-red-600 text-white border-none rounded py-2 px-4 cursor-pointer"
               >
                 Yes, Delete
@@ -211,6 +233,19 @@ const ModulesPage = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ← NEW: Render the drag-and-drop overlay when needed */}
+      {showOrderOverlay && (
+        <ModulesOrder
+          key={modules.map((m) => m._id).join(",")}
+          modules={modules}
+          onClose={() => setShowOrderOverlay(false)}
+          onOrderChanged={() => {
+            fetchModules();
+            setShowOrderOverlay(false);
+          }}
+        />
       )}
     </div>
   );

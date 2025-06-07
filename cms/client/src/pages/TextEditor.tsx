@@ -46,7 +46,6 @@ const TextEditor = ({ content, onChange, subsectionId }: TextEditorProps) => {
     }
   }, [editor, content])
 
-  // This function is still needed if you want to handle direct uploads (keep for possible use in ImageLibraryModal)
   const handleImageUpload = async (file: File) => {
     const formData = new FormData()
     formData.append('file', file)
@@ -79,7 +78,6 @@ const TextEditor = ({ content, onChange, subsectionId }: TextEditorProps) => {
     setTimeout(() => editor?.commands.focus(), 0)
   }
 
-  // Insert image at cursor without clearing existing content
   const handleLibrarySelect = (url: string) => {
     setLibraryOpen(false)
     editor?.chain().focus().setImage({ src: url }).run()
@@ -89,7 +87,6 @@ const TextEditor = ({ content, onChange, subsectionId }: TextEditorProps) => {
 
   return (
     <div className="border border-gray-300 rounded-md">
-      {/* Toolbar */}
       <div className="flex flex-wrap gap-2 p-2 border-b border-gray-300 bg-gray-50">
         <button onClick={(e) => handleButtonClick(e, () => editor.chain().focus().toggleBold().run())} className={`p-2 rounded ${editor.isActive('bold') ? 'bg-gray-200' : 'bg-white'}`}>
           <span className="font-bold">B</span>
@@ -145,7 +142,6 @@ const TextEditor = ({ content, onChange, subsectionId }: TextEditorProps) => {
             <line x1="3" y1="18" x2="21" y2="18"></line>
           </svg>
         </button>
-        {/* Video */}
         <button
           onClick={(e) => {
             e.preventDefault()
@@ -161,7 +157,6 @@ const TextEditor = ({ content, onChange, subsectionId }: TextEditorProps) => {
         >
           🎥 Add Video
         </button>
-        {/* Image upload / library */}
         <button
           className="p-2 rounded bg-white hover:bg-gray-100 border border-gray-300"
           onClick={e => {
@@ -173,9 +168,7 @@ const TextEditor = ({ content, onChange, subsectionId }: TextEditorProps) => {
           🖼️ Add Image
         </button>
       </div>
-      {/* Editor content */}
       <EditorContent editor={editor} />
-      {/* Image library modal (keep outside of toolbar/content divs!) */}
       <ImageLibraryModal
         open={libraryOpen}
         onClose={() => setLibraryOpen(false)}

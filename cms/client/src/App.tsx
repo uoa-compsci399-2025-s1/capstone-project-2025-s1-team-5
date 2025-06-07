@@ -4,29 +4,65 @@ import Home from './pages/Home';
 import ModulesPage from './pages/Modules';
 import UsersPage from './pages/Users';
 import Layout from './components/Layout';
-import Analytics from './pages/Analytics';
 import Login from './pages/Login';
 import { AuthProvider } from './auth/AuthProvider';
 import UploadLibrary from './pages/UploadLibrary';
 import ProgrammesPage from './pages/Programmes';
+import AdminRoute from './auth/AdminRoute';
 
 export default function App() {
   return (    
-  <AuthProvider>
-    <Router>
-      <Layout>
+    <AuthProvider>
+      <Router>
+        <Layout>
           <Routes>
             <Route path="/" element={<Login />} />
-            <Route path="/modules/home" element={<Home />} />
-            <Route path="/modules/modules" element={<ModulesPage />} />
-            <Route path="/modules/users" element={<UsersPage />} />
-            <Route path="/modules/analytics" element={<Analytics />} />
-            <Route path="/modules/library" element={<UploadLibrary />} />
-            <Route path="/modules/programmes" element={<ProgrammesPage />} />
+
+            <Route
+              path="/home"
+              element={
+                <AdminRoute requiredScope="admin">
+                  <Home />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/modules"
+              element={
+                <AdminRoute requiredScope="admin">
+                  <ModulesPage />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/users"
+              element={
+                <AdminRoute requiredScope="admin">
+                  <UsersPage />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/library"
+              element={
+                <AdminRoute requiredScope="admin">
+                  <UploadLibrary />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/programmes"
+              element={
+                <AdminRoute requiredScope="admin">
+                  <ProgrammesPage />
+                </AdminRoute>
+              }
+            />
+
             <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>
-      </Layout>
-    </Router>
-  </AuthProvider>
-);
+        </Layout>
+      </Router>
+    </AuthProvider>
+  );
 }

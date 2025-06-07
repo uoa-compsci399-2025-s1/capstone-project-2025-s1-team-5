@@ -1,89 +1,115 @@
 import { moduleAdaptor } from "../adapter/ModuleAdapter";
-import type { IModule, IQuestion, IQuiz, ISubsection, ILink } from "../models/models";
-import { Link, newModule, Question, Quiz, Subsection } from "../../data-layer/models/schema";
+import type {
+  IModule,
+  IQuestion,
+  IQuiz,
+  ISubsection,
+  ILink,
+} from "../models/models";
+import {
+  Link,
+  newModule,
+  Question,
+  Quiz,
+  Subsection,
+} from "../../data-layer/models/schema";
 import mongoose from "mongoose";
-import { ModuleResponse, QuizDTO, QuestionDTO } from '../../service-layer/response-models/ModuleResponse';
+import {
+  ModuleResponse,
+  QuizDTO,
+  QuestionDTO,
+} from "../../service-layer/response-models/ModuleResponse";
 
 export class ModuleService {
-    /**
-     * Method to fetch all modules
-     * @returns List of all modules
-     */
-    public async getAllModules(): Promise<IModule[]> {
-        const fetchedModules = await newModule.find();
-        return fetchedModules.map(moduleAdaptor);
-      }
+  /**
+   * Method to fetch all modules
+   * @returns List of all modules
+   */
+  public async getAllModules(): Promise<IModule[]> {
+    const fetchedModules = await newModule
+      .find()
+      .sort({ sortOrder: 1 }) // make sure we sort by sortOrder
+      .exec();
+    return fetchedModules.map(moduleAdaptor);
+  }
 
-    public async getModule(moduleId: string): Promise<ModuleResponse | null> {
-      try {
-          const module = await newModule.findById(moduleId)
-              .populate("subsectionIds","title")
-              .populate('linkIds','title link')
-              .populate({
-                path: 'quizIds',
-                populate: { path: 'questions' }
-              })
-              .lean();
-          if (!module) {
-              return null;
-          }
-          return {
-            id: module._id.toString(),
-            title: module.title,
-            description: module.description,
-            quizzes: (module.quizIds as any[]).map((q): QuizDTO => ({
-              id:   q._id.toString(),
-              title:q.title,
-              description:q.description,
-              questions: (q.questions as any[]).map((qa): QuestionDTO => ({
+  public async getModule(moduleId: string): Promise<ModuleResponse | null> {
+    try {
+      const module = await newModule
+        .findById(moduleId)
+        .populate("subsectionIds", "title")
+        .populate("linkIds", "title link")
+        .populate({
+          path: "quizIds",
+          populate: { path: "questions" },
+        })
+        .lean();
+      if (!module) {
+        return null;
+      }
+      return {
+        id: module._id.toString(),
+        title: module.title,
+        description: module.description,
+        quizzes: (module.quizIds as any[]).map(
+          (q): QuizDTO => ({
+            id: q._id.toString(),
+            title: q.title,
+            description: q.description,
+            questions: (q.questions as any[]).map(
+              (qa): QuestionDTO => ({
                 id: qa._id.toString(),
                 question: qa.question,
                 options: qa.options,
-                correctAnswer: qa.correctAnswer
-              }))
-            })),
-            subsections: (module.subsectionIds as any[]).map(sub => ({
-              id:    (sub._id as any).toString(),
-              title: sub.title,
-            })),
-            links:       (module.linkIds as any[]).map(l => ({
-              id:    l._id.toString(),
-              title: l.title,
-              url:   l.link
-            }))
-          };
-      } catch (error) {
-          console.error("Error fetching module with subsections", error);
-          return null;
-      }
+                correctAnswer: qa.correctAnswer,
+              }),
+            ),
+          }),
+        ),
+        subsections: (module.subsectionIds as any[]).map((sub) => ({
+          id: (sub._id as any).toString(),
+          title: sub.title,
+        })),
+        links: (module.linkIds as any[]).map((l) => ({
+          id: l._id.toString(),
+          title: l.title,
+          url: l.link,
+        })),
+      };
+    } catch (error) {
+      console.error("Error fetching module with subsections", error);
+      return null;
     }
-    /**
-     * Creates new module
-     * @param data 
-     * @returns yes
-     */
-    public async createModule(data: Partial<IModule>): Promise<IModule> {
-        const module = new newModule({
-            title: data.title,
-            description: data.description,
-            subsectionIds: []
-          });
-      
-          const saved = await module.save();
-          return saved.toObject();
-        }
-    /**
-     * 
-     * @param moduleId 
-     * @returns 
-     */
-    public async deleteModule(moduleId: string): Promise<boolean> {
-      try {
-          if (!mongoose.Types.ObjectId.isValid(moduleId)) {
-              return false;
-          }
+  }
+  /**
+   * Creates new module
+   * @param data
+   * @returns yes
+   */
+  public async createModule(data: Partial<IModule>): Promise<IModule> {
+    // ✏️ Count existing modules, then give new one sortOrder = count
+    const existingCount = await newModule.countDocuments().exec();
+    const moduleDoc = new newModule({
+      title: data.title,
+      description: data.description,
+      subsectionIds: [],
+      sortOrder: existingCount, // append to end
+    });
+    const saved = await moduleDoc.save();
+    return saved.toObject();
+  }
+  /**
+   *
+   * @param moduleId
+   * @returns
+   */
+  public async deleteModule(moduleId: string): Promise<boolean> {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(moduleId)) {
+        return false;
+      }
 
-          const module = await newModule.findById(moduleId);
+      const module = await newModule.findById(moduleId);
 
           if (module.quizIds?.length) {
             await Promise.all(
@@ -110,95 +136,125 @@ export class ModuleService {
             );
           }
 
-          const deletedModule = await newModule.findByIdAndDelete(moduleId);
-          return !!deletedModule;
-      } catch (error) {
-          console.error("Error deleting module:", error);
-          return false;
-      }
+      const deletedModule = await newModule.findByIdAndDelete(moduleId);
+      return !!deletedModule;
+    } catch (error) {
+      console.error("Error deleting module:", error);
+      return false;
     }
-    /**
-     * Updates Module title and 
-     * @param moduleId 
-     * @param moduleChanges 
-     * @returns 
-     */
-    public async updateModule(
-        moduleId: string,
-        moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[]; linkIds?: string[] }
-      ): Promise<boolean> {
-        try {
-          const module = await newModule.findById(moduleId);
+  }
 
-          if (!module) {
-            return false;
-          }
-          
-          if (moduleChanges.title !== undefined) module.title = moduleChanges.title;
-          if (moduleChanges.description !== undefined) module.description = moduleChanges.description;
-          
-          if (moduleChanges.subsectionIds !== undefined) {
-            module.subsectionIds = moduleChanges.subsectionIds.map(id => new mongoose.Types.ObjectId(id));
-          }
-          
-          if (moduleChanges.quizIds !== undefined) {
-            module.quizIds = moduleChanges.quizIds.map(id => new mongoose.Types.ObjectId(id));
-          }
-          
-          if (moduleChanges.linkIds !== undefined) {
-            module.linkIds = moduleChanges.linkIds.map(id => new mongoose.Types.ObjectId(id));
-          }
-
-          await module.save();
-          return true;
-        } catch (error) {
-          console.error("Error updating module:", error);
-          return false;
-        }
-    }
-    /**
-     * Add Subsection to a module
-     * @param moduleId 
-     * @param subsectionData 
-     * @returns 
-     */
-    public async addSubsection(
-      moduleId: string,
-      subsectionData: { title: string; body: string; authorID: string }
-    ): Promise<ISubsection | null> {
-      try {
-        const module = await newModule.findById(moduleId);
-        if (!module) {
-          throw new Error("Module not found");
-        }
-    
-        const newSubsection = new Subsection({
-          title: subsectionData.title,
-          body: subsectionData.body,
-          authorID: subsectionData.authorID,
-        });
-    
-        await newSubsection.save();
-    
-        if (!newSubsection._id) {
-          throw new Error("Subsection ID not generated");
-        }
-
-        module.subsectionIds.push(newSubsection._id);        
-        await module.save();
-        return newSubsection;
-      } catch (error: any) {
-        return error;
+  public async reorderModules(orderedIds: string[]): Promise<boolean> {
+    if (!Array.isArray(orderedIds)) return false;
+    try {
+      for (let i = 0; i < orderedIds.length; i++) {
+        const moduleId = orderedIds[i];
+        if (!mongoose.Types.ObjectId.isValid(moduleId)) continue;
+        await newModule
+          .updateOne({ _id: moduleId }, { $set: { sortOrder: i } })
+          .exec();
       }
+      return true;
+    } catch (error) {
+      console.error("Error reordering modules:", error);
+      return false;
     }
-    
-    public async getSubsectionById(subsectionId: string): Promise<ISubsection> {
-        const subsection = await Subsection.findById(subsectionId)
-      if (!subsection) {
-        throw new Error("Subsection Not Found")
+  }
+  /**
+   * Updates Module title and
+   * @param moduleId
+   * @param moduleChanges
+   * @returns
+   */
+  public async updateModule(
+    moduleId: string,
+    moduleChanges: {
+      title?: string;
+      description?: string;
+      subsectionIds?: string[];
+      quizIds?: string[];
+      linkIds?: string[];
+    },
+  ): Promise<boolean> {
+    try {
+      const module = await newModule.findById(moduleId);
+
+      if (!module) {
+        return false;
       }
-      return subsection
+
+      if (moduleChanges.title !== undefined) module.title = moduleChanges.title;
+      if (moduleChanges.description !== undefined)
+        module.description = moduleChanges.description;
+
+      if (moduleChanges.subsectionIds !== undefined) {
+        module.subsectionIds = moduleChanges.subsectionIds.map(
+          (id) => new mongoose.Types.ObjectId(id),
+        );
+      }
+
+      if (moduleChanges.quizIds !== undefined) {
+        module.quizIds = moduleChanges.quizIds.map(
+          (id) => new mongoose.Types.ObjectId(id),
+        );
+      }
+
+      if (moduleChanges.linkIds !== undefined) {
+        module.linkIds = moduleChanges.linkIds.map(
+          (id) => new mongoose.Types.ObjectId(id),
+        );
+      }
+
+      await module.save();
+      return true;
+    } catch (error) {
+      console.error("Error updating module:", error);
+      return false;
     }
+  }
+  /**
+   * Add Subsection to a module
+   * @param moduleId
+   * @param subsectionData
+   * @returns
+   */
+  public async addSubsection(
+    moduleId: string,
+    subsectionData: { title: string; body: string; authorID: string },
+  ): Promise<ISubsection | null> {
+    try {
+      const module = await newModule.findById(moduleId);
+      if (!module) {
+        throw new Error("Module not found");
+      }
+
+      const newSubsection = new Subsection({
+        title: subsectionData.title,
+        body: subsectionData.body,
+        authorID: subsectionData.authorID,
+      });
+
+      await newSubsection.save();
+
+      if (!newSubsection._id) {
+        throw new Error("Subsection ID not generated");
+      }
+
+      module.subsectionIds.push(newSubsection._id);
+      await module.save();
+      return newSubsection;
+    } catch (error: any) {
+      return error;
+    }
+  }
+
+  public async getSubsectionById(subsectionId: string): Promise<ISubsection> {
+    const subsection = await Subsection.findById(subsectionId);
+    if (!subsection) {
+      throw new Error("Subsection Not Found");
+    }
+    return subsection;
+  }
 
     /**
      * Deletes Subsection of a module
@@ -290,23 +346,23 @@ export class ModuleService {
        * @returns 
        */
 
-    public async addQuiz(
-      moduleId: string,
-      quizData: {title: string, description: string}
-    ): Promise<IQuiz> {
-      try {
-        const module = await newModule.findById(moduleId);
-        if (!module) {
-          throw new Error("Module not found");
-        }
-    
-        const newQuiz = new Quiz(quizData);
-        await newQuiz.save();
-        module.quizIds.push(newQuiz._id);        
-        await module.save();
-        return newQuiz;
-      } catch (error: any) {
-        return error;
+  public async addQuiz(
+    moduleId: string,
+    quizData: { title: string; description: string },
+  ): Promise<IQuiz> {
+    try {
+      const module = await newModule.findById(moduleId);
+      if (!module) {
+        throw new Error("Module not found");
+      }
+
+      const newQuiz = new Quiz(quizData);
+      await newQuiz.save();
+      module.quizIds.push(newQuiz._id);
+      await module.save();
+      return newQuiz;
+    } catch (error: any) {
+      return error;
     }
   }
 
@@ -325,16 +381,16 @@ export class ModuleService {
 
   public async updateQuiz(
     quizId: string,
-    quizData: { title: string; description: string }
+    quizData: { title: string; description: string },
   ): Promise<IQuiz | null> {
     try {
       const quiz = await Quiz.findByIdAndUpdate(
         quizId,
-        { 
+        {
           title: quizData.title,
-          description: quizData.description
+          description: quizData.description,
         },
-        { new: true }
+        { new: true },
       ).exec();
 
       const parentModule = await newModule.findOne({ quizIds: quizId });
@@ -351,7 +407,10 @@ export class ModuleService {
 
   public async deleteQuiz(quizId: string, moduleId: string): Promise<boolean> {
     try {
-      if (!mongoose.Types.ObjectId.isValid(quizId) || !mongoose.Types.ObjectId.isValid(moduleId)) {
+      if (
+        !mongoose.Types.ObjectId.isValid(quizId) ||
+        !mongoose.Types.ObjectId.isValid(moduleId)
+      ) {
         console.error("Invalid quiz or module ID");
         return false;
       }
@@ -364,18 +423,20 @@ export class ModuleService {
 
       const quiz = await Quiz.findById(quizId);
       if (quiz && quiz.questions && quiz.questions.length > 0) {
-        console.log(`Deleting ${quiz.questions.length} questions from quiz ${quizId}`);
-        
+        console.log(
+          `Deleting ${quiz.questions.length} questions from quiz ${quizId}`,
+        );
+
         for (const questionId of quiz.questions) {
           await Question.findByIdAndDelete(questionId);
         }
       }
 
-      module.quizIds = module.quizIds.filter(id => id.toString() !== quizId);
+      module.quizIds = module.quizIds.filter((id) => id.toString() !== quizId);
       await module.save();
 
       await Quiz.findByIdAndDelete(quizId);
-      
+
       return true;
     } catch (error) {
       console.error("Error deleting quiz:", error);
@@ -394,8 +455,12 @@ export class ModuleService {
   }
 
   public async addQuestionToQuiz(
-    quizId: string, 
-    questionData: { question: string; options: string[]; correctAnswer: string }
+    quizId: string,
+    questionData: {
+      question: string;
+      options: string[];
+      correctAnswer: string;
+    },
   ): Promise<IQuestion> {
     try {
       const newQuestion = new Question({
@@ -405,11 +470,10 @@ export class ModuleService {
       });
 
       const savedQuestion = await newQuestion.save();
-      
-      await Quiz.findByIdAndUpdate(
-        quizId,
-        { $push: { questions: savedQuestion._id } }
-      );
+
+      await Quiz.findByIdAndUpdate(quizId, {
+        $push: { questions: savedQuestion._id },
+      });
 
       return savedQuestion;
     } catch (error) {
@@ -420,7 +484,11 @@ export class ModuleService {
 
   public async updateQuestion(
     questionId: string,
-    questionData: { question: string; options: string[]; correctAnswer: string }
+    questionData: {
+      question: string;
+      options: string[];
+      correctAnswer: string;
+    },
   ): Promise<IQuestion | null> {
     if (!mongoose.Types.ObjectId.isValid(questionId)) {
       return null;
@@ -431,7 +499,7 @@ export class ModuleService {
       {
         question: questionData.question,
         options: questionData.options,
-        correctAnswer: questionData.correctAnswer
+        correctAnswer: questionData.correctAnswer,
       },
       { new: true }
     )
@@ -448,44 +516,53 @@ export class ModuleService {
 
     return updated;
   }
-      
-public async deleteQuestion(questionId: string, quizId: string): Promise<boolean> {
-  const quiz = await Quiz.findById(quizId);
-  if (!quiz) {
-    console.error(`Quiz ${quizId} not found`);
-    return false;
-  }
 
-  try {
-    const deleted = await Question.findByIdAndDelete(questionId);
-    if (!deleted) {
-      console.error(`Question ${questionId} not found`);
+  public async deleteQuestion(
+    questionId: string,
+    quizId: string,
+  ): Promise<boolean> {
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) {
+      console.error(`Quiz ${quizId} not found`);
       return false;
     }
 
-    quiz.questions = quiz.questions.filter(id => id.toString() !== questionId);
-    await quiz.save();
+    try {
+      const deleted = await Question.findByIdAndDelete(questionId);
+      if (!deleted) {
+        console.error(`Question ${questionId} not found`);
+        return false;
+      }
 
-    return true;
-  } catch (error) {
-    console.error("Error deleting question:", error);
-    return false;
+      quiz.questions = quiz.questions.filter(
+        (id) => id.toString() !== questionId,
+      );
+      await quiz.save();
+
+      return true;
+    } catch (error) {
+      console.error("Error deleting question:", error);
+      return false;
+    }
   }
-}
 
-//CRUD Methods for LINK support
- public async createLink(moduleId: string,title: string, link: string): Promise<boolean> {
-      try {
+  //CRUD Methods for LINK support
+  public async createLink(
+    moduleId: string,
+    title: string,
+    link: string,
+  ): Promise<boolean> {
+    try {
       const module = await newModule.findById(moduleId);
       if (!module) {
         throw new Error("Module not found");
       }
-      const newLink = new Link({title, link});
-      
-      await newLink.save();
-      module.linkIds.push(newLink._id);  
+      const newLink = new Link({ title, link });
 
-      await module.save()
+      await newLink.save();
+      module.linkIds.push(newLink._id);
+
+      await module.save();
       return true;
     } catch (error) {
       console.error("Error creating link:", error);
@@ -502,7 +579,11 @@ public async deleteQuestion(questionId: string, quizId: string): Promise<boolean
     }
   }
 
-  public async updateLink(id: string, title: string, link: string): Promise<boolean> {
+  public async updateLink(
+    id: string,
+    title: string,
+    link: string,
+  ): Promise<boolean> {
     try {
       const result = await Link.findByIdAndUpdate(id, { title, link }, { new: true });
 
@@ -532,7 +613,7 @@ public async deleteQuestion(questionId: string, quizId: string): Promise<boolean
         return false;
       }
 
-      module.linkIds = module.linkIds.filter(id => id.toString() !== linkId);
+      module.linkIds = module.linkIds.filter((id) => id.toString() !== linkId);
       await module.save();
 
       return true;

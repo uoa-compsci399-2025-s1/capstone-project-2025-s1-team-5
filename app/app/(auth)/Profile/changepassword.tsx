@@ -31,6 +31,12 @@ export default function ChangePasswordScreen() {
         return;
       }
 
+      if (currentPassword === newPassword) {
+        setErrorMessage('New password cannot be the same as the old password.');
+        setSuccessMessage('');
+        return;
+      }
+
       try {
          const res = await api.post<{ message: string }>('/auth/changePassword', {
           oldPassword: currentPassword,
@@ -45,9 +51,8 @@ export default function ChangePasswordScreen() {
         setTimeout(() => router.back(), 2000)
 
       } catch (e) {
-        setErrorMessage('An error occurred while changing the password.');
+        setErrorMessage('The current password is incorrect.');
         setSuccessMessage('');
-        console.error('Error:', e);
       }
     } else {
       setErrorMessage('Please fill out all fields.');

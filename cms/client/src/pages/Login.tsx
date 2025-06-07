@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
@@ -8,29 +8,45 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { setIsAuthenticated } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, setScopes } = useAuth();
 
-  const handleLogin = async (event: React.FormEvent) => {
-    event.preventDefault();
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/home");
+    }
+  }, [isAuthenticated, navigate]);
 
-    try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
+const handleLogin = async (event: React.FormEvent) => {
+  event.preventDefault();
+
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/api/auth/login/admin`,
+      {
         email,
         password,
-      });
+      }
+    );
 
-      const token = response.data.token;
+    const token = response.data.token;
+    localStorage.setItem("authToken", token);
 
-      // Store token securely
-      localStorage.setItem("authToken", token);
+    const decoded = JSON.parse(atob(token.split(".")[1]));
 
-      setError(null);
-      setIsAuthenticated(true); // Update global auth state
-      navigate("/modules/home"); // Navigate to a protected route (e.g., Dashboard)
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Login failed. Please try again.");
+    if (!decoded.scopes?.includes("admin")) {
+      setError("You are not authorized as an admin.");
+      localStorage.removeItem("authToken");
+      return;
     }
-  };
+
+    setScopes(decoded.scopes);
+    setIsAuthenticated(true);
+    setError(null);
+    navigate("/home"); // move navigation here instead
+  } catch (err: any) {
+    setError(err.response?.data?.message || "Login failed. Please try again.");
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300 p-6">

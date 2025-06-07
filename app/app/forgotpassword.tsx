@@ -7,6 +7,8 @@ import StyledText from '@/components/StyledText';
 import TextInputBox from '@/components/TextInputBox';
 import SubmitButton from '@/components/SubmitButton';
 
+import api from './lib/api';
+
 export default function ContactFormScreen() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -14,7 +16,6 @@ export default function ContactFormScreen() {
   const [contact, setContact] = useState('');
   const { theme, isDarkMode } = useContext(ThemeContext);
 
-  const GETFORM_ENDPOINT = 'https://getform.io/f/bpjpjpvb';
 
   const handleSubmit = async () => {
     if (!firstName || !lastName || !email || !contact) {
@@ -27,35 +28,35 @@ export default function ContactFormScreen() {
       last_name: lastName,
       preferred_email: email,
       contact_number: contact,
+      enquiry_message: ' ',
+      title: 'UoA Your Way Password Reset Request'
     };
-    const formBody = new URLSearchParams(data).toString();
 
     try {
-      const response = await fetch(GETFORM_ENDPOINT, {
-        method: 'POST',
+      const response = await api.post('/support', data, {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
         },
-        body: formBody,
       });
 
-      if (response.ok) {
-        Alert.alert('Success', 'Your enquiry has been sent.');
-
+      if (response.status === 204) {
+        Alert.alert('Success', 'Your request has been sent.');
         setFirstName('');
         setLastName('');
         setEmail('');
         setContact('');
       } else {
-        const errText = await response.text();
-        console.error('Form submission failed:', errText);
-        Alert.alert('Error', 'Failed to send enquiry.');
+          console.warn('Unexpected status code:', response.status);
+          Alert.alert('Error', 'Failed to send request.');
+        }
+    } catch (error: any) {
+        console.error('Submit error:', error.response?.data || error.message);
+        const msg =
+          error.response?.data?.message ||
+          'Network error while sending request.';
+        Alert.alert('Error', msg);
       }
-    } catch (error) {
-      console.error('Fetch error:', error);
-      Alert.alert('Error', 'Network error while sending enquiry.');
-    }
-  };
+    };
 
   const logoSource = isDarkMode
     ? require('@/assets/logos/VerticalWhiteLogo.png')
@@ -66,7 +67,7 @@ export default function ContactFormScreen() {
 
     <View style={styles.appLogo}><Image source={logoSource} style={styles.logoImage}/></View>
     <StyledText type="label" style={styles.customTitle}>Forgot Password?</StyledText>
-    <StyledText type="label" style={[{ color: theme.text }, styles.customMessage]}>Enter your account information below. Our team will follow up shortly to help you reset your password.</StyledText>
+    <StyledText type="label" style={[{ color: theme.text }, styles.customMessage]}>Enter your contact information below. Our team will follow up shortly to help you reset your password.</StyledText>
 
       <TextInputBox
         placeholder="First Name"
@@ -81,7 +82,7 @@ export default function ContactFormScreen() {
         iconName="person"
       />
       <TextInputBox
-        placeholder="Email"
+        placeholder="Preferred Email"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -102,7 +103,7 @@ export default function ContactFormScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 24,
+    padding: 20,
     paddingBottom: 40,
     flexGrow: 1,
   },
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
   customTitle: {
     fontSize: 20,
     fontFamily: 'National',
-    marginBottom: '5%',
+    marginBottom: 8,
     alignSelf: 'center',
   },
   customMessage: {
