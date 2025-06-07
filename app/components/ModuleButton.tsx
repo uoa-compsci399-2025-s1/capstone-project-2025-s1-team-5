@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 12,
     justifyContent: 'center',
-    marginBottom: 10,
+    marginBottom: 15,
   },
   content: {
     flexDirection: 'row',
@@ -52,15 +52,19 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   iconContainer: {
-    flex: 1,
+    width: 70,             
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 20,       
   },
   textContainer: {
-    flex: 1,
+    flex: 1,              
     justifyContent: 'center',
   },
   textWhite: {
     color: '#FFFFFF',
+    fontSize: 19,
+    fontWeight: 'bold',
   },
 });
+
