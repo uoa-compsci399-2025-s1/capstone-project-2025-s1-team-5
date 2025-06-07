@@ -32,6 +32,7 @@ export default function ModuleDetailScreen() {
         <SubModuleButton
           key={s.id}
           title={s.title}
+          iconKey={s.iconKey}
           onPress={() =>
             router.push({
               pathname: `/Modules/[moduleId]/[subsectionId]`,

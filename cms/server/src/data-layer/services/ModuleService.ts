@@ -226,7 +226,7 @@ export class ModuleService {
    */
   public async addSubsection(
     moduleId: string,
-    subsectionData: { title: string; body: string; authorID: string },
+    subsectionData: { title: string; body: string; authorID: string, iconKey?: string},
   ): Promise<ISubsection | null> {
     try {
       const module = await newModule.findById(moduleId);
@@ -238,6 +238,7 @@ export class ModuleService {
         title: subsectionData.title,
         body: subsectionData.body,
         authorID: subsectionData.authorID,
+        iconKey: subsectionData.iconKey,
       });
 
       await newSubsection.save();

@@ -7,17 +7,20 @@ export interface Subsection {
   createdAt:string;
   updatedAt:string;
   __v:     number;
+  iconKey?: string
 }
 
 export interface SubsectionItem { 
   id: string; 
-  title: string 
+  title: string;
+  iconKey?: string
 }
 
 export interface LinkItem { 
   id: string; 
   title: string; 
-  url: string 
+  url: string;
+  iconKey?: string
 }
 export interface ModuleDetail {
   subsections: SubsectionItem[];
@@ -36,6 +39,7 @@ export interface QuizItem {
   title: string;
   description: string;
   questions: QuestionItem[];
+  iconKey?: string;
 }
 
 export type UserAnswer = {

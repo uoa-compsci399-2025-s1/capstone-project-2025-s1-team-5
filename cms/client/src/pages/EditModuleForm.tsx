@@ -639,12 +639,20 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
                               </div>
 
                               {editingSubsectionIds.has(subsection._id) && (
-                                <TextEditor
-                                  key={subsection._id}
-                                  subsectionId={subsection._id}
-                                  content={subsection.body}
-                                  onChange={content => handleSubsectionChange(subsection._id, 'body', content)}
-                                />
+                                <View>
+                                  <label>Icon</label>
+                                  <IconPicker
+                                    value={formik.values.iconKey}
+                                    onChange={key => formik.setFieldValue('iconKey', key)}
+                                  />
+                                  <TextEditor
+                                    key={subsection._id}
+                                    subsectionId={subsection._id}
+                                    content={subsection.body}
+                                    onChange={content => handleSubsectionChange(subsection._id, 'body', content)}
+                                  />
+                                </View>
+                                
                               )}
                             </div>
                           )}

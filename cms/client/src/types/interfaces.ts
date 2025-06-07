@@ -16,6 +16,7 @@ export interface Subsection {
   title: string;
   body: string;
   authorID: string;
+  iconKey?: string;
 }
 
 export interface Question {
@@ -31,6 +32,7 @@ export interface Quiz {
   title: string;
   description: string;
   questions: Question[];
+  iconKey?: string;
 }
 
 export interface ModulesResponse {
@@ -48,4 +50,5 @@ export interface Link {
   _id: string;
   title: string;
   link: string;
+  iconKey?: string;
 }

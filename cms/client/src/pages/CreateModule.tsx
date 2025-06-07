@@ -7,18 +7,21 @@ import { IconPicker } from '../components/IconPicker';
 interface Subsection {
   title: string;
   body: string;
+  iconKey?: string;
 }
 
 interface Question {
   question: string;
   options: string[];
   correctAnswer: string;
+  iconKey?: string;
 }
 
 interface Quiz {
   title: string;
   description: string;
   questions: Question[];
+  iconKey?: string;
 }
 
 interface CreateModuleProps {
@@ -51,7 +54,8 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
   const handleAddSubsection = () => {
     setSubsections([...subsections, { 
       title: "New Subsection", 
-      body: "<p>Enter content here...</p>" 
+      body: "<p>Enter content here...</p>",
+      iconKey: "" 
     }]);
   };
 
@@ -68,7 +72,8 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
         question: "Enter your question here",
         options: ["Option 1", "Option 2", "Option 3", "Option 4"],
         correctAnswer: "Option 1"
-      }]
+      }],
+      iconKey: ""
     }]);
   };
 
@@ -173,7 +178,8 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
     setLinks([...links, { 
       _id: `temp-${Date.now()}`,
       title: "New Link", 
-      link: "https://example.com" 
+      link: "https://example.com",
+      iconKey: "",
     }]);
   };
 
@@ -218,7 +224,7 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
           quizzes.map(async (quiz) => {
             const quizResponse = await axios.post(
               `${process.env.REACT_APP_API_URL}/api/modules/${moduleId}/quiz`,
-              { title: quiz.title, description: quiz.description },
+              { title: quiz.title, description: quiz.description, iconKey: quiz.iconKey},
               { headers: { Authorization: `Bearer ${token}` } }
             );
             
@@ -244,7 +250,7 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
           links.map(link =>
             axios.post(
               `${process.env.REACT_APP_API_URL}/api/modules/link/${moduleId}`,
-              { title: link.title, link: link.link },
+              { title: link.title, link: link.link, iconKey: link.iconKey },
               { headers: { Authorization: `Bearer ${token}` } }
             )
           )
@@ -342,6 +348,15 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
                       Delete
                     </button>
                   </div>
+                  <label className="block mt-2">Icon</label>
+                  <IconPicker
+                    value={subsection.iconKey}
+                    onChange={key => {
+                      const next = [...subsections];
+                      next[index].iconKey = key;
+                      setSubsections(next);
+                    }}
+                  />
                   <div className="border rounded-lg overflow-hidden">
                     <TextEditor
                       key={index}
@@ -387,6 +402,15 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
                     onChange={(e) => handleQuizChange(quizIndex, 'description', e.target.value)}
                     className="w-full p-2 border rounded mb-4"
                     placeholder="Quiz Description"
+                  />
+                  <label className="block mt-2">Icon</label>
+                  <IconPicker
+                    value={quiz.iconKey}
+                    onChange={key => {
+                      const next = [...quizzes];
+                      next[quizIndex].iconKey = key;
+                      setQuizzes(next);
+                    }}
                   />
                   {quiz.questions.map((question, questionIndex) => (
                     <div key={questionIndex} className="mb-4 p-3 border rounded bg-white">
@@ -476,6 +500,15 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
                     onChange={(e) => handleLinkChange(index, 'link', e.target.value)}
                     className="w-full p-2 border rounded"
                     placeholder="Link URL"
+                  />
+                  <label className="block mt-2">Icon</label>
+                  <IconPicker
+                    value={link.iconKey}
+                    onChange={key => {
+                      const next = [...links];
+                      next[index].iconKey = key;
+                      setLinks(next);
+                    }}
                   />
                 </div>
               ))}
