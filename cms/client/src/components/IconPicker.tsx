@@ -37,6 +37,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({ value, onChange }) => {
 
   const columnCount = 8;
   const cellSize = 48;
+  const rowsToShow  = 6;
   const rowCount = Math.ceil(filtered.length / columnCount);
 
   return (
@@ -52,10 +53,10 @@ export const IconPicker: React.FC<IconPickerProps> = ({ value, onChange }) => {
       <Grid
       columnCount={columnCount}
       columnWidth={cellSize}
-      height={cellSize * 4}     // 只展示 4 行即可滚动
+      height={cellSize * rowsToShow}     // 只展示 4 行即可滚动
       rowCount={rowCount}
       rowHeight={cellSize}
-      width={columnCount * cellSize}
+      width={columnCount * cellSize + 16}
     >
       {({ columnIndex, rowIndex, style }) => {
         const index = rowIndex * columnCount + columnIndex;
