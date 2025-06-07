@@ -49,7 +49,7 @@ export class ModuleController extends Controller {
     @Post()
     @SuccessResponse(201, "Module Created")
     public async addModule(
-      @Body() body: { title: string; description: string }
+      @Body() body: { title: string; description: string; iconKey?: string; }
     ): Promise<IModule> {
       // This line must invoke the service we edited
       return this.moduleService.createModule(body);
@@ -79,7 +79,7 @@ export class ModuleController extends Controller {
     @SuccessResponse(200, "Module Updated")
     public async updateModule(
       @Path() moduleId: string,
-      @Body() moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[]; linkIds?: string[] }
+      @Body() moduleChanges: { title?: string; description?: string; subsectionIds?: string[]; quizIds?: string[]; linkIds?: string[]; iconKey?: string;}
     ): Promise<{ success: boolean }> {
       const result = await this.moduleService.updateModule(moduleId, moduleChanges);
       return { success: result };
@@ -102,7 +102,7 @@ export class ModuleController extends Controller {
     @SuccessResponse(201, "Subsection added")
     public async addSubsection(
         @Path() moduleId: string,
-        @Body() subsectionData: { title: string; body: string; authorID: string }
+        @Body() subsectionData: { title: string; body: string; authorID: string, iconKey?: string; }
     ): Promise<ISubsection> {
         return this.moduleService.addSubsection(moduleId, subsectionData);
     }
@@ -112,7 +112,7 @@ export class ModuleController extends Controller {
     @SuccessResponse(202, "Subsection updated")
     public async editSubsection(
     @Path() subsectionId: string,
-    @Body() subsectionChanges: { title?: string; body?: string }
+    @Body() subsectionChanges: { title?: string; body?: string ; iconKey?: string;}
     ): Promise<{ success: boolean }> {
     const result = await this.moduleService.editSubsection(subsectionId, subsectionChanges);
     return { success: result };
@@ -141,7 +141,7 @@ export class ModuleController extends Controller {
     @Post("{moduleId}/quiz")
     public async addQuiz(
         @Path() moduleId: string,
-        @Body() quizData: {title: string, description: string}
+        @Body() quizData: {title: string, description: string, iconKey?: string; }
     ): Promise<IQuiz> {
         const result = await this.moduleService.addQuiz(moduleId, quizData);
         return result;
@@ -162,7 +162,7 @@ export class ModuleController extends Controller {
     @Put("/quiz/{quizId}")
     public async updateQuiz(
       @Path() quizId: string,
-      @Body() quizData: { title: string; description: string }
+      @Body() quizData: { title: string; description: string; iconKey?: string; }
     ): Promise<IQuiz> {
       const updatedQuiz = await this.moduleService.updateQuiz(quizId, quizData);
       if (!updatedQuiz) {
@@ -251,7 +251,7 @@ export class ModuleController extends Controller {
   @SuccessResponse("201", "Created Link")
   public async addLink(
     @Path() moduleId: string,
-    @Body() linkData: {title:string, link: string}
+    @Body() linkData: {title:string, link: string; iconKey?: string; }
   ): Promise<void> {
     const success = await this.moduleService.createLink(moduleId, linkData.title, linkData.link);
     if (!success) {
@@ -266,7 +266,7 @@ export class ModuleController extends Controller {
   @SuccessResponse("200", "Link updated")
   public async editLink(
     @Path() linkId: string,
-    @Body() linkData: {title: string, link: string}
+    @Body() linkData: {title: string, link: string; iconKey?: string; }
   ): Promise<void> {
     const success = await this.moduleService.updateLink(linkId, linkData.title, linkData.link);
     if (!success) {

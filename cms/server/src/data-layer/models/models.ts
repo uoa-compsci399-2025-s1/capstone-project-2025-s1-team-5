@@ -48,12 +48,6 @@ export interface IQuestion {
   createdAt: Date;
 }
 
-export interface IQuiz {
-  title: string;
-  description: string;
-  questions: Types.ObjectId[];
-  createdAt: Date;
-}
 
 export interface ISubsection {
   id: string;
@@ -77,6 +71,7 @@ export interface IQuiz {
   questions: Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
+  iconKey?: string; 
 }
 
 export interface ILink {
@@ -84,6 +79,7 @@ export interface ILink {
   link: string;
   createdAt: Date;
   updatedAt: Date;
+  iconKey?: string; 
 }
 
 export interface UpdateAvatarRequest {

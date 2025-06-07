@@ -140,6 +140,7 @@ const quizSchema: Schema<IQuiz> = new Schema(
       type: String,
       required: true,
     },
+    iconKey:  { type: String, required: false },
     questions: [
       { type: mongoose.Schema.Types.ObjectId, ref: "Question", required: true },
     ],
@@ -161,6 +162,7 @@ const linkSchema: Schema<ILink> = new Schema(
       type: String,
       required: true,
     },
+    iconKey:  { type: String, required: false },
     createdAt: {
       type: Date,
       default: Date.now,
