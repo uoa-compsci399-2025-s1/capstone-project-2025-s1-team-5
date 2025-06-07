@@ -25,13 +25,11 @@ export default function ModuleButton({
       <View style={styles.content}>
         {iconKey && (
           <View style={styles.iconContainer}>
-            <Icon iconKey={iconKey} size={46} color="#fff" />
+            <Icon iconKey={iconKey} size={65} color="#fff" />
           </View>
         )}
         <View style={styles.textContainer}>
-          <StyledText type="subtitle" style={styles.textWhite}>
-            {title}
-          </StyledText>
+          <StyledText type="subtitle" style={styles.textWhite}>{title}</StyledText>
         </View>
       </View>
     </TouchableOpacity>
@@ -41,7 +39,7 @@ export default function ModuleButton({
 const styles = StyleSheet.create({
   button: {
     width: '100%',
-    height: 125,
+    height: 130,
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderRadius: 12,
@@ -54,7 +52,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   iconContainer: {
-    width: 46,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
