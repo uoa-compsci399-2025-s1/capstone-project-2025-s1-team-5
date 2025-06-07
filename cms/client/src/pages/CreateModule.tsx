@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import TextEditor from "./TextEditor";
 import { Link } from '../types/interfaces';
+import { IconPicker } from '../components/IconPicker';
 
 interface Subsection {
   title: string;
@@ -28,6 +29,7 @@ interface CreateModuleProps {
 const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateModule }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [iconKey, setIconKey] = useState<string>("");
   const [subsections, setSubsections] = useState<Subsection[]>([]);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [links, setLinks] = useState<Link[]>([]);
@@ -186,6 +188,7 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
     const moduleData = {
       title,
       description,
+      iconKey, 
     };
 
     try {
@@ -277,6 +280,14 @@ const CreateModule: React.FC<CreateModuleProps> = ({ onModuleCreated, setCreateM
             className="w-full p-3 border rounded-lg h-32"
             placeholder="Module Description"
             required
+          />
+        </div>
+
+        <div className="mb-6">
+          <label className="block mb-2 font-medium">Module Icon</label>
+          <IconPicker
+            value={iconKey}
+            onChange={key => setIconKey(key)}
           />
         </div>
 

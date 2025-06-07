@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, ComponentType, useMemo, useCallback, ChangeEvent } from 'react';
 import * as MdIcons from 'react-icons/md';
+import debounce from 'lodash.debounce';
+import { FixedSizeGrid as Grid } from 'react-window';
 
 // 把 MdIcons 里的所有导出组件过滤出来
-const ICONS = Object.entries(MdIcons)
-  .filter(([key]) => key.startsWith('Md'))   // 只要 MaterialIcons 系列
-  .map(([key, Comp]) => ({ key, Comp }));
+const ICONS: { key: string; Comp: ComponentType<any> }[] = Object.entries(MdIcons)
+    .filter(([key]) => key.startsWith('Md'))
+    .map(([key, Comp]) => ({
+    key,
+    Comp: Comp as ComponentType<any>,
+  }));
 
 interface IconPickerProps {
   value?: string;                    // 当前选的 iconKey，比如 "MaterialIcons#home"
@@ -13,55 +18,72 @@ interface IconPickerProps {
 
 export const IconPicker: React.FC<IconPickerProps> = ({ value, onChange }) => {
   const [search, setSearch] = useState('');
+  const [rawSearch, setRawSearch] = useState('');
+  
+  const debounced = useMemo(
+    () => debounce((text: string) => setSearch(text), 300),
+    []
+  );
+  const handleSearchChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setRawSearch(e.target.value);
+    debounced(e.target.value);
+  }, [debounced]);
 
   // 过滤搜索结果
-  const filtered = ICONS.filter(icon =>
-    icon.key.toLowerCase().includes(search.toLowerCase())
+  const filtered = useMemo(
+    () => ICONS.filter(({ key }) => key.toLowerCase().includes(search.toLowerCase())),
+    [search]
   );
+
+  const columnCount = 8;
+  const cellSize = 48;
+  const rowCount = Math.ceil(filtered.length / columnCount);
 
   return (
     <div style={{ fontFamily: 'sans-serif' }}>
       <input
         type="text"
-        placeholder="搜索 icon（如 home)"
-        value={search}
-        onChange={e => setSearch(e.target.value)}
+        placeholder="Search icon (for example: home)"
+        value={rawSearch}
+        onChange={handleSearchChange}
         style={{ padding: 4, marginBottom: 8, width: 200 }}
       />
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(8, 1fr)',
-          gap: 8,
-          maxHeight: 200,
-          overflowY: 'auto',
-          border: '1px solid #ccc',
-          padding: 8,
-        }}
-      >
-        {filtered.map(({ key, Comp }) => {
-          // 把 'MdHome' → 'home'
-          const name = key.replace(/^Md/, '').replace(/([A-Z])/g, l => l.toLowerCase());
-          const iconKey = `MaterialIcons#${name}`;
+      <Grid
+      columnCount={columnCount}
+      columnWidth={cellSize}
+      height={cellSize * 4}     // 只展示 4 行即可滚动
+      rowCount={rowCount}
+      rowHeight={cellSize}
+      width={columnCount * cellSize}
+    >
+      {({ columnIndex, rowIndex, style }) => {
+        const index = rowIndex * columnCount + columnIndex;
+        if (index >= filtered.length) return null;
+        const { key, Comp } = filtered[index];
+        const name = key
+          .replace(/^Md/, '')
+          .replace(/([A-Z])/g, l => l.toLowerCase());
+        const iconKey = `MaterialIcons#${name}`;
 
-          return (
-            <div
-              key={key}
-              onClick={() => onChange(iconKey)}
-              style={{
-                cursor: 'pointer',
-                padding: 4,
-                border: value === iconKey ? '2px solid #1890ff' : '1px solid #ddd',
-                borderRadius: 4,
-                textAlign: 'center',
-              }}
-            >
-              <Comp size={24} />
-            </div>
-          );
-        })}
-      </div>
+        return (
+          <div
+            style={{
+              ...style,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              border: value === iconKey ? '2px solid #1890ff' : '1px solid #ddd',
+            }}
+            onClick={() => onChange(iconKey)}
+            key={key}
+          >
+            <Comp size={24} />
+          </div>
+        );
+      }}
+    </Grid>
     </div>
   );
 };

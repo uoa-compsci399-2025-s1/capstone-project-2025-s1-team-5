@@ -93,7 +93,9 @@ export class ModuleService {
       title: data.title,
       description: data.description,
       subsectionIds: [],
-      sortOrder: existingCount, // append to end
+      sortOrder: existingCount, // append to end\
+      iconKey: data.iconKey,
+
     });
     const saved = await moduleDoc.save();
     return saved.toObject();
