@@ -1,94 +1,93 @@
 import { Types } from "mongoose";
 
 export enum RoleType {
-    admin= "admin",
-    user= "user"
+  admin = "admin",
+  user = "user",
 }
 
 export interface IUser {
-    id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    password: string;
-    avatar?: string,
-    colorPref?: string
-    country: string;
-    programme?: string;
-    role: RoleType,
-    createdAt: Date
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  avatar?: string;
+  colorPref?: string;
+  country: string;
+  programme?: string;
+  role: RoleType;
+  createdAt: Date;
 }
 
 export interface IModule {
-    id: string;
-    title: string;
-    description: string;
-    createdAt: Date;
-    updatedAt?: Date;
-    subsectionIds: Types.ObjectId[];
-    quizIds: Types.ObjectId[]
-    linkIds: Types.ObjectId[]
-    sortOrder: number;
+  id: string;
+  title: string;
+  description: string;
+  createdAt: Date;
+  updatedAt?: Date;
+  subsectionIds: Types.ObjectId[];
+  quizIds: Types.ObjectId[];
+  linkIds: Types.ObjectId[];
+  sortOrder: number;
 }
 
 export interface IProgramme {
-    id: string;
-    name: string;
-    description: string;
-    link: string;
-    createdAt: Date;
+  id: string;
+  name: string;
+  description: string;
+  link: string;
+  createdAt: Date;
 }
 
 export interface IQuestion {
-    id: string;
-    question: string;
-    options: string[];
-    correctAnswer: string;
-    createdAt: Date;
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  createdAt: Date;
 }
 
 export interface IQuiz {
-    title: string;
-    description: string;
-    questions: Types.ObjectId[];
-    createdAt: Date;
+  title: string;
+  description: string;
+  questions: Types.ObjectId[];
+  createdAt: Date;
 }
 
 export interface ISubsection {
-    id: string;
-    title: string;
-    body: string;
-    authorID: string;
-    published: boolean;
-    createdAt: Date;
-    updatedAt: Date;
+  id: string;
+  title: string;
+  body: string;
+  authorID: string;
+  published: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface ChangePasswordRequest {
-    oldPassword: string;
-    newPassword: string;
+  oldPassword: string;
+  newPassword: string;
 }
 
 export interface IQuiz {
-    title: string;
-    description: string;
-    questions: Types.ObjectId[];
-    createdAt: Date;
-    updatedAt: Date;
-
+  title: string;
+  description: string;
+  questions: Types.ObjectId[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface ILink {
-    title: string;
-    link: string
-    createdAt: Date;
-    updatedAt: Date;
+  title: string;
+  link: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface UpdateAvatarRequest {
-  avatar: string;         
+  avatar: string;
 }
 
 export interface UpdateThemeRequest {
-  colorPref: 'light' | 'dark';
+  colorPref: "light" | "dark";
 }

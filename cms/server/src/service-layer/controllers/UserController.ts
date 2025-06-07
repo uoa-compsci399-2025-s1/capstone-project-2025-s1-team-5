@@ -18,9 +18,6 @@ import {
 import { UserService, UserCreationParams, UserUpdateParams } from "../../data-layer/services/UserService";
 import { PaginatedUserResponse, UserGetResponse, UserInfo, UserPostResponse, UserUpdateResponse } from "../response-models/UserResponse";
 import { userAdaptor } from "../../data-layer/adapter/UserAdapter";
-import * as bcrypt from "bcrypt";
-import * as jwt from "jsonwebtoken";
-import { User } from "../../data-layer/models/schema";
 import { UpdateAvatarRequest, UpdateThemeRequest } from '../../data-layer/models/models';
 
 @Route("users")
@@ -39,7 +36,6 @@ export class UsersController extends Controller {
             this.setStatus(404);
             throw new Error("Could not fetch users");
         }
-    
         return fetchedUsers;
     }
     
@@ -74,7 +70,7 @@ export class UsersController extends Controller {
           return userInfo;
     }
         
-
+    @Security("jwt", ["admin"])
     @Put("{userId}") 
     @SuccessResponse(200, "User updated")
     public async updateUser(
@@ -91,6 +87,7 @@ export class UsersController extends Controller {
         return { user: updatedUser };
     }
 
+    @Security("jwt", ["admin"])
     @Delete("{userId}")
     @SuccessResponse(202, "User deleted")
     public async deleteUser(
@@ -105,24 +102,6 @@ export class UsersController extends Controller {
     
         return { message: "User successfully deleted" };
 
-    }
-
-    
-    @Post("/login")
-    public async login(@Body() credentials: { email: string, password: string }): Promise<{ token: string }> {
-    const user = await User.findOne({ email: credentials.email });
-    if (!user) throw new Error("Invalid credentials");
-
-    const isMatch = await bcrypt.compare(credentials.password, user.password);
-    if (!isMatch) throw new Error("Invalid credentials");
-
-    const token = jwt.sign(
-        { id: user._id, role: user.role },
-        process.env.JWT_SECRET as string,
-        { expiresIn: "1d" }
-    );
-
-    return { token };
     }
 
     @Patch('/me/avatar')

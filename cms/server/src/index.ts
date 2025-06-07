@@ -1,12 +1,16 @@
 import "dotenv/config";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import bodyParser from "body-parser";
 import multer from "multer";
 import multerS3 from "multer-s3";
-import { S3Client, ListObjectsV2Command, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  ListObjectsV2Command,
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
 
 import * as swaggerJson from "./middleware/__generated__/swagger.json";
 import * as swaggerUI from "swagger-ui-express";
@@ -46,7 +50,6 @@ const upload = multer({
   }),
 });
 
-
 // Delete file route
 app.delete("/api/library/:key", async (req, res) => {
   try {
@@ -62,8 +65,6 @@ app.delete("/api/library/:key", async (req, res) => {
     res.status(500).json({ error: "Could not delete file" });
   }
 });
-
-
 
 app.get("/api/library", async (req, res) => {
   try {
@@ -86,17 +87,20 @@ app.get("/api/library", async (req, res) => {
   }
 });
 
-
 // ✅ Upload endpoint
-app.post("/api/upload", upload.single("file"), (req: Request, res: Response): void => {
-  if (!req.file || typeof req.file !== "object") {
-    res.status(400).json({ error: "Upload failed" });
-    return;
-  }
+app.post(
+  "/api/upload",
+  upload.single("file"),
+  (req: Request, res: Response): void => {
+    if (!req.file || typeof req.file !== "object") {
+      res.status(400).json({ error: "Upload failed" });
+      return;
+    }
 
-  const fileUrl = (req.file as any).location;
-  res.status(200).json({ url: fileUrl });
-});
+    const fileUrl = (req.file as any).location;
+    res.status(200).json({ url: fileUrl });
+  },
+);
 
 // Swagger + Routes
 RegisterRoutes(app);
@@ -104,12 +108,11 @@ app.use("/swagger", swaggerUI.serve, swaggerUI.setup(swaggerJson));
 
 const port = Number(process.env.PORT) || 3000;
 
-
 const startServer = async () => {
   try {
     await connectToDatabase();
-    app.listen(port, '0.0.0.0', () =>
-      console.log(`Server running on port ${port}`)
+    app.listen(port, "0.0.0.0", () =>
+      console.log(`Server running on port ${port}`),
     );
   } catch (error) {
     console.error("ERROR Connecting to Database", error);
