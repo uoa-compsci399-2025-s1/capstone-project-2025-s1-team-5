@@ -1,16 +1,20 @@
 import React, { useContext } from 'react';
 import { TouchableOpacity, StyleSheet, View } from 'react-native';
 import { ThemeContext } from '@/contexts/ThemeContext';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { Icon } from './Icon';  
 import StyledText from '@/components/StyledText';
 
 interface ModuleButtonProps {
   title: string;
   onPress: () => void;
-  iconName: keyof typeof MaterialIcons.glyphMap;
+  iconKey?: string; 
 }
 
-export default function ModuleButton({ title, onPress, iconName }: ModuleButtonProps) {
+export default function ModuleButton({
+  title,
+  onPress,
+  iconKey,
+}: ModuleButtonProps) {
   const { theme } = useContext(ThemeContext);
 
   return (
@@ -19,11 +23,15 @@ export default function ModuleButton({ title, onPress, iconName }: ModuleButtonP
       onPress={onPress}
     >
       <View style={styles.content}>
-        <View style={styles.iconContainer}>
-          <MaterialIcons name={iconName} size={60} color="#FFF" />
-        </View>
+        {iconKey && (
+          <View style={styles.iconContainer}>
+            <Icon iconKey={iconKey} size={46} color="#fff" />
+          </View>
+        )}
         <View style={styles.textContainer}>
-          <StyledText type="subtitle" style={styles.textWhite}>{title}</StyledText>
+          <StyledText type="subtitle" style={styles.textWhite}>
+            {title}
+          </StyledText>
         </View>
       </View>
     </TouchableOpacity>
@@ -46,7 +54,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   iconContainer: {
-    flex: 1,
+    width: 46,
     alignItems: 'center',
     justifyContent: 'center',
   },
