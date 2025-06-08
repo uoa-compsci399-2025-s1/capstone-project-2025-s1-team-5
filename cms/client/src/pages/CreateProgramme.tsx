@@ -22,7 +22,9 @@ const CreateProgramme: React.FC<CreateProgrammeProps> = ({ onProgrammeCreated })
     };
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/programmes`, programmeData);
+      const token = localStorage.getItem("authToken")
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/programmes`, programmeData,         { headers: { Authorization: `Bearer ${token}` } }
+);
       if (onProgrammeCreated) onProgrammeCreated();
       setSuccess("Programme created successfully!");
       setName("");
