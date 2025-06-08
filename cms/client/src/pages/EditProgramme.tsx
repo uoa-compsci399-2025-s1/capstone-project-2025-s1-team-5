@@ -23,9 +23,13 @@ const EditProgrammeForm: React.FC<EditProgrammeFormProps> = ({
     e.preventDefault();
 
     try {
+      const token = localStorage.getItem("authToken")
       await axios.put(
+        
         `${process.env.REACT_APP_API_URL}/api/programmes/${programme._id}`,
-        { name, description, link } 
+        { name, description, link }, 
+                { headers: { Authorization: `Bearer ${token}` } }
+
       );
       onProgrammeUpdated();
     } catch (err) {
