@@ -39,7 +39,7 @@ function Home() {
             Analytics <span className="text-blue-500">Dashboard</span>
           </h1>
           <Link
-            to="/modules/users"
+            to="/users"
             className="text-xl font-semibold text-blue-700 mb-4 hover:underline hover:text-blue-900 transition block"
           >
             View platform insights
