@@ -130,7 +130,7 @@ const UsersPage: React.FC = () => {
 
       <input
         type="text"
-        placeholder="Search across all users..."
+        placeholder="Search across all users, email or country..."
         value={searchTerm}
         onChange={(e) => {
           setPage(1);          
