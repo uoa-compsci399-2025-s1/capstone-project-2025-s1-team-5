@@ -46,7 +46,9 @@ const EditUserForm: React.FC<EditUserFormProps> = ({ user, onUserUpdated, setEdi
       };
 
     try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/api/users/${user.id}`, updatedUser);
+      const token = localStorage.getItem("authToken")
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/users/${user.id}`, updatedUser,         { headers: { Authorization: `Bearer ${token}` } }
+);
       onUserUpdated();
       setEditUser(null);
       setSuccess("User successfully edited")
