@@ -5,8 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsoa spec-and-routes && tsc",
-    "start": "concurrently \"yarn nodemon -e ts,js --exec\" \"yarn tsoa spec-and-routes && tsc\"",
-    "nodemon": "nodemon"
+    "start": "concurrently \"node src/dist/index.js\" \"yarn tsoa spec-and-routes && tsc\""
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.817.0",
@@ -16,6 +15,7 @@
     "bcryptjs": "^3.0.2",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",

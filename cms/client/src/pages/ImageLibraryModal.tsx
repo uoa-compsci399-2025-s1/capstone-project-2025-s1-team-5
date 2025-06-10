@@ -18,7 +18,6 @@ interface Props {
 const ImageLibraryModal: React.FC<Props> = ({ open, onClose, onSelect }) => {
   const [files, setFiles] = useState<S3File[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (open) {
