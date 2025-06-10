@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "dev-server": "yarn workspace server start",
-    "start": "concurrently \"yarn workspace cms-frontend start\" \"yarn workspace server start\""
+    "start": "yarn workspace server build && concurrently \"yarn workspace cms-frontend start\" \"yarn workspace server start\""
   },
   "dependencies": {},
   "devDependencies": {
