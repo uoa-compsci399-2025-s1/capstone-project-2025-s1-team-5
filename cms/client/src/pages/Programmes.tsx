@@ -111,19 +111,21 @@ const ProgrammesPage = () => {
                 <td className="py-2 px-4">{programme.name}</td>
                 <td className="py-2 px-4">{programme.description}</td>
                 <td className="py-2 px-4">{programme.link}</td>
-                <td className="py-2 px-4 space-x-2">
-                  <button
-                    onClick={() => handleEdit(programme)}
-                    className="bg-yellow-400 hover:bg-yellow-500 text-white py-1 px-3 rounded text-sm"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(programme._id)}
-                    className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded text-sm"
-                  >
-                    Delete
-                  </button>
+                <td className="py-2 px-4">
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleEdit(programme)}
+                      className="bg-yellow-400 hover:bg-yellow-500 text-white py-1 px-3 rounded text-sm"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(programme._id)}
+                      className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded text-sm"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

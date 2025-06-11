@@ -26,8 +26,8 @@ function Home() {
   }, []);
 
   return (
-    <div style={{ paddingLeft: '60px' }}>
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-white to-blue-300 p-6 space-y-8">
+    <div className="fixed inset-0 overflow-hidden" style={{ paddingLeft: '60px' }}>
+      <div className="h-full flex flex-col items-center justify-center bg-gradient-to-r from-white to-blue-300 p-6 space-y-8">
         <div className="bg-white rounded-3xl shadow-lg p-10 w-full max-w-4xl text-center">
           <h1 className="text-5xl font-extrabold text-gray-700 leading-tight mb-6 whitespace-nowrap overflow-hidden text-ellipsis">
             Welcome to <span className="text-blue-500">UOA: Your Way</span>
@@ -46,8 +46,8 @@ function Home() {
           </Link>
           <div className="mt-6">
             <p className="text-lg font-medium text-gray-600">
-              👥 Total Users: <span className="text-blue-600 font-bold">{userCount}</span>  
-              🌍 Unique Countries: <span className="text-green-600 font-bold">{uniqueCountries}</span>
+              👥 Total Users: <span className="text-blue-600 font-bold">{userCount}</span>
+              {'  '}🌍 Unique Countries: <span className="text-green-600 font-bold">{uniqueCountries}</span>
             </p>
           </div>
         </div>
@@ -55,5 +55,4 @@ function Home() {
     </div>
   );
 }
-
 export default Home;
