@@ -701,7 +701,7 @@ const handleDragEnd = (result: DropResult) => {
                       >
                         {question.options.map((option, index) => (
                           <option key={index} value={option}>
-                            Option {index + 1}
+                            Correct Answer: Option {index + 1}
                           </option>
                         ))}
                       </select>
