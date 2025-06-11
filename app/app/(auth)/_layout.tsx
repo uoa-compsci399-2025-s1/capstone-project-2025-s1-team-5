@@ -1,9 +1,7 @@
 import React, { useContext } from 'react';
 import { Tabs } from 'expo-router';
+import { ThemeContext } from '@/contexts/ThemeContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-
-import { UserProvider } from '@/contexts/UserContext';
-import { ThemeProvider, ThemeContext } from '@/contexts/ThemeContext';
 
 export default function Layout() {
   return (

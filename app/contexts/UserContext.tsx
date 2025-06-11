@@ -5,7 +5,7 @@ export interface User {
     last_name: string;
     email: string;
     colorPref: string;
-    avatar: string; // 'cat', 'dog'...
+    avatar: string; 
     country: string;
     programme: string;
   }
@@ -20,7 +20,7 @@ const defaultUser: User = {
   last_name: 'default',
   email: 'default',
   colorPref: 'light',
-  avatar: 'default', // 'cat', 'dog'...
+  avatar: 'default', 
   country: 'New Zealand',
   programme: 'Master of Engineering Project Management'
 }

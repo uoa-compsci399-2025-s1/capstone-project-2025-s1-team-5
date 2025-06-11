@@ -6,9 +6,9 @@ import React, {
   useContext,
 } from 'react';
 import { useColorScheme, ColorSchemeName } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { lightTheme, darkTheme } from '@/theme/theme';
 import { UserContext } from './UserContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type ColorPreference = 'light' | 'dark' | 'system';
 

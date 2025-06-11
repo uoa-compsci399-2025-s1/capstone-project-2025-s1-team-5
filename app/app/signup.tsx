@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 import { View, StyleSheet, Image, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemeContext } from '@/contexts/ThemeContext';
-import { UserContext } from '@/contexts/UserContext';
 
 import api from './lib/api'; 
 

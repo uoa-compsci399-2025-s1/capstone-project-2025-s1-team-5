@@ -27,7 +27,6 @@ export default function QuizViewer() {
   const { moduleId, quizId } = useLocalSearchParams<{ moduleId: string; quizId: string }>();
   const { theme } = useContext(ThemeContext);
 
-  // 顶层 state
   const [quiz,         setQuiz]        = useState<any>(null);
   const [loading,      setLoading]     = useState(true);
   const [currentIndex, setCurrentIndex]= useState(0);
@@ -49,7 +48,6 @@ export default function QuizViewer() {
     setFinished(false);
   };
 
-  // 合并初始化：抓到数据的同时，一口气把所有 state 都打好
   useEffect(() => {
     if (!moduleId) return;
 
@@ -60,7 +58,6 @@ export default function QuizViewer() {
         setQuiz(found);
 
         if (found) {
-          // 这里同时初始化所有和 quiz 相关的 state
           setCurrentIndex(0);
           setScore(0);
           setFinished(false);
@@ -73,7 +70,7 @@ export default function QuizViewer() {
             }))
           );
         } else {
-          setUserAnswers([]); // 保底
+          setUserAnswers([]); 
         }
       })
       .catch(console.error)
@@ -82,7 +79,6 @@ export default function QuizViewer() {
       });
   }, [moduleId, quizId]);
 
-  // 渲染 guard：先把 loading、quiz、userAnswers 都过一遍
   if (loading) {
     return (
       <View style={[styles.center, { backgroundColor: theme.background }]}>
@@ -98,7 +94,6 @@ export default function QuizViewer() {
     );
   }
 
-  // 题都准备好了，才渲染答题流程
   if (finished) {
     return (
       <View style={{ flex: 1, backgroundColor: theme.background, justifyContent: 'flex-start', alignItems: 'center'}}>
@@ -115,7 +110,6 @@ export default function QuizViewer() {
     );
   }
 
-  // 正常答题渲染
   const progress = (currentIndex + 1) / quiz.questions.length;
 
   const handleSelect = (opt: string) =>
