@@ -188,18 +188,20 @@ const UsersPage: React.FC = () => {
                   {new Date(user.createdAt).toLocaleDateString()}
                 </td>
                 <td className="py-2 px-4 space-x-2">
+                  <div className="flex space-x-2">
                   <button
-                    onClick={() => handleEdit(user)}
-                    className="bg-yellow-400 hover:bg-yellow-500 text-white py-1 px-3 rounded text-sm"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(user.id)}
-                    className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded text-sm"
-                  >
-                    Delete
-                  </button>
+                      onClick={() => handleEdit(user)}
+                      className="bg-yellow-400 hover:bg-yellow-500 text-white py-1 px-2 rounded text-xs sm:text-sm whitespace-nowrap flex-1 min-w-[10px]"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(user.id)}
+                      className="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded text-xs sm:text-sm whitespace-nowrap flex-1 min-w-[10px]"
+                    >
+                      Delete
+                    </button>
+                    </div>
                 </td>
               </tr>
             ))}

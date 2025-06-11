@@ -199,19 +199,7 @@ const UploadLibrary: React.FC = () => {
     <div className="flex flex-col items-center min-h-screen bg-gradient-to-r from-white to-blue-100 p-8">
       <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-4xl">
         <h1 className="text-2xl font-bold mb-6 text-center text-blue-700">Upload Library</h1>
-        <div className="flex justify-end mb-2">
-          <label className="text-sm mr-2 font-medium text-gray-600">Sort by:</label>
-          <select
-            value={sortBy}
-            onChange={e => setSortBy(e.target.value as SortBy)}
-            className="border rounded p-1 text-sm"
-          >
-            <option value="date-desc">Newest</option>
-            <option value="date-asc">Oldest</option>
-            <option value="title-asc">Title A-Z</option>
-            <option value="title-desc">Title Z-A</option>
-          </select>
-        </div>
+        
         
         
         <form
@@ -233,7 +221,7 @@ const UploadLibrary: React.FC = () => {
             {uploading ? "Uploading..." : "Upload"}
           </button>
         </form>
-
+        
         <div className="flex justify-between items-center mb-4">
           <button
             className={`bg-red-600 hover:bg-red-700 text-white rounded px-4 py-2 font-medium transition disabled:bg-red-200 ${
@@ -254,6 +242,19 @@ const UploadLibrary: React.FC = () => {
               <span className="text-sm">Select All</span>
             </label>
           </div>
+        </div>
+        <div className="flex items-center space-x-2 my-4">
+          <label className="text-sm font-medium text-gray-600">Sort by:</label>
+          <select
+            value={sortBy}
+            onChange={e => setSortBy(e.target.value as SortBy)}
+            className="border rounded p-1 text-sm"
+          >
+            <option value="date-desc">Newest</option>
+            <option value="date-asc">Oldest</option>
+            <option value="title-asc">Title A-Z</option>
+            <option value="title-desc">Title Z-A</option>
+          </select>
         </div>
         {error && (
           <div className="text-red-500 text-center mb-4">{error}</div>
