@@ -8,6 +8,7 @@ module.exports = function (api) {
             '@assets': '../assets',
           },
         }],
+        ['module:react-native-dotenv']
       ],
     };
   };
