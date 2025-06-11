@@ -124,7 +124,7 @@ npm install
 Create a `.env` file in the `app` folder with the following:
 
 ```env
-LOCAL_IP= YourIPvAddress
+EXPO_PUBLIC_API_URL=YourIPV4Address
 ```
 
 ### Step 4: Start the App
