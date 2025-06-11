@@ -15,9 +15,9 @@ import {
 import * as swaggerJson from "./middleware/__generated__/swagger.json";
 import * as swaggerUI from "swagger-ui-express";
 import { Request, Response } from "express";
-
 import { RegisterRoutes } from "./middleware/__generated__/routes";
 import connectToDatabase from "./data-layer/adapter/mongodb";
+import { ErrorRequestHandler } from "express";
 
 export const app = express();
 
@@ -26,6 +26,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(helmet());
 app.use(cors({ origin: "*" }));
+
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  console.error("Unhandled error:", err);
+  res.status(500).json({ error: "Internal Server Error" });
+};
 
 // ✅ S3 Client
 const s3 = new S3Client({
@@ -118,5 +123,7 @@ const startServer = async () => {
     console.error("ERROR Connecting to Database", error);
   }
 };
+
+app.use(errorHandler);
 
 startServer();

@@ -131,7 +131,7 @@ export class UserService {
    */
   public async deleteUser(userId: string): Promise<boolean> {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return false;
+      return false
     }
 
     const deletedUser = await User.findByIdAndDelete(userId);

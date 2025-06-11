@@ -1,7 +1,8 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { LOCAL_IP } from '@env'
 
-const api = axios.create({ baseURL: 'http://172.24.21.190:3000/api' });
+const api = axios.create({ baseURL: `http://${LOCAL_IP}:3000/api` });
 
 api.interceptors.request.use(async (config) => {
   const token = await SecureStore.getItemAsync('USER_TOKEN');
