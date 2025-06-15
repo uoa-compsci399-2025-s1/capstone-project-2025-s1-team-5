@@ -4,6 +4,9 @@ Welcome to the official repository for the **UoA Your Way** project. This system
 
 - A mobile app built with React Native for end users.
 - A web-based content management system (CMS) for administrators to manage content.
+- 🗂️ Project Management Tools Used: [GitHub Issues](https://github.com/uoa-compsci399-2025-s1/capstone-project-2025-s1-team-5/issues)
+
+The UoA Your Way project is a dual-platform system designed to support international postgraduate students applying to the University of Auckland via a new offshore-to-onshore study pathway. It features a mobile app for students and a web-based content management system (CMS) for staff. The app helps students explore programmes, learn about university life and New Zealand culture, and stay engaged during the application process. The CMS allows staff with minimal technical experience to easily manage and update content. Together, the platforms aim to improve engagement, and offer a more accessible and personalised experience for students.
 
 ---
 
@@ -26,6 +29,8 @@ Welcome to the official repository for the **UoA Your Way** project. This system
   - Node.js
   - Express
   - MongoDB (via Mongoose)
+
+### 
 
 ---
 
@@ -76,15 +81,12 @@ REACT_APP_API_URL=http://localhost:3000
 Create a `.env` file in the `cms/server/` folder with the following:
 
 ```env
-
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=uoayourway@gmail.com
-SMTP_PASS=wjdg waao qqnj yjcv
-TO_EMAIL=vereinen00@gmail.com
+Hidden for security reason. Please contact vereinen00@gmail.com for keys
 ```
 
 > ⚠️ **Security Notice:** Do **not** commit `.env` files to version control. Be sure `.env` is listed in `.gitignore`.
+> ⚠️ Server Environment Note: Some .env variables (e.g., AWS keys) used in the deployed server are not available locally for security reasons.
+> 📧 Need Access to Server Environment Keys? Contact the project maintainers via vereinen00@gmail.com for more information.
 
 ### Step 4: Start the CMS
 
@@ -143,6 +145,14 @@ A QR code will appear in your terminal or browser.
 
 ---
 
+## 🧾 Demonstration
+
+A walkthrough video has been provided to demonstrate the app and CMS functionality:
+
+📽️ [Demo Video](https://youtu.be/tDsgT_pjNCU?si=VaF_hjuMOxOYwAaV)
+
+---
+
 ## 🚀 Deployment
 
 ### 📂 Content Management System (CMS)
@@ -195,6 +205,23 @@ We plan to enhance and expand the platform with the following initiatives:
   - Hosting data closer to the region for improved speed and reliability
 
 These enhancements aim to improve usability, engagement, and global accessibility, particularly for international students.
+
+---
+🙌 Acknowledgements
+
+This project was completed as part of COMPSCI 399 at the University of Auckland by the following team members:
+
+Leon Huang – Team Leader, CMS Full Stack Developer
+
+Derrick Trang – Project Manager, Backend Developer
+
+Jack Zhen – CMS/Mobile App Full Stack Developer
+
+Andy Xu – Mobile App Frontend Developer
+
+Gavin Ding – CMS Full Stack Developer
+
+Andrew Yao – Mobile App Frontend Developer
 
 ---
 
