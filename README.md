@@ -223,6 +223,8 @@ Gavin Ding – CMS Full Stack Developer
 
 Andrew Yao – Mobile App Frontend Developer
 
+We would also like to acknowledge Ellie Shedden for her valuable guidance and contributions throughout the development of this project.
+
 ---
 
 ## 📝 License
