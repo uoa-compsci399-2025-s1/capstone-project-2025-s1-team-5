@@ -1,13 +1,9 @@
-// src/pages/ModulesPage.tsx
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CreateModule from "./CreateModule";
 import EditModuleForm from "./EditModuleForm";
 import ModuleButton from "../components/ModuleButton";
 import { Module, ModulesResponse } from "../types/interfaces";
-
-// ← IMPORT THE NEW OVERLAY COMPONENT
 import ModulesOrder from "./ModulesOrder";
 
 const ModulesPage: React.FC = () => {
@@ -18,8 +14,6 @@ const ModulesPage: React.FC = () => {
   const [editModule, setEditModule] = useState<Module | null>(null);
   const [deleteConfirmModule, setDeleteConfirmModule] = useState<Module | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  // ← NEW: state to toggle the reorder overlay
   const [showOrderOverlay, setShowOrderOverlay] = useState(false);
 
   const fetchModules = async () => {
@@ -113,12 +107,12 @@ const ModulesPage: React.FC = () => {
             </select>
           </div>
 
-          {/* ← ADDED “Reorder Modules” BUTTON */}
+          {}
           <div className="flex gap-2">
             <ModuleButton
               label="Reorder Modules"
               onClick={() => setShowOrderOverlay(true)}
-              color="#17a2b8" // teal
+              color="#17a2b8"
             />
             <ModuleButton
               label="Create Module"
@@ -160,7 +154,7 @@ const ModulesPage: React.FC = () => {
                     <ModuleButton
                       label="Edit"
                       onClick={() => setEditModule(module)}
-                      color="#007bff"
+                      color="#facc15"
                     />
                     <ModuleButton
                       label="Delete"
@@ -235,7 +229,7 @@ const ModulesPage: React.FC = () => {
         </div>
       )}
 
-      {/* ← NEW: Render the drag-and-drop overlay when needed */}
+      {}
       {showOrderOverlay && (
         <ModulesOrder
           key={modules.map((m) => m._id).join(",")}
