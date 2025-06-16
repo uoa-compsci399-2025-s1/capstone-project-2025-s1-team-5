@@ -181,19 +181,8 @@ const handleDragEnd = (result: DropResult) => {
   items.splice(result.destination.index, 0, moved);
 
   setSubsections(items);
-  setModuleSubsectionIds(items.map(item => item._id)); // update order
+  setModuleSubsectionIds(items.map(item => item._id));
 };
-
-//   const handleSubsectionReorder = (result: DropResult) => {
-//   if (!result.destination) return;
-
-//   const reordered = Array.from(subsections);
-//   const [moved] = reordered.splice(result.source.index, 1);
-//   reordered.splice(result.destination.index, 0, moved);
-
-//   setSubsections(reordered);
-//   setModuleSubsectionIds(reordered.map((s) => s._id)); // update order for submission
-// };
 
  const handleAddQuiz = async () => {
     try {
@@ -236,7 +225,6 @@ const handleDragEnd = (result: DropResult) => {
       const moduleId = getModuleId();
       const token = localStorage.getItem("authToken");
       
-      // Fix the deletion endpoint
       await axios.delete(
         `${process.env.REACT_APP_API_URL}/api/modules/quiz/${moduleId}/${quizId}`,
         { headers: { Authorization: `Bearer ${token}` } }
@@ -306,7 +294,7 @@ const handleDragEnd = (result: DropResult) => {
   try {
     const token = localStorage.getItem("authToken");
     const response = await axios.post<Question>(
-      `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}`, // ✅ corrected path
+      `${process.env.REACT_APP_API_URL}/api/modules/quiz/${quizId}`,
       {
         question: "Enter your question here",
         options: ["Option 1", "Option 2", "Option 3", "Option 4"],
