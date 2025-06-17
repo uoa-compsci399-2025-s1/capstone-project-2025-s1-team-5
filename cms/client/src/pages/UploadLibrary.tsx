@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ChangeEvent, FormEvent, useRef } from "react";
+import React, { useEffect, useState, ChangeEvent, FormEvent, useRef, useCallback } from "react";
 import axios from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -140,43 +140,44 @@ const UploadLibrary: React.FC = () => {
     setDragRect(null);
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!dragStart) return;
-    const x = Math.min(e.clientX, dragStart.x);
-    const y = Math.min(e.clientY, dragStart.y);
-    const width = Math.abs(e.clientX - dragStart.x);
-    const height = Math.abs(e.clientY - dragStart.y);
-    setDragRect({ left: x, top: y, width, height });
-  };
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+  if (!dragStart) return;
+  const x = Math.min(e.clientX, dragStart.x);
+  const y = Math.min(e.clientY, dragStart.y);
+  const width = Math.abs(e.clientX - dragStart.x);
+  const height = Math.abs(e.clientY - dragStart.y);
+  setDragRect({ left: x, top: y, width, height });
+}, [dragStart]);
 
-  const handleMouseUp = (e: MouseEvent) => {
-    if (!dragStart || !dragRect) {
-      setDragStart(null);
-      setDragRect(null);
-      return;
-    }
-    const rect = dragRect;
-    const gridOffset = gridRef.current?.getBoundingClientRect();
-    if (!gridOffset) return;
-
-    const selected = new Set(selectedKeys);
-    files.forEach((file, idx) => {
-      const box = boxRefs.current[idx];
-      if (!box) return;
-      const boxRect = box.getBoundingClientRect();
-      if (
-        boxRect.left < rect.left + rect.width &&
-        boxRect.left + boxRect.width > rect.left &&
-        boxRect.top < rect.top + rect.height &&
-        boxRect.top + boxRect.height > rect.top
-      ) {
-        selected.add(file.key);
-      }
-    });
-    setSelectedKeys(selected);
+const handleMouseUp = useCallback((e: MouseEvent) => {
+  if (!dragStart || !dragRect) {
     setDragStart(null);
     setDragRect(null);
-  };
+    return;
+  }
+  const rect = dragRect;
+  const gridOffset = gridRef.current?.getBoundingClientRect();
+  if (!gridOffset) return;
+
+  const selected = new Set(selectedKeys);
+  files.forEach((file, idx) => {
+    const box = boxRefs.current[idx];
+    if (!box) return;
+    const boxRect = box.getBoundingClientRect();
+    if (
+      boxRect.left < rect.left + rect.width &&
+      boxRect.left + boxRect.width > rect.left &&
+      boxRect.top < rect.top + rect.height &&
+      boxRect.top + boxRect.height > rect.top
+    ) {
+      selected.add(file.key);
+    }
+  });
+  setSelectedKeys(selected);
+  setDragStart(null);
+  setDragRect(null);
+}, [dragStart, dragRect, selectedKeys, files]);
+
 
   useEffect(() => {
     if (dragStart) {
@@ -190,7 +191,7 @@ const UploadLibrary: React.FC = () => {
       };
     }
 
-  }, [dragStart, dragRect]);
+  }, [dragStart, dragRect, handleMouseMove, handleMouseUp]);
 
 
     boxRefs.current = sortedFiles.map((_, i) => boxRefs.current[i] || null);

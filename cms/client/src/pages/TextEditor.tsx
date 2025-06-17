@@ -4,7 +4,7 @@ import TextAlign from '@tiptap/extension-text-align'
 import { useEffect, useRef, useState } from 'react'
 import { CustomIframe } from './CustomIframe'
 import ImageLibraryModal from './ImageLibraryModal'
-import axios from 'axios'
+// import axios from 'axios'
 import Image from '@tiptap/extension-image'
 
 interface TextEditorProps {
@@ -46,21 +46,21 @@ const TextEditor = ({ content, onChange, subsectionId }: TextEditorProps) => {
     }
   }, [editor, content])
 
-  const handleImageUpload = async (file: File) => {
-    const formData = new FormData()
-    formData.append('file', file)
+  // const handleImageUpload = async (file: File) => {
+  //   const formData = new FormData()
+  //   formData.append('file', file)
 
-    try {
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/upload`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
-      const imageUrl = res.data.url
-      editor?.chain().focus().setImage({ src: imageUrl }).run()
-    } catch (err) {
-      console.error('Image upload failed', err)
-      alert('Failed to upload image.')
-    }
-  }
+  //   try {
+  //     const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/upload`, formData, {
+  //       headers: { 'Content-Type': 'multipart/form-data' },
+  //     })
+  //     const imageUrl = res.data.url
+  //     editor?.chain().focus().setImage({ src: imageUrl }).run()
+  //   } catch (err) {
+  //     console.error('Image upload failed', err)
+  //     alert('Failed to upload image.')
+  //   }
+  // }
 
   const convertToEmbedUrl = (url: string) => {
     const youtubeMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{11})/)
